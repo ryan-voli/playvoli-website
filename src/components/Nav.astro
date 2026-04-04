@@ -19,9 +19,15 @@ const { activePage = '' } = Astro.props;
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
     </nav>
     <div class="download-pill desktop-pill" id="download-pill">Download</div>
-    <div id="nav-auth"></div>
 
-    <!-- Mobile download icon (same size as hamburger) -->
+    <!-- Mobile hamburger -->
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Mobile download icon -->
     <button class="mobile-download-btn" id="download-pill-mobile" aria-label="Download">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -30,12 +36,7 @@ const { activePage = '' } = Astro.props;
         </svg>
     </button>
 
-    <!-- Mobile hamburger -->
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
+    <div id="nav-auth"></div>
 </div>
 
 <!-- Mobile dropdown -->
@@ -178,7 +179,7 @@ const { activePage = '' } = Astro.props;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--electric-blue);
-        border-radius: 12px;
+        border-radius: 50%;
         cursor: pointer;
         transition: all 0.2s;
         padding: 0;
@@ -206,7 +207,7 @@ const { activePage = '' } = Astro.props;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
-        border-radius: 12px;
+        border-radius: 50%;
         cursor: pointer;
         padding: 10px;
     }
@@ -241,9 +242,9 @@ const { activePage = '' } = Astro.props;
         transform: translateX(-50%);
         width: calc(100% - 2rem);
         max-width: 360px;
-        background: rgba(15, 15, 17, 0.95);
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
         border-radius: 20px;
         padding: 1.25rem;
@@ -296,6 +297,7 @@ const { activePage = '' } = Astro.props;
         text-decoration: none;
         padding: 0.5rem 0.75rem;
         transition: opacity 0.2s;
+        white-space: nowrap;
     }
 
     #nav-auth :global(.nav-login-link:hover) {
