@@ -309,8 +309,8 @@ const { activePage = '' } = Astro.props;
     }
 
     #nav-auth :global(.nav-avatar) {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         border: 1.5px solid var(--accent);
         cursor: pointer;
@@ -323,8 +323,8 @@ const { activePage = '' } = Astro.props;
     }
 
     #nav-auth :global(.nav-avatar-fallback) {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         border: 1.5px solid var(--accent);
         background: var(--bg-card);
@@ -343,13 +343,12 @@ const { activePage = '' } = Astro.props;
         position: absolute;
         top: calc(100% + 8px);
         right: 0;
-        background: rgba(20, 20, 22, 0.95);
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
-        border-radius: 12px;
-        padding: 0.5rem;
-        min-width: 140px;
+        border-radius: 100px;
+        padding: 0;
         display: none;
         z-index: 200;
     }
@@ -359,22 +358,21 @@ const { activePage = '' } = Astro.props;
     }
 
     #nav-auth :global(.avatar-dropdown button) {
-        width: 100%;
-        padding: 0.6rem 1rem;
+        padding: 0.75rem 1.25rem;
         background: transparent;
         border: none;
-        color: var(--text-secondary);
+        color: var(--rose);
         font-family: inherit;
-        font-size: 0.85rem;
-        text-align: left;
+        font-size: 0.9rem;
+        font-weight: 500;
+        white-space: nowrap;
         cursor: pointer;
-        border-radius: 8px;
+        border-radius: 100px;
         transition: all 0.15s;
     }
 
     #nav-auth :global(.avatar-dropdown button:hover) {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text-primary);
+        background: rgba(255, 31, 109, 0.1);
     }
 
     /* Mobile: show hamburger + download icon, hide desktop elements */

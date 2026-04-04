@@ -27,9 +27,6 @@
       ]
     }
   ],
-  "redirects": [
-    { "source": "/oauth-callback.html", "destination": "/oauth-callback", "permanent": true }
-  ],
   "rewrites": [
     { "source": "/podcast/:path*", "destination": "/podcast" },
     { "source": "/league/:path*", "destination": "/league" },
