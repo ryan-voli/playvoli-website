@@ -11,14 +11,85 @@ const { activePage = '' } = Astro.props;
         <img src="/images/logo_dark.webp" alt="VOLI">
         <span>Voli</span>
     </a>
-    <nav class="nav">
+
+    <!-- Desktop nav -->
+    <nav class="nav desktop-nav">
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
     </nav>
-    <div class="download-pill" id="download-pill">Download</div>
-    <div id="nav-auth"></div>
+    <div class="download-pill desktop-only" id="download-pill">Download</div>
+    <div id="nav-auth" class="desktop-only"></div>
+
+    <!-- Mobile hamburger -->
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 </div>
+
+<!-- Mobile dropdown -->
+<div class="mobile-menu" id="mobile-menu">
+    <nav class="mobile-nav">
+        <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
+        <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
+        <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
+    </nav>
+    <div class="mobile-actions">
+        <div class="download-pill mobile-download" id="download-pill-mobile">Download App</div>
+        <div id="nav-auth-mobile"></div>
+    </div>
+</div>
+
+<script is:inline>
+(function() {
+    var hamburger = document.getElementById('hamburger');
+    var menu = document.getElementById('mobile-menu');
+    if (!hamburger || !menu) return;
+
+    hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburger.classList.toggle('open');
+        menu.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+            hamburger.classList.remove('open');
+            menu.classList.remove('open');
+        }
+    });
+
+    // Close menu when clicking a link
+    menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('open');
+            menu.classList.remove('open');
+        });
+    });
+
+    // Sync mobile auth with desktop auth
+    var navAuth = document.getElementById('nav-auth');
+    var navAuthMobile = document.getElementById('nav-auth-mobile');
+    if (navAuth && navAuthMobile) {
+        var observer = new MutationObserver(function() {
+            navAuthMobile.innerHTML = navAuth.innerHTML;
+        });
+        observer.observe(navAuth, { childList: true, subtree: true });
+    }
+
+    // Mobile download pill
+    var mobilePill = document.getElementById('download-pill-mobile');
+    if (mobilePill) {
+        mobilePill.addEventListener('click', function() {
+            var desktopPill = document.getElementById('download-pill');
+            if (desktopPill) desktopPill.click();
+        });
+    }
+})();
+</script>
 
 <style>
     .nav-container {
@@ -101,7 +172,137 @@ const { activePage = '' } = Astro.props;
         background: rgba(0, 212, 255, 0.1);
     }
 
-    /* Nav auth slot */
+    /* Hamburger button */
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 40px;
+        height: 40px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .hamburger span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: #ffffff;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .hamburger.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .hamburger.open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Mobile menu dropdown */
+    .mobile-menu {
+        display: none;
+        position: fixed;
+        top: calc(4rem + env(safe-area-inset-top));
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 2rem);
+        max-width: 360px;
+        background: rgba(15, 15, 17, 0.95);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 1.25rem;
+        z-index: 99;
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        pointer-events: none;
+    }
+
+    .mobile-menu.open {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+
+    .mobile-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .mobile-nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a.active {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .mobile-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--glass-border);
+    }
+
+    .mobile-download {
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    #nav-auth-mobile {
+        display: flex;
+        justify-content: center;
+    }
+
+    #nav-auth-mobile :global(.nav-login-link) {
+        color: var(--accent);
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 0.75rem 1rem;
+        display: block;
+        text-align: center;
+        width: 100%;
+        border-radius: 12px;
+        transition: background 0.2s;
+    }
+
+    #nav-auth-mobile :global(.nav-login-link:hover) {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    #nav-auth-mobile :global(.nav-avatar-wrap) {
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Nav auth slot (desktop) */
     #nav-auth {
         display: flex;
         align-items: center;
@@ -193,23 +394,19 @@ const { activePage = '' } = Astro.props;
         color: var(--text-primary);
     }
 
-    @media (max-width: 480px) {
-        .nav-container {
-            gap: 0.5rem;
+    /* Mobile: show hamburger, hide desktop elements */
+    @media (max-width: 640px) {
+        .desktop-nav,
+        .desktop-only {
+            display: none !important;
         }
 
-        .nav {
-            padding: 0.6rem 1.25rem;
-            gap: 1.25rem;
+        .hamburger {
+            display: flex;
         }
 
-        .nav a {
-            font-size: 0.8rem;
-        }
-
-        .download-pill {
-            padding: 0.6rem 1rem;
-            font-size: 0.8rem;
+        .mobile-menu {
+            display: block;
         }
     }
 </style>

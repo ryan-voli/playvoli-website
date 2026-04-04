@@ -9,7 +9,54 @@
         gtag('js', new Date());
         gtag('config', 'AW-17868194042');
     </script><!-- Supabase SDK (for nav auth + pages that need it) --><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><link rel="stylesheet" href="/_astro/partners.DaH7lOx4.css">
-<link rel="stylesheet" href="/_astro/about.CqEPWtwJ.css"></head> <body class> <div class="nav-container" data-astro-cid-dmqpwcec> <a href="/" class="nav-logo" data-astro-cid-dmqpwcec> <img src="/images/logo_dark.webp" alt="VOLI" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec>Voli</span> </a> <nav class="nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> <div class="download-pill" id="download-pill" data-astro-cid-dmqpwcec>Download</div> <div id="nav-auth" data-astro-cid-dmqpwcec></div> </div>   <h1 class="page-title" data-astro-cid-6odhiasn>Our Partners</h1> <p class="page-subtitle" data-astro-cid-6odhiasn>Working together to grow the volleyball community</p> <div class="partners-grid" data-astro-cid-6odhiasn> <div class="partner-card" data-astro-cid-6odhiasn> <img src="/images/partners/Volley Talk.jpeg" alt="Volley Talk with Sarah Pavan" class="partner-logo" data-astro-cid-6odhiasn> <div class="partner-content" data-astro-cid-6odhiasn> <h2 class="partner-name" data-astro-cid-6odhiasn>Volley Talk with Sarah Pavan</h2> <p class="partner-description" data-astro-cid-6odhiasn>Hosted by Olympian, World Champion, and former Nebraska Cornhusker All-American Sarah Pavan and her husband Adam Schulz—international volleyball coach and stats wizard—Volley Talk is the podcast for fans who want to dig deep into NCAA and international volleyball. With weekly highlights, feature match breakdowns, and hot takes drawn from decades of experience at the highest level, they bring unmatched insight to volleyball fans everywhere. Join their official fantasy league on VOLI and compete alongside their community.</p> <div class="partner-buttons" data-astro-cid-6odhiasn> <a href="https://playvoli.com/volleytalk" class="partner-btn" id="vt-league" data-astro-cid-6odhiasn> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-6odhiasn><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" data-astro-cid-6odhiasn></path><polyline points="10 17 15 12 10 7" data-astro-cid-6odhiasn></polyline><line x1="15" y1="12" x2="3" y2="12" data-astro-cid-6odhiasn></line></svg>
+<link rel="stylesheet" href="/_astro/about.CEnVtuAw.css"></head> <body class> <div class="nav-container" data-astro-cid-dmqpwcec> <a href="/" class="nav-logo" data-astro-cid-dmqpwcec> <img src="/images/logo_dark.webp" alt="VOLI" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec>Voli</span> </a> <!-- Desktop nav --> <nav class="nav desktop-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> <div class="download-pill desktop-only" id="download-pill" data-astro-cid-dmqpwcec>Download</div> <div id="nav-auth" class="desktop-only" data-astro-cid-dmqpwcec></div> <!-- Mobile hamburger --> <button class="hamburger" id="hamburger" aria-label="Menu" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> </button> </div> <!-- Mobile dropdown --> <div class="mobile-menu" id="mobile-menu" data-astro-cid-dmqpwcec> <nav class="mobile-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> <div class="mobile-actions" data-astro-cid-dmqpwcec> <div class="download-pill mobile-download" id="download-pill-mobile" data-astro-cid-dmqpwcec>Download App</div> <div id="nav-auth-mobile" data-astro-cid-dmqpwcec></div> </div> </div> <script>
+(function() {
+    var hamburger = document.getElementById('hamburger');
+    var menu = document.getElementById('mobile-menu');
+    if (!hamburger || !menu) return;
+
+    hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburger.classList.toggle('open');
+        menu.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+            hamburger.classList.remove('open');
+            menu.classList.remove('open');
+        }
+    });
+
+    // Close menu when clicking a link
+    menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('open');
+            menu.classList.remove('open');
+        });
+    });
+
+    // Sync mobile auth with desktop auth
+    var navAuth = document.getElementById('nav-auth');
+    var navAuthMobile = document.getElementById('nav-auth-mobile');
+    if (navAuth && navAuthMobile) {
+        var observer = new MutationObserver(function() {
+            navAuthMobile.innerHTML = navAuth.innerHTML;
+        });
+        observer.observe(navAuth, { childList: true, subtree: true });
+    }
+
+    // Mobile download pill
+    var mobilePill = document.getElementById('download-pill-mobile');
+    if (mobilePill) {
+        mobilePill.addEventListener('click', function() {
+            var desktopPill = document.getElementById('download-pill');
+            if (desktopPill) desktopPill.click();
+        });
+    }
+})();
+</script>   <h1 class="page-title" data-astro-cid-6odhiasn>Our Partners</h1> <p class="page-subtitle" data-astro-cid-6odhiasn>Working together to grow the volleyball community</p> <div class="partners-grid" data-astro-cid-6odhiasn> <div class="partner-card" data-astro-cid-6odhiasn> <img src="/images/partners/Volley Talk.jpeg" alt="Volley Talk with Sarah Pavan" class="partner-logo" data-astro-cid-6odhiasn> <div class="partner-content" data-astro-cid-6odhiasn> <h2 class="partner-name" data-astro-cid-6odhiasn>Volley Talk with Sarah Pavan</h2> <p class="partner-description" data-astro-cid-6odhiasn>Hosted by Olympian, World Champion, and former Nebraska Cornhusker All-American Sarah Pavan and her husband Adam Schulz—international volleyball coach and stats wizard—Volley Talk is the podcast for fans who want to dig deep into NCAA and international volleyball. With weekly highlights, feature match breakdowns, and hot takes drawn from decades of experience at the highest level, they bring unmatched insight to volleyball fans everywhere. Join their official fantasy league on VOLI and compete alongside their community.</p> <div class="partner-buttons" data-astro-cid-6odhiasn> <a href="https://playvoli.com/volleytalk" class="partner-btn" id="vt-league" data-astro-cid-6odhiasn> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-6odhiasn><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" data-astro-cid-6odhiasn></path><polyline points="10 17 15 12 10 7" data-astro-cid-6odhiasn></polyline><line x1="15" y1="12" x2="3" y2="12" data-astro-cid-6odhiasn></line></svg>
 Join League
 </a> <a href="https://playvoli.com/volleytalk" class="partner-btn partner-btn-secondary" id="vt-listen" data-astro-cid-6odhiasn> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-6odhiasn><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" data-astro-cid-6odhiasn></path><path d="M19 10v2a7 7 0 0 1-14 0v-2" data-astro-cid-6odhiasn></path><line x1="12" y1="19" x2="12" y2="23" data-astro-cid-6odhiasn></line><line x1="8" y1="23" x2="16" y2="23" data-astro-cid-6odhiasn></line></svg>
 Listen on VOLI
