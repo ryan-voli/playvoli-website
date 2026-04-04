@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download VOLI</title>
+    <meta name="description" content="Download the VOLI app for iOS or Android">
+    <link rel="icon" href="images/official_logo_dark_bg.webp">
+    <style>
+        body {
+            background: #0a0a0b;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .loading {
+            text-align: center;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #c8ff00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <p>Redirecting to app store...</p>
+    </div>
+    <script>
+        (function() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            var appStoreUrl = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+            var playStoreUrl = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+
+            // iOS detection
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location.href = appStoreUrl;
+            }
+            // Android detection
+            else if (/android/i.test(userAgent)) {
+                window.location.href = playStoreUrl;
+            }
+            // Default to App Store for other devices (Mac, etc.)
+            else {
+                window.location.href = appStoreUrl;
+            }
+        })();
+    </script>
+</body>
+</html>

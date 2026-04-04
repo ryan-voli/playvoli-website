@@ -1,0 +1,282 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Partners - VOLI"
+  description="Meet VOLI's partners helping to grow the volleyball community."
+  activePage="partners"
+  minimalFooter
+>
+    <h1 class="page-title">Our Partners</h1>
+    <p class="page-subtitle">Working together to grow the volleyball community</p>
+
+    <div class="partners-grid">
+        <div class="partner-card">
+            <img src="/images/partners/Volley Talk.jpeg" alt="Volley Talk with Sarah Pavan" class="partner-logo">
+            <div class="partner-content">
+                <h2 class="partner-name">Volley Talk with Sarah Pavan</h2>
+                <p class="partner-description">Hosted by Olympian, World Champion, and former Nebraska Cornhusker All-American Sarah Pavan and her husband Adam Schulz—international volleyball coach and stats wizard—Volley Talk is the podcast for fans who want to dig deep into NCAA and international volleyball. With weekly highlights, feature match breakdowns, and hot takes drawn from decades of experience at the highest level, they bring unmatched insight to volleyball fans everywhere. Join their official fantasy league on VOLI and compete alongside their community.</p>
+                <div class="partner-buttons">
+                    <a href="https://playvoli.com/volleytalk" class="partner-btn" id="vt-league">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Join League
+                    </a>
+                    <a href="https://playvoli.com/volleytalk" class="partner-btn partner-btn-secondary" id="vt-listen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        Listen on VOLI
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="partner-card">
+            <img src="/images/partners/mlmpod.svg" alt="Major League Minute" class="partner-logo">
+            <div class="partner-content">
+                <h2 class="partner-name">Major League Minute</h2>
+                <p class="partner-description">Your quick-hitting podcast diving into the fast-paced world of Major League Volleyball. Join Nick Prososki (Doc) and Gina Mancuso-Prososki (GMP)—former Nebraska Cornhusker and Omaha Supernovas player—as they break down the biggest games, key performances, and trending headlines with hot takes and real talk. We also partner with MLM for exclusive player Ask Me Anythings on VOLI. Join their official fantasy league and compete alongside their community. Whether you're a die-hard fan or just keeping up with the season, Major League Minute keeps you dialed in and ready for the next serve.</p>
+                <div class="partner-buttons">
+                    <a href="https://playvoli.com/mlm" class="partner-btn" id="mlm-league">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Join League
+                    </a>
+                    <a href="https://playvoli.com/mlm" class="partner-btn partner-btn-secondary" id="mlm-listen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        Listen on VOLI
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="partner-card">
+            <img src="/images/partners/Court Captains.jpeg" alt="Court Captains" class="partner-logo">
+            <div class="partner-content">
+                <h2 class="partner-name">Court Captains</h2>
+                <p class="partner-description">Former college volleyball players Kelly and Nikki team up with their volley newbie friend Ian to bring you all the tea on Major League Volleyball. This up-and-coming fan podcast has built a loyal following with their unfiltered hot takes, primarily covering MLV with the occasional dive into "LOVBuh". If you want the real talk, the drama, and hosts who aren't afraid to speak their minds, Court Captains has you covered.</p>
+                <div class="partner-buttons">
+                    <a href="https://playvoli.com/courtcaptains" class="partner-btn" id="cc-listen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        Listen on VOLI
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline slot="scripts">
+        function handleDeepLink(event, deepLink, webUrl, title) {
+            event.preventDefault();
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            var isAndroid = /android/i.test(userAgent);
+
+            if (isIOS || isAndroid) {
+                window.location.href = deepLink;
+                setTimeout(function() {
+                    if (!document.hidden) {
+                        showAppDownloadPopup();
+                    }
+                }, 2000);
+            } else {
+                showQrCodeModal(webUrl || deepLink, title);
+            }
+        }
+
+        function showQrCodeModal(url, title) {
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+            var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url);
+            var popup = document.createElement('div');
+            popup.style.cssText = 'background:rgba(255,255,255,0.03);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:2rem;max-width:320px;width:100%;text-align:center;';
+            popup.innerHTML = '<h3 style="color:#fff;font-size:1.25rem;margin-bottom:0.5rem;">' + (title || 'Open in VOLI') + '</h3><p style="color:rgba(255,255,255,0.6);font-size:0.9rem;margin-bottom:1.5rem;">Scan the QR code with your phone</p><img src="' + qrUrl + '" alt="QR Code" style="width:200px;height:200px;border-radius:12px;background:white;padding:10px;"><button style="margin-top:1.5rem;background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.08);padding:0.75rem 1.5rem;border-radius:10px;font-size:0.9rem;cursor:pointer;font-family:inherit;">Close</button>';
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay || e.target.tagName === 'BUTTON') {
+                    document.body.removeChild(overlay);
+                }
+            });
+        }
+
+        function showAppDownloadPopup() {
+            var overlay = document.createElement('div');
+            overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+            var popup = document.createElement('div');
+            popup.style.cssText = 'background:rgba(255,255,255,0.03);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:2rem;max-width:360px;width:100%;text-align:center;';
+            popup.innerHTML = '<h2 style="color:#c8ff00;font-size:1.25rem;margin-bottom:0.75rem;">Download VOLI to Join!</h2><p style="color:rgba(255,255,255,0.6);font-size:0.95rem;line-height:1.5;margin-bottom:1.5rem;">Get the VOLI app to join the fantasy volleyball league.</p><button style="background:transparent;color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.08);padding:0.75rem 1.5rem;border-radius:10px;font-size:0.95rem;cursor:pointer;">Got it</button>';
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay || e.target.tagName === 'BUTTON') {
+                    document.body.removeChild(overlay);
+                }
+            });
+        }
+
+        // Bind deep link handlers
+        document.getElementById('vt-league').addEventListener('click', function(e) {
+            handleDeepLink(e, 'voli://league/b596cbe0-d899-4929-90e9-7cbe73712e21/04ee-573b-f9b9', 'https://playvoli.com/volleytalk', 'Join Volley Talk League');
+        });
+        document.getElementById('vt-listen').addEventListener('click', function(e) {
+            handleDeepLink(e, 'voli://podcast/2a40ac90-1603-487c-b49e-cdee419d78c2', 'https://playvoli.com/volleytalk', 'Listen to Volley Talk');
+        });
+        document.getElementById('mlm-league').addEventListener('click', function(e) {
+            handleDeepLink(e, 'voli://league/3185a98f-0c17-49c1-9306-edb41e42f81c/8de5-a72d-3f55', 'https://playvoli.com/mlm', 'Join MLM League');
+        });
+        document.getElementById('mlm-listen').addEventListener('click', function(e) {
+            handleDeepLink(e, 'voli://podcast/fd2c11ea-3cff-4248-886d-e571e55c0f36', 'https://playvoli.com/mlm', 'Listen to Major League Minute');
+        });
+        document.getElementById('cc-listen').addEventListener('click', function(e) {
+            handleDeepLink(e, 'voli://podcast/c8cd8414-2399-406d-b003-c5e95dd88d2e', 'https://playvoli.com/courtcaptains', 'Listen to Court Captains');
+        });
+    </script>
+</Layout>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .partners-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .partner-card {
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2rem;
+        text-align: left;
+    }
+
+    .partner-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    .partner-logo {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    .partner-content { flex: 1; }
+
+    .partner-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+    }
+
+    .partner-description {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .partner-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        width: 100%;
+    }
+
+    .partner-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        flex: 1;
+        background: var(--accent);
+        color: #000;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .partner-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px var(--accent-glow);
+    }
+
+    .partner-btn-secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        box-shadow: none;
+    }
+
+    .partner-btn-secondary:hover {
+        background: rgba(200, 255, 0, 0.1);
+        box-shadow: none;
+    }
+
+    .partner-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .partner-card {
+            flex-direction: column;
+            text-align: center;
+        }
+        .partner-logo { width: 80px; height: 80px; }
+    }
+
+    @media (max-width: 480px) {
+        body { padding: 6rem 1rem 1rem; }
+        .page-title { font-size: 1.5rem; }
+        .page-subtitle { font-size: 0.9rem; margin-bottom: 2rem; }
+        .partner-card { padding: 1.5rem; }
+        .partner-logo { width: 100px; height: 100px; }
+        .partner-name { font-size: 1.1rem; }
+    }
+</style>

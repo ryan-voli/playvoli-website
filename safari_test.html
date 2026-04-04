@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safari Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+        .log { margin: 5px 0; padding: 5px; background: #2a2a2a; }
+        .error { background: #4a1a1a; color: #ff6b6b; }
+        .success { background: #1a4a1a; color: #6bff6b; }
+    </style>
+</head>
+<body>
+    <h1>Safari Compatibility Test</h1>
+    <div id="logs"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://api.playvoli.com';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+
+        function log(message, type = 'log') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = new Date().toISOString() + ': ' + message;
+            document.getElementById('logs').appendChild(div);
+            console.log(message);
+        }
+
+        log('Browser: ' + navigator.userAgent);
+        log('Starting test...');
+
+        async function test() {
+            try {
+                log('Fetching from: ' + SUPABASE_URL + '/rest/v1/global_settings?select=terms_of_use&limit=1');
+
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/global_settings?select=terms_of_use&limit=1`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+
+                log('Response status: ' + response.status);
+                log('Response ok: ' + response.ok);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log('Error response: ' + errorText, 'error');
+                    throw new Error('HTTP ' + response.status);
+                }
+
+                const data = await response.json();
+                log('Data length: ' + data.length);
+
+                if (data && data.length > 0 && data[0].terms_of_use) {
+                    log('✓ Terms title: ' + data[0].terms_of_use.title, 'success');
+                    log('✓ Sections: ' + data[0].terms_of_use.sections.length, 'success');
+                    log('✓ SUCCESS - Data loaded correctly!', 'success');
+                } else {
+                    log('✗ No data found in response', 'error');
+                }
+            } catch (error) {
+                log('✗ Exception: ' + error.message, 'error');
+                log('✗ Stack: ' + error.stack, 'error');
+            }
+        }
+
+        // Run test
+        test();
+    </script>
+</body>
+</html>

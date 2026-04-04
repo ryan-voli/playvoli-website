@@ -1,0 +1,17 @@
+{
+  "name": "playvoli-website",
+  "type": "module",
+  "version": "2.0.0",
+  "description": "VOLI - The Volleyball Hub",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/vercel": "^8.1.0",
+    "astro": "^5.7.0",
+    "vercel": "^50.39.0"
+  },
+  "private": true
+}

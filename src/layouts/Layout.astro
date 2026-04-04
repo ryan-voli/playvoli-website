@@ -1,0 +1,104 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import QrModal from '../components/QrModal.astro';
+import NavAuth from '../components/NavAuth.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogUrl?: string;
+  activePage?: string;
+  showFooter?: boolean;
+  minimalFooter?: boolean;
+  bodyClass?: string;
+  /** Set to true for pages that load Supabase SDK themselves */
+  skipSupabase?: boolean;
+  /** Set to true for pages that don't need the nav auth slot */
+  skipNavAuth?: boolean;
+}
+
+const {
+  title,
+  description = 'The ultimate volleyball hub. Fantasy leagues, live stats, game schedules, and more.',
+  ogImage = 'https://playvoli.com/images/official_logo_dark_bg.webp',
+  ogUrl = 'https://playvoli.com/',
+  activePage = '',
+  showFooter = true,
+  minimalFooter = false,
+  bodyClass = '',
+  skipSupabase = false,
+  skipNavAuth = false,
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={ogUrl}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={ogImage}>
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content={ogUrl}>
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+
+    <link rel="icon" href="/images/official_logo_dark_bg.webp">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-W77KSNYJG3"></script>
+    <script is:inline>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-W77KSNYJG3');
+    </script>
+
+    <!-- Google Ads -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-17868194042"></script>
+    <script is:inline>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17868194042');
+    </script>
+
+    <!-- Supabase SDK (for nav auth + pages that need it) -->
+    {!skipSupabase && (
+        <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    )}
+
+    <slot name="head" />
+</head>
+<body class={bodyClass}>
+    <Nav activePage={activePage} />
+
+    <slot />
+
+    {showFooter && <Footer minimal={minimalFooter} />}
+
+    <QrModal />
+
+    {!skipNavAuth && !skipSupabase && <NavAuth />}
+
+    <slot name="scripts" />
+</body>
+</html>

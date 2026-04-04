@@ -11,11 +11,49 @@
     "cleanUrls": true,
     "rewrites": [
       {
+        "source": "/podcast/**",
+        "destination": "/podcast.html"
+      },
+      {
+        "source": "/league/**",
+        "destination": "/league.html"
+      },
+      {
+        "source": "/dailygrid/**",
+        "destination": "/dailygrid.html"
+      },
+      {
         "source": "**",
         "destination": "/404.html"
       }
     ],
     "headers": [
+      {
+        "source": "/.well-known/assetlinks.json",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "/.well-known/apple-app-site-association",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      },
       {
         "source": "**/*.@(js|css|png|jpg|jpeg|gif|ico|svg|otf)",
         "headers": [
@@ -30,7 +68,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "max-age=3600"
+            "value": "no-cache, must-revalidate"
           }
         ]
       }

@@ -1,0 +1,86 @@
+TIMELINE DURATION ANALYSIS
+==========================
+
+Understanding the problem:
+- With scrub, the timeline duration determines how animations spread across scroll range
+- Current scroll range: 500vh (from start: 'top top' to end: '+=500vh')
+- User reports animations finish at ~25% of scroll (125vh out of 500vh)
+- This means timeline totalDuration is only using 25% of available scroll space
+
+Current timeline structure with relative positioning:
+
+Phase 1: Hero fade (duration: 1) at position 0
+  - Hero elements fade out
+  - Timeline is now at position 1
+
+Phase 2: FANTASY section at position 1
+  - Fantasy title fade in (duration: 1) at position 1
+  - Fantasy screenshots slide in (duration: 2) at position >  (starts at 2)
+  - Center screenshot (duration: 2) at position >-1 (starts at 3, overlaps 1s with previous)
+  - Right screenshot (duration: 2) at position >-1 (starts at 4, overlaps 1s with previous)
+  - Fantasy text fade in (duration: 1.5) at position >-0.5 (starts at 5.5, overlaps 0.5s)
+  - Timeline is now at position 7
+
+Phase 3: FANTASY → STATS transition at position >+5 (starts at 12)
+  - Fantasy title fade out (duration: 0.8) at position 12
+  - Stats title fade in (duration: 0.8) at position < (starts at 12, simultaneous)
+  - Fantasy screenshots exit (duration: 1.5) at position < (starts at 12, simultaneous)
+  - Fantasy text fade out (duration: 0.8) at position < (starts at 12, simultaneous)
+  - Stats text fade in (duration: 0.8) at position < (starts at 12, simultaneous)
+  - Timeline is now at position 13.5 (12 + max(0.8, 1.5))
+
+Phase 4: STATS screenshots at position > (starts at 13.5)
+  - Left screenshot (duration: 2) at position 13.5
+  - Center screenshot (duration: 2) at position >-1 (starts at 14.5)
+  - Right screenshot (duration: 2) at position >-1 (starts at 15.5)
+  - Timeline is now at position 17.5
+
+Phase 5: STATS → GAMES transition at position >+5 (starts at 22.5)
+  - Stats title fade out (duration: 0.8) at position 22.5
+  - Games title fade in (duration: 0.8) at position < (starts at 22.5)
+  - Stats screenshots exit (duration: 1.5) at position < (starts at 22.5)
+  - Stats text fade out (duration: 0.8) at position < (starts at 22.5)
+  - Games text fade in (duration: 0.8) at position < (starts at 22.5)
+  - Timeline is now at position 24 (22.5 + max(0.8, 1.5))
+
+Phase 6: GAMES screenshots at position > (starts at 24)
+  - Left screenshot (duration: 2) at position 24
+  - Center screenshot (duration: 2) at position >-1 (starts at 25)
+  - Right screenshot (duration: 2) at position >-1 (starts at 26)
+  - Timeline is now at position 28
+
+Phase 7: GAMES → MORE transition at position >+5 (starts at 33)
+  - Games title fade out (duration: 0.8) at position 33
+  - More title fade in (duration: 0.8) at position < (starts at 33)
+  - Games screenshots exit (duration: 1.5) at position < (starts at 33)
+  - Games text fade out (duration: 0.8) at position < (starts at 33)
+  - More text fade in (duration: 0.8) at position < (starts at 33)
+  - Timeline is now at position 34.5 (33 + max(0.8, 1.5))
+
+Phase 8: MORE screenshots at position > (starts at 34.5)
+  - Left screenshot (duration: 2) at position 34.5
+  - Center screenshot (duration: 2) at position >-1 (starts at 35.5)
+  - Right screenshot (duration: 2) at position >-1 (starts at 36.5)
+  - Timeline is now at position 38.5
+
+Phase 9: Footer at position >+5 (starts at 43.5)
+  - More title fade out (duration: 1) at position 43.5
+  - More text fade out (duration: 1) at position < (starts at 43.5)
+  - Screenshots move down (duration: 1.5) at position < (starts at 43.5)
+  - Hero logo returns (duration: 1.5) at position <0.3 (starts at 43.8)
+  - Hero tagline returns (duration: 1.5) at position <0.1 (starts at 43.9)
+  - Download buttons up (duration: 1.5) at position <0.2 (starts at 44)
+  - Footer slide up (duration: 1.5) at position < (starts at 43.5)
+  - Timeline ends at position 45.5 (43.5 + max(1, 1.5, 1.5))
+
+TOTAL TIMELINE DURATION: ~45.5 seconds
+
+However, with scrub mode, this 45.5 "duration units" gets stretched across the scroll range.
+The issue is that 45.5 units is WAY too short for 500vh of scroll.
+
+SOLUTION:
+Need to increase timeline duration to match scroll range proportionally.
+If animations currently use 25% of scroll (125vh out of 500vh),
+then timeline duration needs to be 4x longer: 45.5 × 4 = 182 duration units
+
+OR better approach: Increase all the +5 gaps to much larger values like +20 or +30

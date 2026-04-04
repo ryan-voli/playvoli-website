@@ -1,0 +1,215 @@
+---
+interface Props {
+  activePage?: string;
+}
+
+const { activePage = '' } = Astro.props;
+---
+
+<div class="nav-container">
+    <a href="/" class="nav-logo">
+        <img src="/images/logo_dark.webp" alt="VOLI">
+        <span>Voli</span>
+    </a>
+    <nav class="nav">
+        <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
+        <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
+        <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
+    </nav>
+    <div class="download-pill" id="download-pill">Download</div>
+    <div id="nav-auth"></div>
+</div>
+
+<style>
+    .nav-container {
+        position: fixed;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        z-index: 100;
+        padding-top: env(safe-area-inset-top);
+    }
+
+    .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .nav-logo img {
+        height: 28px;
+        width: auto;
+    }
+
+    .nav-logo span {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+    }
+
+    .nav {
+        padding: 0.75rem 2rem;
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 100px;
+    }
+
+    .nav a {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .nav a:hover {
+        color: var(--text-primary);
+    }
+
+    .nav a.active {
+        color: var(--text-primary);
+    }
+
+    .download-pill {
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--electric-blue);
+        border-radius: 100px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .download-pill:hover {
+        background: rgba(0, 212, 255, 0.1);
+    }
+
+    /* Nav auth slot */
+    #nav-auth {
+        display: flex;
+        align-items: center;
+    }
+
+    #nav-auth :global(.nav-login-link) {
+        color: var(--accent);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 0.5rem 0.75rem;
+        transition: opacity 0.2s;
+    }
+
+    #nav-auth :global(.nav-login-link:hover) {
+        opacity: 0.8;
+    }
+
+    #nav-auth :global(.nav-avatar-wrap) {
+        position: relative;
+    }
+
+    #nav-auth :global(.nav-avatar) {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1.5px solid var(--accent);
+        cursor: pointer;
+        object-fit: cover;
+        transition: opacity 0.2s;
+    }
+
+    #nav-auth :global(.nav-avatar:hover) {
+        opacity: 0.85;
+    }
+
+    #nav-auth :global(.nav-avatar-fallback) {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1.5px solid var(--accent);
+        background: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    #nav-auth :global(.nav-avatar-fallback:hover) {
+        opacity: 0.85;
+    }
+
+    #nav-auth :global(.avatar-dropdown) {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: rgba(20, 20, 22, 0.95);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 0.5rem;
+        min-width: 140px;
+        display: none;
+        z-index: 200;
+    }
+
+    #nav-auth :global(.avatar-dropdown.open) {
+        display: block;
+    }
+
+    #nav-auth :global(.avatar-dropdown button) {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        font-family: inherit;
+        font-size: 0.85rem;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.15s;
+    }
+
+    #nav-auth :global(.avatar-dropdown button:hover) {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+    }
+
+    @media (max-width: 480px) {
+        .nav-container {
+            gap: 0.5rem;
+        }
+
+        .nav {
+            padding: 0.6rem 1.25rem;
+            gap: 1.25rem;
+        }
+
+        .nav a {
+            font-size: 0.8rem;
+        }
+
+        .download-pill {
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+        }
+    }
+</style>

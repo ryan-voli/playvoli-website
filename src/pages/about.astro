@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="About - VOLI"
+  description="Learn about VOLI's mission to revolutionize volleyball with fantasy leagues, live stats, and community features."
+  activePage="about"
+  minimalFooter
+>
+    <main class="card">
+        <h1 class="title">About</h1>
+
+        <div class="section">
+            <div class="section-label">What is VOLI?</div>
+            <p class="section-text">VOLI is a feature-rich digital hub for US pro volleyball, seamlessly integrating contract-based fantasy gameplay, real-time game statistics and scores, dynamic community chat rooms, informative profiles for players and teams, your favorite volleyball podcasts, and interactive articles like you've never seen before in any sport. Our platform serves as a centralized ecosystem where fans can connect more with professional volleyball—from in-depth data and engaging fantasy competition to authentic community connection and premium volleyball content.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Independent Platform</div>
+            <p class="section-text">VOLI is an independent fan platform created by volleyball fans, for volleyball fans. We're not affiliated with or endorsed by any professional volleyball league or organization. Our goal is to support and celebrate professional volleyball, and we're actively working to build partnerships with leagues and teams.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Data & Statistics</div>
+            <p class="section-text">The VOLI app uses publicly available statistical data and factual information about professional volleyball games, players, and teams. We apply proprietary AI and deterministic algorithms to derive detailed statistics and insights—like rotation tracking and play-by-play analysis—that go beyond the basic box score. All statistics, scores, and enhanced analytics are generated from publicly accessible sources using our own technology. We are committed to accuracy and transparency in how we present volleyball data to our community.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">About VOLI LLC</div>
+            <p class="section-text">VOLI LLC is a volleyball technology company building the infrastructure that professional volleyball deserves. We believe volleyball has the talent, the competition, and the fanbase to compete with any major sport—it just needs the right technology ecosystem. Our work will span fan engagement, data analytics, and AI tools, all designed to elevate how people experience professional volleyball. We're building a foundation for the sport's digital future.</p>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .card {
+        width: 100%;
+        max-width: 800px;
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    .title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2rem;
+        letter-spacing: -0.02em;
+    }
+
+    .section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-label {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .section-text {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.8;
+        text-align: center;
+    }
+
+    @media (max-width: 480px) {
+        body { padding: 6rem 1rem 1rem; }
+        .card { padding: 2rem 1.5rem; border-radius: 20px; }
+        .title { font-size: 1.5rem; }
+        .section-text { font-size: 0.95rem; }
+    }
+</style>

@@ -1,0 +1,101 @@
+<!-- QR Code Modal for desktop downloads -->
+<div class="qr-modal" id="qr-modal">
+    <div class="qr-modal-content">
+        <h3>Download VOLI</h3>
+        <p>Scan the QR code with your phone to download the app</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://playvoli.com/download" alt="QR Code to download VOLI">
+        <button class="qr-modal-close" id="qr-close">Close</button>
+    </div>
+</div>
+
+<style>
+    .qr-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .qr-modal.active {
+        display: flex;
+    }
+
+    .qr-modal-content {
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        max-width: 320px;
+    }
+
+    .qr-modal h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    .qr-modal p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .qr-modal img {
+        width: 200px;
+        height: 200px;
+        border-radius: 12px;
+        background: white;
+        padding: 10px;
+    }
+
+    .qr-modal-close {
+        margin-top: 1.5rem;
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid var(--glass-border);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+
+    .qr-modal-close:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-primary);
+    }
+</style>
+
+<script is:inline>
+    // Download handler - detect platform and redirect or show QR
+    function handleDownload() {
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+            window.location.href = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+        } else if (/android/i.test(ua)) {
+            window.location.href = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+        } else {
+            document.getElementById('qr-modal').classList.add('active');
+        }
+    }
+
+    document.getElementById('download-pill').addEventListener('click', handleDownload);
+    document.getElementById('qr-close').addEventListener('click', function() {
+        document.getElementById('qr-modal').classList.remove('active');
+    });
+    document.getElementById('qr-modal').addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+    });
+</script>

@@ -1,0 +1,88 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  return [{ params: { slug: undefined } }];
+}
+---
+
+<Layout
+  title="Podcast - VOLI"
+  description="Listen to volleyball podcasts on VOLI."
+  ogUrl="https://playvoli.com/podcast"
+>
+    <main class="card">
+        <h1 class="title">Podcasts</h1>
+        <p class="subtitle">Coming soon to the web. Listen on the VOLI app.</p>
+        <div class="actions">
+            <a href="/" class="btn-home">Return Home</a>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .card {
+        width: 100%;
+        max-width: 460px;
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    .title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 0.875rem 2.5rem;
+        background: var(--accent);
+        color: #000;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 24px var(--accent-glow);
+    }
+
+    .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px var(--accent-glow);
+    }
+</style>

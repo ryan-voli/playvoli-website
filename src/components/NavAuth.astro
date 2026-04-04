@@ -1,0 +1,69 @@
+<!-- Client-side auth: renders "Log In" or avatar dropdown in #nav-auth -->
+<script is:inline>
+(function() {
+    var SUPABASE_URL = 'https://api.playvoli.com';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+
+    function renderNavAuth() {
+        var el = document.getElementById('nav-auth');
+        if (!el || typeof window.supabase === 'undefined') return;
+
+        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window._sbClient = sb;
+
+        sb.auth.getSession().then(function(res) {
+            var session = res.data.session;
+            if (!session) {
+                var currentPath = window.location.pathname;
+                var href = '/auth' + (currentPath !== '/' ? '?redirect=' + encodeURIComponent(currentPath) : '');
+                el.innerHTML = '<a class="nav-login-link" href="' + href + '">Log In</a>';
+                return;
+            }
+
+            var user = session.user;
+            var avatar = user.user_metadata && user.user_metadata.avatar_url;
+            var html = '<div class="nav-avatar-wrap">';
+
+            if (avatar) {
+                html += '<img class="nav-avatar" src="' + avatar + '" alt="Profile" onclick="toggleAvatarDropdown(event)">';
+            } else {
+                html += '<div class="nav-avatar-fallback" onclick="toggleAvatarDropdown(event)">'
+                    + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+                    + '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>'
+                    + '<circle cx="12" cy="7" r="4"/></svg></div>';
+            }
+
+            html += '<div class="avatar-dropdown" id="avatar-dropdown">'
+                + '<button onclick="navLogout()">Log Out</button></div></div>';
+
+            el.innerHTML = html;
+        });
+    }
+
+    window.toggleAvatarDropdown = function(e) {
+        e.stopPropagation();
+        var dd = document.getElementById('avatar-dropdown');
+        if (dd) dd.classList.toggle('open');
+    };
+
+    window.navLogout = function() {
+        if (window._sbClient) {
+            window._sbClient.auth.signOut().then(function() {
+                window.location.reload();
+            });
+        }
+    };
+
+    document.addEventListener('click', function() {
+        var dd = document.getElementById('avatar-dropdown');
+        if (dd) dd.classList.remove('open');
+    });
+
+    // Wait for Supabase SDK to load
+    if (typeof window.supabase !== 'undefined') {
+        renderNavAuth();
+    } else {
+        window.addEventListener('load', renderNavAuth);
+    }
+})();
+</script>

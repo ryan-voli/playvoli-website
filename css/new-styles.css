@@ -1,0 +1,440 @@
+/* ============================================
+   VOLI Website - Clean Rebuild
+   ============================================ */
+
+/* ============================================
+   CSS Variables
+   ============================================ */
+:root {
+    --lemon-lime: #C8FF00;
+    --electric-blue: #00d4ff;
+    --rose: #FF1F6D;
+    --dark-bg: #131819;
+    --dark-surface: #1f2629;
+    --text-primary: #ffffff;
+    --text-secondary: #dddddd;
+}
+
+/* ============================================
+   Base Reset
+   ============================================ */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ============================================
+   Lenis Smooth Scroll Setup
+   ============================================ */
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+    pointer-events: none;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+html {
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Scroll Architecture
+   ============================================ */
+#scroll-spacer {
+    height: 750vh;
+    pointer-events: none;
+}
+
+#sections-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+#hero {
+    flex-direction: column;
+}
+
+.hero-background {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-logo {
+    width: min(300px, 80vw);
+    height: auto;
+    margin-bottom: 2rem;
+    z-index: 2;
+}
+
+.hero-tagline {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-bottom: 4rem;
+    z-index: 2;
+}
+
+/* ============================================
+   Scroll Indicator
+   ============================================ */
+.scroll-indicator {
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    z-index: 2;
+}
+
+.scroll-indicator svg {
+    color: var(--electric-blue);
+}
+
+.scroll-indicator p {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+}
+
+.scroll-dot {
+    animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+}
+
+/* ============================================
+   Feature Section
+   ============================================ */
+#feature-section {
+    position: relative;
+}
+
+.feature-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--lemon-lime);
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+}
+
+.feature-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(0.875rem, 2vw, 1.125rem);
+    font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+    text-align: center;
+    max-width: 90%;
+    z-index: 1;
+}
+
+/* ============================================
+   Screenshots
+   ============================================ */
+.screenshots-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+.screenshot-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.screenshot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(280px, 90vw);
+    height: auto;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+    will-change: transform, opacity;
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--dark-surface);
+    padding: 3rem 2rem;
+    z-index: 999;
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.footer-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--lemon-lime);
+}
+
+.footer-social {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-social a {
+    color: var(--text-secondary);
+    transition: color 0.2s, transform 0.2s;
+}
+
+.footer-social a:hover {
+    color: var(--lemon-lime);
+    transform: scale(1.1);
+}
+
+.footer-copyright {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+/* ============================================
+   Download Buttons
+   ============================================ */
+.fixed-download-buttons {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 1000;
+    max-width: 95vw;
+}
+
+.app-store-button,
+.play-store-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background-color: var(--dark-surface);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.app-store-button:hover,
+.play-store-button:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.app-store-button svg,
+.play-store-button svg {
+    flex-shrink: 0;
+    color: white;
+}
+
+.btn-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.btn-subtitle {
+    color: white;
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.btn-title {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    .hero-logo {
+        width: 200px;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-tagline {
+        margin-bottom: 3rem;
+    }
+
+    .scroll-indicator {
+        bottom: 180px;
+    }
+
+    .fixed-download-buttons {
+        bottom: 30px;
+    }
+
+    .app-store-button,
+    .play-store-button {
+        min-width: 165px;
+    }
+
+    .screenshot {
+        width: min(250px, 90vw);
+    }
+}
+
+@media (max-width: 430px) {
+    .fixed-download-buttons {
+        gap: 0.3rem;
+    }
+
+    .app-store-button,
+    .play-store-button {
+        padding: 8px 10px;
+        gap: 6px;
+        min-width: 145px;
+    }
+
+    .app-store-button svg,
+    .play-store-button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .btn-subtitle {
+        font-size: 8px;
+    }
+
+    .btn-title {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 375px) {
+    .fixed-download-buttons {
+        gap: 0.25rem;
+    }
+
+    .app-store-button,
+    .play-store-button {
+        padding: 8px 8px;
+        gap: 5px;
+        min-width: 135px;
+    }
+
+    .app-store-button svg,
+    .play-store-button svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .btn-subtitle {
+        font-size: 7px;
+    }
+
+    .btn-title {
+        font-size: 13px;
+    }
+}

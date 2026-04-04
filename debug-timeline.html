@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Debug</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #131819;
+            color: white;
+        }
+        #debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        #debug-info div {
+            margin: 5px 0;
+        }
+        .label {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="debug-info">
+        <div><span class="label">Scroll Position:</span> <span id="scroll-pos">0</span>vh</div>
+        <div><span class="label">Timeline Progress:</span> <span id="timeline-progress">0</span>%</div>
+        <div><span class="label">Timeline Time:</span> <span id="timeline-time">0</span>s</div>
+        <div><span class="label">Current Phase:</span> <span id="current-phase">-</span></div>
+    </div>
+
+    <!-- Include the actual page -->
+    <iframe src="index.html" style="width: 100%; height: calc(100vh - 0px); border: none;"></iframe>
+
+    <script>
+        const iframe = document.querySelector('iframe');
+
+        iframe.addEventListener('load', () => {
+            const iframeWin = iframe.contentWindow;
+            const iframeDoc = iframe.contentDocument;
+
+            // Monitor scroll in iframe
+            iframeWin.addEventListener('scroll', () => {
+                const scrollY = iframeWin.scrollY;
+                const viewportHeight = iframeWin.innerHeight;
+                const scrollVH = (scrollY / viewportHeight).toFixed(2);
+
+                document.getElementById('scroll-pos').textContent = scrollVH;
+
+                // Try to get GSAP timeline if it exists
+                if (iframeWin.masterTimeline) {
+                    const progress = iframeWin.masterTimeline.progress();
+                    const time = iframeWin.masterTimeline.time();
+
+                    document.getElementById('timeline-progress').textContent = (progress * 100).toFixed(1);
+                    document.getElementById('timeline-time').textContent = time.toFixed(2);
+
+                    // Determine phase
+                    let phase = '';
+                    if (progress < 0.05) phase = 'Hero';
+                    else if (progress < 0.20) phase = 'Fantasy Title Appears';
+                    else if (progress < 0.40) phase = 'Fantasy Screenshots';
+                    else if (progress < 0.55) phase = 'Fantasy → Stats Transition';
+                    else if (progress < 0.75) phase = 'Stats Screenshots';
+                    else if (progress < 0.85) phase = 'Stats → Games Transition';
+                    else phase = 'Games Screenshots';
+
+                    document.getElementById('current-phase').textContent = phase;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

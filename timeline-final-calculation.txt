@@ -1,0 +1,61 @@
+FINAL TIMELINE DURATION WITH +35 GAPS
+========================================
+
+Phase 1: Hero fade (0-1)
+- Hero fade out: 1s
+
+Phase 2: FANTASY section (1-7)
+- Fantasy title fade in: 1s (at position 1)
+- Left screenshot: 2s (at position 2)
+- Center screenshot: 2s (at position 3, with >-1 overlap)
+- Right screenshot: 2s (at position 4, with >-1 overlap)
+- Fantasy text: 1.5s (at position 5.5, with >-0.5 overlap)
+End position: ~7
+
+GAP +35 = 42
+
+Phase 3: FANTASY → STATS transition (42-43.5)
+- Fantasy title fade out: 0.8s (at position 42)
+- All other tweens simultaneous with <
+- Longest tween: fantasy screenshots exit 1.5s
+End position: 42 + 1.5 = 43.5
+
+Phase 4: STATS screenshots (43.5-49.5)
+- Left screenshot: 2s (at position 43.5)
+- Center screenshot: 2s (at position 44.5, with >-1)
+- Right screenshot: 2s (at position 45.5, with >-1)
+End position: 45.5 + 2 = 47.5
+
+Wait, let me recalculate more carefully...
+
+Actually with +35, the calculation is:
+Position after FANTASY section: ~7
+Add +35 gap: 42
+FANTASY → STATS transition: starts at 42, lasts 1.5s → ends at 43.5
+STATS screenshots start at >: 43.5
+  Left: 2s (43.5-45.5)
+  Center: 2s starting at >-1 = 44.5-46.5
+  Right: 2s starting at >-1 = 45.5-47.5
+End: 47.5
+
+GAP +35: 47.5 + 35 = 82.5
+
+STATS → GAMES transition: starts at 82.5, lasts 1.5s → ends at 84
+GAMES screenshots: 84-90
+
+GAP +35: 90 + 35 = 125
+
+GAMES → MORE transition: starts at 125, lasts 1.5s → ends at 126.5
+MORE screenshots: 126.5-132.5
+
+GAP +35: 132.5 + 35 = 167.5
+
+Footer: starts at 167.5, lasts 1.5s → ends at 169
+
+TOTAL TIMELINE DURATION: ~169 seconds
+
+This is much better than the original 45.5!
+169 / 45.5 = 3.7x longer
+
+If animations were at 25% before, they should now be at ~92% of the scroll range.
+That's pretty close to filling the whole thing!

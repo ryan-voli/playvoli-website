@@ -1,0 +1,22 @@
+RECALCULATING TIMELINE DURATION
+================================
+
+Original timeline duration: ~45.5 units
+Needed timeline duration: ~182 units (4x longer to fill 100% instead of 25%)
+
+Current gaps changed from +5 to +20, adding 15 units × 4 gaps = +60 units
+New total: 45.5 + 60 = 105.5 units
+
+Still need: 182 - 105.5 = 76.5 more units
+
+Since we have 4 gaps, distribute evenly: 76.5 / 4 = ~19 more per gap
+
+So gaps should be: 20 + 19 = ~39 or let's use 40 for clean numbers
+
+Actually, let me be more precise:
+- Target: 182 units total
+- Current without gaps: 45.5 units
+- Need to add via gaps: 182 - 45.5 = 136.5 units
+- Four gaps, so: 136.5 / 4 = 34 units per gap
+
+Let's use +35 for each gap to be safe.

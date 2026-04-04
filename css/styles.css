@@ -3,6 +3,7 @@
     src: url('../fonts/Axiforma Book.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
@@ -10,6 +11,7 @@
     src: url('../fonts/Axiforma Black.otf') format('opentype');
     font-weight: 900;
     font-style: normal;
+    font-display: swap;
 }
 
 * {
@@ -66,7 +68,7 @@ body::before {
 }
 
 /* Navigation */
-nav {
+nav:not(.social-nav) {
     position: fixed;
     top: 0;
     width: 100%;
@@ -87,13 +89,15 @@ nav {
 
 /* Social Navigation */
 .social-nav {
-    position: absolute;
+    position: fixed;
     top: 1rem;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
     z-index: 1000;
     padding: 0;
     pointer-events: none;
+    background: none !important;
 }
 
 .social-nav-container {
@@ -157,7 +161,7 @@ nav {
 
 /* Adjust hero section to account for social nav */
 .hero {
-    padding-top: 1rem;
+    padding-top: 5rem;
 }
 
 .logo {
@@ -214,7 +218,7 @@ nav {
     justify-content: center;
     text-align: center;
     background: transparent;
-    padding: 2rem;
+    padding: 5rem 2rem 2rem 2rem;
 }
 
 .hero-container {
@@ -269,7 +273,7 @@ nav {
     width: 40px;
     height: 40px;
     opacity: 0.8;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, filter 0.4s ease;
 }
 
 .hero-icon:hover {
@@ -284,7 +288,7 @@ nav {
     text-align: center;
     min-height: 2rem;
     margin-bottom: 2rem;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, height 0.3s ease;
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
@@ -597,6 +601,101 @@ select.contact-input option {
     transform: translateY(-2px);
 }
 
+/* Podcast Page Specific Styles */
+.podcast-card {
+    background: var(--dark-surface);
+    border-radius: 24px;
+    padding: 1.5rem 1.25rem;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.podcast-card .hero-logo {
+    margin-bottom: 0.75rem;
+}
+
+.podcast-card .hero-logo img {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px !important;
+    object-fit: cover;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.podcast-card h1 {
+    margin-bottom: 0.5rem;
+}
+
+.podcast-card .hero-description {
+    margin-bottom: 1rem;
+}
+
+.podcast-meta {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.podcast-description {
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.podcast-cta-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.podcast-card .stay-updated-btn {
+    background: var(--dark-surface);
+    color: var(--electric-blue);
+    border: 1px solid rgba(23, 233, 252, 0.3);
+}
+
+.podcast-card .stay-updated-btn:hover {
+    background: rgba(31, 38, 41, 0.6);
+    border-color: var(--electric-blue);
+}
+
+.podcast-store-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.podcast-store-btn {
+    padding: 0.7rem 2rem;
+    border-radius: 25px;
+    font-family: 'Axiforma', Arial, sans-serif;
+    font-weight: 400;
+    text-decoration: none;
+    text-align: center;
+    background: var(--electric-blue);
+    color: var(--eerie-black);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.podcast-store-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(23, 233, 252, 0.3);
+}
+
+.podcast-divider {
+    text-align: center;
+    color: var(--text-secondary);
+    margin: 1rem 0;
+}
+
 /* Footer */
 footer {
     background: transparent;
@@ -718,7 +817,7 @@ footer {
     }
 
     .hero {
-        padding: 1rem 0.5rem;
+        padding: 5rem 0.5rem 1rem 0.5rem;
     }
 
     .email-signup-pill {

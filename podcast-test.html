@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+    <style>
+        body {
+            background: red;
+            color: white;
+            font-size: 50px;
+            text-align: center;
+            padding: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>TEST PAGE - IF YOU SEE THIS, DEPLOYMENT WORKS</h1>
+    <p>Timestamp: <?php echo date('Y-m-d H:i:s'); ?></p>
+    <script>
+        document.body.innerHTML += '<p>JavaScript works: ' + new Date().toISOString() + '</p>';
+    </script>
+</body>
+</html>

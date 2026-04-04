@@ -2,76 +2,902 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>It's time for volleyball.</title>
-    <meta name="description" content="Fantasy volleyball, live stats, and community together in one revolutionary app.">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>VOLI - The Volleyball Hub</title>
+    <meta name="description" content="The ultimate volleyball hub. Fantasy leagues, live stats, game schedules, and more.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://playvoli.com/">
+    <meta property="og:title" content="VOLI - The Volleyball Hub">
+    <meta property="og:description" content="The ultimate volleyball hub. Fantasy leagues, live stats, game schedules, and more.">
+    <meta property="og:image" content="https://playvoli.com/images/official_logo_dark_bg.webp">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://playvoli.com/">
+    <meta name="twitter:title" content="VOLI - The Volleyball Hub">
+    <meta name="twitter:description" content="The ultimate volleyball hub. Fantasy leagues, live stats, game schedules, and more.">
+    <meta name="twitter:image" content="https://playvoli.com/images/official_logo_dark_bg.webp">
+
+    <link rel="icon" href="images/official_logo_dark_bg.webp">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W77KSNYJG3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-W77KSNYJG3');
+    </script>
+
+    <!-- Google Ads -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17868194042"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-17868194042');
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0b;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --accent: #c8ff00;
+            --accent-glow: rgba(200, 255, 0, 0.3);
+        }
+
+        html {
+            background: var(--bg-dark);
+            background-image:
+                linear-gradient(to bottom, var(--bg-dark), transparent 60px, transparent calc(100% - 60px), var(--bg-dark)),
+                radial-gradient(circle at 30% 20%, rgba(200, 255, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: transparent;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 100;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 28px;
+            width: auto;
+        }
+
+        .nav-logo span {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .nav {
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--text-primary);
+        }
+
+        .download-pill {
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid #00d4ff;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .download-pill:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            padding-top: calc(6rem + env(safe-area-inset-top));
+            text-align: center;
+        }
+
+        .hero-logo {
+            width: 100px;
+            height: auto;
+            border-radius: 22px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-tagline {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+        }
+
+        /* Store buttons */
+        .store-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .btn-store {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-store:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-store svg {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .btn-store-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .btn-store-label {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: white;
+            opacity: 0.7;
+        }
+
+        .btn-store-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        /* Screenshots Section */
+        .screenshots {
+            padding: 2rem 2rem 4rem;
+            overflow: hidden;
+        }
+
+        .screenshots-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .screenshot-wrapper {
+            flex: 1;
+            max-width: 280px;
+        }
+
+        .screenshot-wrapper:nth-child(2) {
+            transform: scale(1.1);
+            z-index: 2;
+        }
+
+        .screenshot {
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .screenshots-container {
+                gap: 1rem;
+            }
+
+            .screenshot-wrapper {
+                max-width: 180px;
+            }
+
+            .screenshot {
+                border-radius: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .screenshots {
+                padding: 2rem 0;
+                overflow: hidden;
+            }
+
+            .screenshots-container {
+                gap: 0.75rem;
+                width: 130%;
+                margin-left: -15%;
+            }
+
+            .screenshot-wrapper {
+                max-width: 160px;
+                flex-shrink: 0;
+            }
+
+            .screenshot-wrapper:nth-child(2) {
+                transform: scale(1.1);
+            }
+
+            .screenshot {
+                border-radius: 16px;
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            align-items: stretch;
+        }
+
+        .features-grid > * {
+            height: 100%;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 0.75rem;
+            object-fit: contain;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        a.feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .feature-card .learn-more-icon {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+        }
+
+        /* Leagues Section */
+        .leagues {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .leagues-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .leagues-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .league-logo {
+            height: 60px;
+            width: auto;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .league-logo:hover {
+            opacity: 1;
+        }
+
+        .leagues-disclaimer {
+            margin-top: 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        /* Contact Bar */
+        .contact-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .contact-bar p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .contact-btn {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--accent);
+            border-radius: 100px;
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .contact-btn:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        @media (max-width: 480px) {
+            .contact-bar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-icons a {
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .social-icons a:hover {
+            color: var(--text-primary);
+        }
+
+        .social-icons svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .footer-links {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* QR Modal */
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .qr-modal.active {
+            display: flex;
+        }
+
+        .qr-modal-content {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .qr-modal h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .qr-modal p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .qr-modal img {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+        }
+
+        .qr-modal-close {
+            margin-top: 1.5rem;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .qr-modal-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-tagline {
+                font-size: 1.25rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                gap: 0.5rem;
+            }
+
+            .nav {
+                padding: 0.6rem 1.25rem;
+                gap: 1.25rem;
+            }
+
+            .nav a {
+                font-size: 0.8rem;
+            }
+
+            .download-pill {
+                padding: 0.6rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .hero {
+                padding: 5rem 1.5rem 3rem;
+            }
+
+            .hero-logo {
+                width: 80px;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-tagline {
+                font-size: 1.1rem;
+            }
+
+            .store-buttons {
+                gap: 0.75rem;
+            }
+
+            .btn-store {
+                padding: 0.75rem 0.5rem;
+                gap: 0.5rem;
+            }
+
+            .btn-store svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .btn-store-label {
+                font-size: 0.55rem;
+            }
+
+            .btn-store-name {
+                font-size: 0.85rem;
+            }
+
+            .features {
+                padding: 3rem 1.5rem;
+            }
+
+            .features {
+                padding: 2rem 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+
+            .feature-card {
+                padding: 1rem;
+                border-radius: 14px;
+            }
+
+            .feature-icon {
+                width: 24px;
+                height: 24px;
+                margin-bottom: 0.5rem;
+            }
+
+            .feature-card .learn-more-icon {
+                width: 24px;
+                height: 24px;
+                margin-bottom: 0.5rem;
+            }
+
+            .feature-title {
+                font-size: 0.9rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .feature-description {
+                font-size: 0.7rem;
+                line-height: 1.3;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="nav-container">
+        <a href="index.html" class="nav-logo">
+            <img src="images/logo_dark.webp" alt="VOLI">
+            <span>Voli</span>
+        </a>
+        <nav class="nav">
+            <a href="index.html" class="active">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="download-pill" onclick="handleDownload()">Download</div>
+    </div>
 
-    <!-- Social Navigation -->
-    <nav class="social-nav">
-        <div class="social-nav-container">
-            <a href="https://instagram.com/playvoli" target="_blank" class="social-icon instagram" aria-label="Instagram">
-                <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.218.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
-            </a>
-            <a href="https://reddit.com/r/playvoli" target="_blank" class="social-icon reddit" aria-label="Reddit">
-                <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.561-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-            </a>
-            <a href="https://facebook.com/playvoli" target="_blank" class="social-icon facebook" aria-label="Facebook">
-                <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
-            </a>
-            <a href="https://tiktok.com/@playvoli" target="_blank" class="social-icon tiktok" aria-label="TikTok">
-                <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
-            </a>
-            <a href="https://youtube.com/@watchvoli" target="_blank" class="social-icon youtube" aria-label="YouTube">
-                <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-            </a>
-        </div>
-    </nav>
+    <section class="hero">
+        <img src="images/appicon.webp" alt="VOLI" class="hero-logo">
+        <h1 class="hero-title">VOLI: The Volleyball Hub</h1>
+        <p class="hero-tagline">Fantasy. Stats. Community.</p>
+        <p class="hero-description">Experience volleyball like never before with fantasy leagues, real-time stats, and a community of passionate fans.</p>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-container">
-            <div class="hero-logo">
-                <img src="images/official_logo_dark_text.png" alt="Voli Logo">
-            </div>
-            <h1>It's time for volleyball.</h1>
-            
-            <div class="hero-icons">
-                <img src="images/icons/fantasy.png" alt="Fantasy" class="hero-icon" data-text="A contracts based fantasy game built for volleyball.">
-                <img src="images/icons/community.png" alt="Community" class="hero-icon" data-text="A feature rich chat with rooms for every game.">
-                <img src="images/icons/content.png" alt="Content" class="hero-icon" data-text="Listen to your favorite podcasts and read interactive articles.">
-                <img src="images/icons/games.png" alt="Games" class="hero-icon" data-text="Stay up to date with live game statistics and scores.">
-                <img src="images/icons/statistics.png" alt="Statistics" class="hero-icon" data-text="Keep up with player/team statistics, history, and more.">
-            </div>
-            
-            <div class="hero-description" id="hero-description">Coming soon to iOS and Android</div>
-            
-            <form class="email-signup-pill">
-                <input type="email" class="email-pill-input" placeholder="Enter your email" name="email" required>
-                <button type="submit" class="stay-updated-btn">Stay Updated</button>
-            </form>
-            
+        <div class="store-buttons">
+            <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982"
+               onclick="gtag('event', 'click', {'event_category': 'download', 'event_label': 'app_store', 'source': 'homepage'});"
+               class="btn-store">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                </svg>
+                <div class="btn-store-text">
+                    <span class="btn-store-label">Download on the</span>
+                    <span class="btn-store-name">App Store</span>
+                </div>
+            </a>
+
+            <a href="https://play.google.com/store/apps/details?id=com.playvoli.app"
+               onclick="gtag('event', 'click', {'event_category': 'download', 'event_label': 'play_store', 'source': 'homepage'});"
+               class="btn-store">
+                <svg viewBox="0 0 24 24" fill="white">
+                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
+                </svg>
+                <div class="btn-store-text">
+                    <span class="btn-store-label">Get it on</span>
+                    <span class="btn-store-name">Google Play</span>
+                </div>
+            </a>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-links">
-                <a href="about.html">About</a>
-                <a href="contact.html">Contact</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms of Use</a>
+    <section class="screenshots">
+        <div class="screenshots-container">
+            <div class="screenshot-wrapper">
+                <img src="images/screenshots/ss2.png" alt="VOLI App Screenshot" class="screenshot">
             </div>
-            <p style="color: var(--text-secondary); opacity: 0.5;">
-                © 2025 VOLI LLC. All rights reserved.
-            </p>
+            <div class="screenshot-wrapper">
+                <img src="images/screenshots/ss1.png" alt="VOLI App Screenshot" class="screenshot">
+            </div>
+            <div class="screenshot-wrapper">
+                <img src="images/screenshots/ss3.png" alt="VOLI App Screenshot" class="screenshot">
+            </div>
         </div>
+    </section>
+
+    <section class="features">
+        <div class="features-grid">
+            <div class="feature-card">
+                <img src="images/icons/fantasy.png" alt="Fantasy" class="feature-icon">
+                <h3 class="feature-title">Fantasy</h3>
+                <p class="feature-description">Build your dream team with our contract-based fantasy system designed specifically for volleyball.</p>
+            </div>
+            <div class="feature-card">
+                <img src="images/icons/statistics.png" alt="Stats" class="feature-icon">
+                <h3 class="feature-title">Stats</h3>
+                <p class="feature-description">More in-depth real-time statistics than anywhere else. Track every dig, kill, and ace.</p>
+            </div>
+            <div class="feature-card">
+                <img src="images/icons/games.png" alt="Games" class="feature-icon">
+                <h3 class="feature-title">Games</h3>
+                <p class="feature-description">Live scores, play-by-plays, and detailed information for every professional match.</p>
+            </div>
+            <div class="feature-card">
+                <img src="images/icons/content.png" alt="Content" class="feature-icon">
+                <h3 class="feature-title">Content</h3>
+                <p class="feature-description">Podcasts, articles, and exclusive volleyball content all in one place.</p>
+            </div>
+            <div class="feature-card">
+                <img src="images/icons/community.png" alt="Community" class="feature-icon">
+                <h3 class="feature-title">Community</h3>
+                <p class="feature-description">Connect with passionate volleyball fans in real-time chat rooms during every game.</p>
+            </div>
+            <a href="about.html" class="feature-card">
+                <svg class="learn-more-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"/>
+                    <path d="M12 5l7 7-7 7"/>
+                </svg>
+                <h3 class="feature-title">Learn More</h3>
+                <p class="feature-description">Find out more about VOLI and our mission to revolutionize volleyball.</p>
+            </a>
+        </div>
+    </section>
+
+    <section class="leagues">
+        <p class="leagues-label">Leagues We Cover</p>
+        <div class="leagues-logos">
+            <a href="https://provolleyball.com" target="_blank"><img src="images/MLV.png" alt="MLV" class="league-logo"></a>
+            <a href="https://lovb.com" target="_blank"><img src="images/LOVB.png" alt="LOVB" class="league-logo"></a>
+        </div>
+        <p class="leagues-disclaimer">VOLI is an independent fan platform, not affiliated with or endorsed by these leagues.</p>
+    </section>
+
+    <section class="contact-bar">
+        <p>Have questions or feedback?</p>
+        <a href="contact.html" class="contact-btn">Contact Us</a>
+    </section>
+
+    <footer class="footer">
+        <div class="social-icons">
+            <a href="https://instagram.com/playvoli" target="_blank" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.218.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+            </a>
+            <a href="https://tiktok.com/@playvoli" target="_blank" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            </a>
+            <a href="https://youtube.com/@watchvoli" target="_blank" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://facebook.com/playvoli" target="_blank" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
+            </a>
+            <a href="https://reddit.com/r/playvoli" target="_blank" aria-label="Reddit">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.561-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+            </a>
+        </div>
+        <div class="footer-links">
+            <a href="about.html">About</a> &nbsp;&middot;&nbsp;
+            <a href="contact.html">Contact</a> &nbsp;&middot;&nbsp;
+            <a href="partners.html">Partners</a> &nbsp;&middot;&nbsp;
+            <a href="privacy.html">Privacy</a> &nbsp;&middot;&nbsp;
+            <a href="terms.html">Terms</a>
+        </div>
+        <p class="footer-copyright">© 2026 VOLI LLC. All rights reserved.</p>
     </footer>
 
-    <script src="js/main.js"></script>
+    <!-- QR Code Modal -->
+    <div class="qr-modal" id="qr-modal">
+        <div class="qr-modal-content">
+            <h3>Download VOLI</h3>
+            <p>Scan the QR code with your phone to download the app</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://playvoli.com/download" alt="QR Code to download VOLI">
+            <button class="qr-modal-close" onclick="closeQrModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Platform detection and download handler
+        function handleDownload() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            var isAndroid = /android/i.test(userAgent);
+
+            if (isIOS) {
+                window.location.href = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+            } else if (isAndroid) {
+                window.location.href = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+            } else {
+                document.getElementById('qr-modal').classList.add('active');
+            }
+        }
+
+        function closeQrModal() {
+            document.getElementById('qr-modal').classList.remove('active');
+        }
+
+        document.getElementById('qr-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeQrModal();
+        });
+    </script>
 </body>
 </html>
