@@ -18,7 +18,7 @@ import Layout from '../layouts/Layout.astro';
 </div>
 
 <!-- Auth Card -->
-<div id="auth-card" class="auth-card hidden">
+<div id="auth-card" class="auth-card" style="display:none">
 
     <!-- Main View: Login / Signup -->
     <div id="view-main" class="auth-view active">
@@ -130,18 +130,30 @@ import Layout from '../layouts/Layout.astro';
 <script is:inline slot="scripts">
     const SUPABASE_URL = 'https://api.playvoli.com';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const urlParams = new URLSearchParams(window.location.search);
     const redirectTo = urlParams.get('redirect') || '/';
     const $loading = document.getElementById('loading-state');
     const $authCard = document.getElementById('auth-card');
     let resetEmail = '';
+    let sb;
+
+    function showAuth() {
+        if ($loading) $loading.style.display = 'none';
+        if ($authCard) $authCard.style.display = '';
+    }
+
+    try {
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch(e) {
+        showAuth();
+    }
 
     async function init() {
-        const { data: { session } } = await sb.auth.getSession();
-        if (session) { window.location.href = redirectTo; return; }
-        $loading.classList.add('hidden');
-        $authCard.classList.remove('hidden');
+        try {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) { window.location.href = redirectTo; return; }
+        } catch(e) {}
+        showAuth();
         sb.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN' && session) window.location.href = redirectTo;
         });
