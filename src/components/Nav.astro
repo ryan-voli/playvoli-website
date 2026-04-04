@@ -18,8 +18,17 @@ const { activePage = '' } = Astro.props;
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
     </nav>
-    <div class="download-pill desktop-only" id="download-pill">Download</div>
-    <div id="nav-auth" class="desktop-only"></div>
+    <div class="download-pill desktop-pill" id="download-pill">Download</div>
+    <div id="nav-auth"></div>
+
+    <!-- Mobile download icon (same size as hamburger) -->
+    <button class="mobile-download-btn" id="download-pill-mobile" aria-label="Download">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+    </button>
 
     <!-- Mobile hamburger -->
     <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -36,10 +45,6 @@ const { activePage = '' } = Astro.props;
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
     </nav>
-    <div class="mobile-actions">
-        <div class="download-pill mobile-download" id="download-pill-mobile">Download App</div>
-        <div id="nav-auth-mobile"></div>
-    </div>
 </div>
 
 <script is:inline>
@@ -70,20 +75,10 @@ const { activePage = '' } = Astro.props;
         });
     });
 
-    // Sync mobile auth with desktop auth
-    var navAuth = document.getElementById('nav-auth');
-    var navAuthMobile = document.getElementById('nav-auth-mobile');
-    if (navAuth && navAuthMobile) {
-        var observer = new MutationObserver(function() {
-            navAuthMobile.innerHTML = navAuth.innerHTML;
-        });
-        observer.observe(navAuth, { childList: true, subtree: true });
-    }
-
-    // Mobile download pill
-    var mobilePill = document.getElementById('download-pill-mobile');
-    if (mobilePill) {
-        mobilePill.addEventListener('click', function() {
+    // Mobile download button — trigger same handler as desktop pill
+    var mobileDl = document.getElementById('download-pill-mobile');
+    if (mobileDl) {
+        mobileDl.addEventListener('click', function() {
             var desktopPill = document.getElementById('download-pill');
             if (desktopPill) desktopPill.click();
         });
@@ -169,6 +164,33 @@ const { activePage = '' } = Astro.props;
     }
 
     .download-pill:hover {
+        background: rgba(0, 212, 255, 0.1);
+    }
+
+    /* Mobile download icon button */
+    .mobile-download-btn {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--electric-blue);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+    }
+
+    .mobile-download-btn svg {
+        width: 20px;
+        height: 20px;
+        color: #ffffff;
+    }
+
+    .mobile-download-btn:hover {
         background: rgba(0, 212, 255, 0.1);
     }
 
@@ -261,48 +283,7 @@ const { activePage = '' } = Astro.props;
         background: rgba(255, 255, 255, 0.05);
     }
 
-    .mobile-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        padding-top: 0.75rem;
-        border-top: 1px solid var(--glass-border);
-    }
-
-    .mobile-download {
-        justify-content: center;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    #nav-auth-mobile {
-        display: flex;
-        justify-content: center;
-    }
-
-    #nav-auth-mobile :global(.nav-login-link) {
-        color: var(--accent);
-        font-size: 0.95rem;
-        font-weight: 600;
-        text-decoration: none;
-        padding: 0.75rem 1rem;
-        display: block;
-        text-align: center;
-        width: 100%;
-        border-radius: 12px;
-        transition: background 0.2s;
-    }
-
-    #nav-auth-mobile :global(.nav-login-link:hover) {
-        background: rgba(255, 255, 255, 0.05);
-    }
-
-    #nav-auth-mobile :global(.nav-avatar-wrap) {
-        display: flex;
-        justify-content: center;
-    }
-
-    /* Nav auth slot (desktop) */
+    /* Nav auth slot */
     #nav-auth {
         display: flex;
         align-items: center;
@@ -394,11 +375,19 @@ const { activePage = '' } = Astro.props;
         color: var(--text-primary);
     }
 
-    /* Mobile: show hamburger, hide desktop elements */
+    /* Mobile: show hamburger + download icon, hide desktop elements */
     @media (max-width: 640px) {
         .desktop-nav,
         .desktop-only {
             display: none !important;
+        }
+
+        .desktop-pill {
+            display: none !important;
+        }
+
+        .mobile-download-btn {
+            display: flex;
         }
 
         .hamburger {
@@ -407,6 +396,10 @@ const { activePage = '' } = Astro.props;
 
         .mobile-menu {
             display: block;
+        }
+
+        .mobile-nav {
+            margin-bottom: 0;
         }
     }
 </style>

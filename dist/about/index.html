@@ -9,7 +9,7 @@
         gtag('js', new Date());
         gtag('config', 'AW-17868194042');
     </script><!-- Supabase SDK (for nav auth + pages that need it) --><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><link rel="stylesheet" href="/_astro/about.CUbMjyns.css">
-<link rel="stylesheet" href="/_astro/about.CEnVtuAw.css"></head> <body class> <div class="nav-container" data-astro-cid-dmqpwcec> <a href="/" class="nav-logo" data-astro-cid-dmqpwcec> <img src="/images/logo_dark.webp" alt="VOLI" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec>Voli</span> </a> <!-- Desktop nav --> <nav class="nav desktop-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" class="active" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> <div class="download-pill desktop-only" id="download-pill" data-astro-cid-dmqpwcec>Download</div> <div id="nav-auth" class="desktop-only" data-astro-cid-dmqpwcec></div> <!-- Mobile hamburger --> <button class="hamburger" id="hamburger" aria-label="Menu" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> </button> </div> <!-- Mobile dropdown --> <div class="mobile-menu" id="mobile-menu" data-astro-cid-dmqpwcec> <nav class="mobile-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" class="active" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> <div class="mobile-actions" data-astro-cid-dmqpwcec> <div class="download-pill mobile-download" id="download-pill-mobile" data-astro-cid-dmqpwcec>Download App</div> <div id="nav-auth-mobile" data-astro-cid-dmqpwcec></div> </div> </div> <script>
+<link rel="stylesheet" href="/_astro/about.UE1HBvYV.css"></head> <body class> <div class="nav-container" data-astro-cid-dmqpwcec> <a href="/" class="nav-logo" data-astro-cid-dmqpwcec> <img src="/images/logo_dark.webp" alt="VOLI" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec>Voli</span> </a> <!-- Desktop nav --> <nav class="nav desktop-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" class="active" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> <div class="download-pill desktop-pill" id="download-pill" data-astro-cid-dmqpwcec>Download</div> <div id="nav-auth" data-astro-cid-dmqpwcec></div> <!-- Mobile download icon (same size as hamburger) --> <button class="mobile-download-btn" id="download-pill-mobile" aria-label="Download" data-astro-cid-dmqpwcec> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-dmqpwcec> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" data-astro-cid-dmqpwcec></path> <polyline points="7 10 12 15 17 10" data-astro-cid-dmqpwcec></polyline> <line x1="12" y1="15" x2="12" y2="3" data-astro-cid-dmqpwcec></line> </svg> </button> <!-- Mobile hamburger --> <button class="hamburger" id="hamburger" aria-label="Menu" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> </button> </div> <!-- Mobile dropdown --> <div class="mobile-menu" id="mobile-menu" data-astro-cid-dmqpwcec> <nav class="mobile-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" class="active" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> </nav> </div> <script>
 (function() {
     var hamburger = document.getElementById('hamburger');
     var menu = document.getElementById('mobile-menu');
@@ -37,20 +37,10 @@
         });
     });
 
-    // Sync mobile auth with desktop auth
-    var navAuth = document.getElementById('nav-auth');
-    var navAuthMobile = document.getElementById('nav-auth-mobile');
-    if (navAuth && navAuthMobile) {
-        var observer = new MutationObserver(function() {
-            navAuthMobile.innerHTML = navAuth.innerHTML;
-        });
-        observer.observe(navAuth, { childList: true, subtree: true });
-    }
-
-    // Mobile download pill
-    var mobilePill = document.getElementById('download-pill-mobile');
-    if (mobilePill) {
-        mobilePill.addEventListener('click', function() {
+    // Mobile download button — trigger same handler as desktop pill
+    var mobileDl = document.getElementById('download-pill-mobile');
+    if (mobileDl) {
+        mobileDl.addEventListener('click', function() {
             var desktopPill = document.getElementById('download-pill');
             if (desktopPill) desktopPill.click();
         });
