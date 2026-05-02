@@ -11,6 +11,15 @@ import Layout from '../layouts/Layout.astro';
         <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
         <h1 class="hero-title">VOLI: The Volleyball Hub</h1>
         <p class="hero-tagline">Fantasy. Stats. Community.</p>
+
+        <div class="hero-stars">
+            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+
         <p class="hero-description">Experience volleyball like never before with fantasy leagues, real-time stats, and a community of passionate fans.</p>
 
         <div class="store-buttons">
@@ -36,6 +45,13 @@ import Layout from '../layouts/Layout.astro';
                 </div>
             </a>
         </div>
+
+        <div class="hero-quotes">
+            <p>"This app is everything I've been dreaming of since I've gotten into professional volleyball!"</p>
+            <p>"It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!"</p>
+            <p>"This app is gorgeous. Thanks for putting it out there. And so fun!"</p>
+            <p>"Y'all are starting something huge that could be a massive growth factor for U.S. volleyball."</p>
+        </div>
     </section>
 
     <section class="screenshots">
@@ -55,27 +71,27 @@ import Layout from '../layouts/Layout.astro';
     <section class="features">
         <div class="features-grid">
             <div class="feature-card">
-                <img src="/images/icons/fantasy.png" alt="Fantasy" class="feature-icon">
+                <img src="/images/icons/fantasy_opt.png" alt="Fantasy" class="feature-icon">
                 <h3 class="feature-title">Fantasy</h3>
                 <p class="feature-description">Build your dream team with our contract-based fantasy system designed specifically for volleyball.</p>
             </div>
             <div class="feature-card">
-                <img src="/images/icons/statistics.png" alt="Stats" class="feature-icon">
+                <img src="/images/icons/statistics_opt.png" alt="Stats" class="feature-icon">
                 <h3 class="feature-title">Stats</h3>
                 <p class="feature-description">More in-depth real-time statistics than anywhere else. Track every dig, kill, and ace.</p>
             </div>
             <div class="feature-card">
-                <img src="/images/icons/games.png" alt="Games" class="feature-icon">
+                <img src="/images/icons/games_opt.png" alt="Games" class="feature-icon">
                 <h3 class="feature-title">Games</h3>
                 <p class="feature-description">Live scores, play-by-plays, and detailed information for every professional match.</p>
             </div>
             <div class="feature-card">
-                <img src="/images/icons/content.png" alt="Content" class="feature-icon">
+                <img src="/images/icons/content_opt.png" alt="Content" class="feature-icon">
                 <h3 class="feature-title">Content</h3>
                 <p class="feature-description">Podcasts, articles, and exclusive volleyball content all in one place.</p>
             </div>
             <div class="feature-card">
-                <img src="/images/icons/community.png" alt="Community" class="feature-icon">
+                <img src="/images/icons/community_opt.png" alt="Community" class="feature-icon">
                 <h3 class="feature-title">Community</h3>
                 <p class="feature-description">Connect with passionate volleyball fans in real-time chat rooms during every game.</p>
             </div>
@@ -93,8 +109,8 @@ import Layout from '../layouts/Layout.astro';
     <section class="leagues">
         <p class="leagues-label">Leagues We Cover</p>
         <div class="leagues-logos">
-            <a href="https://provolleyball.com" target="_blank"><img src="/images/MLV.png" alt="MLV" class="league-logo"></a>
-            <a href="https://lovb.com" target="_blank"><img src="/images/LOVB.png" alt="LOVB" class="league-logo"></a>
+            <a href="https://provolleyball.com" target="_blank"><img src="/images/MLV_opt.webp" alt="MLV" class="league-logo"></a>
+            <a href="https://lovb.com" target="_blank"><img src="/images/LOVB_opt.webp" alt="LOVB" class="league-logo"></a>
         </div>
         <p class="leagues-disclaimer">VOLI is an independent fan platform, not affiliated with or endorsed by these leagues.</p>
     </section>
@@ -116,6 +132,28 @@ import Layout from '../layouts/Layout.astro';
         padding: 6rem 2rem 4rem;
         padding-top: calc(6rem + env(safe-area-inset-top));
         text-align: center;
+    }
+
+    .hero-quotes {
+        display: flex;
+        gap: 2rem;
+        max-width: 1100px;
+        margin-top: 3rem;
+        padding: 0 1rem;
+    }
+
+    .hero-quotes p {
+        font-size: 0.8rem;
+        font-style: italic;
+        color: var(--text-muted);
+        line-height: 1.5;
+        flex: 1;
+    }
+
+    .hero-stars {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 1rem;
     }
 
     .hero-logo {
@@ -391,6 +429,7 @@ import Layout from '../layouts/Layout.astro';
 
     /* Responsive */
     @media (max-width: 768px) {
+        .hero-quotes { display: none; }
         .hero-title { font-size: 2.5rem; }
         .hero-tagline { font-size: 1.25rem; }
         .hero-description { font-size: 1rem; }
