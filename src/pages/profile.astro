@@ -1,0 +1,677 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+    title="Profile - VOLI"
+    description="Manage your VOLI profile, favorite teams, and account settings."
+    ogUrl="https://playvoli.com/profile"
+    bodyClass="profile-body"
+>
+
+<!-- Loading State -->
+<div id="profile-loading">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- Profile Card -->
+<div id="profile-card" class="glass-card" style="display:none">
+
+    <!-- Avatar -->
+    <div class="avatar-section">
+        <div class="avatar-wrap" id="avatar-wrap">
+            <img id="profile-avatar" class="profile-avatar" style="display:none" alt="Avatar">
+            <div id="profile-avatar-fallback" class="profile-avatar-fallback">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            <label class="avatar-upload-btn" for="avatar-input">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>
+            </label>
+            <input type="file" id="avatar-input" accept="image/*" hidden>
+        </div>
+        <div id="profile-email" class="profile-email"></div>
+    </div>
+
+    <!-- Fields -->
+    <div class="field-group">
+        <label for="field-username">Username</label>
+        <input type="text" id="field-username" class="form-input" placeholder="Username" minlength="3" maxlength="20">
+    </div>
+
+    <div class="field-row">
+        <div class="field-group">
+            <label for="field-first">First Name</label>
+            <input type="text" id="field-first" class="form-input" placeholder="First Name">
+        </div>
+        <div class="field-group">
+            <label for="field-last">Last Name</label>
+            <input type="text" id="field-last" class="form-input" placeholder="Last Name">
+        </div>
+    </div>
+
+    <!-- Favorite Teams -->
+    <div class="field-group">
+        <label>MLV Favorite</label>
+        <div class="team-selector" id="mlv-teams"></div>
+    </div>
+
+    <div class="field-group">
+        <label>LOVB Favorite</label>
+        <div class="team-selector" id="lovb-teams"></div>
+    </div>
+
+    <!-- Save -->
+    <div id="profile-message" class="message"></div>
+    <button id="save-btn" class="btn-primary">Save Changes</button>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+        <button id="reset-pw-btn" class="danger-btn muted">Reset Password</button>
+        <button id="delete-btn" class="danger-btn rose">Delete Account</button>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal-overlay" style="display:none">
+    <div class="modal-card glass-card">
+        <h2>Delete Account</h2>
+        <p class="modal-text">This action is permanent and cannot be undone. Type <strong id="delete-confirm-text"></strong> to confirm.</p>
+        <input type="text" id="delete-input" class="form-input" placeholder="Type to confirm">
+        <div id="delete-message" class="message"></div>
+        <div class="modal-actions">
+            <button id="delete-cancel-btn" class="danger-btn muted">Cancel</button>
+            <button id="delete-confirm-btn" class="btn-delete" disabled>Delete</button>
+        </div>
+    </div>
+</div>
+
+<script is:inline slot="scripts">
+    var SUPABASE_URL = 'https://api.playvoli.com';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+
+    var MLV_TEAMS = ['ATL','CLB','DAL','GRR','IND','OMA','ORL','SDM','VGT'];
+    var LOVB_TEAMS = ['ATL','AUS','HOU','MAD','NEB','SLC'];
+
+    var sb, currentUser, currentProfile;
+    var $loading = document.getElementById('profile-loading');
+    var $card = document.getElementById('profile-card');
+    var $avatar = document.getElementById('profile-avatar');
+    var $avatarFallback = document.getElementById('profile-avatar-fallback');
+    var $avatarInput = document.getElementById('avatar-input');
+    var $email = document.getElementById('profile-email');
+    var $username = document.getElementById('field-username');
+    var $first = document.getElementById('field-first');
+    var $last = document.getElementById('field-last');
+    var $saveBtn = document.getElementById('save-btn');
+    var $resetPwBtn = document.getElementById('reset-pw-btn');
+    var $deleteBtn = document.getElementById('delete-btn');
+    var $deleteModal = document.getElementById('delete-modal');
+    var $deleteInput = document.getElementById('delete-input');
+    var $deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+    var $deleteCancelBtn = document.getElementById('delete-cancel-btn');
+    var $deleteConfirmText = document.getElementById('delete-confirm-text');
+
+    var selectedMlv = null;
+    var selectedLovb = null;
+
+    function showCard() {
+        if ($loading) $loading.style.display = 'none';
+        if ($card) $card.style.display = '';
+    }
+
+    function showMessage(id, text, type) {
+        var el = document.getElementById(id);
+        el.innerHTML = text;
+        el.className = 'message ' + type + ' visible';
+    }
+
+    function hideMessage(id) {
+        var el = document.getElementById(id);
+        el.className = 'message';
+        el.innerHTML = '';
+    }
+
+    // Build team selector buttons
+    function buildTeamSelector(containerId, teams, league) {
+        var container = document.getElementById(containerId);
+        teams.forEach(function(abbr) {
+            var btn = document.createElement('button');
+            btn.className = 'team-btn';
+            btn.dataset.abbr = abbr;
+            btn.dataset.league = league;
+            btn.innerHTML = '<img src="/images/teamlogos/' + league + '/' + abbr + '.png" alt="' + abbr + '">';
+            btn.addEventListener('click', function() {
+                var siblings = container.querySelectorAll('.team-btn');
+                siblings.forEach(function(s) { s.classList.remove('selected'); });
+                if ((league === 'MLV' && selectedMlv === abbr) || (league === 'LOVB' && selectedLovb === abbr)) {
+                    if (league === 'MLV') selectedMlv = null;
+                    else selectedLovb = null;
+                } else {
+                    btn.classList.add('selected');
+                    if (league === 'MLV') selectedMlv = abbr;
+                    else selectedLovb = abbr;
+                }
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function selectTeam(containerId, abbr) {
+        if (!abbr) return;
+        var btns = document.getElementById(containerId).querySelectorAll('.team-btn');
+        btns.forEach(function(b) {
+            if (b.dataset.abbr === abbr) b.classList.add('selected');
+        });
+    }
+
+    function setAvatar(url) {
+        if (url) {
+            $avatar.src = url;
+            $avatar.style.display = 'block';
+            $avatarFallback.style.display = 'none';
+        } else {
+            $avatar.style.display = 'none';
+            $avatarFallback.style.display = 'flex';
+        }
+    }
+
+    async function init() {
+        try {
+            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch(e) {
+            window.location.href = '/auth?redirect=/profile';
+            return;
+        }
+
+        var res = await sb.auth.getSession();
+        var session = res.data.session;
+        if (!session) {
+            window.location.href = '/auth?redirect=/profile';
+            return;
+        }
+
+        currentUser = session.user;
+        $email.textContent = currentUser.email || '';
+
+        // Check if OAuth user — hide reset password
+        var isOAuth = false;
+        if (currentUser.identities && currentUser.identities.length > 0) {
+            isOAuth = currentUser.identities.some(function(id) {
+                return id.provider !== 'email';
+            });
+        }
+        if (isOAuth) $resetPwBtn.style.display = 'none';
+
+        // Fetch profile
+        var profileRes = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+        if (profileRes.error) {
+            showCard();
+            showMessage('profile-message', 'Failed to load profile.', 'error');
+            return;
+        }
+
+        currentProfile = profileRes.data;
+        $username.value = currentProfile.username || '';
+        $first.value = currentProfile.first_name || '';
+        $last.value = currentProfile.last_name || '';
+
+        // Avatar
+        var avatarUrl = currentProfile.avatar_url || (currentUser.user_metadata && currentUser.user_metadata.avatar_url);
+        setAvatar(avatarUrl);
+
+        // Build team selectors
+        buildTeamSelector('mlv-teams', MLV_TEAMS, 'MLV');
+        buildTeamSelector('lovb-teams', LOVB_TEAMS, 'LOVB');
+
+        // Set current favorites
+        selectedMlv = currentProfile.mlv_favorite || null;
+        selectedLovb = currentProfile.lovb_favorite || null;
+        selectTeam('mlv-teams', selectedMlv);
+        selectTeam('lovb-teams', selectedLovb);
+
+        showCard();
+    }
+
+    // Save
+    $saveBtn.addEventListener('click', async function() {
+        hideMessage('profile-message');
+        var username = $username.value.trim();
+        if (username.length < 3) {
+            showMessage('profile-message', 'Username must be at least 3 characters.', 'error');
+            return;
+        }
+
+        $saveBtn.disabled = true;
+        $saveBtn.textContent = 'Saving...';
+
+        var updates = {
+            username: username,
+            first_name: $first.value.trim() || null,
+            last_name: $last.value.trim() || null,
+            mlv_favorite: selectedMlv,
+            lovb_favorite: selectedLovb
+        };
+
+        var res = await sb.from('profiles').update(updates).eq('id', currentUser.id);
+        if (res.error) {
+            showMessage('profile-message', res.error.message || 'Failed to save.', 'error');
+        } else {
+            showMessage('profile-message', 'Profile updated.', 'success');
+        }
+
+        $saveBtn.disabled = false;
+        $saveBtn.textContent = 'Save Changes';
+    });
+
+    // Avatar upload
+    $avatarInput.addEventListener('change', async function() {
+        var file = $avatarInput.files[0];
+        if (!file) return;
+
+        var ext = file.name.split('.').pop().toLowerCase();
+        var path = currentUser.id + '/avatar.' + ext;
+
+        setAvatar(URL.createObjectURL(file));
+
+        var uploadRes = await sb.storage.from('user.photos').upload(path, file, { upsert: true, contentType: file.type });
+        if (uploadRes.error) {
+            showMessage('profile-message', 'Avatar upload failed: ' + uploadRes.error.message, 'error');
+            return;
+        }
+
+        var urlRes = sb.storage.from('user.photos').getPublicUrl(path);
+        var publicUrl = urlRes.data.publicUrl + '?t=' + Date.now();
+
+        var updateRes = await sb.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+        if (updateRes.error) {
+            showMessage('profile-message', 'Failed to save avatar.', 'error');
+        } else {
+            setAvatar(publicUrl);
+            showMessage('profile-message', 'Avatar updated.', 'success');
+        }
+    });
+
+    // Reset password
+    $resetPwBtn.addEventListener('click', async function() {
+        hideMessage('profile-message');
+        $resetPwBtn.disabled = true;
+        $resetPwBtn.textContent = 'Sending...';
+
+        var res = await sb.auth.resetPasswordForEmail(currentUser.email);
+        if (res.error) {
+            showMessage('profile-message', res.error.message, 'error');
+        } else {
+            showMessage('profile-message', 'Password reset email sent. Check your inbox.', 'success');
+        }
+
+        $resetPwBtn.disabled = false;
+        $resetPwBtn.textContent = 'Reset Password';
+    });
+
+    // Delete account
+    var deleteTarget = '';
+
+    $deleteBtn.addEventListener('click', function() {
+        deleteTarget = 'delete-' + (currentProfile.username || '').toLowerCase();
+        $deleteConfirmText.textContent = deleteTarget;
+        $deleteInput.value = '';
+        $deleteConfirmBtn.disabled = true;
+        hideMessage('delete-message');
+        $deleteModal.style.display = 'flex';
+    });
+
+    $deleteInput.addEventListener('input', function() {
+        $deleteConfirmBtn.disabled = $deleteInput.value !== deleteTarget;
+    });
+
+    $deleteCancelBtn.addEventListener('click', function() {
+        $deleteModal.style.display = 'none';
+    });
+
+    $deleteModal.addEventListener('click', function(e) {
+        if (e.target === $deleteModal) $deleteModal.style.display = 'none';
+    });
+
+    $deleteConfirmBtn.addEventListener('click', async function() {
+        hideMessage('delete-message');
+        $deleteConfirmBtn.disabled = true;
+        $deleteConfirmBtn.textContent = 'Deleting...';
+
+        var res = await sb.rpc('delete_user_account');
+        if (res.error) {
+            showMessage('delete-message', res.error.message || 'Failed to delete account.', 'error');
+            $deleteConfirmBtn.disabled = false;
+            $deleteConfirmBtn.textContent = 'Delete';
+            return;
+        }
+
+        await sb.auth.signOut({ scope: 'local' });
+        window.location.href = '/';
+    });
+
+    init();
+</script>
+
+</Layout>
+
+<style is:global>
+    body.profile-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        overflow-x: hidden;
+    }
+
+    #profile-loading .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top: 3px solid var(--accent);
+        border-radius: 50%;
+        animation: profile-spin 0.8s linear infinite;
+        margin: 4rem auto;
+    }
+
+    @keyframes profile-spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #profile-card {
+        width: 100%;
+        max-width: 460px;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    /* Avatar */
+    .avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .avatar-wrap {
+        position: relative;
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 1px solid var(--accent);
+        object-fit: cover;
+        display: block;
+    }
+
+    .profile-avatar-fallback {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 1px solid var(--accent);
+        background: rgba(255, 255, 255, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-upload-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--bg-dark);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+    }
+
+    .avatar-upload-btn:hover {
+        color: var(--text-primary);
+        border-color: var(--accent);
+    }
+
+    .profile-email {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 0.75rem;
+    }
+
+    /* Fields */
+    .field-group {
+        margin-bottom: 1rem;
+    }
+
+    .field-group label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 0.375rem;
+        padding-left: 0.25rem;
+    }
+
+    .field-row {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .field-row .field-group {
+        flex: 1;
+    }
+
+    /* Team Selector */
+    .team-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .team-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.03);
+        cursor: pointer;
+        padding: 6px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .team-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 50%;
+    }
+
+    .team-btn:hover {
+        border-color: rgba(200, 255, 0, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .team-btn.selected {
+        border-color: var(--accent);
+        box-shadow: 0 0 12px var(--accent-glow);
+        background: rgba(200, 255, 0, 0.08);
+    }
+
+    /* Message */
+    .message {
+        display: none;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .message.visible {
+        display: block;
+    }
+
+    .message.error {
+        background: rgba(255, 77, 106, 0.1);
+        border: 1px solid rgba(255, 77, 106, 0.2);
+        color: #ff4d6a;
+    }
+
+    .message.success {
+        background: var(--accent-subtle);
+        border: 1px solid rgba(200, 255, 0, 0.2);
+        color: var(--accent);
+    }
+
+    /* Save */
+    #save-btn {
+        margin-top: 0.5rem;
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .danger-btn {
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0.5rem 0;
+        transition: opacity 0.2s;
+    }
+
+    .danger-btn:hover {
+        opacity: 0.7;
+    }
+
+    .danger-btn.muted {
+        color: var(--text-muted);
+    }
+
+    .danger-btn.rose {
+        color: var(--rose);
+    }
+
+    /* Delete Modal */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 500;
+        padding: 2rem;
+    }
+
+    .modal-card {
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .modal-card h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        color: var(--rose);
+    }
+
+    .modal-text {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .modal-text strong {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .modal-card .form-input {
+        margin-bottom: 0.75rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .modal-actions .danger-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .modal-actions .danger-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+        opacity: 1;
+    }
+
+    .btn-delete {
+        flex: 1;
+        padding: 0.75rem;
+        background: var(--rose);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-delete:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .btn-delete:not(:disabled):hover {
+        box-shadow: 0 4px 16px rgba(255, 31, 109, 0.3);
+    }
+
+    @media (max-width: 480px) {
+        body.profile-body {
+            padding: 6rem 1rem 1rem;
+        }
+
+        #profile-card {
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+        }
+    }
+</style>

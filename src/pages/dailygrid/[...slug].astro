@@ -10,185 +10,2217 @@ export function getStaticPaths() {
   title="Daily Grid - VOLI"
   description="Play the Voli Daily Grid — fill a 3x3 grid with volleyball players matching row and column categories."
   ogUrl="https://playvoli.com/dailygrid"
+  activePage="dailygrid"
   skipNavAuth
+  bodyClass="dg-body"
 >
-    <!-- Loading State -->
-    <div id="loading-state">
-        <div class="loading-spinner"></div>
+
+<!-- Loading -->
+<div id="dg-loading"><div class="dg-spinner"></div></div>
+
+<!-- Sign-in Prompt -->
+<div id="dg-signin" class="dg-center" style="display:none">
+    <h1 class="dg-page-title">DAILY GRID</h1>
+    <p class="dg-page-sub">Sign in to play today's grid</p>
+    <a href="/auth?redirect=/dailygrid" class="btn-primary" style="display:inline-block; width:auto; padding:0.875rem 2.5rem;">Sign In</a>
+</div>
+
+<!-- Game -->
+<div id="dg-game" style="display:none">
+
+    <div class="dg-title-row">
+        <button class="dg-title-btn" id="dg-leaderboard-btn"><img src="/images/icons/leaderboard.png" alt="Leaderboard"></button>
+        <h1 class="dg-page-title">DAILY GRID</h1>
+        <button class="dg-title-btn" id="dg-info-btn"><img src="/images/icons/info.png" alt="Info"></button>
     </div>
 
-    <!-- Not Signed In -->
-    <div id="signin-prompt" class="content hidden">
-        <h1 class="page-title">Daily Grid</h1>
-        <p class="page-subtitle">Sign in to play today's grid</p>
-        <a href="/auth?redirect=/dailygrid" class="btn-signin">Sign In</a>
+    <!-- Status Bar -->
+    <div id="dg-status" class="dg-status">
+        <span class="dg-stat" id="dg-grid-num"><img src="/images/icons/dailygrid_sm.png" class="dg-stat-icon" alt="">#0000</span>
+        <span class="dg-stat dg-correct" id="dg-score"><img src="/images/icons/check_lemon_sm.png" class="dg-stat-icon" alt="">0</span>
+        <span class="dg-stat dg-wrong" id="dg-incorrect"><img src="/images/icons/incorrect_rose_sm.png" class="dg-stat-icon" alt="">0</span>
+        <span class="dg-stat dg-remaining" id="dg-remaining"><img src="/images/icons/help_blue_sm.png" class="dg-stat-icon" alt="">9</span>
     </div>
 
-    <!-- Game Container (shown when logged in) -->
-    <div id="game-container" class="content hidden">
-        <h2 class="page-title">Daily Grid</h2>
-        <p class="page-subtitle">Coming soon...</p>
+    <!-- Grid -->
+    <div id="dg-grid" class="dg-grid">
+        <!-- Corner (empty) -->
+        <div class="dg-corner"></div>
+        <!-- 3 column headers -->
+        <div class="dg-header dg-col-header" id="dg-col-0"></div>
+        <div class="dg-header dg-col-header" id="dg-col-1"></div>
+        <div class="dg-header dg-col-header" id="dg-col-2"></div>
+        <!-- Row 0 -->
+        <div class="dg-header dg-row-header" id="dg-row-0"></div>
+        <div class="dg-cell" id="dg-cell-0-0" data-row="0" data-col="0"></div>
+        <div class="dg-cell" id="dg-cell-0-1" data-row="0" data-col="1"></div>
+        <div class="dg-cell" id="dg-cell-0-2" data-row="0" data-col="2"></div>
+        <!-- Row 1 -->
+        <div class="dg-header dg-row-header" id="dg-row-1"></div>
+        <div class="dg-cell" id="dg-cell-1-0" data-row="1" data-col="0"></div>
+        <div class="dg-cell" id="dg-cell-1-1" data-row="1" data-col="1"></div>
+        <div class="dg-cell" id="dg-cell-1-2" data-row="1" data-col="2"></div>
+        <!-- Row 2 -->
+        <div class="dg-header dg-row-header" id="dg-row-2"></div>
+        <div class="dg-cell" id="dg-cell-2-0" data-row="2" data-col="0"></div>
+        <div class="dg-cell" id="dg-cell-2-1" data-row="2" data-col="1"></div>
+        <div class="dg-cell" id="dg-cell-2-2" data-row="2" data-col="2"></div>
     </div>
 
-    <script is:inline slot="scripts">
-        // ── Supabase Init ──
-        var SUPABASE_URL = 'https://api.playvoli.com';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
-        var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- Creator attribution -->
+    <div id="dg-creator" class="dg-creator" style="display:none"></div>
 
-        var $loading = document.getElementById('loading-state');
-        var $signinPrompt = document.getElementById('signin-prompt');
-        var $gameContainer = document.getElementById('game-container');
-        var $navAuth = document.getElementById('nav-auth');
+    <!-- Results Card -->
+    <div id="dg-results" style="display:none">
+        <div class="dg-results-card glass-card">
+            <div class="dg-results-top">
+                <div class="dg-results-left">
+                    <div class="dg-results-score" id="dg-results-score">0/9</div>
+                    <div class="dg-results-msg" id="dg-results-msg"></div>
+                </div>
+                <div class="dg-mini-grid" id="dg-mini-grid"></div>
+            </div>
+            <button class="btn-primary" id="dg-share-btn">Share Results</button>
+            <div id="dg-share-msg" class="dg-share-msg"></div>
+        </div>
+    </div>
 
-        async function init() {
-            var res = await sb.auth.getSession();
-            var session = res.data.session;
+    <!-- Countdown -->
+    <div class="dg-countdown" id="dg-countdown"></div>
 
-            if (session) {
-                showGame(session.user);
-            } else {
-                showSigninPrompt();
-            }
+    <!-- Historical grids CTA -->
+    <p class="dg-historical">Play historical grids on the <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Voli app</a></p>
+</div>
 
-            sb.auth.onAuthStateChange(function(event, session) {
-                if (event === 'SIGNED_IN' && session) {
-                    showGame(session.user);
-                } else if (event === 'SIGNED_OUT') {
-                    showSigninPrompt();
-                }
-            });
-        }
+<!-- Player Search Modal -->
+<div id="dg-search" style="display:none">
+    <div class="dg-search-backdrop"></div>
+    <div class="dg-search-sheet">
+        <div class="dg-drag-handle"></div>
+        <input type="text" id="dg-search-input" class="form-input" placeholder="Search players..." autocomplete="off">
+        <div id="dg-search-results" class="dg-search-results"></div>
+    </div>
+</div>
 
-        function renderNavAuth(user) {
-            if (!$navAuth) return;
-            if (!user) {
-                $navAuth.innerHTML = '<a class="nav-login-link" href="/auth?redirect=/dailygrid">Log In</a>';
-                return;
-            }
-            var avatarUrl = user.user_metadata && user.user_metadata.avatar_url;
-            var html = '<div class="nav-avatar-wrap">';
-            if (avatarUrl) {
-                html += '<img class="nav-avatar" src="' + escapeAttr(avatarUrl) + '" alt="Avatar" onclick="toggleAvatarDropdown(event)">';
-            } else {
-                html += '<div class="nav-avatar-fallback" onclick="toggleAvatarDropdown(event)">' +
-                    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                    '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>' +
-                    '<circle cx="12" cy="7" r="4"/></svg></div>';
-            }
-            html += '<div class="avatar-dropdown" id="avatar-dropdown">' +
-                '<button onclick="handleLogout()">Log Out</button></div></div>';
-            $navAuth.innerHTML = html;
-        }
+<!-- Info Drawer -->
+<div id="dg-info" style="display:none">
+    <div class="dg-info-backdrop"></div>
+    <div class="dg-info-sheet">
+        <div class="dg-drag-handle"></div>
+        <div class="dg-info-header">
+            <img src="/images/icons/info.png" class="dg-info-icon" alt="">
+            <span class="dg-info-title">How To Play</span>
+            <button class="dg-info-close" id="dg-info-close">&times;</button>
+        </div>
+        <div class="dg-info-scroll">
 
-        function toggleAvatarDropdown(e) {
-            e.stopPropagation();
-            var dd = document.getElementById('avatar-dropdown');
-            if (dd) dd.classList.toggle('open');
-        }
+            <div class="dg-info-welcome">
+                <span class="dg-welcome-sub">WELCOME TO</span>
+                <span class="dg-welcome-main">DAILY GRID</span>
+            </div>
 
-        document.addEventListener('click', function() {
-            var dd = document.getElementById('avatar-dropdown');
-            if (dd) dd.classList.remove('open');
-        });
+            <h3 class="dg-info-heading">The Goal</h3>
+            <p class="dg-info-text">Fill the 3x3 grid by naming a player that matches both the row and column category for each cell. A new grid is released every day at <span id="dg-reset-time">midnight</span>.</p>
 
-        function showSigninPrompt() {
-            $loading.classList.add('hidden');
-            $gameContainer.classList.add('hidden');
-            $signinPrompt.classList.remove('hidden');
+            <h3 class="dg-info-heading">How It Works</h3>
+            <div class="dg-step-card">
+                <div class="dg-step-num">1</div>
+                <div>
+                    <div class="dg-step-title">Tap a Cell</div>
+                    <div class="dg-step-desc">Choose any empty cell in the grid to make a guess. Each cell sits at the intersection of a row category and a column category.</div>
+                </div>
+            </div>
+            <div class="dg-step-card">
+                <div class="dg-step-num">2</div>
+                <div>
+                    <div class="dg-step-title">Search for a Player</div>
+                    <div class="dg-step-desc">Type a player's name to search. Pick someone who matches both the row and column categories for that cell.</div>
+                </div>
+            </div>
+            <div class="dg-step-card">
+                <div class="dg-step-num">3</div>
+                <div>
+                    <div class="dg-step-title">Check Your Answer</div>
+                    <div class="dg-step-desc">Correct guesses light up green. Wrong guesses are highlighted red but your answer stays visible so you can learn from it.</div>
+                </div>
+            </div>
+
+            <h3 class="dg-info-heading">Guesses</h3>
+            <div class="dg-info-card">
+                <div class="dg-info-row"><span>Total guesses</span><span class="dg-val-blue">9</span></div>
+                <div class="dg-info-row"><span>Best possible score</span><span class="dg-val-lemon">9/9</span></div>
+                <p class="dg-info-note">You have 9 guesses to get as many cells correct as possible. If you get one wrong, you can re-guess on that cell — but it uses one of your 9 total guesses, meaning you'll lose the ability to guess for another cell.</p>
+            </div>
+
+            <h3 class="dg-info-heading">Categories</h3>
+            <p class="dg-info-text">Each row and column has a category. Players must match both to be a valid answer. Only statistics from US pro leagues count (MLV and LOVB).</p>
+            <div class="dg-info-card">
+                <div class="dg-cat-row"><span class="dg-cat-label">Teams</span><span class="dg-cat-desc">Player must have been signed to that team</span></div>
+                <div class="dg-cat-row"><span class="dg-cat-label">Stats</span><span class="dg-cat-desc">Player must meet a statistical threshold</span></div>
+                <div class="dg-cat-row"><span class="dg-cat-label">All Star</span><span class="dg-cat-desc">Player must have played in an All Star match</span></div>
+                <div class="dg-cat-row"><span class="dg-cat-label">League Champion</span><span class="dg-cat-desc">Player won a league championship</span></div>
+                <div class="dg-cat-row"><span class="dg-cat-label">Draft Round</span><span class="dg-cat-desc">Player was drafted in a specific round</span></div>
+            </div>
+
+            <h3 class="dg-info-heading">Team Avatars</h3>
+            <p class="dg-info-text">Teams are shown by their avatar, which is the team's abbreviation in the team's primary color. MLV teams use block text and LOVB teams use cursive text. For example:</p>
+            <div class="dg-info-card dg-league-examples">
+                <div class="dg-league-ex">
+                    <img src="/images/teamlogos/MLV/ATL.png" class="dg-league-ex-logo" alt="MLV ATL">
+                    <div class="dg-league-ex-info"><span class="dg-league-ex-name">MLV Atlanta</span><span class="dg-league-ex-desc">Block text</span></div>
+                </div>
+                <div class="dg-league-ex">
+                    <img src="/images/teamlogos/LOVB/ATL.png" class="dg-league-ex-logo" alt="LOVB ATL">
+                    <div class="dg-league-ex-info"><span class="dg-league-ex-name">LOVB Atlanta</span><span class="dg-league-ex-desc">Cursive text</span></div>
+                </div>
+            </div>
+
+            <h3 class="dg-info-heading">Scoring</h3>
+            <div class="dg-info-card">
+                <div class="dg-info-row"><span>Each correct answer</span><span class="dg-val-lemon">+1 pt</span></div>
+                <div class="dg-info-row"><span>Perfect grid</span><span class="dg-val-blue">9 pts</span></div>
+                <p class="dg-info-note">Check the leaderboard to see how you stack up against other players. Compete for the top spot!</p>
+            </div>
+
+            <h3 class="dg-info-heading">After Completing</h3>
+            <p class="dg-info-text">Once you've used all 9 guesses, share your results with friends and compare scores!</p>
+            <p class="dg-info-text">Your past grids are saved in the Voli app. Tap any to review your answers or finish an incomplete grid.</p>
+
+            <button class="dg-info-got-it" id="dg-info-gotit">Got it!</button>
+        </div>
+    </div>
+</div>
+
+<!-- Leaderboard Drawer -->
+<div id="dg-lb" style="display:none">
+    <div class="dg-lb-backdrop"></div>
+    <div class="dg-lb-sheet">
+        <div class="dg-drag-handle"></div>
+        <div class="dg-lb-header">
+            <img src="/images/icons/leaderboard.png" class="dg-lb-icon" alt="">
+            <span class="dg-lb-title">Leaderboard</span>
+            <button class="dg-info-close" id="dg-lb-close">&times;</button>
+        </div>
+
+        <div class="dg-lb-tabs">
+            <button class="dg-lb-tab active" data-period="daily">Grid</button>
+            <button class="dg-lb-tab" data-period="season">Season</button>
+        </div>
+
+        <div class="dg-lb-search-row">
+            <input type="text" id="dg-lb-search" class="form-input" placeholder="Search username..." autocomplete="off">
+        </div>
+
+        <div id="dg-lb-myrank" style="display:none"></div>
+
+        <div id="dg-lb-list" class="dg-lb-list"></div>
+
+        <div id="dg-lb-loading" class="dg-lb-loading"><div class="dg-spinner"></div></div>
+        <div id="dg-lb-empty" class="dg-lb-empty" style="display:none"></div>
+    </div>
+</div>
+
+<!-- Valid Players Drawer -->
+<div id="dg-valid" style="display:none">
+    <div class="dg-valid-backdrop"></div>
+    <div class="dg-valid-sheet">
+        <div class="dg-drag-handle"></div>
+        <div class="dg-valid-header">
+            <span class="dg-valid-title" id="dg-valid-title"></span>
+            <button class="dg-info-close" id="dg-valid-close">&times;</button>
+        </div>
+        <div class="dg-valid-count" id="dg-valid-count"></div>
+        <div class="dg-valid-list" id="dg-valid-list"></div>
+    </div>
+</div>
+
+<script is:inline slot="scripts">
+    var SUPABASE_URL = 'https://api.playvoli.com';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // DOM refs
+    var $loading = document.getElementById('dg-loading');
+    var $signin = document.getElementById('dg-signin');
+    var $game = document.getElementById('dg-game');
+    var $gridNum = document.getElementById('dg-grid-num');
+    var $score = document.getElementById('dg-score');
+    var $incorrect = document.getElementById('dg-incorrect');
+    var $remaining = document.getElementById('dg-remaining');
+    var $results = document.getElementById('dg-results');
+    var $resultsScore = document.getElementById('dg-results-score');
+    var $resultsMsg = document.getElementById('dg-results-msg');
+    var $miniGrid = document.getElementById('dg-mini-grid');
+    var $shareBtn = document.getElementById('dg-share-btn');
+    var $shareMsg = document.getElementById('dg-share-msg');
+    var $countdown = document.getElementById('dg-countdown');
+    var $search = document.getElementById('dg-search');
+    var $searchInput = document.getElementById('dg-search-input');
+    var $searchResults = document.getElementById('dg-search-results');
+    var $navAuth = document.getElementById('nav-auth');
+
+    // Show local time equivalent of midnight UTC in info drawer
+    (function() {
+        var el = document.getElementById('dg-reset-time');
+        if (!el) return;
+        var d = new Date();
+        d.setUTCHours(0, 0, 0, 0);
+        d.setUTCDate(d.getUTCDate() + 1);
+        var h = d.getHours();
+        var ampm = h >= 12 ? 'PM' : 'AM';
+        var h12 = h % 12 || 12;
+        var mins = d.getMinutes();
+        var timeStr = mins === 0 ? h12 + ' ' + ampm : h12 + ':' + String(mins).padStart(2, '0') + ' ' + ampm;
+        el.textContent = timeStr;
+    })();
+
+    // Valid players drawer refs
+    var $valid = document.getElementById('dg-valid');
+    var $validTitle = document.getElementById('dg-valid-title');
+    var $validCount = document.getElementById('dg-valid-count');
+    var $validList = document.getElementById('dg-valid-list');
+
+    // Game state
+    var gridData = null;
+    var cellValidPlayers = {}; // "r_c" → [ { first_name, last_name, number, position } ]
+    var cellStates = {};   // "r_c" → { playerUuid, firstName, lastName, correct, teamColor }
+    var guessesUsed = 0;
+    var score = 0;
+    var selectedCell = null;
+    var isComplete = false;
+    var searchTimeout = null;
+    var currentUserId = null;
+
+    // Leaderboard state
+    var $lb = document.getElementById('dg-lb');
+    var $lbList = document.getElementById('dg-lb-list');
+    var $lbMyRank = document.getElementById('dg-lb-myrank');
+    var $lbLoading = document.getElementById('dg-lb-loading');
+    var $lbEmpty = document.getElementById('dg-lb-empty');
+    var $lbSearch = document.getElementById('dg-lb-search');
+    var lbPeriod = 'daily';
+    var lbOffset = 0;
+    var lbHasMore = true;
+    var lbLoadingMore = false;
+    var lbSearchTimeout = null;
+
+    // ── Init ──
+    async function init() {
+        var res = await sb.auth.getSession();
+        var session = res.data.session;
+        if (session) {
+            currentUserId = session.user.id;
+            renderNavAuth(session.user);
+            loadAllPlayers();
+            await loadGrid();
+        } else {
+            $loading.style.display = 'none';
+            $signin.style.display = '';
             renderNavAuth(null);
         }
 
-        function showGame(user) {
-            $loading.classList.add('hidden');
-            $signinPrompt.classList.add('hidden');
-            $gameContainer.classList.remove('hidden');
-            renderNavAuth(user);
+        sb.auth.onAuthStateChange(function(event, session) {
+            if (event === 'SIGNED_IN' && session) {
+                renderNavAuth(session.user);
+                $signin.style.display = 'none';
+                $loading.style.display = '';
+                loadGrid();
+            } else if (event === 'SIGNED_OUT') {
+                $game.style.display = 'none';
+                $signin.style.display = '';
+                renderNavAuth(null);
+            }
+        });
+    }
+
+    // ── Nav Auth ──
+    function renderNavAuth(user) {
+        if (!$navAuth) return;
+        if (!user) {
+            $navAuth.innerHTML = '<a class="nav-login-link" href="/auth?redirect=/dailygrid">Log In</a>';
+            return;
+        }
+        var av = user.user_metadata && user.user_metadata.avatar_url;
+        var h = '<div class="nav-avatar-wrap">';
+        if (av) {
+            h += '<img class="nav-avatar" src="' + esc(av) + '" alt="Avatar" onclick="toggleDD(event)">';
+        } else {
+            h += '<div class="nav-avatar-fallback" onclick="toggleDD(event)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
+        }
+        h += '<div class="avatar-dropdown" id="avatar-dropdown"><button onclick="navProfile()">Profile</button><button onclick="navLogout()">Log Out</button></div></div>';
+        $navAuth.innerHTML = h;
+    }
+    window.toggleDD = function(e) { e.stopPropagation(); var d = document.getElementById('avatar-dropdown'); if(d) d.classList.toggle('open'); };
+    window.navProfile = function() { window.location.href = '/profile'; };
+    window.navLogout = function() { sb.auth.signOut({ scope: 'local' }); };
+    document.addEventListener('click', function() { var d = document.getElementById('avatar-dropdown'); if(d) d.classList.remove('open'); });
+
+    // ── Load Grid ──
+    async function loadGrid() {
+        var res = await sb.schema('dailygrid').rpc('get_todays_grid');
+        if (res.error || !res.data) {
+            $loading.style.display = 'none';
+            $game.style.display = '';
+            $countdown.textContent = 'No grid available today.';
+            return;
         }
 
-        async function handleLogout() {
-            await sb.auth.signOut();
+        gridData = res.data;
+        $gridNum.innerHTML = '<img src="/images/icons/dailygrid_sm.png" class="dg-stat-icon" alt="">#' + String(gridData.grid_number).padStart(4, '0');
+
+        // Render category headers
+        gridData.columns.forEach(function(cat, i) { renderHeader('dg-col-' + i, cat); });
+        gridData.rows.forEach(function(cat, i) { renderHeader('dg-row-' + i, cat); });
+
+        // Creator attribution
+        if (gridData.created_by_username) {
+            var $creator = document.getElementById('dg-creator');
+            var avatarHtml = gridData.created_by_avatar
+                ? '<img class="dg-creator-avatar" src="' + esc(gridData.created_by_avatar) + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+                  + '<div class="dg-creator-avatar-fb" style="display:none"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>'
+                : '<div class="dg-creator-avatar-fb"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
+            $creator.innerHTML = '<span class="dg-creator-by">by</span>' + avatarHtml + '<span class="dg-creator-name">' + esc(gridData.created_by_username) + '</span>';
+            $creator.style.display = '';
         }
 
-        function escapeAttr(str) {
-            return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // Restore existing guesses
+        if (gridData.guesses && gridData.guesses.length > 0) {
+            gridData.guesses.forEach(function(g) {
+                var key = g.row_index + '_' + g.col_index;
+                cellStates[key] = {
+                    playerUuid: g.guessed_player_uuid,
+                    firstName: g.first_name,
+                    lastName: g.last_name,
+                    correct: g.correct,
+                    teamColor: g.team_primary_color
+                };
+            });
+            guessesUsed = gridData.attempt ? gridData.attempt.guesses_used : gridData.guesses.length;
+            score = gridData.attempt ? gridData.attempt.score : gridData.guesses.filter(function(g) { return g.correct; }).length;
+            isComplete = gridData.attempt ? gridData.attempt.is_complete : false;
         }
 
-        init();
-    </script>
+        // Render cells
+        for (var r = 0; r < 3; r++) {
+            for (var c = 0; c < 3; c++) {
+                renderCell(r, c);
+            }
+        }
+
+        updateStatus();
+
+        if (isComplete) showResults();
+
+        $loading.style.display = 'none';
+        $game.style.display = '';
+
+        startCountdown();
+    }
+
+    // ── Render Category Header ──
+    function renderHeader(elId, cat) {
+        var el = document.getElementById(elId);
+        if (!el) return;
+        el.innerHTML = '';
+
+        if (cat.category_type === 'team') {
+            var img = document.createElement('img');
+            img.src = '/images/teamlogos/' + (cat.team_league || cat.league) + '/' + cat.team_abbr + '.png';
+            img.alt = cat.team_abbr;
+            img.style.cssText = 'width:70px;height:70px;max-width:70px;max-height:70px;object-fit:contain;display:block;';
+            img.onerror = function() {
+                el.innerHTML = '<span style="font-family:Designer,sans-serif;font-size:10px;color:' + (cat.team_primary_color || '#fff') + ';text-transform:uppercase">' + cat.team_abbr + '</span>';
+            };
+            el.appendChild(img);
+        } else if (cat.category_type.indexOf('stat_') === 0) {
+            var scope = cat.category_type.replace('stat_', '');
+            scope = scope.charAt(0).toUpperCase() + scope.slice(1);
+            el.innerHTML =
+                '<span class="dg-h-threshold">' + cat.stat_threshold + '+</span>' +
+                '<span class="dg-h-stat">' + (cat.stat_name || '').toUpperCase() + '</span>' +
+                '<span class="dg-h-scope">' + scope + '</span>';
+        } else if (cat.category_type === 'draft_round') {
+            el.innerHTML =
+                '<span class="dg-h-threshold">RD ' + cat.draft_round + '</span>' +
+                '<span class="dg-h-stat">DRAFT</span>' +
+                '<span class="dg-h-scope">PICK</span>';
+        } else if (cat.category_type === 'all_star') {
+            el.innerHTML =
+                '<span class="dg-h-stat">ALL</span>' +
+                '<span class="dg-h-stat">STAR</span>';
+        } else if (cat.category_type === 'league_champion') {
+            el.innerHTML =
+                '<span class="dg-h-stat">LEAGUE</span>' +
+                '<span class="dg-h-stat">CHAMP</span>';
+        } else {
+            el.innerHTML = '<span class="dg-header-text">' + (cat.display_name || '') + '</span>';
+        }
+    }
+
+    // ── Render Cell ──
+    function renderCell(r, c) {
+        var el = document.getElementById('dg-cell-' + r + '-' + c);
+        if (!el) return;
+        var key = r + '_' + c;
+        var state = cellStates[key];
+
+        el.className = 'dg-cell';
+        el.onclick = null;
+
+        if (!state) {
+            // Empty
+            el.innerHTML = '<span class="dg-plus">+</span>';
+            if (!isComplete) {
+                el.classList.add('dg-empty');
+                el.onclick = function() { openSearch(r, c); };
+            }
+        } else if (state.correct) {
+            el.classList.add('dg-correct-cell');
+            el.innerHTML = '<span class="dg-initials">' + getCellName(state.firstName, state.lastName) + '</span>';
+            fitCellName(el);
+        } else {
+            el.classList.add('dg-wrong-cell');
+            el.innerHTML = '<span class="dg-initials">' + getCellName(state.firstName, state.lastName) + '</span>';
+            fitCellName(el);
+            if (!isComplete) {
+                el.classList.add('dg-empty');
+                el.onclick = function() { openSearch(r, c); };
+            }
+        }
+    }
+
+    // "F. LASTNAME" for grid cells
+    function getCellName(first, last) {
+        return ((first || '').charAt(0) + '. ' + (last || '')).toUpperCase();
+    }
+
+    // Shrink font if any word is wider than the cell
+    function fitCellName(cell) {
+        var span = cell.querySelector('.dg-initials');
+        if (!span) return;
+        requestAnimationFrame(function() {
+            var size = parseFloat(getComputedStyle(span).fontSize);
+            var cellW = cell.clientWidth - 8; // subtract padding
+            // Split on spaces/hyphens and check each word
+            var words = span.textContent.split(/[\s\-]/);
+            var canvas = document.createElement('canvas').getContext('2d');
+            var font = getComputedStyle(span).fontFamily;
+            while (size > 5) {
+                canvas.font = size + 'px ' + font;
+                var fits = true;
+                for (var i = 0; i < words.length; i++) {
+                    if (canvas.measureText(words[i]).width > cellW) { fits = false; break; }
+                }
+                if (fits) break;
+                size -= 0.5;
+            }
+            if (size < parseFloat(getComputedStyle(span).fontSize)) {
+                span.style.fontSize = size + 'px';
+            }
+        });
+    }
+
+    // 2-3 letter initials for avatars (3 if hyphenated/multi-part last name)
+    function getInitials(first, last) {
+        if (!first && !last) return '??';
+        var fi = first ? first.charAt(0).toUpperCase() : '';
+        var parts = (last || '').split(/[\s-]+/).filter(function(p) { return p.length > 0; });
+        if (parts.length === 0) return fi || '?';
+        if (parts.length >= 2) {
+            return fi + parts[0].charAt(0).toUpperCase() + parts[1].charAt(0).toUpperCase();
+        }
+        return fi + parts[0].charAt(0).toUpperCase();
+    }
+
+    // ── Update Status ──
+    function updateStatus() {
+        $score.innerHTML = '<img src="/images/icons/check_lemon_sm.png" class="dg-stat-icon" alt="">' + score;
+        $incorrect.innerHTML = '<img src="/images/icons/incorrect_rose_sm.png" class="dg-stat-icon" alt="">' + (guessesUsed - score);
+        $remaining.innerHTML = '<img src="/images/icons/help_blue_sm.png" class="dg-stat-icon" alt="">' + (9 - guessesUsed);
+    }
+
+    // ── Player Search ──
+    var allPlayers = [];
+
+    var playersLoaded = false;
+    async function loadAllPlayers() {
+        var res = await sb.schema('vbdata').from('players')
+            .select('player_id, first_name, last_name, number, position, team:teams!players_team_uuid_fkey(abbreviation, primary_color)')
+            .order('last_name')
+            .limit(2000);
+        if (!res.error && res.data) {
+            allPlayers = res.data.map(function(p) {
+                return {
+                    player_id: p.player_id,
+                    first_name: p.first_name,
+                    last_name: p.last_name,
+                    number: p.number,
+                    position: p.position,
+                    team_abbr: p.team ? p.team.abbreviation : '',
+                    team_primary_color: p.team && p.team.primary_color ? '#' + p.team.primary_color : ''
+                };
+            });
+            playersLoaded = true;
+        }
+    }
+
+    async function openSearch(r, c) {
+        selectedCell = { row: r, col: c };
+        $searchInput.value = '';
+        $search.style.display = '';
+        setTimeout(function() {
+            $search.classList.add('open');
+            $searchInput.focus();
+        }, 10);
+        if (!playersLoaded) await loadAllPlayers();
+        renderPlayerList(getAvailablePlayers());
+    }
+
+    function closeSearch() {
+        $search.classList.remove('open');
+        setTimeout(function() { $search.style.display = 'none'; }, 250);
+        selectedCell = null;
+    }
+
+    document.querySelector('.dg-search-backdrop').addEventListener('click', closeSearch);
+
+    // ── Info Drawer ──
+    var $info = document.getElementById('dg-info');
+    document.getElementById('dg-info-btn').addEventListener('click', function() {
+        $info.style.display = '';
+        setTimeout(function() { $info.classList.add('open'); }, 10);
+    });
+    function closeInfo() {
+        $info.classList.remove('open');
+        setTimeout(function() { $info.style.display = 'none'; }, 250);
+    }
+    document.querySelector('.dg-info-backdrop').addEventListener('click', closeInfo);
+    document.getElementById('dg-info-close').addEventListener('click', closeInfo);
+    document.getElementById('dg-info-gotit').addEventListener('click', closeInfo);
+
+    function getAvailablePlayers() {
+        var usedIds = {};
+        Object.keys(cellStates).forEach(function(key) {
+            if (cellStates[key].playerUuid) usedIds[cellStates[key].playerUuid] = true;
+        });
+        return allPlayers.filter(function(p) { return !usedIds[p.player_id]; });
+    }
+
+    $searchInput.addEventListener('input', function() {
+        var available = getAvailablePlayers();
+        var q = $searchInput.value.trim().toLowerCase();
+        if (!q) {
+            renderPlayerList(available);
+            return;
+        }
+        var filtered = available.filter(function(p) {
+            return p.first_name.toLowerCase().indexOf(q) !== -1 ||
+                   p.last_name.toLowerCase().indexOf(q) !== -1;
+        });
+        renderPlayerList(filtered);
+    });
+
+    function renderPlayerList(players) {
+        $searchResults.innerHTML = '';
+        players.forEach(function(p) {
+            var card = document.createElement('button');
+            card.className = 'dg-player-card';
+            var num = p.number ? String(p.number).padStart(2, '0') : '';
+            card.innerHTML =
+                '<div class="dg-player-avatar">' +
+                    '<span class="dg-avatar-initials">' + getInitials(p.first_name, p.last_name) + '</span>' +
+                    (num ? '<span class="dg-avatar-number">' + num + '</span>' : '') +
+                '</div>' +
+                '<div class="dg-player-info">' +
+                    '<div class="dg-player-name">' + esc(p.first_name + ' ' + p.last_name) + '</div>' +
+                    '<div class="dg-player-meta">' + esc(p.position || '') + '</div>' +
+                '</div>';
+            card.addEventListener('click', function() { submitGuess(p); });
+            $searchResults.appendChild(card);
+        });
+    }
+
+    // ── Submit Guess ──
+    async function submitGuess(player) {
+        if (!selectedCell || isComplete) return;
+        var r = selectedCell.row;
+        var c = selectedCell.col;
+        closeSearch();
+
+        var res = await sb.schema('dailygrid').rpc('submit_guess', {
+            p_grid_id: gridData.grid_id,
+            p_cell_row: r,
+            p_cell_col: c,
+            p_player_uuid: player.player_id
+        });
+
+        if (res.error) {
+            console.error('Guess error:', res.error);
+            return;
+        }
+
+        var result = res.data;
+        var key = r + '_' + c;
+
+        cellStates[key] = {
+            playerUuid: player.player_id,
+            firstName: player.first_name,
+            lastName: player.last_name,
+            correct: result.correct,
+            teamColor: player.team_primary_color
+        };
+
+        guessesUsed = 9 - result.guesses_remaining;
+        if (result.correct) score++;
+
+        renderCell(r, c);
+        updateStatus();
+
+        // Animate
+        var el = document.getElementById('dg-cell-' + r + '-' + c);
+        if (result.correct) {
+            el.classList.add('dg-anim-correct');
+        } else {
+            el.classList.add('dg-anim-wrong');
+        }
+
+        // Check completion
+        if (result.guesses_remaining <= 0 || score >= 9) {
+            isComplete = true;
+            // Disable remaining empty cells
+            for (var rr = 0; rr < 3; rr++) {
+                for (var cc = 0; cc < 3; cc++) {
+                    var cell = document.getElementById('dg-cell-' + rr + '-' + cc);
+                    if (cell) { cell.classList.remove('dg-empty'); cell.onclick = null; }
+                }
+            }
+            setTimeout(showResults, 600);
+        }
+    }
+
+    // ── Results ──
+    function showResults() {
+        var msg = '';
+        if (score === 9) msg = 'Perfect!';
+        else if (score >= 7) msg = 'Great job!';
+        else if (score >= 4) msg = 'Nice try!';
+        else msg = 'Better luck tomorrow!';
+
+        $resultsScore.textContent = score + '/9';
+        $resultsScore.className = 'dg-results-score';
+        if (score >= 7) $resultsScore.classList.add('dg-score-great');
+        else if (score >= 4) $resultsScore.classList.add('dg-score-ok');
+        else $resultsScore.classList.add('dg-score-low');
+
+        $resultsMsg.textContent = msg;
+
+        // Mini grid
+        $miniGrid.innerHTML = '';
+        for (var r = 0; r < 3; r++) {
+            for (var c = 0; c < 3; c++) {
+                var dot = document.createElement('div');
+                var state = cellStates[r + '_' + c];
+                dot.className = 'dg-mini-cell';
+                if (state && state.correct) dot.classList.add('dg-mini-correct');
+                else if (state && !state.correct) dot.classList.add('dg-mini-wrong');
+                else dot.classList.add('dg-mini-empty');
+                $miniGrid.appendChild(dot);
+            }
+        }
+
+        $results.style.display = '';
+        loadValidPlayers();
+    }
+
+    // ── Valid Players ──
+    async function loadValidPlayers() {
+        if (!gridData || !gridData.grid_id) return;
+        var res = await sb.schema('dailygrid').rpc('get_grid_by_id', { p_grid_id: gridData.grid_id });
+        if (res.error || !res.data || !res.data.cells) return;
+
+        res.data.cells.forEach(function(c) {
+            var key = c.row_index + '_' + c.col_index;
+            if (c.valid_players) cellValidPlayers[key] = c.valid_players;
+        });
+
+        // Make all cells clickable
+        for (var r = 0; r < 3; r++) {
+            for (var c = 0; c < 3; c++) {
+                (function(row, col) {
+                    var el = document.getElementById('dg-cell-' + row + '-' + col);
+                    if (el) {
+                        el.style.cursor = 'pointer';
+                        el.onclick = function() { showValidPlayers(row, col); };
+                    }
+                })(r, c);
+            }
+        }
+    }
+
+    function getCategoryDisplayName(cat) {
+        if (!cat) return '';
+        if (cat.category_type === 'team') return cat.team_abbr || '';
+        if (cat.category_type === 'all_star') return 'All Star';
+        if (cat.category_type === 'league_champion') return 'League Champ';
+        if (cat.category_type === 'draft_round') return 'Rd ' + cat.draft_round + ' Draft';
+        if (cat.category_type && cat.category_type.indexOf('stat_') === 0) {
+            return (cat.stat_threshold || '') + '+ ' + (cat.stat_name || '').toUpperCase();
+        }
+        return cat.display_name || '';
+    }
+
+    function showValidPlayers(row, col) {
+        var key = row + '_' + col;
+        var players = cellValidPlayers[key];
+        if (!players || !players.length) return;
+
+        var rowCat = gridData.rows[row];
+        var colCat = gridData.columns[col];
+        $validTitle.textContent = getCategoryDisplayName(rowCat) + '  ×  ' + getCategoryDisplayName(colCat);
+        $validCount.textContent = players.length + ' matching player' + (players.length === 1 ? '' : 's');
+
+        $validList.innerHTML = '';
+        players.forEach(function(p) {
+            var fn = p.first_name || '';
+            var ln = p.last_name || '';
+            var num = p.number || 0;
+            var pos = p.position || '';
+            var initials = getInitials(fn, ln);
+
+            var card = document.createElement('div');
+            card.className = 'dg-valid-card';
+            card.innerHTML =
+                '<div class="dg-valid-avatar"><span class="dg-valid-initials">' + esc(initials) + '</span>' +
+                (num ? '<span class="dg-valid-num">#' + num + '</span>' : '') + '</div>' +
+                '<div class="dg-valid-info"><span class="dg-valid-name">' + esc(fn + ' ' + ln) + '</span>' +
+                (pos ? '<span class="dg-valid-pos">' + esc(pos) + '</span>' : '') + '</div>' +
+                (num ? '<span class="dg-valid-jersey">#' + num + '</span>' : '');
+            $validList.appendChild(card);
+        });
+
+        $valid.style.display = '';
+        setTimeout(function() { $valid.classList.add('open'); }, 10);
+    }
+
+    function closeValidDrawer() {
+        $valid.classList.remove('open');
+        setTimeout(function() { $valid.style.display = 'none'; }, 300);
+    }
+
+    document.querySelector('.dg-valid-backdrop').addEventListener('click', closeValidDrawer);
+    document.getElementById('dg-valid-close').addEventListener('click', closeValidDrawer);
+
+    // ── Share ──
+    $shareBtn.addEventListener('click', function() {
+        var lines = ['Voli Grid #' + String(gridData.grid_number).padStart(4, '0'), '', score + '/9', ''];
+        for (var r = 0; r < 3; r++) {
+            var row = '';
+            for (var c = 0; c < 3; c++) {
+                var state = cellStates[r + '_' + c];
+                if (state && state.correct) row += '\u{1F7E9}';
+                else if (state) row += '\u{1F7E5}';
+                else row += '\u2B1C';
+            }
+            lines.push(row);
+        }
+        lines.push('', 'playvoli.com/dailygrid');
+        var text = lines.join('\n');
+
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function() {
+                $shareMsg.textContent = 'Copied to clipboard!';
+                setTimeout(function() { $shareMsg.textContent = ''; }, 2000);
+            });
+        }
+    });
+
+    // ── Countdown ──
+    function startCountdown() {
+        function update() {
+            var now = new Date();
+            var tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+            var diff = tomorrow - now;
+            if (diff < 0) diff = 0;
+            var h = Math.floor(diff / 3600000);
+            var m = Math.floor((diff % 3600000) / 60000);
+            var s = Math.floor((diff % 60000) / 1000);
+            $countdown.textContent = 'Next grid in ' + h + 'h ' + m + 'm ' + s + 's';
+        }
+        update();
+        setInterval(update, 1000);
+    }
+
+    // ── Leaderboard ──
+    function ordinal(n) {
+        var s = ['th','st','nd','rd'];
+        var v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
+    function formatTime(sec) {
+        if (!sec || sec <= 0) return '0:00';
+        var h = Math.floor(sec / 3600);
+        var m = Math.floor((sec % 3600) / 60);
+        var s = sec % 60;
+        if (h > 0) return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        return m + ':' + String(s).padStart(2, '0');
+    }
+
+    function renderMiniDots(cellResults) {
+        if (!cellResults || !cellResults.length) return '';
+        var html = '<div class="dg-lb-dots">';
+        for (var i = 0; i < 9; i++) {
+            var cr = cellResults[i];
+            var cls = 'dg-lb-dot';
+            if (cr && cr.correct === true) cls += ' dg-dot-correct';
+            else if (cr && cr.correct === false) cls += ' dg-dot-wrong';
+            else cls += ' dg-dot-empty';
+            html += '<div class="' + cls + '"></div>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function renderLbEntry(entry, isMe) {
+        var isOwn = currentUserId && entry.user_id === currentUserId;
+        var nameClass = isOwn ? 'dg-lb-name dg-lb-name-own' : 'dg-lb-name';
+        var avatar = entry.avatar_url
+            ? '<img class="dg-lb-avatar" src="' + esc(entry.avatar_url) + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+              + '<div class="dg-lb-avatar-fb" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>'
+            : '<div class="dg-lb-avatar-fb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
+
+        var stats = '<span class="dg-lb-stats">';
+        stats += entry.grids_played + ' grid' + (entry.grids_played === 1 ? '' : 's');
+        if (entry.average_score != null) stats += ' &middot; ' + Number(entry.average_score).toFixed(1) + ' avg';
+        stats += ' &middot; ' + formatTime(entry.total_time);
+        stats += '</span>';
+
+        var dots = lbPeriod === 'daily' ? renderMiniDots(entry.cell_results) : '';
+
+        var html = '<div class="dg-lb-entry' + (isMe ? ' dg-lb-entry-me' : '') + '">';
+        html += '<span class="dg-lb-rank">' + ordinal(entry.rank) + '</span>';
+        html += '<div class="dg-lb-avatar-wrap">' + avatar + '</div>';
+        html += '<div class="dg-lb-info">';
+        html += '<span class="' + nameClass + '">' + esc(entry.username || 'Player') + '</span>';
+        html += stats;
+        html += '</div>';
+        html += dots;
+        html += '<span class="dg-lb-score">' + entry.total_score + '</span>';
+        html += '</div>';
+        return html;
+    }
+
+    function renderMyRankCard(entry) {
+        if (!entry) { $lbMyRank.style.display = 'none'; return; }
+        var html = '<div class="dg-lb-myrank-card">';
+        html += '<div class="dg-lb-myrank-top">';
+        html += '<span class="dg-lb-myrank-label">Your Rank</span>';
+        html += '<span class="dg-lb-myrank-rank">' + ordinal(entry.rank) + '</span>';
+        html += '</div>';
+        html += '<div class="dg-lb-myrank-row">';
+        html += '<div class="dg-lb-myrank-stat"><span class="dg-lb-myrank-val dg-val-lemon">' + entry.total_score + '</span><span class="dg-lb-myrank-lbl">Score</span></div>';
+        html += '<div class="dg-lb-myrank-stat"><span class="dg-lb-myrank-val">' + entry.grids_played + '</span><span class="dg-lb-myrank-lbl">Grids</span></div>';
+        html += '<div class="dg-lb-myrank-stat"><span class="dg-lb-myrank-val">' + Number(entry.average_score || 0).toFixed(1) + '</span><span class="dg-lb-myrank-lbl">Avg</span></div>';
+        html += '<div class="dg-lb-myrank-stat"><span class="dg-lb-myrank-val">' + formatTime(entry.total_time) + '</span><span class="dg-lb-myrank-lbl">Time</span></div>';
+        if (entry.perfect_count > 0) {
+            html += '<div class="dg-lb-myrank-stat"><span class="dg-lb-myrank-val dg-val-lemon">' + entry.perfect_count + '</span><span class="dg-lb-myrank-lbl">Perfect</span></div>';
+        }
+        html += '</div>';
+        if (lbPeriod === 'daily' && entry.cell_results) {
+            html += '<div class="dg-lb-myrank-dots">' + renderMiniDots(entry.cell_results) + '</div>';
+        }
+        html += '</div>';
+        $lbMyRank.innerHTML = html;
+        $lbMyRank.style.display = '';
+    }
+
+    async function loadLeaderboard(reset) {
+        if (reset) {
+            lbOffset = 0;
+            lbHasMore = true;
+            $lbList.innerHTML = '';
+        }
+        if (!lbHasMore || lbLoadingMore) return;
+
+        lbLoadingMore = true;
+        if (lbOffset === 0) {
+            $lbLoading.style.display = '';
+            $lbEmpty.style.display = 'none';
+        }
+
+        var searchVal = $lbSearch.value.trim();
+        var params = {
+            p_period: lbPeriod,
+            p_limit: 100,
+            p_offset: lbOffset,
+            p_search: searchVal || null,
+            p_grid_date: lbPeriod === 'daily' && gridData ? gridData.grid_date : null
+        };
+
+        var res = await sb.schema('dailygrid').rpc('get_grid_leaderboard_v2', params);
+        lbLoadingMore = false;
+        $lbLoading.style.display = 'none';
+
+        if (res.error || !res.data) {
+            if (lbOffset === 0) {
+                $lbEmpty.textContent = 'Failed to load leaderboard';
+                $lbEmpty.style.display = '';
+            }
+            return;
+        }
+
+        var data = res.data;
+        var entries = data.entries || [];
+
+        // My rank card (only on first page, not during search)
+        if (lbOffset === 0 && !searchVal) {
+            renderMyRankCard(data.my_entry);
+        } else if (searchVal) {
+            $lbMyRank.style.display = 'none';
+        }
+
+        if (entries.length === 0 && lbOffset === 0) {
+            var emptyMsg = searchVal
+                ? 'No results for "' + esc(searchVal) + '"'
+                : lbPeriod === 'daily' ? 'No scores yet for this grid' : 'No scores yet this season';
+            $lbEmpty.textContent = emptyMsg;
+            $lbEmpty.style.display = '';
+            return;
+        }
+
+        entries.forEach(function(entry) {
+            $lbList.insertAdjacentHTML('beforeend', renderLbEntry(entry, false));
+        });
+
+        lbOffset += entries.length;
+        if (entries.length < 100) lbHasMore = false;
+    }
+
+    // Open/close leaderboard
+    function openLeaderboard() {
+        $lb.style.display = '';
+        setTimeout(function() { $lb.classList.add('open'); }, 10);
+        loadLeaderboard(true);
+    }
+
+    function closeLeaderboard() {
+        $lb.classList.remove('open');
+        setTimeout(function() { $lb.style.display = 'none'; }, 300);
+    }
+
+    document.getElementById('dg-leaderboard-btn').addEventListener('click', openLeaderboard);
+    document.querySelector('.dg-lb-backdrop').addEventListener('click', closeLeaderboard);
+    document.getElementById('dg-lb-close').addEventListener('click', closeLeaderboard);
+
+    // Tab switching
+    document.querySelectorAll('.dg-lb-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.dg-lb-tab').forEach(function(t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+            lbPeriod = tab.getAttribute('data-period');
+            $lbSearch.value = '';
+            loadLeaderboard(true);
+        });
+    });
+
+    // Search
+    $lbSearch.addEventListener('input', function() {
+        clearTimeout(lbSearchTimeout);
+        lbSearchTimeout = setTimeout(function() {
+            loadLeaderboard(true);
+        }, 300);
+    });
+
+    // Infinite scroll
+    $lbList.addEventListener('scroll', function() {
+        if ($lbList.scrollTop + $lbList.clientHeight >= $lbList.scrollHeight - 100) {
+            loadLeaderboard(false);
+        }
+    });
+
+    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    init();
+</script>
+
 </Layout>
 
-<style>
-    body {
+<style is:global>
+    body.dg-body {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 5rem 2rem 2rem;
+        padding: 5rem 1rem 2rem;
         padding-top: calc(5rem + env(safe-area-inset-top));
         padding-bottom: calc(2rem + env(safe-area-inset-bottom));
         overflow-x: hidden;
     }
 
-    .content {
-        width: 100%;
-        max-width: 500px;
+    .dg-center {
         text-align: center;
-        margin-top: auto;
-        margin-bottom: auto;
+        margin: auto;
     }
 
-    .page-title {
-        font-size: 2rem;
-        font-weight: 700;
+    .dg-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         margin-bottom: 0.5rem;
-        letter-spacing: -0.02em;
+        width: 100%;
+        max-width: 380px;
     }
 
-    .page-subtitle {
+    .dg-page-title {
+        font-family: 'Designer', sans-serif;
+        font-size: 2rem;
+        margin: 0;
+    }
+
+    .dg-title-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--glass-border);
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: background 0.15s;
+    }
+
+    .dg-title-btn:hover {
+        background: rgba(255,255,255,0.06);
+    }
+
+    .dg-title-btn img {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+    }
+
+    .dg-page-sub {
         color: var(--text-secondary);
-        font-size: 1rem;
         margin-bottom: 2rem;
     }
 
-    .btn-signin {
-        display: inline-block;
-        padding: 0.875rem 2.5rem;
-        background: var(--accent);
-        color: #000;
-        font-family: inherit;
-        font-size: 0.95rem;
+    /* Spinner */
+    .dg-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(255,255,255,0.1);
+        border-top: 3px solid #17E9FC;
+        border-radius: 50%;
+        animation: dg-spin 0.8s linear infinite;
+        margin: 4rem auto;
+    }
+    @keyframes dg-spin { to { transform: rotate(360deg); } }
+
+    /* Game */
+    #dg-game {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Status Bar */
+    .dg-status {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .dg-stat {
+        font-size: 0.85rem;
         font-weight: 600;
-        border: none;
-        border-radius: 12px;
+        padding: 0.4rem 0.75rem;
+        border-radius: 100px;
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .dg-stat-icon {
+        width: 14px;
+        height: 14px;
+        object-fit: contain;
+        display: block;
+    }
+
+    .dg-correct { color: #F0FF1E; border-color: rgba(240,255,30,0.3); }
+    .dg-wrong { color: #FF1F6D; border-color: rgba(255,31,109,0.3); }
+    .dg-remaining { color: #17E9FC; border-color: rgba(23,233,252,0.3); }
+
+    /* Grid */
+    .dg-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        width: 100%;
+        max-width: 380px;
+    }
+
+    /* Headers */
+    .dg-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 4px;
+        overflow: hidden;
+    }
+
+    .dg-header img {
+        width: 70px;
+        height: 70px;
+        max-width: 70px;
+        max-height: 70px;
+        object-fit: contain;
+        display: block;
+    }
+
+
+    .dg-h-threshold {
+        font-family: 'Designer', sans-serif;
+        font-size: 16px;
+        color: #17E9FC;
+        line-height: 1.2;
+    }
+
+    .dg-h-stat {
+        font-family: 'Designer', sans-serif;
+        font-size: 12px;
+        color: #fff;
+        text-transform: uppercase;
+        line-height: 1.2;
+    }
+
+    .dg-h-scope {
+        font-size: 10px;
+        color: rgba(255,255,255,0.5);
+        line-height: 1.2;
+    }
+
+    .dg-header-text {
+        font-family: 'Designer', sans-serif;
+        font-size: 12px;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    /* Cells */
+    .dg-cell {
+        aspect-ratio: 1;
+        border-radius: 22px;
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: all 0.2s;
+        cursor: default;
+        overflow: hidden;
+        min-width: 0;
+    }
+
+    .dg-cell.dg-empty {
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 24px var(--accent-glow);
+    }
+
+    .dg-cell.dg-empty:hover {
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.15);
+    }
+
+    .dg-plus {
+        font-size: 1.5rem;
+        color: var(--text-muted);
+        font-weight: 300;
+    }
+
+    .dg-correct-cell {
+        border-color: #F0FF1E;
+        background: rgba(240,255,30,0.25);
+    }
+
+    .dg-wrong-cell {
+        border-color: rgba(255,31,109,0.4);
+        background: rgba(255,31,109,0.06);
+    }
+
+    .dg-initials {
+        font-family: 'Designer', sans-serif;
+        font-size: 0.6rem;
+        color: #fff;
+        text-align: center;
+        padding: 0 4px;
+        word-break: normal;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .dg-x {
+        position: absolute;
+        font-family: 'Designer', sans-serif;
+        font-size: 1.5rem;
+        color: #FF1F6D;
+        opacity: 0.7;
+    }
+
+    /* Cell Animations */
+    .dg-anim-correct {
+        animation: dg-bounce 0.3s ease;
+    }
+
+    .dg-anim-wrong {
+        animation: dg-shake 0.3s ease;
+    }
+
+    @keyframes dg-bounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes dg-shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-4px); }
+        75% { transform: translateX(4px); }
+    }
+
+    /* Creator attribution */
+    .dg-creator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 8px;
+    }
+
+    .dg-creator-by {
+        color: rgba(255,255,255,0.4);
+        font-size: 12px;
+    }
+
+    .dg-creator-avatar {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .dg-creator-avatar-fb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dg-creator-name {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Results */
+    .dg-results-card.glass-card {
+        margin-top: 1.5rem;
+        padding: 1.5rem 1.25rem 1rem;
+    }
+
+    .dg-results-top {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .dg-results-card .btn-primary {
+        padding: 0.65rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .dg-results-left {
+        text-align: left;
+    }
+
+    .dg-results-score {
+        font-family: 'Designer', sans-serif;
+        font-size: 3rem;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .dg-score-great { color: #F0FF1E; }
+    .dg-score-ok { color: #17E9FC; }
+    .dg-score-low { color: #FF1F6D; }
+
+    .dg-results-msg {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .dg-mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        width: 90px;
+        flex-shrink: 0;
+    }
+
+    .dg-mini-cell {
+        aspect-ratio: 1;
+        border-radius: 6px;
+    }
+
+    .dg-mini-correct { background: #F0FF1E; }
+    .dg-mini-wrong { background: #FF1F6D; }
+    .dg-mini-empty { background: rgba(255,255,255,0.1); }
+
+    .dg-share-msg {
+        color: var(--accent);
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        min-height: 0;
+        text-align: center;
+    }
+
+    /* Countdown */
+    .dg-countdown {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+
+    .dg-historical {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin-top: 1rem;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .dg-historical a {
+        color: var(--accent);
         text-decoration: none;
     }
 
-    .btn-signin:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 32px var(--accent-glow);
+    /* Search Modal */
+    #dg-search {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
     }
 
-    .hidden { display: none !important; }
+    .dg-search-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
 
-    .loading-spinner {
+    #dg-search.open .dg-search-backdrop {
+        opacity: 1;
+    }
+
+    .dg-search-sheet {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+        width: 100%;
+        max-width: 500px;
+        max-height: 80vh;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-bottom: none;
+        border-radius: 22px 22px 0 0;
+        padding: 0.75rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s ease;
+    }
+
+    #dg-search.open .dg-search-sheet {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    #dg-search-input {
+        height: 44px;
+        border-radius: 22px;
+    }
+
+    .dg-drag-handle {
+        width: 36px;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.2);
+        margin: 0 auto 0.75rem;
+    }
+
+    .dg-search-results {
+        overflow-y: auto;
+        flex: 1;
+        margin-top: 0.75rem;
+    }
+
+    .dg-player-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.625rem 0.75rem;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.15s;
+        margin-bottom: 0.375rem;
+        text-align: left;
+        color: inherit;
+        font-family: inherit;
+    }
+
+    .dg-player-card:hover {
+        background: rgba(255,255,255,0.06);
+    }
+
+    .dg-player-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: rgba(255,255,255,0.05);
+        gap: 1px;
+    }
+
+    .dg-avatar-initials {
+        font-family: 'Designer', sans-serif;
+        font-size: 0.7rem;
+        color: #fff;
+        line-height: 1;
+    }
+
+    .dg-avatar-number {
+        font-size: 0.55rem;
+        color: rgba(255,255,255,0.5);
+        line-height: 1;
+    }
+
+    .dg-player-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .dg-player-meta {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    /* Info Drawer */
+    #dg-info {
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+    }
+
+    .dg-info-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+
+    #dg-info.open .dg-info-backdrop {
+        opacity: 1;
+    }
+
+    .dg-info-sheet {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+        width: 100%;
+        max-width: 500px;
+        max-height: 85vh;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-bottom: none;
+        border-radius: 22px 22px 0 0;
+        padding: 0.75rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s ease;
+    }
+
+    #dg-info.open .dg-info-sheet {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .dg-info-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .dg-info-icon {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+    }
+
+    .dg-info-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+        flex: 1;
+    }
+
+    .dg-info-close {
         width: 32px;
         height: 32px;
-        border: 3px solid rgba(255, 255, 255, 0.1);
-        border-top: 3px solid var(--accent);
         border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin: 4rem auto;
+        border: 1px solid var(--glass-border);
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+        font-size: 1.2rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 0 2px 0;
     }
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+    .dg-info-scroll {
+        overflow-y: auto;
+        flex: 1;
+        padding-bottom: 1rem;
     }
 
-    @media (max-width: 480px) {
-        body { padding: 6rem 1rem 1rem; }
+    .dg-info-welcome {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .dg-welcome-sub {
+        display: block;
+        font-family: 'Designer', sans-serif;
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 4px;
+    }
+
+    .dg-welcome-main {
+        display: block;
+        font-family: 'Designer', sans-serif;
+        font-size: 2rem;
+        color: #17E9FC;
+        letter-spacing: 6px;
+    }
+
+    .dg-info-heading {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #17E9FC;
+        margin: 1.25rem 0 0.5rem;
+    }
+
+    .dg-info-text {
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.7);
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+    }
+
+    .dg-step-card {
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        margin-bottom: 0.5rem;
+    }
+
+    .dg-step-num {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(23,233,252,0.2);
+        color: #17E9FC;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .dg-step-title {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 0.25rem;
+    }
+
+    .dg-step-desc {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.55);
+        line-height: 1.4;
+    }
+
+    .dg-info-card {
+        padding: 0.75rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        margin-bottom: 0.5rem;
+    }
+
+    .dg-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.35rem 0;
+        font-size: 0.85rem;
+        color: rgba(255,255,255,0.7);
+    }
+
+    .dg-val-blue { font-weight: 600; color: #17E9FC; }
+    .dg-val-lemon { font-weight: 600; color: #F0FF1E; }
+
+    .dg-info-note {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.45);
+        line-height: 1.4;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+
+    .dg-cat-row {
+        padding: 0.4rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .dg-cat-row:last-child {
+        border-bottom: none;
+    }
+
+    .dg-cat-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .dg-cat-desc {
+        display: block;
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.45);
+        line-height: 1.3;
+    }
+
+    .dg-league-examples {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .dg-league-ex {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .dg-league-ex-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    .dg-league-ex-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dg-league-ex-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .dg-league-ex-desc {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.4);
+    }
+
+    .dg-info-got-it {
+        display: block;
+        margin: 1.5rem auto 0;
+        padding: 0.5rem 2.5rem;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        color: #17E9FC;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .dg-info-got-it:hover {
+        background: rgba(255,255,255,0.1);
+    }
+
+    /* ── Valid Players Drawer ── */
+    #dg-valid {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+    }
+
+    .dg-valid-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+
+    #dg-valid.open .dg-valid-backdrop {
+        opacity: 1;
+    }
+
+    .dg-valid-sheet {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+        width: 100%;
+        max-width: 500px;
+        max-height: 70vh;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-bottom: none;
+        border-radius: 22px 22px 0 0;
+        padding: 0.75rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s ease;
+    }
+
+    #dg-valid.open .dg-valid-sheet {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .dg-valid-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .dg-valid-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #17E9FC;
+        flex: 1;
+    }
+
+    .dg-valid-count {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.35);
+        margin-bottom: 0.75rem;
+    }
+
+    .dg-valid-list {
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding-bottom: 2rem;
+    }
+
+    .dg-valid-card {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.65rem;
+        background: rgba(255,255,255,0.05);
+        border-radius: 14px;
+    }
+
+    .dg-valid-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .dg-valid-initials {
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(255,255,255,0.7);
+        line-height: 1;
+    }
+
+    .dg-valid-num {
+        font-size: 9px;
+        font-weight: 600;
+        color: rgba(255,255,255,0.35);
+        line-height: 1;
+        margin-top: 2px;
+    }
+
+    .dg-valid-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dg-valid-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .dg-valid-pos {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.5);
+    }
+
+    .dg-valid-jersey {
+        font-size: 1rem;
+        font-weight: 700;
+        color: rgba(255,255,255,0.2);
+    }
+
+    /* ── Leaderboard Drawer ── */
+    #dg-lb {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+    }
+
+    .dg-lb-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+
+    #dg-lb.open .dg-lb-backdrop {
+        opacity: 1;
+    }
+
+    .dg-lb-sheet {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+        width: 100%;
+        max-width: 500px;
+        max-height: 85vh;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-bottom: none;
+        border-radius: 22px 22px 0 0;
+        padding: 0.75rem 1rem 0;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.25s ease;
+    }
+
+    #dg-lb.open .dg-lb-sheet {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .dg-lb-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .dg-lb-icon {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+    }
+
+    .dg-lb-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+        flex: 1;
+    }
+
+    .dg-lb-tabs {
+        display: flex;
+        gap: 4px;
+        padding: 3px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 22px;
+        margin-bottom: 0.75rem;
+    }
+
+    .dg-lb-tab {
+        flex: 1;
+        height: 36px;
+        border: none;
+        background: transparent;
+        border-radius: 18px;
+        color: rgba(255,255,255,0.5);
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .dg-lb-tab.active {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+    }
+
+    .dg-lb-search-row {
+        margin-bottom: 0.75rem;
+    }
+
+    .dg-lb-search-row .form-input {
+        height: 40px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+
+    /* My rank card */
+    .dg-lb-myrank-card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .dg-lb-myrank-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .dg-lb-myrank-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.5);
+    }
+
+    .dg-lb-myrank-rank {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #17E9FC;
+    }
+
+    .dg-lb-myrank-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .dg-lb-myrank-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        min-width: 50px;
+    }
+
+    .dg-lb-myrank-val {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .dg-lb-myrank-lbl {
+        font-size: 0.65rem;
+        color: rgba(255,255,255,0.4);
+        margin-top: 2px;
+    }
+
+    .dg-lb-myrank-dots {
+        display: flex;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+
+    /* Entry list */
+    .dg-lb-list {
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding-bottom: 2rem;
+        min-height: 0;
+    }
+
+    .dg-lb-entry {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.5rem 0.6rem;
+        background: rgba(255,255,255,0.04);
+        border-radius: 14px;
+        flex-shrink: 0;
+    }
+
+    .dg-lb-entry-me {
+        border: 1px solid rgba(23,233,252,0.2);
+    }
+
+    .dg-lb-rank {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #17E9FC;
+        min-width: 32px;
+        text-align: center;
+    }
+
+    .dg-lb-avatar-wrap {
+        flex-shrink: 0;
+    }
+
+    .dg-lb-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .dg-lb-avatar-fb {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dg-lb-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dg-lb-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dg-lb-name-own {
+        color: #17E9FC;
+    }
+
+    .dg-lb-stats {
+        font-size: 0.7rem;
+        color: rgba(255,255,255,0.4);
+    }
+
+    .dg-lb-score {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #F0FF1E;
+        min-width: 28px;
+        text-align: center;
+    }
+
+    /* Mini dots */
+    .dg-lb-dots {
+        display: grid;
+        grid-template-columns: repeat(3, 8px);
+        grid-template-rows: repeat(3, 8px);
+        gap: 3px;
+        flex-shrink: 0;
+    }
+
+    .dg-lb-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .dg-dot-correct { background: #F0FF1E; }
+    .dg-dot-wrong { background: #FF1F6D; }
+    .dg-dot-empty { background: rgba(255,255,255,0.15); }
+
+    .dg-lb-loading {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .dg-lb-empty {
+        text-align: center;
+        color: rgba(255,255,255,0.4);
+        font-size: 0.85rem;
+        padding: 2rem 1rem;
+    }
+
+    @media (max-width: 400px) {
+        .dg-grid {
+            gap: 4px;
+        }
+
+        .dg-header img { width: 50px !important; height: 50px !important; max-width: 50px !important; max-height: 50px !important; }
+        .dg-h-threshold { font-size: 14px; }
+        .dg-h-stat { font-size: 10px; }
+        .dg-h-scope { font-size: 9px; }
     }
 </style>

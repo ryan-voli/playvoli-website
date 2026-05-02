@@ -1,0 +1,398 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Creators Court - VOLI"
+  description="The all-in-one platform for volleyball content creators. Analytics, fan engagement tools, game prep dashboards, article publishing, and live data APIs."
+  ogUrl="https://playvoli.com/creatorscourt"
+  skipSupabase
+  skipNavAuth
+>
+    <main class="cc-page">
+        <div class="card">
+
+        <!-- Hero -->
+        <section class="cc-hero">
+            <div class="cc-hero-icon">
+                <img src="/images/icons/creatorscourt.png" alt="" class="cc-hero-img">
+            </div>
+            <h1 class="cc-title">Creators Court</h1>
+            <p class="cc-subtitle">The all-in-one platform for volleyball podcasters, bloggers, and content creators.</p>
+            <div class="cc-badge">In Development</div>
+        </section>
+
+        <!-- What is it -->
+        <section class="cc-section">
+            <div class="cc-section-label">What Is It?</div>
+            <p class="cc-section-text">Creators Court is where volleyball content creators get the tools they need to grow their audience and make better content. Whether you're running a podcast, writing a blog, or building a YouTube channel — Creators Court gives you analytics, fan engagement features, game prep tools, and access to the most reliable volleyball data available.</p>
+        </section>
+
+        <!-- Analytics -->
+        <section class="cc-section">
+            <div class="cc-section-label">Creator Analytics</div>
+            <p class="cc-section-text">A media-kit-ready analytics dashboard built for volleyball creators.</p>
+            <div class="cc-features">
+                <div class="cc-feature">
+                    <img src="/images/icons/analytics.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Audience Insights</strong>
+                        <span>Track plays, unique listeners, completions, favorites, loves, and shares across all your content.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/content_opt.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Episode Breakdown</strong>
+                        <span>Per-episode analytics showing exactly what's resonating with your audience and what's not.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/leaderboard.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Data Dashboard</strong>
+                        <span>Scores, standings, schedules, and detailed volleyball data organized and ready for your content.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Engagement Tools -->
+        <section class="cc-section">
+            <div class="cc-section-label">Fan Engagement Tools</div>
+            <p class="cc-section-text">Build a loyal fanbase with interactive features that keep your audience coming back.</p>
+            <div class="cc-features">
+                <div class="cc-feature">
+                    <img src="/images/icons/fantasy_opt.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Official Fantasy Leagues</strong>
+                        <span>Create branded fantasy leagues tied to your show. Give your audience a reason to stay engaged all season.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/chat.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Ask Me Anything</strong>
+                        <span>Host live AMA sessions where fans submit questions for athletes and guests on your show.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/thisorthat.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>This or That</strong>
+                        <span>Run fan polls where your audience picks between players, teams, and scenarios — then discuss the results on air.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Prep & Data -->
+        <section class="cc-section">
+            <div class="cc-section-label">Game Prep & Data</div>
+            <p class="cc-section-text">Never scramble for stats again. Everything you need to prepare for game coverage, all in one place.</p>
+            <div class="cc-features">
+                <div class="cc-feature">
+                    <img src="/images/icons/games_opt.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Game Details Dashboard</strong>
+                        <span>Schedules, lineups, head-to-head records, and matchup history — ready before tip-off.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/statistics_opt.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Reliable Statistics</strong>
+                        <span>Access the same detailed stats that power the Voli app — attack efficiency, serve percentages, rotation data, and more.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/profile.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Player & Team Profiles</strong>
+                        <span>Quick-reference profiles with season stats, transaction history, and performance trends.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Publishing & APIs -->
+        <section class="cc-section">
+            <div class="cc-section-label">Publishing & APIs</div>
+            <p class="cc-section-text">Bring Voli's data to your own platform, or publish directly to ours.</p>
+            <div class="cc-features">
+                <div class="cc-feature">
+                    <img src="/images/icons/edit.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Interactive Articles</strong>
+                        <span>Write and publish articles on Voli with embedded live stats, player cards, and interactive elements.</span>
+                    </div>
+                </div>
+                <div class="cc-feature">
+                    <img src="/images/icons/share.png" alt="" class="cc-feature-icon">
+                    <div>
+                        <strong>Voli Data APIs</strong>
+                        <span>Pull live scores, stats, standings, and player data directly into your own blog or website with our API.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Who is it for -->
+        <section class="cc-section">
+            <div class="cc-section-label">Who Is It For?</div>
+            <div class="cc-audience-grid">
+                <div class="cc-audience-card">
+                    <strong>Podcasters</strong>
+                    <span>Analytics, AMA sessions, fan engagement tools, and game prep data to elevate your show.</span>
+                </div>
+                <div class="cc-audience-card">
+                    <strong>Bloggers & Writers</strong>
+                    <span>Publish interactive articles on Voli or use our APIs to bring live data to your own site.</span>
+                </div>
+                <div class="cc-audience-card">
+                    <strong>YouTubers & Streamers</strong>
+                    <span>Reliable stats and game details for pre-show research and on-air reference.</span>
+                </div>
+                <div class="cc-audience-card">
+                    <strong>Community Builders</strong>
+                    <span>Fantasy leagues, polls, and AMAs to keep your community active and engaged all season.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cc-cta">
+            <p>Interested in joining Creators Court?</p>
+            <a href="/contact" class="cc-cta-btn">Get in Touch</a>
+        </section>
+
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .cc-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .card {
+        width: 100%;
+        max-width: 800px;
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    /* Hero */
+    .cc-hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .cc-hero-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: #17E9FC;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+    }
+
+    .cc-hero-img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+    }
+
+    .cc-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .cc-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        max-width: 500px;
+        margin: 0 auto 1rem;
+        line-height: 1.5;
+    }
+
+    .cc-badge {
+        display: inline-block;
+        padding: 0.3rem 0.9rem;
+        border-radius: 100px;
+        background: rgba(23, 233, 252, 0.12);
+        color: var(--electric-blue);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    /* Sections */
+    .cc-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .cc-section:last-of-type {
+        margin-bottom: 2rem;
+    }
+
+    .cc-section-label {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .cc-section-text {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.8;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    /* Features */
+    .cc-features {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .cc-feature {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+
+    .cc-feature-icon {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .cc-feature strong {
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.1rem;
+    }
+
+    .cc-feature span {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Audience grid */
+    .cc-audience-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .cc-audience-card {
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+
+    .cc-audience-card strong {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .cc-audience-card span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    /* CTA */
+    .cc-cta {
+        text-align: center;
+    }
+
+    .cc-cta p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .cc-cta-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .cc-cta-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        background: var(--electric-blue);
+        color: #000;
+    }
+
+    .cc-cta-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .cc-cta-btn--outline {
+        background: transparent;
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+    }
+
+    .cc-cta-btn--outline:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+        .cc-page { padding: 6rem 1rem 1rem; }
+        .card { padding: 2rem 1.5rem; border-radius: 20px; }
+        .cc-title { font-size: 1.5rem; }
+        .cc-section-text { font-size: 0.95rem; }
+        .cc-audience-grid { grid-template-columns: 1fr; }
+    }
+</style>

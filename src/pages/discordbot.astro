@@ -1,0 +1,684 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Discord Bot - VOLI"
+  description="Add the Voli Discord bot to your server for fantasy leaderboards, live scores, stat leaders, transaction tracking, record alerts, and more."
+  ogUrl="https://playvoli.com/discordbot"
+  skipSupabase
+  skipNavAuth
+>
+    <main class="bot-page">
+        <div class="card">
+
+        <!-- Hero -->
+        <section class="bot-hero">
+            <div class="bot-hero-icon">
+                <img src="/images/logo_dark.webp" alt="" class="bot-hero-voli">
+                <span class="bot-hero-x">&times;</span>
+                <svg class="bot-hero-discord" width="44" height="44" viewBox="0 0 24 24" fill="white">
+                    <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
+                </svg>
+            </div>
+            <h1 class="bot-title">Voli Discord Bot</h1>
+            <p class="bot-subtitle">Bring pro volleyball stats, fantasy leagues, live scores, and more directly into your Discord server.</p>
+            <a href="https://discord.com/oauth2/authorize?client_id=1422381975947182203&permissions=2147567616&integration_type=0&scope=applications.commands+bot"
+               target="_blank"
+               class="bot-add-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                    <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
+                </svg>
+                Add to Discord
+            </a>
+        </section>
+
+        <!-- Features overview -->
+        <section class="bot-features">
+            <div class="bot-features-grid">
+                <div class="bot-feature-card">
+                    <div class="bot-feature-icon-wrap"><img src="/images/icons/fantasy_opt.png" alt="" class="bot-feature-img"></div>
+                    <strong>Fantasy Leagues</strong>
+                    <span>Link your Voli fantasy league, view leaderboards, and get weekly standings posted automatically.</span>
+                </div>
+                <div class="bot-feature-card">
+                    <div class="bot-feature-icon-wrap"><img src="/images/icons/games_opt.png" alt="" class="bot-feature-img"></div>
+                    <strong>Live Scores</strong>
+                    <span>Check live games, upcoming matchups, and recent results for MLV and LOVB.</span>
+                </div>
+                <div class="bot-feature-card">
+                    <div class="bot-feature-icon-wrap"><img src="/images/icons/statistics_opt.png" alt="" class="bot-feature-img"></div>
+                    <strong>Stat Leaders</strong>
+                    <span>Look up top 10 statistical leaders across kills, aces, digs, blocks, assists, and efficiency.</span>
+                </div>
+                <div class="bot-feature-card">
+                    <div class="bot-feature-icon-wrap"><img src="/images/icons/trade.png" alt="" class="bot-feature-img"></div>
+                    <strong>Transaction Tracking</strong>
+                    <span>Auto-post player signings, releases, and trades the moment they happen.</span>
+                </div>
+                <div class="bot-feature-card">
+                    <div class="bot-feature-icon-wrap"><img src="/images/icons/book.png" alt="" class="bot-feature-img"></div>
+                    <strong>Record Alerts</strong>
+                    <span>Get notified when new league records are set for any stat category.</span>
+                </div>
+                <div class="bot-feature-card">
+                    <div class="bot-feature-icon-wrap"><img src="/images/icons/notification.png" alt="" class="bot-feature-img"></div>
+                    <strong>Lineup Reminders</strong>
+                    <span>Automatic reminders before games start so your league never misses a lineup.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Automated Features -->
+        <section class="bot-section">
+            <h2 class="bot-section-title">Automated Features</h2>
+            <p class="bot-section-desc">Set it and forget it. The bot handles these automatically once configured.</p>
+            <div class="bot-auto-grid">
+                <div class="bot-auto-card">
+                    <div class="bot-auto-badge">Mondays</div>
+                    <strong>Weekly Leaderboards</strong>
+                    <span>Posts your fantasy league standings every Monday at your chosen time. Shows top 5 overall and top 5 from the previous round, with Discord mentions for managers in your server.</span>
+
+                </div>
+                <div class="bot-auto-card">
+                    <div class="bot-auto-badge">Real-time</div>
+                    <strong>Transaction Feed</strong>
+                    <span>Automatically posts new player transactions as they happen — signings, releases, trades, and more.</span>
+                </div>
+                <div class="bot-auto-card">
+                    <div class="bot-auto-badge">Real-time</div>
+                    <strong>Record Notifications</strong>
+                    <span>When a new league record is set, the bot posts it automatically. Covers all stat categories for both MLV and LOVB.</span>
+                </div>
+                <div class="bot-auto-card">
+                    <div class="bot-auto-badge">Pre-game</div>
+                    <strong>Lineup Reminders</strong>
+                    <span>Sends a reminder before games start, tagging managers with incomplete rosters so they don't miss their lineup.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Commands Documentation -->
+        <section class="bot-section">
+            <h2 class="bot-section-title">Commands</h2>
+            <p class="bot-section-desc">All slash commands available in the bot.</p>
+
+            <div class="bot-cmd-tabs">
+                <button class="bot-cmd-tab active" data-tab="public">Public</button>
+                <button class="bot-cmd-tab" data-tab="admin">Admin</button>
+            </div>
+
+            <!-- Public Commands -->
+            <div class="bot-cmd-panel" id="bot-cmd-public">
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Fantasy League</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy leaderboard</div>
+                        <div class="bot-cmd-desc">View the top 10 fantasy teams in your linked league with current standings and point totals.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy join</div>
+                        <div class="bot-cmd-desc">Get the direct link to join the server's linked fantasy league in the Voli app.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy reminder-test</div>
+                        <div class="bot-cmd-desc">Preview what the lineup reminder embed looks like. Shows standings and incomplete rosters.</div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Games</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/games upcoming <span class="bot-param-opt">[league]</span></div>
+                        <div class="bot-cmd-desc">Show the next 5 upcoming games with dates, times, and stream info.</div>
+                        <div class="bot-cmd-params">
+                            <code>league</code> — MLV or LOVB (optional, shows all if omitted)
+                        </div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/games results <span class="bot-param-opt">[league]</span></div>
+                        <div class="bot-cmd-desc">Show the last 5 completed games with final scores and set-by-set breakdowns.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/games live <span class="bot-param-opt">[league]</span></div>
+                        <div class="bot-cmd-desc">Show any games currently in progress with live set scores.</div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Pro League</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/standings <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">View current season standings with W-L record, set record, and points.</div>
+                        <div class="bot-cmd-params">
+                            <code>league</code> — MLV or LOVB
+                        </div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/team roster <span class="bot-param">&lt;league&gt;</span> <span class="bot-param">&lt;team&gt;</span></div>
+                        <div class="bot-cmd-desc">View a team's full roster with jersey numbers and positions.</div>
+                        <div class="bot-cmd-params">
+                            <code>team</code> — Autocomplete with team abbreviations
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Statistics</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/stat leaders <span class="bot-param">&lt;category&gt;</span> <span class="bot-param">&lt;league&gt;</span> <span class="bot-param">&lt;stat-type&gt;</span> <span class="bot-param-opt">[calc-type]</span> <span class="bot-param-opt">[year]</span></div>
+                        <div class="bot-cmd-desc">View the top 10 statistical leaders for any stat category.</div>
+                        <div class="bot-cmd-params">
+                            <code>category</code> — Player or Team<br>
+                            <code>stat-type</code> — Aces, Kills, Digs, Assists, Blocks, Efficiency<br>
+                            <code>calc-type</code> — Total (default) or Per Set<br>
+                            <code>year</code> — Season year (default: current)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Records</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/records lookup <span class="bot-param">&lt;league&gt;</span> <span class="bot-param">&lt;entity&gt;</span> <span class="bot-param">&lt;scope&gt;</span> <span class="bot-param">&lt;stat&gt;</span> <span class="bot-param-opt">[sets]</span></div>
+                        <div class="bot-cmd-desc">Look up records for a specific stat, scope, and entity type.</div>
+                        <div class="bot-cmd-params">
+                            <code>entity</code> — Player or Team<br>
+                            <code>scope</code> — Set, Game, Season, or All-Time<br>
+                            <code>stat</code> — Points, Kills, Blocks, Aces, Assists, Digs, Perfect Passes, Efficiency<br>
+                            <code>sets</code> — For game scope: 3, 4, or 5 set games
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Info</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/help</div>
+                        <div class="bot-cmd-desc">Show all available commands organized by category.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Admin Commands -->
+            <div class="bot-cmd-panel" id="bot-cmd-admin" style="display:none">
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Fantasy League</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy link-league <span class="bot-param">&lt;join-code&gt;</span></div>
+                        <div class="bot-cmd-desc">Link a Voli fantasy league to this Discord server using the league's join code.</div>
+                        <div class="bot-cmd-params">
+                            <code>join-code</code> — Found in the Voli app's league invite modal
+                        </div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy setup-channel <span class="bot-param">&lt;channel&gt;</span></div>
+                        <div class="bot-cmd-desc">Set which Discord channel receives weekly leaderboard updates and lineup reminders.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy set-time <span class="bot-param">&lt;time&gt;</span> <span class="bot-param-opt">[timezone]</span></div>
+                        <div class="bot-cmd-desc">Customize when Monday leaderboard updates are posted.</div>
+                        <div class="bot-cmd-params">
+                            <code>time</code> — HH:MM format (e.g., 10:00)<br>
+                            <code>timezone</code> — ET, CT, MT, PT, AZ, AK, or HI (default: CT)
+                        </div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/fantasy unlink</div>
+                        <div class="bot-cmd-desc">Disconnect the linked fantasy league from this server. Can be re-linked later.</div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Transactions</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/transactions enable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">Enable automatic transaction posting. New player signings, releases, and trades will be posted as they happen.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/transactions disable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">Stop posting transaction updates to the specified channel.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/transactions sync <span class="bot-param-opt">[integration_id]</span></div>
+                        <div class="bot-cmd-desc">Sync transaction messages — updates edited transactions and removes deleted ones from Discord.</div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Records</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/records enable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">Enable record break notifications. Posts when new league records are set.</div>
+                        <div class="bot-cmd-params">
+                            <code>league</code> — MLV, LOVB, or Both
+                        </div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/records disable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">Stop posting record notifications to the specified channel.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/records populate <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">Post all existing records to the current channel. Useful for backfilling a records channel.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/records test <span class="bot-param">&lt;league&gt;</span></div>
+                        <div class="bot-cmd-desc">Post the 5 most recent records to test formatting in the current channel.</div>
+                    </div>
+                </div>
+
+                <div class="bot-cmd-group">
+                    <h3 class="bot-cmd-group-title">Settings</h3>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/settings allow-channel <span class="bot-param">&lt;channel&gt;</span></div>
+                        <div class="bot-cmd-desc">Enable the bot to respond to commands in a specific channel.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/settings block-channel <span class="bot-param">&lt;channel&gt;</span></div>
+                        <div class="bot-cmd-desc">Disable the bot in a specific channel.</div>
+                    </div>
+                    <div class="bot-cmd">
+                        <div class="bot-cmd-name">/settings list-channels</div>
+                        <div class="bot-cmd-desc">View all channels where the bot is currently enabled.</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="bot-cta">
+            <p>Ready to bring Voli to your server?</p>
+            <a href="https://discord.com/oauth2/authorize?client_id=1422381975947182203&permissions=2147567616&integration_type=0&scope=applications.commands+bot"
+               target="_blank"
+               class="bot-add-btn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                    <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
+                </svg>
+                Add to Discord
+            </a>
+        </section>
+
+        </div>
+    </main>
+</Layout>
+
+<script is:inline>
+(function() {
+    var tabs = document.querySelectorAll('.bot-cmd-tab');
+    var panels = document.querySelectorAll('.bot-cmd-panel');
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            tabs.forEach(function(t) { t.classList.remove('active'); });
+            panels.forEach(function(p) { p.style.display = 'none'; });
+            tab.classList.add('active');
+            document.getElementById('bot-cmd-' + tab.dataset.tab).style.display = 'block';
+        });
+    });
+})();
+</script>
+
+<style>
+    .bot-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .card {
+        width: 100%;
+        max-width: 800px;
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    /* Hero */
+    .bot-hero {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .bot-hero-icon {
+        height: 80px;
+        border-radius: 20px;
+        background: #5865F2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0 1.5rem;
+        margin: 0 auto 1.25rem;
+    }
+
+    .bot-hero-voli {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .bot-hero-x {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 300;
+        line-height: 1;
+        opacity: 0.7;
+    }
+
+    .bot-hero-discord {
+        width: 44px;
+        height: 44px;
+    }
+
+    .bot-title {
+        font-size: 2.25rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .bot-subtitle {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        max-width: 500px;
+        margin: 0 auto 1.5rem;
+        line-height: 1.5;
+    }
+
+    .bot-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #5865F2;
+        color: white;
+        padding: 0.85rem 1.75rem;
+        border-radius: 100px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .bot-add-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+
+    /* Features grid */
+    .bot-features {
+        margin-bottom: 3rem;
+    }
+
+    .bot-features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .bot-feature-card {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .bot-feature-icon-wrap {
+        margin-bottom: 0.25rem;
+    }
+
+    .bot-feature-img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+    }
+
+    .bot-feature-card strong {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .bot-feature-card span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    /* Section titles */
+    .bot-section {
+        margin-bottom: 3rem;
+    }
+
+    .bot-section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .bot-section-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+    }
+
+    .bot-cmd-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        margin-bottom: 2rem;
+        max-width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .bot-cmd-tab {
+        flex: 1;
+        padding: 0.5rem 1.25rem;
+        border: none;
+        background: none;
+        color: var(--text-muted);
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .bot-cmd-tab:hover {
+        color: var(--text-primary);
+    }
+
+    .bot-cmd-tab.active {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text-primary);
+    }
+
+    /* Automated features */
+    .bot-auto-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .bot-auto-card {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .bot-auto-badge {
+        display: inline-block;
+        width: fit-content;
+        padding: 0.15rem 0.6rem;
+        border-radius: 100px;
+        background: rgba(23, 233, 252, 0.12);
+        color: var(--electric-blue);
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.15rem;
+    }
+
+    .bot-auto-card strong {
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .bot-auto-card span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+
+    /* Command groups */
+    .bot-cmd-group {
+        margin-bottom: 2rem;
+    }
+
+    .bot-cmd-group-title {
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.75rem;
+    }
+
+    .bot-cmd {
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .bot-cmd-name {
+        color: var(--text-primary);
+        font-size: 0.88rem;
+        font-weight: 600;
+        font-family: 'SF Mono', 'Fira Code', monospace;
+        margin-bottom: 0.2rem;
+    }
+
+    .bot-param {
+        color: var(--electric-blue);
+        font-weight: 500;
+    }
+
+    .bot-param-opt {
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .bot-cmd-desc {
+        color: var(--text-secondary);
+        font-size: 0.82rem;
+        line-height: 1.4;
+    }
+
+    .bot-cmd-params {
+        margin-top: 0.4rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        line-height: 1.6;
+    }
+
+    .bot-cmd-params code {
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    /* CTA */
+    .bot-cta {
+        text-align: center;
+        padding: 2.5rem 2rem;
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        margin-bottom: 0;
+    }
+
+    .bot-cta p {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+        .bot-page {
+            padding: 6rem 1rem 1rem;
+        }
+
+        .card {
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+        }
+
+        .bot-title {
+            font-size: 1.75rem;
+        }
+
+        .bot-features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .bot-auto-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .bot-cmd-name {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .bot-features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>

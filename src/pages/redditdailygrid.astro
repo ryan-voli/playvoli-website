@@ -1,0 +1,442 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Reddit Daily Grid - VOLI"
+  description="Play the Voli Daily Grid on Reddit. A daily volleyball trivia puzzle where you match players to category clues in a 3x3 grid."
+  ogUrl="https://playvoli.com/redditdailygrid"
+  skipSupabase
+  skipNavAuth
+>
+    <main class="rdg-page">
+        <div class="card">
+
+        <!-- Hero -->
+        <section class="rdg-hero">
+            <div class="rdg-hero-icon">
+                <img src="/images/icons/dailygrid.png" alt="" class="rdg-hero-img">
+                <span class="rdg-hero-x">&times;</span>
+                <svg class="rdg-hero-reddit" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.561-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+            </div>
+            <h1 class="rdg-title">Voli Daily Grid on Reddit</h1>
+            <p class="rdg-subtitle">The fan favorite daily volleyball trivia puzzle — now playable directly inside Reddit.</p>
+            <div class="rdg-badge">Pending Reddit Approval</div>
+        </section>
+
+        <!-- What is it -->
+        <section class="rdg-section">
+            <div class="rdg-section-label">What Is It?</div>
+            <p class="rdg-section-text">The Voli Daily Grid is a 3x3 matching puzzle where you identify professional volleyball players based on row and column category clues. A new grid drops every day at midnight UTC. You get 9 guesses to fill all 9 cells — find a player that satisfies both the row and column category for each cell.</p>
+        </section>
+
+        <!-- How it works -->
+        <section class="rdg-section">
+            <div class="rdg-section-label">How It Works</div>
+            <div class="rdg-steps">
+                <div class="rdg-step">
+                    <div class="rdg-step-num">1</div>
+                    <div>
+                        <strong>Open the post</strong>
+                        <span>A new Daily Grid post is created automatically every day on the subreddit.</span>
+                    </div>
+                </div>
+                <div class="rdg-step">
+                    <div class="rdg-step-num">2</div>
+                    <div>
+                        <strong>Read the clues</strong>
+                        <span>Each row and column has a category — teams, stats, all-star appearances, draft rounds, and more.</span>
+                    </div>
+                </div>
+                <div class="rdg-step">
+                    <div class="rdg-step-num">3</div>
+                    <div>
+                        <strong>Pick your players</strong>
+                        <span>Tap a cell, search for a player, and submit your guess. Green means correct, red means wrong.</span>
+                    </div>
+                </div>
+                <div class="rdg-step">
+                    <div class="rdg-step-num">4</div>
+                    <div>
+                        <strong>Share your score</strong>
+                        <span>Post your results as a comment with one tap and see how you stack up on the leaderboard.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="rdg-section">
+            <div class="rdg-section-label">Category Types</div>
+            <div class="rdg-cat-grid">
+                <div class="rdg-cat-card">
+                    <strong>Team</strong>
+                    <span>Player must have been signed to that team (MLV or LOVB)</span>
+                </div>
+                <div class="rdg-cat-card">
+                    <strong>Statistics</strong>
+                    <span>Player must meet a statistical threshold for a game, season, or career</span>
+                </div>
+                <div class="rdg-cat-card">
+                    <strong>All Star</strong>
+                    <span>Player must have played in an All-Star match</span>
+                </div>
+                <div class="rdg-cat-card">
+                    <strong>League Champion</strong>
+                    <span>Player must have won a championship</span>
+                </div>
+                <div class="rdg-cat-card">
+                    <strong>Draft Round</strong>
+                    <span>Player must have been drafted in that round</span>
+                </div>
+            </div>
+            <p class="rdg-cat-note">Only statistics from US pro leagues (MLV and LOVB) count.</p>
+        </section>
+
+        <!-- Features -->
+        <section class="rdg-section">
+            <div class="rdg-section-label">Features</div>
+            <div class="rdg-features">
+                <div class="rdg-feature">
+                    <img src="/images/icons/dailygrid.png" alt="" class="rdg-feature-icon">
+                    <div>
+                        <strong>Daily Puzzles</strong>
+                        <span>A new grid every day with fresh category combinations.</span>
+                    </div>
+                </div>
+                <div class="rdg-feature">
+                    <img src="/images/icons/search.png" alt="" class="rdg-feature-icon">
+                    <div>
+                        <strong>Player Search</strong>
+                        <span>Search across hundreds of professional volleyball players by name or number.</span>
+                    </div>
+                </div>
+                <div class="rdg-feature">
+                    <img src="/images/icons/leaderboard.png" alt="" class="rdg-feature-icon">
+                    <div>
+                        <strong>Leaderboards</strong>
+                        <span>Daily and season leaderboards with rankings, averages, and perfect score counts.</span>
+                    </div>
+                </div>
+                <div class="rdg-feature">
+                    <img src="/images/icons/share.png" alt="" class="rdg-feature-icon">
+                    <div>
+                        <strong>Share Results</strong>
+                        <span>Post your score as a Reddit comment with a single tap.</span>
+                    </div>
+                </div>
+                <div class="rdg-feature">
+                    <img src="/images/icons/profile.png" alt="" class="rdg-feature-icon">
+                    <div>
+                        <strong>Account Linking</strong>
+                        <span>Link your Reddit account to Voli to sync your grid history and scores across platforms.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="rdg-cta">
+            <p>Also available on the web and in the Voli app.</p>
+            <div class="rdg-cta-links">
+                <a href="/dailygrid" class="rdg-cta-btn">Play on Web</a>
+                <a href="/mobileapp" class="rdg-cta-btn rdg-cta-btn--outline">Get the App</a>
+            </div>
+        </section>
+
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .rdg-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .card {
+        width: 100%;
+        max-width: 800px;
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    /* Hero */
+    .rdg-hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .rdg-hero-icon {
+        height: 80px;
+        border-radius: 20px;
+        background: #FF4500;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0 1.5rem;
+        margin: 0 auto 1.25rem;
+    }
+
+    .rdg-hero-img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+    }
+
+    .rdg-hero-x {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 300;
+        line-height: 1;
+        opacity: 0.7;
+    }
+
+    .rdg-hero-reddit {
+        width: 44px;
+        height: 44px;
+    }
+
+    .rdg-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .rdg-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        max-width: 500px;
+        margin: 0 auto 1rem;
+        line-height: 1.5;
+    }
+
+    .rdg-badge {
+        display: inline-block;
+        padding: 0.3rem 0.9rem;
+        border-radius: 100px;
+        background: rgba(255, 69, 0, 0.12);
+        color: #FF4500;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    /* Sections */
+    .rdg-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .rdg-section:last-of-type {
+        margin-bottom: 2rem;
+    }
+
+    .rdg-section-label {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .rdg-section-text {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.8;
+        text-align: center;
+    }
+
+    /* Steps */
+    .rdg-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .rdg-step {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+
+    .rdg-step-num {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(23, 233, 252, 0.12);
+        color: var(--electric-blue);
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .rdg-step strong {
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.1rem;
+    }
+
+    .rdg-step span {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Category grid */
+    .rdg-cat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .rdg-cat-card {
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+
+    .rdg-cat-card strong {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+
+    .rdg-cat-card span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .rdg-cat-note {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        text-align: center;
+        margin-top: 0.75rem;
+        opacity: 0.7;
+    }
+
+    /* Features */
+    .rdg-features {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .rdg-feature {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+
+    .rdg-feature-icon {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
+    .rdg-feature strong {
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.1rem;
+    }
+
+    .rdg-feature span {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    /* CTA */
+    .rdg-cta {
+        text-align: center;
+    }
+
+    .rdg-cta p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 1rem;
+    }
+
+    .rdg-cta-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .rdg-cta-btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        background: #FF4500;
+        color: #fff;
+        border: 1px solid #FF4500;
+    }
+
+    .rdg-cta-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .rdg-cta-btn--outline {
+        background: transparent;
+        border: 1px solid var(--glass-border);
+        color: var(--text-primary);
+    }
+
+    .rdg-cta-btn--outline:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Mobile */
+    @media (max-width: 480px) {
+        .rdg-page { padding: 6rem 1rem 1rem; }
+        .card { padding: 2rem 1.5rem; border-radius: 20px; }
+        .rdg-title { font-size: 1.5rem; }
+        .rdg-section-text { font-size: 0.95rem; }
+        .rdg-cat-grid { grid-template-columns: 1fr; }
+    }
+</style>

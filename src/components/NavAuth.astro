@@ -34,6 +34,7 @@
             }
 
             html += '<div class="avatar-dropdown" id="avatar-dropdown">'
+                + '<button onclick="navProfile()">Profile</button>'
                 + '<button onclick="navLogout()">Log Out</button></div></div>';
 
             el.innerHTML = html;
@@ -46,9 +47,13 @@
         if (dd) dd.classList.toggle('open');
     };
 
+    window.navProfile = function() {
+        window.location.href = '/profile';
+    };
+
     window.navLogout = function() {
         if (window._sbClient) {
-            window._sbClient.auth.signOut().then(function() {
+            window._sbClient.auth.signOut({ scope: 'local' }).then(function() {
                 window.location.reload();
             });
         }

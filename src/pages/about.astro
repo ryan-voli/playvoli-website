@@ -6,14 +6,44 @@ import Layout from '../layouts/Layout.astro';
   title="About - VOLI"
   description="Learn about VOLI's mission to revolutionize volleyball with fantasy leagues, live stats, and community features."
   activePage="about"
-  minimalFooter
 >
     <main class="card">
-        <h1 class="title">About</h1>
+        <h1 class="title">About VOLI</h1>
 
         <div class="section">
-            <div class="section-label">What is VOLI?</div>
-            <p class="section-text">VOLI is a feature-rich digital hub for US pro volleyball, seamlessly integrating contract-based fantasy gameplay, real-time game statistics and scores, dynamic community chat rooms, informative profiles for players and teams, your favorite volleyball podcasts, and interactive articles like you've never seen before in any sport. Our platform serves as a centralized ecosystem where fans can connect more with professional volleyball—from in-depth data and engaging fantasy competition to authentic community connection and premium volleyball content.</p>
+            <div class="section-label">Our Mission</div>
+            <p class="section-text">VOLI LLC is a volleyball technology company building the infrastructure that professional volleyball deserves. We believe volleyball has the talent, the competition, and the fanbase to compete with any major sport — it just needs the right technology ecosystem. We're building a foundation for the sport's digital future.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">What We Do</div>
+            <p class="section-text">We build products that connect fans more deeply with professional volleyball. From fantasy leagues and real-time statistics to community spaces and interactive games, everything we create is designed to elevate how people experience the sport. Our proprietary AI and deterministic algorithms power detailed analytics — like rotation tracking and play-by-play analysis — that go beyond what's available anywhere else.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Our Products</div>
+            <div class="products-grid">
+                <a href="/mobileapp" class="product-card">
+                    <img src="/images/appicon.webp" alt="" class="product-icon product-icon--rounded">
+                    <strong>Voli Mobile App</strong>
+                    <span>Fantasy leagues, live stats, community chat, podcasts, and more — all in one app.</span>
+                </a>
+                <a href="/discordbot" class="product-card">
+                    <svg class="product-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/></svg>
+                    <strong>Voli Discord Bot</strong>
+                    <span>Fantasy leaderboards, live scores, stat leaders, and transaction tracking for Discord servers.</span>
+                </a>
+                <a href="/redditdailygrid" class="product-card">
+                    <svg class="product-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.561-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                    <strong>Reddit Daily Grid</strong>
+                    <span>A daily volleyball trivia puzzle playable directly inside Reddit.</span>
+                </a>
+                <a href="/creatorscourt" class="product-card">
+                    <img src="/images/icons/creatorscourt.png" alt="" class="product-icon">
+                    <div class="product-title-row"><strong>Creators Court</strong><span class="product-badge">Coming Soon</span></div>
+                    <span>Analytics, engagement tools, and data APIs for volleyball content creators.</span>
+                </a>
+            </div>
         </div>
 
         <div class="section">
@@ -23,12 +53,7 @@ import Layout from '../layouts/Layout.astro';
 
         <div class="section">
             <div class="section-label">Data & Statistics</div>
-            <p class="section-text">The VOLI app uses publicly available statistical data and factual information about professional volleyball games, players, and teams. We apply proprietary AI and deterministic algorithms to derive detailed statistics and insights—like rotation tracking and play-by-play analysis—that go beyond the basic box score. All statistics, scores, and enhanced analytics are generated from publicly accessible sources using our own technology. We are committed to accuracy and transparency in how we present volleyball data to our community.</p>
-        </div>
-
-        <div class="section">
-            <div class="section-label">About VOLI LLC</div>
-            <p class="section-text">VOLI LLC is a volleyball technology company building the infrastructure that professional volleyball deserves. We believe volleyball has the talent, the competition, and the fanbase to compete with any major sport—it just needs the right technology ecosystem. Our work will span fan engagement, data analytics, and AI tools, all designed to elevate how people experience professional volleyball. We're building a foundation for the sport's digital future.</p>
+            <p class="section-text">Our products use publicly available statistical data and factual information about professional volleyball games, players, and teams. All statistics, scores, and enhanced analytics are generated from publicly accessible sources using our own technology. We are committed to accuracy and transparency in how we present volleyball data to our community.</p>
         </div>
     </main>
 </Layout>
@@ -99,10 +124,81 @@ import Layout from '../layouts/Layout.astro';
         text-align: center;
     }
 
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .product-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1.25rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .product-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .product-card strong {
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .product-card span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .product-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .product-badge {
+        padding: 0.15rem 0.5rem;
+        border-radius: 100px;
+        background: rgba(23, 233, 252, 0.12);
+        color: var(--electric-blue);
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        line-height: 1.4;
+    }
+
+    .product-icon {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+    }
+
+    .product-icon--rounded {
+        border-radius: 10px;
+    }
+
+    .product-icon-svg {
+        width: 40px;
+        height: 40px;
+    }
+
     @media (max-width: 480px) {
         body { padding: 6rem 1rem 1rem; }
         .card { padding: 2rem 1.5rem; border-radius: 20px; }
         .title { font-size: 1.5rem; }
         .section-text { font-size: 0.95rem; }
+        .products-grid { grid-template-columns: 1fr; }
     }
 </style>

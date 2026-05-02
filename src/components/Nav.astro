@@ -8,7 +8,7 @@ const { activePage = '' } = Astro.props;
 
 <div class="nav-container">
     <a href="/" class="nav-logo">
-        <img src="/images/logo_dark.webp" alt="VOLI">
+        <img src="/images/logo_dark_sm.webp" alt="VOLI">
         <span>Voli</span>
     </a>
 
@@ -17,7 +17,33 @@ const { activePage = '' } = Astro.props;
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
+        <button class="more-btn" id="more-btn">More</button>
     </nav>
+    <div class="more-dropdown" id="more-dropdown">
+        <div class="more-columns">
+            <div class="more-col">
+                <div class="more-col-title">Products</div>
+                <a href="/mobileapp">Mobile App</a>
+                <a href="/discordbot">Discord Bot</a>
+                <a href="/redditdailygrid">Reddit Daily Grid</a>
+                <a href="/creatorscourt">Creators Court</a>
+            </div>
+            <div class="more-col">
+                <a href="/partners" class="more-col-title-link"><div class="more-col-title">Partners</div></a>
+                <a href="/volleytalk">Volley Talk</a>
+                <a href="/courtcaptains">Court Captains</a>
+                <a href="/mlm">Major League Minute</a>
+            </div>
+            <div class="more-col">
+                <div class="more-col-title">Legal</div>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
+            </div>
+        </div>
+    </div>
+    <a href="/dailygrid" class="dg-circle-btn" aria-label="Daily Grid">
+        <img src="/images/icons/dailygrid.png" alt="" class="dg-circle-icon">
+    </a>
     <div class="download-pill desktop-pill" id="download-pill">Download</div>
 
     <!-- Mobile hamburger -->
@@ -45,6 +71,20 @@ const { activePage = '' } = Astro.props;
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
+        <div class="mobile-divider"></div>
+        <div class="mobile-section-title">Products</div>
+        <a href="/mobileapp">Mobile App</a>
+        <a href="/discordbot">Discord Bot</a>
+        <a href="/redditdailygrid">Reddit Daily Grid</a>
+        <a href="/creatorscourt">Creators Court</a>
+        <div class="mobile-section-title">Partners</div>
+        <a href="/partners">Partners</a>
+        <a href="/volleytalk">Volley Talk</a>
+        <a href="/courtcaptains">Court Captains</a>
+        <a href="/mlm">Major League Minute</a>
+        <div class="mobile-section-title">Legal</div>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
     </nav>
 </div>
 
@@ -84,11 +124,25 @@ const { activePage = '' } = Astro.props;
             if (desktopPill) desktopPill.click();
         });
     }
+
+    // More dropdown hover
+    var moreBtn = document.getElementById('more-btn');
+    var moreDd = document.getElementById('more-dropdown');
+    var moreTimer = null;
+    function showMore() { clearTimeout(moreTimer); moreDd.classList.add('open'); }
+    function hideMore() { moreTimer = setTimeout(function() { moreDd.classList.remove('open'); }, 150); }
+    if (moreBtn && moreDd) {
+        moreBtn.addEventListener('mouseenter', showMore);
+        moreBtn.addEventListener('mouseleave', hideMore);
+        moreDd.addEventListener('mouseenter', showMore);
+        moreDd.addEventListener('mouseleave', hideMore);
+    }
 })();
 </script>
 
 <style>
     .nav-container {
+        --nav-h: 44px;
         position: fixed;
         top: 1rem;
         left: 50%;
@@ -120,35 +174,44 @@ const { activePage = '' } = Astro.props;
     }
 
     .nav {
-        padding: 0.75rem 2rem;
+        height: var(--nav-h);
+        padding: 0.25rem;
         display: flex;
+        align-items: stretch;
         justify-content: center;
-        gap: 2rem;
+        gap: 0.25rem;
         background: var(--bg-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
-        border-radius: 100px;
+        border-radius: 22px;
     }
 
     .nav a {
-        color: var(--text-secondary);
+        color: var(--text-primary);
         text-decoration: none;
         font-size: 0.9rem;
         font-weight: 500;
-        transition: color 0.2s;
+        padding: 0 1.25rem;
+        display: flex;
+        align-items: center;
+        border-radius: 18px;
+        transition: all 0.15s;
+        white-space: nowrap;
     }
 
     .nav a:hover {
-        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
     }
 
     .nav a.active {
-        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
+        font-weight: 650;
     }
 
     .download-pill {
-        padding: 0.75rem 1.25rem;
+        height: var(--nav-h);
+        padding: 0 1.25rem;
         display: flex;
         align-items: center;
         background: var(--bg-card);
@@ -173,8 +236,8 @@ const { activePage = '' } = Astro.props;
         display: none;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: var(--nav-h);
+        height: var(--nav-h);
         background: var(--bg-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
@@ -201,8 +264,8 @@ const { activePage = '' } = Astro.props;
         flex-direction: column;
         justify-content: center;
         gap: 5px;
-        width: 40px;
-        height: 40px;
+        width: var(--nav-h);
+        height: var(--nav-h);
         background: var(--bg-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
@@ -237,50 +300,48 @@ const { activePage = '' } = Astro.props;
     .mobile-menu {
         display: none;
         position: fixed;
-        top: calc(4rem + env(safe-area-inset-top));
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(100% - 2rem);
-        max-width: 360px;
+        top: calc(5rem + env(safe-area-inset-top));
+        left: 1rem;
+        right: 1rem;
         background: var(--bg-card);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        padding: 1.25rem;
+        border-radius: 22px;
+        padding: 0.25rem;
         z-index: 99;
         opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
+        transform: translateY(-10px);
         transition: opacity 0.25s ease, transform 0.25s ease;
         pointer-events: none;
     }
 
     .mobile-menu.open {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
         pointer-events: auto;
     }
 
     .mobile-nav {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
-        margin-bottom: 1rem;
     }
 
     .mobile-nav a {
-        color: var(--text-secondary);
+        color: var(--text-primary);
         text-decoration: none;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 500;
-        padding: 0.75rem 1rem;
-        border-radius: 12px;
-        transition: all 0.2s;
+        padding: 0.75rem 1.25rem;
+        border-radius: 18px;
+        transition: all 0.15s;
+        white-space: nowrap;
+        width: 100%;
+        text-align: center;
     }
 
     .mobile-nav a:hover,
     .mobile-nav a.active {
-        color: var(--text-primary);
         background: rgba(255, 255, 255, 0.05);
     }
 
@@ -309,10 +370,11 @@ const { activePage = '' } = Astro.props;
     }
 
     #nav-auth :global(.nav-avatar) {
-        width: 40px;
-        height: 40px;
+        display: block;
+        width: var(--nav-h);
+        height: var(--nav-h);
         border-radius: 50%;
-        border: 1.5px solid var(--accent);
+        border: 1px solid var(--accent);
         cursor: pointer;
         object-fit: cover;
         transition: opacity 0.2s;
@@ -323,10 +385,10 @@ const { activePage = '' } = Astro.props;
     }
 
     #nav-auth :global(.nav-avatar-fallback) {
-        width: 40px;
-        height: 40px;
+        width: var(--nav-h);
+        height: var(--nav-h);
         border-radius: 50%;
-        border: 1.5px solid var(--accent);
+        border: 1px solid var(--accent);
         background: var(--bg-card);
         display: flex;
         align-items: center;
@@ -347,36 +409,187 @@ const { activePage = '' } = Astro.props;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid var(--glass-border);
-        border-radius: 100px;
-        padding: 0;
+        border-radius: 22px;
+        padding: 0.25rem;
         display: none;
         z-index: 200;
     }
 
     #nav-auth :global(.avatar-dropdown.open) {
-        display: block;
+        display: flex;
+        flex-direction: column;
     }
 
     #nav-auth :global(.avatar-dropdown button) {
-        padding: 0.75rem 1.25rem;
+        height: calc(var(--nav-h) - 0.5rem);
+        padding: 0 1.25rem;
+        display: flex;
+        align-items: center;
         background: transparent;
         border: none;
-        color: var(--rose);
+        color: var(--text-primary);
         font-family: inherit;
         font-size: 0.9rem;
         font-weight: 500;
         white-space: nowrap;
         cursor: pointer;
-        border-radius: 100px;
+        border-radius: 18px;
         transition: all 0.15s;
     }
 
     #nav-auth :global(.avatar-dropdown button:hover) {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    #nav-auth :global(.avatar-dropdown button:last-child) {
+        color: var(--rose);
+    }
+
+    #nav-auth :global(.avatar-dropdown button:last-child:hover) {
         background: rgba(255, 31, 109, 0.1);
+    }
+
+    /* More dropdown */
+    .more-btn {
+        color: var(--text-primary);
+        background: none;
+        border: none;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0 1.25rem;
+        display: flex;
+        align-items: center;
+        border-radius: 18px;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
+
+    .more-btn:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .more-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        background: var(--bg-card);
+        -webkit-backdrop-filter: blur(40px);
+        backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 22px;
+        padding: 1.25rem 1.5rem;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-6px);
+        pointer-events: none;
+        transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+        z-index: 200;
+    }
+
+    .more-dropdown.open {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .more-columns {
+        display: flex;
+        gap: 2.5rem;
+    }
+
+    .more-col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .more-col-title {
+        color: var(--text-primary);
+        font-size: 0.75rem;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.2rem;
+    }
+
+    .more-col-title-link {
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+    .more-col-title-link:hover {
+        opacity: 0.8;
+    }
+
+    .more-col a {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: color 0.15s;
+    }
+
+    .more-col a:hover {
+        color: var(--text-primary);
+    }
+
+    /* Mobile section titles & divider */
+    .mobile-divider {
+        height: 1px;
+        background: var(--glass-border);
+        margin: 0.25rem 1.25rem;
+    }
+
+    .mobile-section-title {
+        color: var(--accent);
+        font-size: 0.7rem;
+        font-weight: 650;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0.5rem 1.25rem 0;
+        text-align: center;
+    }
+
+    /* Daily Grid circle button */
+    .dg-circle-btn {
+        width: var(--nav-h);
+        height: var(--nav-h);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 50%;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .dg-circle-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dg-circle-icon {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
     }
 
     /* Mobile: show hamburger + download icon, hide desktop elements */
     @media (max-width: 640px) {
+        .nav-container {
+            width: calc(100% - 2rem);
+            left: 1rem;
+            transform: none;
+        }
+
+        .nav-logo {
+            margin-right: auto;
+        }
+
         .desktop-nav,
         .desktop-only {
             display: none !important;

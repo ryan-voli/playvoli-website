@@ -8,7 +8,6 @@ import Layout from '../layouts/Layout.astro';
     ogUrl="https://playvoli.com/auth"
     activePage="auth"
     skipNavAuth={true}
-    minimalFooter={true}
     bodyClass="auth-body"
 >
 
@@ -287,7 +286,7 @@ import Layout from '../layouts/Layout.astro';
         btn.disabled = true; btn.textContent = 'Updating...';
         const { error } = await sb.auth.updateUser({ password });
         if (error) { showMessage('newpw-message', escapeHtml(error.message), 'error'); btn.disabled = false; btn.textContent = 'Set Password'; return; }
-        await sb.auth.signOut();
+        await sb.auth.signOut({ scope: 'local' });
         btn.disabled = false; btn.textContent = 'Set Password';
         showView('view-forgot-success');
     }

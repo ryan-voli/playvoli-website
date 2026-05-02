@@ -29,6 +29,7 @@
   ],
   "rewrites": [
     { "source": "/podcast/:path*", "destination": "/podcast" },
+    { "source": "/game/:path*", "destination": "/game" },
     { "source": "/league/:path*", "destination": "/league" },
     { "source": "/dailygrid/:path*", "destination": "/dailygrid" }
   ]

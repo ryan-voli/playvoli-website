@@ -12,7 +12,6 @@ interface Props {
   ogUrl?: string;
   activePage?: string;
   showFooter?: boolean;
-  minimalFooter?: boolean;
   bodyClass?: string;
   /** Set to true for pages that load Supabase SDK themselves */
   skipSupabase?: boolean;
@@ -27,7 +26,6 @@ const {
   ogUrl = 'https://playvoli.com/',
   activePage = '',
   showFooter = true,
-  minimalFooter = false,
   bodyClass = '',
   skipSupabase = false,
   skipNavAuth = false,
@@ -58,33 +56,27 @@ const {
 
     <link rel="icon" href="/images/official_logo_dark_bg.webp">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Self-hosted Inter font (eliminates 3-hop Google Fonts chain) -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <style is:inline>
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 300 800;
+            font-display: swap;
+            src: url('/fonts/inter-latin.woff2') format('woff2');
+        }
+    </style>
 
-    <!-- Google Analytics -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-W77KSNYJG3"></script>
+    <!-- Google Analytics + Ads (deferred, non-blocking) -->
     <script is:inline>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-W77KSNYJG3');
-    </script>
-
-    <!-- Google Ads -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-17868194042"></script>
-    <script is:inline>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
         gtag('config', 'AW-17868194042');
     </script>
-
-    <!-- Supabase SDK (for nav auth + pages that need it) -->
-    {!skipSupabase && (
-        <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    )}
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-W77KSNYJG3"></script>
 
     <slot name="head" />
 </head>
@@ -93,9 +85,14 @@ const {
 
     <slot />
 
-    {showFooter && <Footer minimal={minimalFooter} />}
+    {showFooter && <Footer />}
 
     <QrModal />
+
+    <!-- Supabase SDK at end of body (non-render-blocking) -->
+    {!skipSupabase && (
+        <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    )}
 
     {!skipNavAuth && !skipSupabase && <NavAuth />}
 
