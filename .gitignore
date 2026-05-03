@@ -1,1 +1,15 @@
+# Build output
+dist/
+.astro/
 .vercel
+
+# Dependencies
+node_modules/
+
+# OS junk
+.DS_Store
+
+# Env
+.env
+.env.local
+.env.*.local
