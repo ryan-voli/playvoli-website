@@ -21,6 +21,24 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div class="section">
+            <div class="section-label">Founders</div>
+            <div class="founders-grid">
+                <div class="founder-card">
+                    <div class="founder-photo founder-photo--placeholder">R</div>
+                    <strong>Ryan</strong>
+                    <span class="founder-role">Founder</span>
+                    <p>Ryan works full-time in cybersecurity and software engineering, and built VOLI from the ground up after teaching himself full-stack development specifically to make this happen. He fell in love with volleyball watching his sister play in college, and when she graduated just as the U.S. pro leagues launched, he saw a sport with the talent and fanbase to rival any major league — but missing the digital infrastructure to match. VOLI is his answer: a platform built by a fan who believes pro volleyball deserves better.</p>
+                </div>
+                <div class="founder-card">
+                    <div class="founder-photo founder-photo--placeholder">M</div>
+                    <strong>Max</strong>
+                    <span class="founder-role">Co-Founder</span>
+                    <p>Max runs the business and operational side of VOLI, bringing a project management and server administration background from his day job in IT. He and Ryan met in the Air Force a decade ago and have been close friends ever since — close enough that Max stood in Ryan's wedding — and when the project grew bigger than one person could handle, Max stepped in so Ryan could stay focused on building. He's here because he believes in both the friend and the mission: a sport this good deserves software to match.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
             <div class="section-label">Our Products</div>
             <div class="products-grid">
                 <a href="/mobileapp" class="product-card">
@@ -194,11 +212,70 @@ import Layout from '../layouts/Layout.astro';
         height: 40px;
     }
 
+    .founders-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .founder-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 1.5rem 1.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        text-align: center;
+    }
+
+    .founder-photo {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 0.5rem;
+    }
+
+    .founder-photo--placeholder {
+        background: linear-gradient(135deg, var(--accent), var(--electric-blue));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2.25rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .founder-card strong {
+        color: var(--text-primary);
+        font-size: 1.05rem;
+        font-weight: 600;
+    }
+
+    .founder-role {
+        color: var(--accent);
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .founder-card p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.65;
+        margin-top: 0.5rem;
+    }
+
     @media (max-width: 480px) {
         body { padding: 6rem 1rem 1rem; }
         .card { padding: 2rem 1.5rem; border-radius: 20px; }
         .title { font-size: 1.5rem; }
         .section-text { font-size: 0.95rem; }
         .products-grid { grid-template-columns: 1fr; }
+        .founders-grid { grid-template-columns: 1fr; }
     }
 </style>
