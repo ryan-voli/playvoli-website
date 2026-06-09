@@ -481,15 +481,14 @@ const { activePage = '' } = Astro.props;
         left: 50%;
         transform: translateX(-50%) translateY(-6px);
         background: var(--bg-card);
-        backdrop-filter: blur(40px);
         -webkit-backdrop-filter: blur(40px);
+        backdrop-filter: blur(40px);
         border: 1px solid var(--glass-border);
-        border-radius: 16px;
-        padding: 0.4rem;
+        border-radius: 22px;
+        padding: 1.25rem 1.5rem;
         display: flex;
         flex-direction: column;
-        gap: 0.1rem;
-        min-width: 180px;
+        gap: 0.4rem;
         visibility: hidden;
         opacity: 0;
         pointer-events: none;
@@ -507,23 +506,14 @@ const { activePage = '' } = Astro.props;
     .about-dropdown a {
         color: var(--text-muted);
         font-size: 0.85rem;
-        font-weight: 500;
-        padding: 0.55rem 1rem;
         text-decoration: none;
-        border-radius: 12px;
         white-space: nowrap;
-        text-align: center;
-        transition: color 0.15s, background 0.15s;
+        transition: color 0.15s;
     }
 
-    .about-dropdown a:hover {
-        color: var(--text-primary);
-        background: rgba(255, 255, 255, 0.05);
-    }
-
+    .about-dropdown a:hover,
     .about-dropdown a.active {
         color: var(--text-primary);
-        background: rgba(255, 255, 255, 0.05);
     }
 
     /* More dropdown */
