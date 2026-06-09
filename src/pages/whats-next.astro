@@ -34,7 +34,6 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
         <div class="section-label">Roadmap</div>
         <div class="timeline-wrap">
             <div class="timeline-scroll" id="timeline-scroll">
-                <div class="timeline-line" aria-hidden="true"></div>
                 <div class="timeline-track">
                     {timeline.map(item => (
                         <button
@@ -189,16 +188,6 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
     }
 
     .timeline-scroll::-webkit-scrollbar { display: none; }
-
-    .timeline-line {
-        position: absolute;
-        top: calc(0.5rem + 0.65rem + 0.5rem + 7px);
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: var(--glass-border);
-        pointer-events: none;
-    }
 
     .timeline-track {
         display: inline-flex;
