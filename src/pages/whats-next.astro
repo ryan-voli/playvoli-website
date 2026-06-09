@@ -1,5 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const timeline = [
+  { id: 'fantasyvb',    date: 'Mar 2024', dateFull: 'March 2024',     title: 'FantasyVB Begins',       status: 'past' },
+  { id: 'voli-app',     date: 'Jan 2025', dateFull: 'January 2025',   title: 'VOLI App Begins',        status: 'past' },
+  { id: 'voli-llc',     date: 'May 2025', dateFull: 'May 2025',       title: 'VOLI LLC Launches',      status: 'past' },
+  { id: 'mlv-testing',  date: 'Nov 2025', dateFull: 'November 2025',  title: 'MLV Closed Testing',     status: 'past' },
+  { id: 'app-beta',     date: 'Jan 2026', dateFull: 'January 2026',   title: 'App Beta Launch',        status: 'past' },
+  { id: 'ncaa-fantasy', date: 'Aug 2026', dateFull: 'August 2026',    title: 'NCAA Fantasy Launch',    status: 'current' },
+  { id: 'ncaa-bracket', date: 'Nov 2026', dateFull: 'November 2026',  title: 'NCAA Bracket Challenge', status: 'upcoming' },
+  { id: 'lovb-fantasy', date: 'Jan 2027', dateFull: 'January 2027',   title: 'LOVB Fantasy Launch',    status: 'upcoming' },
+];
+
+const details = Object.fromEntries(timeline.map(t => [t.id, {
+  date: t.dateFull,
+  title: t.title,
+  status: t.status,
+  body: t.id === 'ncaa-fantasy'
+    ? "We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon."
+    : 'Details for this milestone are still being written up — check back as we share more.',
+}]));
 ---
 
 <Layout
@@ -11,21 +31,88 @@ import Layout from '../layouts/Layout.astro';
         <h1 class="title">What's Next</h1>
         <p class="lead">A look at what we're building, what's launching, and where VOLI is headed.</p>
 
-        <div class="placeholder">
-            <span class="placeholder-dot" aria-hidden="true"></span>
-            <p>We're putting this page together — soon it'll be the home for announcements, feature updates, and our public roadmap.</p>
-        </div>
-
-        <div class="section">
-            <div class="section-label">Latest Announcement</div>
-            <div class="announcement-card">
-                <span class="announcement-pill">Coming 2026</span>
-                <h2 class="announcement-title">NCAA Women's Fantasy Volleyball</h2>
-                <p class="announcement-body">We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon.</p>
+        <div class="section-label">Roadmap</div>
+        <div class="timeline-wrap">
+            <div class="timeline-scroll" id="timeline-scroll">
+                <div class="timeline-line" aria-hidden="true"></div>
+                <div class="timeline-track">
+                    {timeline.map(item => (
+                        <button
+                            type="button"
+                            class:list={['timeline-item', item.status]}
+                            data-id={item.id}
+                            aria-label={`${item.dateFull} — ${item.title}`}
+                        >
+                            <span class="timeline-date">{item.date}</span>
+                            <span class="timeline-dot" aria-hidden="true"></span>
+                            <span class="timeline-title">{item.title}</span>
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
+
+        <div class="detail-card" id="timeline-detail">
+            <span class="detail-pill" id="detail-pill">Coming August 2026</span>
+            <h2 class="detail-title" id="detail-title">NCAA Women's Fantasy Volleyball</h2>
+            <p class="detail-body" id="detail-body">We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon.</p>
+        </div>
+
+        <p class="footer-note">
+            <span class="footer-dot" aria-hidden="true"></span>
+            More details, announcements, and feature updates will roll out here as we build.
+        </p>
     </main>
 </Layout>
+
+<script define:vars={{ details }}>
+(function() {
+    var scroll = document.getElementById('timeline-scroll');
+    if (!scroll) return;
+
+    var items = scroll.querySelectorAll('.timeline-item');
+    var pill = document.getElementById('detail-pill');
+    var titleEl = document.getElementById('detail-title');
+    var bodyEl = document.getElementById('detail-body');
+
+    function pillText(status, date) {
+        if (status === 'current') return 'Coming ' + date;
+        if (status === 'upcoming') return 'Coming ' + date;
+        return date;
+    }
+
+    function updateDetail(id) {
+        var d = details[id];
+        if (!d) return;
+        pill.textContent = pillText(d.status, d.date);
+        titleEl.textContent = d.title;
+        bodyEl.textContent = d.body;
+    }
+
+    function selectItem(item) {
+        items.forEach(function(i) { i.classList.remove('selected'); });
+        item.classList.add('selected');
+        updateDetail(item.getAttribute('data-id'));
+    }
+
+    items.forEach(function(item) {
+        item.addEventListener('click', function() { selectItem(item); });
+    });
+
+    function centerCurrent() {
+        var current = scroll.querySelector('.timeline-item.current') || items[0];
+        if (!current) return;
+        var target = current.offsetLeft + current.offsetWidth / 2 - scroll.clientWidth / 2;
+        scroll.scrollLeft = Math.max(0, target);
+        current.classList.add('selected');
+        updateDetail(current.getAttribute('data-id'));
+    }
+
+    // Run after layout settles
+    if (document.readyState === 'complete') centerCurrent();
+    else window.addEventListener('load', centerCurrent);
+})();
+</script>
 
 <style>
     body {
@@ -73,44 +160,7 @@ import Layout from '../layouts/Layout.astro';
         font-size: 1rem;
         line-height: 1.7;
         text-align: center;
-        margin-bottom: 2.5rem;
-    }
-
-    .placeholder {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1rem 1.25rem;
-        background: rgba(200, 255, 0, 0.05);
-        border: 1px solid rgba(200, 255, 0, 0.2);
-        border-radius: 16px;
-        margin-bottom: 2.5rem;
-    }
-
-    .placeholder-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 12px var(--accent);
-        flex-shrink: 0;
-        animation: pulseDot 1.6s ease-in-out infinite;
-    }
-
-    .placeholder p {
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    @keyframes pulseDot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.55; transform: scale(0.8); }
-    }
-
-    .section {
-        margin-bottom: 0;
+        margin-bottom: 2rem;
     }
 
     .section-label {
@@ -123,14 +173,138 @@ import Layout from '../layouts/Layout.astro';
         margin-bottom: 1rem;
     }
 
-    .announcement-card {
-        padding: 1.5rem 1.5rem;
+    /* Timeline */
+    .timeline-wrap {
+        margin: 0 -2rem 2rem;
+    }
+
+    .timeline-scroll {
+        position: relative;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0.5rem 0 0.75rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+    }
+
+    .timeline-scroll::-webkit-scrollbar { display: none; }
+
+    .timeline-line {
+        position: absolute;
+        top: calc(0.5rem + 0.65rem + 0.5rem + 7px);
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--glass-border);
+        pointer-events: none;
+    }
+
+    .timeline-track {
+        display: inline-flex;
+        align-items: flex-start;
+        position: relative;
+        padding: 0 calc(50% - 75px);
+    }
+
+    .timeline-item {
+        flex: 0 0 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.2s;
+    }
+
+    .timeline-item:hover { transform: translateY(-2px); }
+    .timeline-item:focus-visible { outline: none; }
+    .timeline-item:focus-visible .timeline-dot {
+        box-shadow: 0 0 0 4px var(--bg-card), 0 0 0 6px var(--accent);
+    }
+
+    .timeline-date {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 700;
+        color: var(--text-muted);
+        white-space: nowrap;
+        transition: color 0.2s;
+    }
+
+    .timeline-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--bg-card);
+        border: 2px solid var(--text-muted);
+        box-shadow: 0 0 0 4px var(--bg-card);
+        transition: all 0.2s;
+    }
+
+    .timeline-title {
+        font-size: 0.78rem;
+        font-weight: 600;
+        line-height: 1.3;
+        text-align: center;
+        color: var(--text-primary);
+        max-width: 130px;
+        transition: color 0.2s;
+    }
+
+    /* States */
+    .timeline-item.past .timeline-dot {
+        background: var(--text-muted);
+        border-color: var(--text-muted);
+    }
+    .timeline-item.past .timeline-date,
+    .timeline-item.past .timeline-title { opacity: 0.65; }
+
+    .timeline-item.upcoming .timeline-dot {
+        background: var(--bg-card);
+        border-color: var(--text-muted);
+    }
+    .timeline-item.upcoming .timeline-date,
+    .timeline-item.upcoming .timeline-title { opacity: 0.85; }
+
+    .timeline-item.current .timeline-dot {
+        background: var(--accent);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--bg-card), 0 0 18px var(--accent-glow);
+        animation: timelinePulse 2.2s ease-in-out infinite;
+    }
+    .timeline-item.current .timeline-date { color: var(--accent); }
+    .timeline-item.current .timeline-title { font-weight: 700; }
+
+    .timeline-item.selected:not(.current) .timeline-dot {
+        border-color: var(--accent);
+        background: var(--accent);
+    }
+    .timeline-item.selected:not(.current) .timeline-date { color: var(--accent); opacity: 1; }
+    .timeline-item.selected:not(.current) .timeline-title { opacity: 1; }
+
+    @keyframes timelinePulse {
+        0%, 100% { box-shadow: 0 0 0 4px var(--bg-card), 0 0 14px var(--accent-glow); }
+        50% { box-shadow: 0 0 0 4px var(--bg-card), 0 0 26px var(--accent); }
+    }
+
+    /* Detail card */
+    .detail-card {
+        padding: 1.75rem 1.75rem;
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid var(--glass-border);
         border-radius: 16px;
+        margin-bottom: 2rem;
     }
 
-    .announcement-pill {
+    .detail-pill {
         display: inline-block;
         padding: 0.25rem 0.7rem;
         background: linear-gradient(135deg, rgba(200, 255, 0, 0.18), rgba(0, 212, 255, 0.12));
@@ -144,19 +318,46 @@ import Layout from '../layouts/Layout.astro';
         margin-bottom: 0.85rem;
     }
 
-    .announcement-title {
+    .detail-title {
         color: var(--text-primary);
-        font-size: 1.15rem;
+        font-size: 1.2rem;
         font-weight: 650;
         letter-spacing: -0.01em;
         margin: 0 0 0.6rem;
     }
 
-    .announcement-body {
+    .detail-body {
         color: var(--text-muted);
         font-size: 0.9rem;
         line-height: 1.65;
         margin: 0;
+    }
+
+    .footer-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin: 0;
+        text-align: center;
+    }
+
+    .footer-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+        animation: footerDot 1.6s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes footerDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.55; transform: scale(0.8); }
     }
 
     @media (max-width: 480px) {
@@ -164,6 +365,9 @@ import Layout from '../layouts/Layout.astro';
         .card { padding: 2rem 1.5rem; border-radius: 20px; }
         .title { font-size: 1.5rem; }
         .lead { font-size: 0.95rem; }
-        .announcement-title { font-size: 1.05rem; }
+        .timeline-wrap { margin: 0 -1.5rem 1.75rem; }
+        .timeline-track { padding: 0 calc(50% - 70px); }
+        .timeline-item { flex-basis: 140px; }
+        .detail-title { font-size: 1.05rem; }
     }
 </style>
