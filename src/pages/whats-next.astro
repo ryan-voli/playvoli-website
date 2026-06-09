@@ -256,28 +256,31 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
     .timeline-item.past .timeline-date,
     .timeline-item.past .timeline-title { opacity: 0.65; }
 
-    .timeline-item.upcoming .timeline-dot {
+    .timeline-item.upcoming .timeline-dot,
+    .timeline-item.current .timeline-dot {
         background: var(--bg-card);
         border-color: var(--text-muted);
     }
     .timeline-item.upcoming .timeline-date,
-    .timeline-item.upcoming .timeline-title { opacity: 0.85; }
+    .timeline-item.upcoming .timeline-title,
+    .timeline-item.current .timeline-date,
+    .timeline-item.current .timeline-title { opacity: 0.85; }
 
-    .timeline-item.current .timeline-dot {
+    /* Selected: bright accent treatment (highlight follows selection) */
+    .timeline-item.selected .timeline-dot {
         background: var(--accent);
         border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--bg-card), 0 0 14px var(--accent-glow);
+    }
+    .timeline-item.selected .timeline-date { color: var(--accent); opacity: 1; }
+    .timeline-item.selected .timeline-title { opacity: 1; }
+
+    /* Current + Selected: also pulses to signal active project */
+    .timeline-item.current.selected .timeline-dot {
         box-shadow: 0 0 0 4px var(--bg-card), 0 0 18px var(--accent-glow);
         animation: timelinePulse 2.2s ease-in-out infinite;
     }
-    .timeline-item.current .timeline-date { color: var(--accent); }
-    .timeline-item.current .timeline-title { font-weight: 700; }
-
-    .timeline-item.selected:not(.current) .timeline-dot {
-        border-color: var(--accent);
-        background: var(--accent);
-    }
-    .timeline-item.selected:not(.current) .timeline-date { color: var(--accent); opacity: 1; }
-    .timeline-item.selected:not(.current) .timeline-title { opacity: 1; }
+    .timeline-item.current.selected .timeline-title { font-weight: 700; }
 
     @keyframes timelinePulse {
         0%, 100% { box-shadow: 0 0 0 4px var(--bg-card), 0 0 14px var(--accent-glow); }
