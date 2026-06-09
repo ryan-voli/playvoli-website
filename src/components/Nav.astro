@@ -15,15 +15,13 @@ const { activePage = '' } = Astro.props;
     <!-- Desktop nav -->
     <nav class="nav desktop-nav">
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
-        <div class="nav-item-wrap" id="about-trigger">
-            <a href="/about" class:list={[{ active: activePage === 'about' || activePage === 'whats-next' }]}>About</a>
-            <div class="about-dropdown" id="about-dropdown">
-                <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
-            </div>
-        </div>
+        <a href="/about" id="about-link" class:list={[{ active: activePage === 'about' || activePage === 'whats-next' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
         <button class="more-btn" id="more-btn">More</button>
     </nav>
+    <div class="about-dropdown" id="about-dropdown">
+        <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
+    </div>
     <div class="more-dropdown" id="more-dropdown">
         <div class="more-columns">
             <div class="more-col">
@@ -145,16 +143,25 @@ const { activePage = '' } = Astro.props;
     }
 
     // About dropdown hover
-    var aboutTrigger = document.getElementById('about-trigger');
+    var aboutLink = document.getElementById('about-link');
     var aboutDd = document.getElementById('about-dropdown');
+    var navContainer = document.querySelector('.nav-container');
     var aboutTimer = null;
-    function showAbout() { clearTimeout(aboutTimer); aboutDd.classList.add('open'); }
+    function positionAboutDd() {
+        if (!aboutLink || !aboutDd || !navContainer) return;
+        var linkRect = aboutLink.getBoundingClientRect();
+        var containerRect = navContainer.getBoundingClientRect();
+        aboutDd.style.left = (linkRect.left + linkRect.width / 2 - containerRect.left) + 'px';
+    }
+    function showAbout() { clearTimeout(aboutTimer); positionAboutDd(); aboutDd.classList.add('open'); }
     function hideAbout() { aboutTimer = setTimeout(function() { aboutDd.classList.remove('open'); }, 150); }
-    if (aboutTrigger && aboutDd) {
-        aboutTrigger.addEventListener('mouseenter', showAbout);
-        aboutTrigger.addEventListener('mouseleave', hideAbout);
+    if (aboutLink && aboutDd) {
+        aboutLink.addEventListener('mouseenter', showAbout);
+        aboutLink.addEventListener('mouseleave', hideAbout);
         aboutDd.addEventListener('mouseenter', showAbout);
         aboutDd.addEventListener('mouseleave', hideAbout);
+        window.addEventListener('resize', positionAboutDd);
+        positionAboutDd();
     }
 })();
 </script>
@@ -468,17 +475,10 @@ const { activePage = '' } = Astro.props;
         background: rgba(255, 31, 109, 0.1);
     }
 
-    /* About dropdown */
-    .nav-item-wrap {
-        position: relative;
-        display: flex;
-        align-items: stretch;
-    }
-
+    /* About dropdown — sibling of .nav so .nav a rules don't bleed in */
     .about-dropdown {
         position: absolute;
         top: calc(100% + 8px);
-        left: 50%;
         transform: translateX(-50%) translateY(-6px);
         background: var(--bg-card);
         -webkit-backdrop-filter: blur(40px);
@@ -486,9 +486,6 @@ const { activePage = '' } = Astro.props;
         border: 1px solid var(--glass-border);
         border-radius: 22px;
         padding: 1.25rem 1.5rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
         visibility: hidden;
         opacity: 0;
         pointer-events: none;
