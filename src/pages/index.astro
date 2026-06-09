@@ -8,6 +8,11 @@ import Layout from '../layouts/Layout.astro';
   ogUrl="https://playvoli.com/"
 >
     <section class="hero">
+        <div class="hero-announcement" role="status" aria-label="Announcement">
+            <span class="hero-announcement-dot" aria-hidden="true"></span>
+            <strong>Announcing</strong>
+            <span>NCAA Women's Fantasy Volleyball — 2026 Season</span>
+        </div>
         <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
         <h1 class="hero-title">VOLI: The Volleyball Hub</h1>
         <p class="hero-tagline">Fantasy. Stats. Community.</p>
@@ -155,6 +160,58 @@ import Layout from '../layouts/Layout.astro';
         display: flex;
         gap: 0.25rem;
         margin-bottom: 1rem;
+    }
+
+    .hero-announcement {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.55rem 1.15rem 0.55rem 0.9rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, rgba(200, 255, 0, 0.12), rgba(0, 212, 255, 0.08));
+        border: 1px solid rgba(200, 255, 0, 0.35);
+        border-radius: 100px;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 0 24px rgba(200, 255, 0, 0.15);
+        animation: heroAnnouncementGlow 3s ease-in-out infinite;
+        max-width: 100%;
+    }
+
+    .hero-announcement-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px var(--accent);
+        animation: heroAnnouncementDot 1.6s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+
+    .hero-announcement strong {
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        white-space: nowrap;
+    }
+
+    .hero-announcement > span:last-child {
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+    }
+
+    @keyframes heroAnnouncementGlow {
+        0%, 100% { box-shadow: 0 0 24px rgba(200, 255, 0, 0.15); }
+        50% { box-shadow: 0 0 36px rgba(200, 255, 0, 0.32); }
+    }
+
+    @keyframes heroAnnouncementDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.55; transform: scale(0.8); }
     }
 
     .hero-logo {
@@ -443,6 +500,15 @@ import Layout from '../layouts/Layout.astro';
         .hero {
             padding: 5rem 1.5rem 3rem;
         }
+
+        .hero-announcement {
+            flex-wrap: wrap;
+            justify-content: center;
+            row-gap: 0.25rem;
+            padding: 0.55rem 1rem 0.55rem 0.85rem;
+        }
+        .hero-announcement > span:last-child { font-size: 0.78rem; }
+        .hero-announcement strong { font-size: 0.65rem; }
 
         .hero-logo { width: 80px; }
         .hero-title { font-size: 2rem; }
