@@ -1,24 +1,56 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const placeholder = 'Details for this milestone are still being written up — check back as we share more.';
+
 const timeline = [
-  { id: 'fantasyvb',    date: 'Mar 2024', dateFull: 'March 2024',     title: 'FantasyVB Begins',       status: 'past' },
-  { id: 'voli-app',     date: 'Jan 2025', dateFull: 'January 2025',   title: 'VOLI App Begins',        status: 'past' },
-  { id: 'voli-llc',     date: 'May 2025', dateFull: 'May 2025',       title: 'VOLI LLC Launches',      status: 'past' },
-  { id: 'mlv-testing',  date: 'Nov 2025', dateFull: 'November 2025',  title: 'MLV Closed Testing',     status: 'past' },
-  { id: 'app-beta',     date: 'Jan 2026', dateFull: 'January 2026',   title: 'App Beta Launch',        status: 'past' },
-  { id: 'ncaa-fantasy', date: 'Aug 2026', dateFull: 'August 2026',    title: 'NCAA Fantasy Launch',    status: 'current' },
-  { id: 'ncaa-bracket', date: 'Nov 2026', dateFull: 'November 2026',  title: 'NCAA Bracket Challenge', status: 'upcoming' },
-  { id: 'lovb-fantasy', date: 'Jan 2027', dateFull: 'January 2027',   title: 'LOVB Fantasy Launch',    status: 'upcoming' },
+  {
+    id: 'fantasyvb', date: 'Mar 2024', dateFull: 'March 2024',
+    title: 'FantasyVB Begins', status: 'past',
+    body: "FantasyVB started as an experimental sandbox — a personal testbed to figure out whether a real fantasy volleyball product was even possible. The early work focused on comparing fantasy formats to find the one that fit volleyball best, iterating on a scoring system that was fair across every position, and validating the right tech stack. Alongside the build came classes to pick up the full-stack skills the real product would need. By the end, the answer was clear: it was possible — and there was a concrete plan for the knowledge, technical capabilities, and backing it would take to ship it.",
+  },
+  {
+    id: 'voli-app', date: 'Jan 2025', dateFull: 'January 2025',
+    title: 'VOLI App Begins', status: 'past',
+    body: placeholder,
+  },
+  {
+    id: 'voli-llc', date: 'May 2025', dateFull: 'May 2025',
+    title: 'VOLI LLC Launches', status: 'past',
+    body: placeholder,
+  },
+  {
+    id: 'mlv-testing', date: 'Nov 2025', dateFull: 'November 2025',
+    title: 'MLV Closed Testing', status: 'past',
+    body: placeholder,
+  },
+  {
+    id: 'app-beta', date: 'Jan 2026', dateFull: 'January 2026',
+    title: 'App Beta Launch', status: 'past',
+    body: placeholder,
+  },
+  {
+    id: 'ncaa-fantasy', date: 'Aug 2026', dateFull: 'August 2026',
+    title: 'NCAA Fantasy Launch', status: 'current',
+    body: "We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon.",
+  },
+  {
+    id: 'ncaa-bracket', date: 'Nov 2026', dateFull: 'November 2026',
+    title: 'NCAA Bracket Challenge', status: 'upcoming',
+    body: placeholder,
+  },
+  {
+    id: 'lovb-fantasy', date: 'Jan 2027', dateFull: 'January 2027',
+    title: 'LOVB Fantasy Launch', status: 'upcoming',
+    body: placeholder,
+  },
 ];
 
 const details = Object.fromEntries(timeline.map(t => [t.id, {
   date: t.dateFull,
   title: t.title,
   status: t.status,
-  body: t.id === 'ncaa-fantasy'
-    ? "We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon."
-    : 'Details for this milestone are still being written up — check back as we share more.',
+  body: t.body,
 }]));
 ---
 
