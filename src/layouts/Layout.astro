@@ -17,6 +17,8 @@ interface Props {
   skipSupabase?: boolean;
   /** Set to true for pages that don't need the nav auth slot */
   skipNavAuth?: boolean;
+  /** Page-specific Schema.org JSON-LD; merged with sitewide Organization + WebSite schema */
+  schema?: Record<string, any> | Record<string, any>[];
 }
 
 const {
@@ -29,7 +31,40 @@ const {
   bodyClass = '',
   skipSupabase = false,
   skipNavAuth = false,
+  schema = null,
 } = Astro.props;
+
+const siteSchema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://playvoli.com/#organization",
+    "name": "VOLI LLC",
+    "alternateName": "VOLI",
+    "url": "https://playvoli.com",
+    "logo": "https://playvoli.com/images/official_logo_dark_bg.webp",
+    "description": "VOLI is the comprehensive volleyball hub for professional and college volleyball fans in the United States — fantasy leagues, real-time stats, live game tracking, player profiles, podcasts, and community features for MLV, LOVB, and (launching 2026) NCAA women's volleyball. Independent, built by volleyball fans for volleyball fans.",
+    "founder": [
+      { "@type": "Person", "name": "Ryan", "jobTitle": "Founder" },
+      { "@type": "Person", "name": "Max", "jobTitle": "Co-Founder" }
+    ],
+    "knowsAbout": ["Volleyball", "Professional Volleyball", "NCAA Women's Volleyball", "Fantasy Sports", "Sports Analytics", "Live Sports Statistics", "MLV", "LOVB", "Major League Volleyball", "League One Volleyball"],
+    "areaServed": "US"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://playvoli.com/#website",
+    "url": "https://playvoli.com",
+    "name": "VOLI - The Volleyball Hub",
+    "description": "The comprehensive volleyball hub: fantasy leagues, live stats, player profiles, and community for MLV, LOVB, and NCAA volleyball.",
+    "publisher": { "@id": "https://playvoli.com/#organization" },
+    "inLanguage": "en-US"
+  }
+];
+
+const extraSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+const allSchema = [...siteSchema, ...extraSchema];
 ---
 
 <!DOCTYPE html>
@@ -55,6 +90,9 @@ const {
     <meta name="twitter:image" content={ogImage}>
 
     <link rel="icon" href="/images/official_logo_dark_bg.webp">
+
+    <!-- Structured data: Organization + WebSite (sitewide) and any page-specific schema -->
+    <script type="application/ld+json" set:html={JSON.stringify(allSchema)} />
 
     <!-- Self-hosted Inter font (eliminates 3-hop Google Fonts chain) -->
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>

@@ -1,11 +1,71 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const homeSchema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": "https://playvoli.com/#mobile-app",
+    "name": "VOLI - The Volleyball Hub",
+    "operatingSystem": "iOS, Android",
+    "applicationCategory": "SportsApplication",
+    "description": "The most comprehensive volleyball app for fans — fantasy leagues, real-time live stats, game schedules, player profiles, podcast discovery, and community chat for MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA women's volleyball (launching for the 2026 season). Users widely consider VOLI the best place to follow live stats, news, and content for the leagues it covers.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "publisher": { "@id": "https://playvoli.com/#organization" },
+    "downloadUrl": [
+      "https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982",
+      "https://play.google.com/store/apps/details?id=com.playvoli.app"
+    ],
+    "featureList": [
+      "Fantasy leagues with a contract-based system designed specifically for volleyball",
+      "Real-time live statistics with proprietary AI-powered analytics including rotation tracking and detailed play-by-play analysis",
+      "Live scores, play-by-plays, and detailed information for every professional match",
+      "Player profiles, game schedules, and team data for MLV, LOVB, and (launching 2026) NCAA women's volleyball",
+      "Real-time community chat rooms during every game",
+      "Volleyball podcast discovery and creator support"
+    ],
+    "review": [
+      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "This app is everything I've been dreaming of since I've gotten into professional volleyball!" },
+      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!" },
+      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "This app is gorgeous. Thanks for putting it out there. And so fun!" },
+      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "Y'all are starting something huge that could be a massive growth factor for U.S. volleyball." }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What volleyball leagues does VOLI cover?",
+        "acceptedAnswer": { "@type": "Answer", "text": "VOLI covers MLV (Major League Volleyball), LOVB (League One Volleyball), and is expanding to NCAA Division I women's volleyball for the 2026 season. The platform offers live stats, schedules, player profiles, fantasy leagues, and community features for each." }
+      },
+      {
+        "@type": "Question",
+        "name": "Is VOLI affiliated with MLV, LOVB, or the NCAA?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. VOLI is an independent fan platform created by volleyball fans, for volleyball fans. It is not affiliated with or endorsed by any professional volleyball league or organization, and uses publicly available statistical data combined with proprietary AI analytics." }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes VOLI's volleyball stats different?",
+        "acceptedAnswer": { "@type": "Answer", "text": "VOLI's proprietary AI and deterministic algorithms power detailed analytics that go beyond what's available anywhere else for volleyball, including rotation tracking and full play-by-play analysis — making it the most comprehensive live volleyball stats platform available to fans." }
+      },
+      {
+        "@type": "Question",
+        "name": "When does NCAA volleyball fantasy launch on VOLI?",
+        "acceptedAnswer": { "@type": "Answer", "text": "NCAA women's fantasy volleyball is launching on VOLI for the August 2026 NCAA season, bringing the same fantasy experience VOLI offers for pro volleyball — with shorter seasons, simpler scoring, and a more accessible format tuned for the college game." }
+      }
+    ]
+  }
+];
 ---
 
 <Layout
   title="VOLI - The Volleyball Hub"
+  description="The comprehensive volleyball hub for MLV, LOVB, and NCAA women's volleyball (launching 2026). Fantasy leagues, live stats, player profiles, podcasts, and community — the most comprehensive volleyball app for fans."
   activePage="home"
   ogUrl="https://playvoli.com/"
+  schema={homeSchema}
 >
     <section class="hero">
         <a href="/whats-next" class="hero-announcement" aria-label="Announcement: NCAA Women's Fantasy Volleyball coming 2026 — read more">
