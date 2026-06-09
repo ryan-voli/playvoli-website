@@ -15,7 +15,12 @@ const { activePage = '' } = Astro.props;
     <!-- Desktop nav -->
     <nav class="nav desktop-nav">
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
-        <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
+        <div class="nav-item-wrap" id="about-trigger">
+            <a href="/about" class:list={[{ active: activePage === 'about' || activePage === 'whats-next' }]}>About</a>
+            <div class="about-dropdown" id="about-dropdown">
+                <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
+            </div>
+        </div>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
         <button class="more-btn" id="more-btn">More</button>
     </nav>
@@ -70,6 +75,7 @@ const { activePage = '' } = Astro.props;
     <nav class="mobile-nav">
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
+        <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
         <div class="mobile-divider"></div>
         <div class="mobile-section-title">Products</div>
@@ -136,6 +142,19 @@ const { activePage = '' } = Astro.props;
         moreBtn.addEventListener('mouseleave', hideMore);
         moreDd.addEventListener('mouseenter', showMore);
         moreDd.addEventListener('mouseleave', hideMore);
+    }
+
+    // About dropdown hover
+    var aboutTrigger = document.getElementById('about-trigger');
+    var aboutDd = document.getElementById('about-dropdown');
+    var aboutTimer = null;
+    function showAbout() { clearTimeout(aboutTimer); aboutDd.classList.add('open'); }
+    function hideAbout() { aboutTimer = setTimeout(function() { aboutDd.classList.remove('open'); }, 150); }
+    if (aboutTrigger && aboutDd) {
+        aboutTrigger.addEventListener('mouseenter', showAbout);
+        aboutTrigger.addEventListener('mouseleave', hideAbout);
+        aboutDd.addEventListener('mouseenter', showAbout);
+        aboutDd.addEventListener('mouseleave', hideAbout);
     }
 })();
 </script>
@@ -447,6 +466,64 @@ const { activePage = '' } = Astro.props;
 
     #nav-auth :global(.avatar-dropdown button:last-child:hover) {
         background: rgba(255, 31, 109, 0.1);
+    }
+
+    /* About dropdown */
+    .nav-item-wrap {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .about-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%) translateY(-6px);
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 0.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        min-width: 180px;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+        z-index: 200;
+    }
+
+    .about-dropdown.open {
+        visibility: visible;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        pointer-events: auto;
+    }
+
+    .about-dropdown a {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 0.55rem 1rem;
+        text-decoration: none;
+        border-radius: 12px;
+        white-space: nowrap;
+        text-align: center;
+        transition: color 0.15s, background 0.15s;
+    }
+
+    .about-dropdown a:hover {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .about-dropdown a.active {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
     }
 
     /* More dropdown */

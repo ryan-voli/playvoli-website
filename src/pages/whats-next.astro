@@ -1,0 +1,169 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="What's Next - VOLI"
+  description="The VOLI roadmap: announcements, upcoming features, and what we're building next for professional and college volleyball fans."
+  activePage="whats-next"
+>
+    <main class="card">
+        <h1 class="title">What's Next</h1>
+        <p class="lead">A look at what we're building, what's launching, and where VOLI is headed.</p>
+
+        <div class="placeholder">
+            <span class="placeholder-dot" aria-hidden="true"></span>
+            <p>We're putting this page together — soon it'll be the home for announcements, feature updates, and our public roadmap.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Latest Announcement</div>
+            <div class="announcement-card">
+                <span class="announcement-pill">Coming 2026</span>
+                <h2 class="announcement-title">NCAA Women's Fantasy Volleyball</h2>
+                <p class="announcement-body">We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon.</p>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5rem 2rem 2rem;
+        padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+
+    .card {
+        width: 100%;
+        max-width: 800px;
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+
+    .title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.02em;
+    }
+
+    .lead {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.7;
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .placeholder {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: rgba(200, 255, 0, 0.05);
+        border: 1px solid rgba(200, 255, 0, 0.2);
+        border-radius: 16px;
+        margin-bottom: 2.5rem;
+    }
+
+    .placeholder-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 12px var(--accent);
+        flex-shrink: 0;
+        animation: pulseDot 1.6s ease-in-out infinite;
+    }
+
+    .placeholder p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    @keyframes pulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.55; transform: scale(0.8); }
+    }
+
+    .section {
+        margin-bottom: 0;
+    }
+
+    .section-label {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .announcement-card {
+        padding: 1.5rem 1.5rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+    }
+
+    .announcement-pill {
+        display: inline-block;
+        padding: 0.25rem 0.7rem;
+        background: linear-gradient(135deg, rgba(200, 255, 0, 0.18), rgba(0, 212, 255, 0.12));
+        border: 1px solid rgba(200, 255, 0, 0.35);
+        border-radius: 100px;
+        color: var(--accent);
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 0.85rem;
+    }
+
+    .announcement-title {
+        color: var(--text-primary);
+        font-size: 1.15rem;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        margin: 0 0 0.6rem;
+    }
+
+    .announcement-body {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.65;
+        margin: 0;
+    }
+
+    @media (max-width: 480px) {
+        body { padding: 6rem 1rem 1rem; }
+        .card { padding: 2rem 1.5rem; border-radius: 20px; }
+        .title { font-size: 1.5rem; }
+        .lead { font-size: 0.95rem; }
+        .announcement-title { font-size: 1.05rem; }
+    }
+</style>
