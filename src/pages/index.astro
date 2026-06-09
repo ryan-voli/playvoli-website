@@ -8,11 +8,12 @@ import Layout from '../layouts/Layout.astro';
   ogUrl="https://playvoli.com/"
 >
     <section class="hero">
-        <div class="hero-announcement" role="status" aria-label="Announcement">
+        <a href="#" class="hero-announcement" onclick="event.preventDefault()" aria-label="Announcement: NCAA Women's Fantasy Volleyball coming 2026 — read more">
             <span class="hero-announcement-dot" aria-hidden="true"></span>
             <strong>Update</strong>
-            <span>NCAA Women's Fantasy Volleyball — Coming for the 2026 Season</span>
-        </div>
+            <span class="hero-announcement-text">NCAA Women's Fantasy Volleyball — Coming 2026</span>
+            <span class="hero-announcement-cta">Read more <span aria-hidden="true">→</span></span>
+        </a>
         <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
         <h1 class="hero-title">VOLI: The Volleyball Hub</h1>
         <p class="hero-tagline">Fantasy. Stats. Community.</p>
@@ -176,6 +177,33 @@ import Layout from '../layouts/Layout.astro';
         box-shadow: 0 0 24px rgba(200, 255, 0, 0.15);
         animation: heroAnnouncementGlow 3s ease-in-out infinite;
         max-width: 100%;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .hero-announcement:hover,
+    .hero-announcement:focus-visible {
+        transform: translateY(-1px);
+        border-color: rgba(200, 255, 0, 0.6);
+        outline: none;
+    }
+
+    .hero-announcement-cta {
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        padding-left: 0.55rem;
+        margin-left: 0.15rem;
+        border-left: 1px solid rgba(200, 255, 0, 0.25);
+        transition: padding-right 0.2s ease;
+    }
+
+    .hero-announcement:hover .hero-announcement-cta,
+    .hero-announcement:focus-visible .hero-announcement-cta {
+        padding-right: 0.15rem;
     }
 
     .hero-announcement-dot {
@@ -197,7 +225,7 @@ import Layout from '../layouts/Layout.astro';
         white-space: nowrap;
     }
 
-    .hero-announcement > span:last-child {
+    .hero-announcement-text {
         color: var(--text-primary);
         font-size: 0.9rem;
         font-weight: 500;
@@ -504,11 +532,21 @@ import Layout from '../layouts/Layout.astro';
         .hero-announcement {
             flex-wrap: wrap;
             justify-content: center;
-            row-gap: 0.25rem;
+            row-gap: 0.3rem;
             padding: 0.55rem 1rem 0.55rem 0.85rem;
         }
-        .hero-announcement > span:last-child { font-size: 0.78rem; }
+        .hero-announcement-text { font-size: 0.78rem; }
         .hero-announcement strong { font-size: 0.65rem; }
+        .hero-announcement-cta {
+            font-size: 0.72rem;
+            border-left: none;
+            padding-left: 0;
+            margin-left: 0;
+            width: 100%;
+            text-align: center;
+            padding-top: 0.1rem;
+            border-top: 1px solid rgba(200, 255, 0, 0.25);
+        }
 
         .hero-logo { width: 80px; }
         .hero-title { font-size: 2rem; }
