@@ -36,6 +36,7 @@ export function getStaticPaths() {
             <div class="actions">
                 <a href="#" id="retry" class="btn-home">Open in the app</a>
             </div>
+            <p class="retry-note" id="retry-note" hidden></p>
 
             <div class="divider"><span>Don't have the app?</span></div>
 
@@ -111,7 +112,30 @@ export function getStaticPaths() {
     // the in-app browsers (Instagram, Facebook, Discord) where universal
     // links are the thing that does not work, which is the main failure case.
     var appUrl = 'voli://league/' + encodeURIComponent(leagueId) + '/' + encodeURIComponent(joinCode);
-    document.getElementById('retry').setAttribute('href', appUrl);
+
+    // DELIBERATELY NOT set as the button's href, and never handed to
+    // window.location. Navigating straight to an unregistered scheme makes iOS
+    // put up "Safari cannot open the page because the address is invalid" —
+    // an OS-level alert that fires before any JS can intercept it, so it
+    // cannot be caught or styled. An <a href="voli://..."> click does the same.
+    //
+    // A hidden iframe attempt fails SILENTLY instead: no alert anywhere, and
+    // it still launches the app inside the WKWebView in-app browsers
+    // (Instagram, Facebook, Discord) that are the main reason this page is
+    // reached at all. The cost is that Safari proper blocks iframe scheme
+    // navigation outright — but someone in Safari WITH the app installed
+    // would have been taken by the universal link before ever landing here.
+    function tryOpenApp() {
+        try {
+            var f = document.createElement('iframe');
+            f.style.display = 'none';
+            f.src = appUrl;
+            document.body.appendChild(f);
+            setTimeout(function () {
+                if (f.parentNode) f.parentNode.removeChild(f);
+            }, 1500);
+        } catch (e) { /* nothing further to try */ }
+    }
 
     // Name the league in the fallback copy. Fired in PARALLEL with the app
     // handoff below and never awaited before it — a recipient who has the app
@@ -162,11 +186,57 @@ export function getStaticPaths() {
     // Try the handoff, then reveal the fallback if we are still here. 1200ms
     // is long enough for the OS sheet to appear and short enough that a
     // recipient without the app is not staring at "Opening…".
-    try { window.location.href = appUrl; } catch (e) { /* scheme unsupported */ }
+    tryOpenApp();
 
     setTimeout(function () {
         if (!handedOff && !document.hidden) show(fallback);
     }, 1200);
+
+    var APP_STORE  = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+    var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+
+    var ua = navigator.userAgent || '';
+    // iPadOS 13+ reports itself as MacIntel, so touch points are what actually
+    // separate an iPad from a Mac.
+    var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var isAndroid = /Android/.test(ua);
+
+    // Manual retry: try the app, and if we are still sitting here afterwards
+    // send them straight to their store rather than leaving the button looking
+    // broken. They asked to open the app; not having it is the only reason
+    // this path runs, so the store IS the answer.
+    //
+    // Only on the explicit click, never on page load — a Safari user who DOES
+    // have the app (iframe schemes are blocked there) must not get bounced to
+    // the App Store uninvited.
+    //
+    // preventDefault matters: without it the href would navigate and bring
+    // back the very alert this whole approach exists to avoid.
+    document.getElementById('retry').addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var note = document.getElementById('retry-note');
+        note.hidden = true;
+
+        // If the tab is already hidden the timer cannot be trusted, so do not
+        // arm the redirect at all.
+        if (document.hidden) return;
+
+        tryOpenApp();
+
+        setTimeout(function () {
+            if (handedOff || document.hidden) return;   // the app took over
+            var store = isIOS ? APP_STORE : (isAndroid ? PLAY_STORE : null);
+            if (store) {
+                window.location.href = store;
+            } else {
+                // Desktop: no store to send them to that would help.
+                note.textContent =
+                    'VOLI is a mobile app — open this link on your phone, or scan it from the app store.';
+                note.hidden = false;
+            }
+        }, 1500);
+    });
 })();
 </script>
 
@@ -234,6 +304,13 @@ export function getStaticPaths() {
     .btn-home:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 32px var(--accent-glow);
+    }
+
+    .retry-note {
+        margin: 0.9rem 0 0;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        line-height: 1.45;
     }
 
     .divider {
