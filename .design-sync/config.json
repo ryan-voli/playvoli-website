@@ -1,0 +1,9 @@
+{
+  "projectId": "65ffdc81-7684-4548-a811-9647d25df36b",
+  "pkg": "playvoli-website",
+  "globalName": "VOLI",
+  "shape": "package",
+  "cssEntry": "src/styles/global.css",
+  "extraFonts": [".design-sync/brand/fonts.css"],
+  "readmeHeader": ".design-sync/conventions.md"
+}

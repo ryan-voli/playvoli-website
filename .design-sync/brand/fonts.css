@@ -1,0 +1,19 @@
+/* VOLI brand fonts — authored for design-sync (design tokens live in src/styles/global.css).
+   Inter's @font-face ships inline in src/layouts/Layout.astro on the site, so it is
+   restated here; Designer mirrors the rule in global.css with a resolvable path. */
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300 800;
+    font-display: swap;
+    src: url('../../public/fonts/inter-latin.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Designer';
+    src: url('../../public/fonts/Designer.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

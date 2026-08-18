@@ -62,21 +62,10 @@ import Layout from '../layouts/Layout.astro';
     <main class="card">
         <img src="/images/appicon.webp" alt="VOLI" class="logo">
 
-        <h1 class="title">Join the <span>Volley Talk</span> League</h1>
-        <p class="subtitle">Play fantasy volleyball with Sarah Pavan and Adam Schulz and compete with fellow fans on Voli</p>
+        <h1 class="title"><span>Volley Talk</span> with Sarah Pavan</h1>
+        <p class="subtitle">Listen to Sarah Pavan and Adam Schulz break down NCAA and international volleyball on VOLI</p>
 
         <div class="action-buttons">
-            <a href="voli://league/b596cbe0-d899-4929-90e9-7cbe73712e21/04ee-573b-f9b9"
-               id="join-league-btn"
-               onclick="handleDeepLink(event, 'voli://league/b596cbe0-d899-4929-90e9-7cbe73712e21/04ee-573b-f9b9'); plausible('Volley Talk Join League'); gtag('event', 'click', {'event_category': 'league_join', 'event_label': 'volleytalk_league', 'source': 'volleytalk'});"
-               class="btn-primary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                    <polyline points="10 17 15 12 10 7"/>
-                    <line x1="15" y1="12" x2="3" y2="12"/>
-                </svg>
-                Join League
-            </a>
             <a href="voli://podcast/2a40ac90-1603-487c-b49e-cdee419d78c2"
                onclick="handleDeepLink(event, 'voli://podcast/2a40ac90-1603-487c-b49e-cdee419d78c2'); plausible('Volley Talk Listen Podcast'); gtag('event', 'click', {'event_category': 'podcast_listen', 'event_label': 'volleytalk_podcast', 'source': 'volleytalk'});"
                class="btn-secondary">

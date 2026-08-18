@@ -15,13 +15,9 @@ import Layout from '../layouts/Layout.astro';
             <img src="/images/partners/Volley Talk.jpeg" alt="Volley Talk with Sarah Pavan" class="partner-logo">
             <div class="partner-content">
                 <h2 class="partner-name">Volley Talk with Sarah Pavan</h2>
-                <p class="partner-description">Hosted by Olympian, World Champion, and former Nebraska Cornhusker All-American Sarah Pavan and her husband Adam Schulz—international volleyball coach and stats wizard—Volley Talk is the podcast for fans who want to dig deep into NCAA and international volleyball. With weekly highlights, feature match breakdowns, and hot takes drawn from decades of experience at the highest level, they bring unmatched insight to volleyball fans everywhere. Join their official fantasy league on VOLI and compete alongside their community.</p>
+                <p class="partner-description">Hosted by Olympian, World Champion, and former Nebraska Cornhusker All-American Sarah Pavan and her husband Adam Schulz—international volleyball coach and stats wizard—Volley Talk is the podcast for fans who want to dig deep into NCAA and international volleyball. With weekly highlights, feature match breakdowns, and hot takes drawn from decades of experience at the highest level, they bring unmatched insight to volleyball fans everywhere.</p>
                 <div class="partner-buttons">
-                    <a href="https://playvoli.com/volleytalk" class="partner-btn" id="vt-league">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                        Join League
-                    </a>
-                    <a href="https://playvoli.com/volleytalk" class="partner-btn partner-btn-secondary" id="vt-listen">
+                    <a href="https://playvoli.com/volleytalk" class="partner-btn" id="vt-listen">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
                         Listen on VOLI
                     </a>
@@ -33,13 +29,9 @@ import Layout from '../layouts/Layout.astro';
             <img src="/images/partners/mlmpod.svg" alt="Major League Minute" class="partner-logo">
             <div class="partner-content">
                 <h2 class="partner-name">Major League Minute</h2>
-                <p class="partner-description">Your quick-hitting podcast diving into the fast-paced world of Major League Volleyball. Join Nick Prososki (Doc) and Gina Mancuso-Prososki (GMP)—former Nebraska Cornhusker and Omaha Supernovas player—as they break down the biggest games, key performances, and trending headlines with hot takes and real talk. We also partner with MLM for exclusive player Ask Me Anythings on VOLI. Join their official fantasy league and compete alongside their community. Whether you're a die-hard fan or just keeping up with the season, Major League Minute keeps you dialed in and ready for the next serve.</p>
+                <p class="partner-description">Your quick-hitting podcast diving into the fast-paced world of Major League Volleyball. Join Nick Prososki (Doc) and Gina Mancuso-Prososki (GMP)—former Nebraska Cornhusker and Omaha Supernovas player—as they break down the biggest games, key performances, and trending headlines with hot takes and real talk. We also partner with MLM for exclusive player Ask Me Anythings on VOLI. Whether you're a die-hard fan or just keeping up with the season, Major League Minute keeps you dialed in and ready for the next serve.</p>
                 <div class="partner-buttons">
-                    <a href="https://playvoli.com/mlm" class="partner-btn" id="mlm-league">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                        Join League
-                    </a>
-                    <a href="https://playvoli.com/mlm" class="partner-btn partner-btn-secondary" id="mlm-listen">
+                    <a href="https://playvoli.com/mlm" class="partner-btn" id="mlm-listen">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
                         Listen on VOLI
                     </a>
@@ -113,14 +105,8 @@ import Layout from '../layouts/Layout.astro';
         }
 
         // Bind deep link handlers
-        document.getElementById('vt-league').addEventListener('click', function(e) {
-            handleDeepLink(e, 'voli://league/b596cbe0-d899-4929-90e9-7cbe73712e21/04ee-573b-f9b9', 'https://playvoli.com/volleytalk', 'Join Volley Talk League');
-        });
         document.getElementById('vt-listen').addEventListener('click', function(e) {
             handleDeepLink(e, 'voli://podcast/2a40ac90-1603-487c-b49e-cdee419d78c2', 'https://playvoli.com/volleytalk', 'Listen to Volley Talk');
-        });
-        document.getElementById('mlm-league').addEventListener('click', function(e) {
-            handleDeepLink(e, 'voli://league/3185a98f-0c17-49c1-9306-edb41e42f81c/8de5-a72d-3f55', 'https://playvoli.com/mlm', 'Join MLM League');
         });
         document.getElementById('mlm-listen').addEventListener('click', function(e) {
             handleDeepLink(e, 'voli://podcast/fd2c11ea-3cff-4248-886d-e571e55c0f36', 'https://playvoli.com/mlm', 'Listen to Major League Minute');
