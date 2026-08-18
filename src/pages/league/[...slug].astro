@@ -28,7 +28,7 @@ export function getStaticPaths() {
 
         <!-- Fallback: app not installed, or the handoff did not take. -->
         <div id="fallback" hidden>
-            <h1 class="title">Join this league</h1>
+            <h1 class="title" id="fallback-title">Join this league</h1>
             <p class="subtitle" id="fallback-sub">
                 You've been invited to a fantasy volleyball league on VOLI.
             </p>
@@ -112,6 +112,41 @@ export function getStaticPaths() {
     // links are the thing that does not work, which is the main failure case.
     var appUrl = 'voli://league/' + encodeURIComponent(leagueId) + '/' + encodeURIComponent(joinCode);
     document.getElementById('retry').setAttribute('href', appUrl);
+
+    // Name the league in the fallback copy. Fired in PARALLEL with the app
+    // handoff below and never awaited before it — a recipient who has the app
+    // must not wait on a network round trip to be handed over.
+    //
+    // validate-join-code is service-role server side and callable with the
+    // anon key (verified: 200 + league for a real code, 404 for a bogus one).
+    // It returns the WHOLE row; only .name is read here.
+    //
+    // The id check mirrors league_invite_modal.dart:106 — a link whose
+    // leagueId does not match the league the join code actually resolves to is
+    // treated as bad rather than silently showing the real league's name.
+    (function lookupName() {
+        if (!window.supabase) return;
+        try {
+            var sb = window.supabase.createClient(
+                'https://api.playvoli.com',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0'
+            );
+            sb.functions
+                .invoke('validate-join-code', { body: { join_code: joinCode } })
+                .then(function (res) {
+                    var lg = res && res.data && res.data.league;
+                    if (!lg || !lg.name) return;
+                    if (lg.f_league_id !== leagueId) return;
+                    // textContent, never innerHTML — league names are
+                    // user-supplied and must not be able to inject markup.
+                    document.getElementById('fallback-title').textContent =
+                        'Join ' + lg.name;
+                    document.getElementById('fallback-sub').textContent =
+                        "You've been invited to " + lg.name + ' on VOLI.';
+                })
+                .catch(function () { /* keep the generic copy */ });
+        } catch (e) { /* keep the generic copy */ }
+    })();
 
     var handedOff = false;
 
