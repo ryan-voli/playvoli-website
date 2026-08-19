@@ -15,13 +15,19 @@ const { activePage = '' } = Astro.props;
     <!-- Desktop nav -->
     <nav class="nav desktop-nav">
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
-        <a href="/about" id="about-link" class:list={[{ active: activePage === 'about' || activePage === 'whats-next' }]}>About</a>
+        <a href="/about" id="about-link" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
         <button class="more-btn" id="more-btn">More</button>
     </nav>
-    <div class="about-dropdown" id="about-dropdown">
-        <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
-    </div>
+    {/* What's Next is hidden while the roadmap is rewritten. This dropdown
+        held that one link and nothing else, so it goes with it — an About
+        menu that opens an empty box reads as broken. The hover JS below is
+        guarded on this element existing and simply no-ops, and its CSS is
+        left in place so restoring is: put this div back, un-prefix the page
+        file, and drop the vercel.json redirect.
+
+        An Astro comment, not an HTML one: Nav renders on every page, so an
+        HTML comment would ship this note into all 23 of them. */}
     <div class="more-dropdown" id="more-dropdown">
         <div class="more-columns">
             <div class="more-col">
@@ -73,7 +79,6 @@ const { activePage = '' } = Astro.props;
     <nav class="mobile-nav">
         <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
-        <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
         <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
         <div class="mobile-divider"></div>
         <div class="mobile-section-title">Products</div>
