@@ -68,7 +68,7 @@ const homeSchema = [
   schema={homeSchema}
 >
     <section class="hero">
-        <a href="/mobileapp" class="hero-announcement" aria-label="Announcement: NCAA Women's Fantasy Volleyball is live now — get the app">
+        <a href="/mobileapp" id="hero-announcement-dl" class="hero-announcement" aria-label="Announcement: NCAA Women's Fantasy Volleyball is live now — get the app">
             <span class="hero-announcement-dot" aria-hidden="true"></span>
             <strong>Update</strong>
             <span class="hero-announcement-text">NCAA Women's Fantasy Volleyball — Live Now</span>
@@ -187,6 +187,31 @@ const homeSchema = [
         <a href="/contact" class="contact-btn">Contact Us</a>
     </section>
 </Layout>
+
+<script is:inline>
+    /* The hero banner's "Get the app" runs the SAME flow as the nav Download
+       pill — App Store on iOS, Play Store on Android, QR modal on desktop —
+       rather than sending people to /mobileapp to look for a link.
+
+       It clicks the pill instead of calling handleDownload() directly.
+       handleDownload lives in QrModal's inline script, which the Layout
+       renders AFTER this page's content, so it is not defined yet at parse
+       time; the click happens long after, when both exist. Same indirection
+       Nav.astro already uses for the mobile download icon.
+
+       The href stays as a no-JS fallback: if the pill is missing for any
+       reason the anchor is left alone and still lands on /mobileapp. */
+    (function () {
+        var a = document.getElementById('hero-announcement-dl');
+        if (!a) return;
+        a.addEventListener('click', function (e) {
+            var pill = document.getElementById('download-pill');
+            if (!pill) return;
+            e.preventDefault();
+            pill.click();
+        });
+    })();
+</script>
 
 <style>
     /* Hero Section */
