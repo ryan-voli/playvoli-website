@@ -343,9 +343,23 @@ const homeSchema = [
        string with a colon in it. VOLI carries the display face; the descriptor
        is a wide-tracked label in the body face, which is what makes the two
        read as different things rather than as one long headline. */
+    /* ALIGNED ON THE BASELINE, NOT THE BOX — and that choice is load-bearing.
+       align-items:center centres each item's LINE BOX, and a line box is built
+       from the font's ascent and descent. Designer's are 752/-200 against a
+       700 cap on a 1000 em, so its caps sit well above its box centre and the
+       wordmark rode high against the rule and the descriptor.
+
+       Correcting that with a translateY tuned to ascent/descent would have
+       been right on macOS and wrong on Windows: Designer does not set
+       USE_TYPO_METRICS, so Windows lays it out on usWin (1026/273) instead of
+       hhea (752/-200) — a ~0.1em disagreement.
+
+       Baseline alignment depends on NONE of that. Both items sit on their
+       shared baseline, and the only numbers used below are CAP HEIGHTS, which
+       every platform agrees on. */
     .hero-title {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         justify-content: center;
         flex-wrap: wrap;
         gap: 0 1.15rem;
@@ -358,30 +372,40 @@ const homeSchema = [
         font-size: 4.25rem;
         line-height: 1;
         letter-spacing: 0.01em;
-        background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #ffffff;
     }
 
+    /* PROPORTIONS ARE FROM THE BRAND LOCKUP, not eyeballed. The Claude
+       Design "VOLI Brand" template sets the header at VOLI 52px / rule
+       1x34px at 18% white / descriptor 19px at 0.2em and 50% white — so
+       the wordmark is 2.74x the descriptor and the rule is 0.65x the
+       wordmark. Those ratios are kept here at hero scale. */
+    /* A flex item with no text baseline aligns its BOTTOM edge to the shared
+       baseline, so a rule of exactly Designer's cap height (0.70em) spans
+       baseline to cap-top and needs no offset of its own. */
     .hero-title-rule {
         width: 1px;
-        height: 2.5rem;
-        background: rgba(255, 255, 255, 0.22);
+        height: 2.975rem;  /* 0.70 x 4.25rem = Designer's cap height */
+        background: rgba(255, 255, 255, 0.35);
         flex: none;
     }
 
+    /* Lift the descriptor so its cap band centres on the wordmark's:
+       -(0.70 x 2.74 - 0.72754) / 2 = -0.5952em, where 0.72754 is Inter's cap
+       height and 2.74 the brand size ratio. Because that ratio is fixed, the
+       figure is CONSTANT — it holds at every breakpoint without retuning. */
     .hero-title-hub {
-        font-size: 1rem;
+        font-size: 1.55rem; /* 4.25rem / 2.74 */
         font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 0.3em;
-        color: var(--text-secondary);
+        letter-spacing: 0.2em;
+        color: #ffffff;
         white-space: nowrap;
+        transform: translateY(-0.5952em);
         /* letter-spacing also pads the LAST glyph, which shifts a centred
-           label right by half a space. Pull it back so the rule, the wordmark
-           and the descriptor are optically centred rather than metrically. */
-        margin-right: -0.3em;
+           label right by half a space. Pull it back so the lockup is
+           optically centred rather than metrically. */
+        margin-right: -0.2em;
     }
 
     .hero-tagline {
@@ -640,10 +664,10 @@ const homeSchema = [
     /* Responsive */
     @media (max-width: 768px) {
         .hero-quotes { display: none; }
-        .hero-title { gap: 0.6rem 0; flex-direction: column; }
+        .hero-title { gap: 0.6rem 0; flex-direction: column; align-items: center; }
         .hero-title-mark { font-size: 3.25rem; }
         .hero-title-rule { width: 44px; height: 1px; }
-        .hero-title-hub { font-size: 0.8rem; letter-spacing: 0.26em; margin-right: -0.26em; }
+        .hero-title-hub { font-size: 1.19rem; letter-spacing: 0.2em; margin-right: -0.2em; transform: none; }
         .hero-tagline { font-size: 1.25rem; }
         .hero-description { font-size: 1rem; }
         .screenshots-container { gap: 1rem; }
@@ -677,7 +701,7 @@ const homeSchema = [
 
         .hero-logo { width: 80px; }
         .hero-title-mark { font-size: 2.6rem; }
-        .hero-title-hub { font-size: 0.72rem; letter-spacing: 0.22em; margin-right: -0.22em; }
+        .hero-title-hub { font-size: 0.95rem; letter-spacing: 0.2em; margin-right: -0.2em; transform: none; }
         .hero-tagline { font-size: 1.1rem; }
 
         .store-buttons { gap: 0.75rem; }

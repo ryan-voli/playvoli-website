@@ -200,9 +200,12 @@ const { activePage = '' } = Astro.props;
     .nav-logo .nav-logo-word {
         font-family: 'Designer', sans-serif;
         color: #ffffff;
-        font-size: 1.35rem;
+        /* Brand lockup ratio: the wordmark is 0.70x the mark beside it
+           (52px against a 74px logo in the VOLI Brand template). The nav mark
+           is 28px, so 19.6px. */
+        font-size: 1.225rem;
         line-height: 1;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.02em;
         /* Designer's caps sit high in the line box; nudge back onto the
            optical centre of the 28px mark beside it. */
         transform: translateY(1px);
