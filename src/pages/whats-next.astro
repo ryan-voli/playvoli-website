@@ -21,8 +21,8 @@ const timeline = [
   },
   {
     id: 'ncaa-fantasy', date: 'Aug 2026', dateFull: 'August 2026',
-    title: 'NCAA Fantasy Launch', status: 'current',
-    body: "We're bringing the same fantasy experience fans enjoyed during the pro season to NCAA women's volleyball, tuned for the college game. Expect shorter seasons, simpler scoring, and a more accessible format — plus a new round of features built on top of everything we shipped for pro fantasy.",
+    title: 'NCAA Fantasy Launch', status: 'current', live: true,
+    body: "It's here. The same fantasy experience fans enjoyed during the pro season is now running for NCAA women's volleyball, tuned for the college game — shorter seasons, simpler scoring, and a more accessible format. Leagues are open now, and the first scoring round runs September 9–13. The season is ten rounds, each running Wednesday through Sunday, with Monday and Tuesday as the signing window to set your roster for the week ahead.",
   },
   {
     id: 'ncaa-bracket', date: 'Nov 2026', dateFull: 'November 2026',
@@ -40,6 +40,7 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
   date: t.dateFull,
   title: t.title,
   status: t.status,
+  live: t.live === true,
   body: t.body,
 }]));
 ---
@@ -74,9 +75,9 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
         </div>
 
         <div class="detail-card" id="timeline-detail">
-            <span class="detail-pill" id="detail-pill">Coming August 2026</span>
-            <h2 class="detail-title" id="detail-title">NCAA Women's Fantasy Volleyball</h2>
-            <p class="detail-body" id="detail-body">We're expanding VOLI's fantasy platform to NCAA Division I women's volleyball for the 2026 season. More details — draft format, league sizes, scoring, and signup — coming soon.</p>
+            <span class="detail-pill" id="detail-pill">Live now</span>
+            <h2 class="detail-title" id="detail-title">NCAA Fantasy Launch</h2>
+            <p class="detail-body" id="detail-body">It's here. The same fantasy experience fans enjoyed during the pro season is now running for NCAA women's volleyball, tuned for the college game — shorter seasons, simpler scoring, and a more accessible format. Leagues are open now, and the first scoring round runs September 9–13. The season is ten rounds, each running Wednesday through Sunday, with Monday and Tuesday as the signing window to set your roster for the week ahead.</p>
         </div>
 
         <p class="footer-note">
@@ -96,16 +97,19 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
     var titleEl = document.getElementById('detail-title');
     var bodyEl = document.getElementById('detail-body');
 
-    function pillText(status, date) {
-        if (status === 'current') return 'Coming ' + date;
-        if (status === 'upcoming') return 'Coming ' + date;
+    function pillText(status, date, live) {
+        // A shipped milestone is still the CURRENT one on the timeline, so it
+        // keeps status 'current' for centering and styling — but it must not
+        // still be advertised as upcoming once it has launched.
+        if (live) return 'Live now';
+        if (status === 'current' || status === 'upcoming') return 'Coming ' + date;
         return date;
     }
 
     function updateDetail(id) {
         var d = details[id];
         if (!d) return;
-        pill.textContent = pillText(d.status, d.date);
+        pill.textContent = pillText(d.status, d.date, d.live);
         titleEl.textContent = d.title;
         bodyEl.textContent = d.body;
     }

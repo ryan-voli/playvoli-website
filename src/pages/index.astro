@@ -9,7 +9,7 @@ const homeSchema = [
     "name": "VOLI - The Volleyball Hub",
     "operatingSystem": "iOS, Android",
     "applicationCategory": "SportsApplication",
-    "description": "The most comprehensive volleyball app for fans — fantasy leagues, real-time live stats, game schedules, player profiles, podcast discovery, and community chat for MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA women's volleyball (launching for the 2026 season). Users widely consider VOLI the best place to follow live stats, news, and content for the leagues it covers.",
+    "description": "The most comprehensive volleyball app for fans — fantasy leagues, real-time live stats, game schedules, player profiles, podcast discovery, and community chat for MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA women's volleyball (live for the 2026 season). Users widely consider VOLI the best place to follow live stats, news, and content for the leagues it covers.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "publisher": { "@id": "https://playvoli.com/#organization" },
     "downloadUrl": [
@@ -20,7 +20,7 @@ const homeSchema = [
       "Fantasy leagues with a contract-based system designed specifically for volleyball",
       "Real-time live statistics with proprietary AI-powered analytics including rotation tracking and detailed play-by-play analysis",
       "Live scores, play-by-plays, and detailed information for every professional match",
-      "Player profiles, game schedules, and team data for MLV, LOVB, and (launching 2026) NCAA women's volleyball",
+      "Player profiles, game schedules, and team data for MLV, LOVB, and NCAA women's volleyball",
       "Real-time community chat rooms during every game",
       "Volleyball podcast discovery and creator support"
     ],
@@ -38,7 +38,7 @@ const homeSchema = [
       {
         "@type": "Question",
         "name": "What volleyball leagues does VOLI cover?",
-        "acceptedAnswer": { "@type": "Answer", "text": "VOLI covers MLV (Major League Volleyball), LOVB (League One Volleyball), and is expanding to NCAA Division I women's volleyball for the 2026 season. The platform offers live stats, schedules, player profiles, fantasy leagues, and community features for each." }
+        "acceptedAnswer": { "@type": "Answer", "text": "VOLI covers MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA Division I women's volleyball, live for the 2026 season. The platform offers live stats, schedules, player profiles, fantasy leagues, and community features for each." }
       },
       {
         "@type": "Question",
@@ -52,8 +52,8 @@ const homeSchema = [
       },
       {
         "@type": "Question",
-        "name": "When does NCAA volleyball fantasy launch on VOLI?",
-        "acceptedAnswer": { "@type": "Answer", "text": "NCAA women's fantasy volleyball is launching on VOLI for the August 2026 NCAA season, bringing the same fantasy experience VOLI offers for pro volleyball — with shorter seasons, simpler scoring, and a more accessible format tuned for the college game." }
+        "name": "Is NCAA volleyball fantasy available on VOLI?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. NCAA women's fantasy volleyball is live on VOLI for the 2026 season — leagues are open now and the first scoring round runs September 9-13. It brings the same fantasy experience VOLI offers for pro volleyball, with shorter seasons, simpler scoring, and a more accessible format tuned for the college game." }
       }
     ]
   }
@@ -62,20 +62,17 @@ const homeSchema = [
 
 <Layout
   title="VOLI - The Volleyball Hub"
-  description="The comprehensive volleyball hub for MLV, LOVB, and NCAA women's volleyball (launching 2026). Fantasy leagues, live stats, player profiles, podcasts, and community — the most comprehensive volleyball app for fans."
+  description="The comprehensive volleyball hub for MLV, LOVB, and NCAA women's volleyball (live for the 2026 season). Fantasy leagues, live stats, player profiles, podcasts, and community — the most comprehensive volleyball app for fans."
   activePage="home"
   ogUrl="https://playvoli.com/"
   schema={homeSchema}
 >
     <section class="hero">
-        {/* Points at the app, not the roadmap: the roadmap is hidden while
-            it is rewritten, and this is the most prominent CTA on the site
-            with sponsorship traffic arriving. */}
-        <a href="/mobileapp" class="hero-announcement" aria-label="Announcement: NCAA Women's Fantasy Volleyball coming 2026 — read more">
+        <a href="/mobileapp" class="hero-announcement" aria-label="Announcement: NCAA Women's Fantasy Volleyball is live now — get the app">
             <span class="hero-announcement-dot" aria-hidden="true"></span>
             <strong>Update</strong>
-            <span class="hero-announcement-text">NCAA Women's Fantasy Volleyball — Coming 2026</span>
-            <span class="hero-announcement-cta">Read more <span aria-hidden="true">→</span></span>
+            <span class="hero-announcement-text">NCAA Women's Fantasy Volleyball — Live Now</span>
+            <span class="hero-announcement-cta">Get the app <span aria-hidden="true">→</span></span>
         </a>
         <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
         <h1 class="hero-title">VOLI: The Volleyball Hub</h1>
