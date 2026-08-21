@@ -9,7 +9,7 @@ const { activePage = '' } = Astro.props;
 <div class="nav-container">
     <a href="/" class="nav-logo">
         <img src="/images/logo_dark_sm.webp" alt="VOLI">
-        <span>Voli</span>
+        <span class="nav-logo-word">VOLI</span>
     </a>
 
     <!-- Desktop nav -->
@@ -192,11 +192,20 @@ const { activePage = '' } = Astro.props;
         width: auto;
     }
 
-    .nav-logo span {
+    /* THE WORDMARK IS THE DISPLAY FACE. Designer is the same face the app
+       uses and the same one the brand wordmarks are set in, so the nav reads
+       as the same product rather than as Inter bold pretending to be a logo.
+       Designer is a display face with no weight axis — size and tracking do
+       the work that font-weight used to. */
+    .nav-logo .nav-logo-word {
+        font-family: 'Designer', sans-serif;
         color: #ffffff;
-        font-size: 1.1rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
+        font-size: 1.35rem;
+        line-height: 1;
+        letter-spacing: 0.04em;
+        /* Designer's caps sit high in the line box; nudge back onto the
+           optical centre of the 28px mark beside it. */
+        transform: translateY(1px);
     }
 
     .nav {

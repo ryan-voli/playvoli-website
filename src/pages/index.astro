@@ -75,7 +75,11 @@ const homeSchema = [
             <span class="hero-announcement-cta">Get the app <span aria-hidden="true">→</span></span>
         </a>
         <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
-        <h1 class="hero-title">VOLI: The Volleyball Hub</h1>
+        <h1 class="hero-title">
+            <span class="hero-title-mark">VOLI</span>
+            <span class="hero-title-rule" aria-hidden="true"></span>
+            <span class="hero-title-hub">The Volleyball Hub</span>
+        </h1>
         <p class="hero-tagline">Fantasy. Stats. Community.</p>
 
         <div class="hero-stars">
@@ -334,15 +338,50 @@ const homeSchema = [
         margin-bottom: 1.5rem;
     }
 
+    /* THE LOCKUP, NOT A SENTENCE. The brand wordmark is
+       "VOLI | THE VOLLEYBALL HUB" — two faces separated by a rule, not one
+       string with a colon in it. VOLI carries the display face; the descriptor
+       is a wide-tracked label in the body face, which is what makes the two
+       read as different things rather than as one long headline. */
     .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        letter-spacing: -0.03em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0 1.15rem;
         margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .hero-title-mark {
+        font-family: 'Designer', sans-serif;
+        font-size: 4.25rem;
+        line-height: 1;
+        letter-spacing: 0.01em;
         background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+
+    .hero-title-rule {
+        width: 1px;
+        height: 2.5rem;
+        background: rgba(255, 255, 255, 0.22);
+        flex: none;
+    }
+
+    .hero-title-hub {
+        font-size: 1rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        color: var(--text-secondary);
+        white-space: nowrap;
+        /* letter-spacing also pads the LAST glyph, which shifts a centred
+           label right by half a space. Pull it back so the rule, the wordmark
+           and the descriptor are optically centred rather than metrically. */
+        margin-right: -0.3em;
     }
 
     .hero-tagline {
@@ -601,7 +640,10 @@ const homeSchema = [
     /* Responsive */
     @media (max-width: 768px) {
         .hero-quotes { display: none; }
-        .hero-title { font-size: 2.5rem; }
+        .hero-title { gap: 0.6rem 0; flex-direction: column; }
+        .hero-title-mark { font-size: 3.25rem; }
+        .hero-title-rule { width: 44px; height: 1px; }
+        .hero-title-hub { font-size: 0.8rem; letter-spacing: 0.26em; margin-right: -0.26em; }
         .hero-tagline { font-size: 1.25rem; }
         .hero-description { font-size: 1rem; }
         .screenshots-container { gap: 1rem; }
@@ -634,7 +676,8 @@ const homeSchema = [
         }
 
         .hero-logo { width: 80px; }
-        .hero-title { font-size: 2rem; }
+        .hero-title-mark { font-size: 2.6rem; }
+        .hero-title-hub { font-size: 0.72rem; letter-spacing: 0.22em; margin-right: -0.22em; }
         .hero-tagline { font-size: 1.1rem; }
 
         .store-buttons { gap: 0.75rem; }
