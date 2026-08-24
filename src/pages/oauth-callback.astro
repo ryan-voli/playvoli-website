@@ -7,10 +7,11 @@ import Layout from '../layouts/Layout.astro';
   description="Completing your sign in to VOLI..."
 >
     <main class="card">
+        <img src="/images/appicon.webp" alt="VOLI" class="logo">
         <div class="spinner-wrap">
             <div class="loading-spinner"></div>
         </div>
-        <h1 class="title">Signing you in...</h1>
+        <h1 class="title">Signing in to <span>VOLI</span></h1>
         <p class="subtitle" id="status-message">Please wait while we complete your sign in.</p>
 
         <div id="fallback-actions" class="actions hidden">
@@ -99,6 +100,15 @@ import Layout from '../layouts/Layout.astro';
         background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
     }
 
+    .logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        display: block;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
     .spinner-wrap {
         margin-bottom: 1.5rem;
     }
@@ -123,6 +133,10 @@ import Layout from '../layouts/Layout.astro';
         font-weight: 700;
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
+    }
+
+    .title span {
+        color: var(--accent);
     }
 
     .subtitle {
