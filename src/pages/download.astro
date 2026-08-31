@@ -1,0 +1,133 @@
+---
+// /download — one link that sends every phone to the right store.
+//
+// Built for links posted OFF the site (Instagram stories, bios, DMs),
+// where the visitor arrives inside an in-app browser rather than
+// Safari or Chrome.
+//
+// Rendered on demand rather than prerendered, so the store choice is
+// made SERVER-SIDE from the User-Agent header. That matters: in-app
+// browsers are the least predictable JS environments there are, and a
+// server redirect works before a single script runs. The site is
+// output:'static', so this one route opts out.
+export const prerender = false;
+
+const APP_STORE = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+
+const ua = Astro.request.headers.get('user-agent') ?? '';
+
+// iPadOS 13+ reports a desktop Safari UA, so the plain iPad test misses
+// modern iPads — they identify as Macintosh WITH touch support.
+const isIOS = /iPad|iPhone|iPod/i.test(ua) ||
+  (/Macintosh/i.test(ua) && /Mobile|Touch/i.test(ua));
+const isAndroid = /android/i.test(ua);
+
+if (isIOS || isAndroid) {
+  // 302, not 301: a permanent redirect would be cached by the browser
+  // per-URL and could strand a device on the wrong store forever.
+  return Astro.redirect(isIOS ? APP_STORE : PLAY_STORE, 302);
+}
+
+// Anything else (desktop, bots, unknown) gets a real page with both
+// stores and a QR — never a guess.
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+Astro.response.headers.set('Vary', 'User-Agent');
+
+const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=8&data=https://playvoli.com/download';
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Download VOLI</title>
+  <meta name="description" content="Get VOLI — The Volleyball Hub. Scores, stats, fantasy and more." />
+  <meta name="robots" content="noindex" />
+
+  <!-- Social cards, since this URL is made to be shared. -->
+  <meta property="og:title" content="Download VOLI" />
+  <meta property="og:description" content="The Volleyball Hub — scores, stats, fantasy and more." />
+  <meta property="og:url" content="https://playvoli.com/download" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Belt and braces: if this page is ever served from a cache to a
+       phone, the script still routes it. The server redirect above is
+       the primary path. -->
+  <script is:inline>
+    (function () {
+      var ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      var ios = /iPad|iPhone|iPod/i.test(ua) ||
+        (/Macintosh/i.test(ua) && 'ontouchend' in document);
+      if (ios && !window.MSStream) {
+        window.location.replace('https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982');
+      } else if (/android/i.test(ua)) {
+        window.location.replace('https://play.google.com/store/apps/details?id=com.playvoli.app');
+      }
+    })();
+  </script>
+
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #131819;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+      text-align: center;
+    }
+    .card {
+      width: 100%;
+      max-width: 360px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      padding: 32px 24px;
+    }
+    h1 { margin: 0 0 6px; font-size: 1.4rem; letter-spacing: -0.01em; }
+    p  { margin: 0 0 22px; font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.62); }
+    .qr {
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px;
+      display: inline-block;
+      line-height: 0;
+      margin-bottom: 22px;
+    }
+    .qr img { width: 200px; height: 200px; display: block; }
+    .stores { display: flex; flex-direction: column; gap: 10px; }
+    a.store {
+      display: block;
+      padding: 13px 16px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #fff;
+      transition: background 0.15s ease;
+    }
+    a.store:hover { background: rgba(255, 255, 255, 0.16); }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Download VOLI</h1>
+    <p>Scan with your phone, or pick your store below.</p>
+    <div class="qr"><img src={qr} alt="QR code linking to playvoli.com/download" width="200" height="200" /></div>
+    <div class="stores">
+      <a class="store" href={APP_STORE}>Download on the App&nbsp;Store</a>
+      <a class="store" href={PLAY_STORE}>Get it on Google&nbsp;Play</a>
+    </div>
+  </main>
+</body>
+</html>
