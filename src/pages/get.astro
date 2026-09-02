@@ -44,10 +44,10 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
 
     <div class="top">
       <header class="brand">
-        <div class="brand-lockup">
+        <a href="/" class="brand-lockup" aria-label="VOLI home">
           <img src="/images/logo_dark_sm.webp" alt="" width="52" height="52" class="brand-mark" />
           <span class="brand-word">VOLI</span>
-        </div>
+        </a>
         <p class="brand-tag">The Volleyball Hub</p>
       </header>
 
@@ -213,11 +213,22 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
      page is a visitor deciding whether they're in the right place. */
   body.ad-landing .brand { margin-bottom: clamp(10px, 2.4vh, 18px); }
 
+  /* The one sanctioned exit. A landing page normally strips every link
+     that isn't the download, but an unclickable logo reads as a
+     throwaway page — and a visitor who wants to check you're a real
+     company should be able to. */
   body.ad-landing .brand-lockup {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 10px;
+  }
+  body.ad-landing .brand-lockup:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
   }
   body.ad-landing .brand-mark {
     width: clamp(40px, 11vw, 52px);
