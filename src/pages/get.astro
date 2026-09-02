@@ -42,22 +42,28 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
 >
   <main class="lp">
 
-    <section class="hero">
-      <img src="/images/appicon.webp" alt="" width="72" height="72" class="lp-icon" />
+    <div class="top">
+      <header class="brand">
+        <div class="brand-lockup">
+          <img src="/images/logo_dark_sm.webp" alt="" width="52" height="52" class="brand-mark" />
+          <span class="brand-word">VOLI</span>
+        </div>
+        <p class="brand-tag">The Volleyball Hub</p>
+      </header>
 
       <p class="deadline" id="deadline" hidden>
         <span class="dot" aria-hidden="true"></span>
         <span id="deadline-text"></span>
       </p>
 
-      <h1>Every NCAA volleyball score, stat&nbsp;and&nbsp;ranking. Free.</h1>
+      <h1>Every NCAA volleyball score, live.</h1>
 
       <p class="sub">
-        Live scores as they happen, full box scores, team and player stats,
-        the AVCA Top 25 — plus the only fantasy college volleyball league anywhere.
+        Box scores, team and player stats, the AVCA Top&nbsp;25 —
+        plus fantasy college volleyball. Free.
       </p>
 
-      <div class="cta" id="cta">
+      <div class="cta">
         <a href={APP_STORE} class="btn btn-primary" data-store="ios" id="btn-ios">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
@@ -74,52 +80,15 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
       </div>
 
       <p class="trust">Free · No subscription · iOS &amp; Android</p>
-    </section>
+    </div>
 
-    <!-- Two shots, both deliberately player-free. Team names and team
-         stats are factual and sit with the informational use the Terms
-         already claim; a NAMED athlete in paid advertising is a
-         different act and invites a right-of-publicity / NIL argument,
-         so no player-market screenshot appears in ad creative. -->
-    <section class="shots" aria-label="Screenshots">
-      <figure>
-        <img src="/images/ad-live.webp" alt="A live NCAA volleyball match in VOLI: Kansas versus Stanford in set four, with the running score and full team stat comparison."
-             width="700" height="1400" loading="lazy" decoding="async" />
-        <figcaption>Live scores, set by set</figcaption>
-      </figure>
-      <figure>
-        <img src="/images/ad-rankings.webp" alt="The AVCA Coaches Poll Top 25 in VOLI, with each team's record and weekly movement."
-             width="700" height="1400" loading="lazy" decoding="async" />
-        <figcaption>AVCA Top 25, every week</figcaption>
-      </figure>
-    </section>
-
-    <section class="feats">
-      <div class="feat">
-        <h2>Follow every match</h2>
-        <p>Live scores, full box scores and play-by-play for Division&nbsp;I — your teams sorted to the top.</p>
-      </div>
-      <div class="feat">
-        <h2>Stats that go deep</h2>
-        <p>Team and player leaderboards, season history, AVCA Top&nbsp;25 and RPI, and a full records book.</p>
-      </div>
-      <div class="feat">
-        <h2>Fantasy nobody else has</h2>
-        <p>Sign real players to a salary cap, score them every week, and run a league with friends.</p>
-      </div>
-    </section>
-
-    <section class="closer">
-      <h2>Get it before the first round scores.</h2>
-      <div class="cta cta-end">
-        <a href={APP_STORE} class="btn btn-primary" data-store="ios">
-          <span>Download for iPhone</span>
-        </a>
-        <a href={PLAY_STORE} class="btn btn-secondary" data-store="android">
-          <span>Download for Android</span>
-        </a>
-      </div>
-    </section>
+    <!-- Proof, not content. These are allowed to run off the bottom
+         edge: nothing below the fold has to be read, so the crop is a
+         composition choice rather than hidden information. -->
+    <div class="proof" aria-hidden="true">
+      <img src="/images/ad-live.webp" alt="" width="700" height="1400" fetchpriority="low" decoding="async" />
+      <img src="/images/ad-rankings.webp" alt="" width="700" height="1400" fetchpriority="low" decoding="async" />
+    </div>
 
   </main>
 
@@ -209,45 +178,85 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
 </Layout>
 
 <style is:global>
-  /* Landing page: strip the site chrome that competes with the one CTA.
-     The logo stays (trust + a way home); the nav links go. */
-  body.ad-landing .desktop-nav,
-  body.ad-landing .more-btn,
-  body.ad-landing .about-dropdown,
-  body.ad-landing .more-dropdown { display: none !important; }
+  /* A PAID LANDING PAGE, NOT A SITE PAGE. One screen, one job, no
+     scroll. Every exit path and every second screenful is a place the
+     visitor can go that isn't the App Store. */
+
+  /* The whole nav goes, not just the links — keeping a nav bar would
+     eat viewport height we need and hand back the exit paths. The app
+     icon in the page is the brand mark. */
+  body.ad-landing .nav-container { display: none !important; }
+
+  body.ad-landing {
+    overflow: hidden;
+    height: 100dvh;
+  }
 
   body.ad-landing .lp {
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 0 20px calc(72px + env(safe-area-inset-bottom));
-  }
-
-  body.ad-landing .hero {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: clamp(28px, 7vw, 56px) 0 8px;
+    padding: max(20px, env(safe-area-inset-top)) 20px 0;
+    overflow: hidden;
   }
 
-  body.ad-landing .lp-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 17px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    margin-bottom: 20px;
+  body.ad-landing .top {
+    width: 100%;
+    max-width: 460px;
+    flex: 0 0 auto;
+  }
+
+  /* Brand header. The store listing is "VOLI - The Volleyball Hub", and
+     naming it identically here keeps the ad -> page -> store chain
+     reading as one thing; a visitor who lands on a differently-named
+     page is a visitor deciding whether they're in the right place. */
+  body.ad-landing .brand { margin-bottom: clamp(10px, 2.4vh, 18px); }
+
+  body.ad-landing .brand-lockup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  body.ad-landing .brand-mark {
+    width: clamp(40px, 11vw, 52px);
+    height: auto;
+    display: block;
+  }
+  body.ad-landing .brand-word {
+    /* Brand lockup ratio from the nav: wordmark at 0.70x the mark. */
+    font-family: 'Designer', sans-serif;
+    font-size: clamp(1.75rem, 4.8vw, 2.275rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    /* Designer's caps sit high in the line box — nudge onto the
+       optical centre of the mark beside it. */
+    transform: translateY(2px);
+  }
+  body.ad-landing .brand-tag {
+    font-size: clamp(0.72rem, 2.8vw, 0.82rem);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 8px 0 0;
   }
 
   body.ad-landing .deadline {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     background: var(--accent-subtle);
     border: 1px solid rgba(200, 255, 0, 0.28);
     color: var(--accent);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.01em;
-    padding: 6px 13px;
+    padding: 5px 12px;
     border-radius: 999px;
-    margin: 0 0 18px;
+    margin: 0 0 clamp(10px, 2.2vh, 16px);
   }
   body.ad-landing .deadline .dot {
     width: 6px; height: 6px; border-radius: 50%;
@@ -255,27 +264,27 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
   }
 
   body.ad-landing h1 {
-    font-size: clamp(1.85rem, 7.2vw, 2.6rem);
-    line-height: 1.1;
-    letter-spacing: -0.025em;
+    font-size: clamp(1.7rem, 7.4vw, 2.35rem);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
     font-weight: 800;
     text-wrap: balance;
-    margin: 0 0 14px;
+    margin: 0 0 clamp(8px, 1.6vh, 12px);
   }
 
   body.ad-landing .sub {
     color: var(--text-secondary);
-    font-size: 1.02rem;
-    line-height: 1.55;
-    margin: 0 auto 26px;
-    max-width: 34em;
+    font-size: clamp(0.92rem, 3.6vw, 1rem);
+    line-height: 1.45;
     text-wrap: pretty;
+    margin: 0 auto clamp(16px, 3vh, 24px);
+    max-width: 30em;
   }
 
   body.ad-landing .cta {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 9px;
   }
 
   body.ad-landing .btn {
@@ -284,14 +293,14 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
     justify-content: center;
     gap: 10px;
     width: 100%;
-    padding: 16px 22px;
+    padding: 15px 22px;
     border-radius: 14px;
-    font-size: 1.02rem;
+    font-size: 1rem;
     font-weight: 700;
     text-decoration: none;
     transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
-  body.ad-landing .btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+  body.ad-landing .btn svg { width: 19px; height: 19px; flex-shrink: 0; }
 
   body.ad-landing .btn-primary {
     background: var(--accent);
@@ -310,65 +319,39 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
 
   body.ad-landing .trust {
     color: var(--text-muted);
-    font-size: 0.82rem;
-    margin: 14px 0 0;
-  }
-
-  body.ad-landing .shots {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin: 44px 0 0;
-  }
-  body.ad-landing .shots figure { margin: 0; }
-  body.ad-landing .shots img {
-    width: 100%;
-    height: auto;
-    display: block;
-    /* These are device-framed PNGs with transparent surrounds, so the
-       frame supplies the rounding — a border or border-radius here
-       would draw a rectangle around a phone, and a cover-crop would
-       slice the handset in half. Shadow only. */
-    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
-  }
-  body.ad-landing .shots figcaption {
-    color: var(--text-muted);
     font-size: 0.78rem;
-    text-align: center;
-    margin-top: 9px;
+    margin: clamp(10px, 2vh, 14px) 0 0;
   }
 
-  body.ad-landing .feats {
+  /* Takes whatever height is left and no more. min-height 0 is what
+     lets a flex child actually shrink instead of forcing a scrollbar. */
+  body.ad-landing .proof {
+    flex: 1 1 auto;
+    min-height: 0;
     display: flex;
-    flex-direction: column;
-    gap: 1px;
-    background: var(--glass-border);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    overflow: hidden;
-    margin: 44px 0 0;
+    justify-content: center;
+    align-items: flex-end;
+    gap: clamp(10px, 3vw, 20px);
+    width: 100%;
+    max-width: 460px;
+    margin-top: clamp(12px, 2.4vh, 22px);
   }
-  body.ad-landing .feat { background: #0e0e10; padding: 20px 22px; }
-  body.ad-landing .feat h2 {
-    font-size: 1.02rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin: 0 0 5px;
-  }
-  body.ad-landing .feat p {
-    color: var(--text-secondary);
-    font-size: 0.92rem;
-    line-height: 1.5;
-    margin: 0;
+  body.ad-landing .proof img {
+    height: 100%;
+    width: auto;
+    max-width: 47%;
+    object-fit: contain;
+    object-position: top center;
+    /* Device-framed transparent art: the frame supplies the rounding,
+       so shadow only — a border would draw a box around a phone. */
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.55));
   }
 
-  body.ad-landing .closer { margin: 44px 0 0; text-align: center; }
-  body.ad-landing .closer h2 {
-    font-size: clamp(1.3rem, 5vw, 1.6rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-    margin: 0 0 20px;
+  /* Very short viewports (landscape phones): the proof art is the first
+     thing to go. The buttons must never be pushed off screen. */
+  @media (max-height: 620px) {
+    body.ad-landing .proof { display: none; }
+    body.ad-landing .lp { justify-content: center; }
   }
 
   @media (prefers-reduced-motion: reduce) {
