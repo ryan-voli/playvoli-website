@@ -1,0 +1,378 @@
+---
+// /get — the PAID SEARCH landing page.
+//
+// Deliberately separate from /download. That page server-side 302s
+// straight to the store, which is perfect for an Instagram bio link and
+// unusable for ads on two counts: Google prohibits off-domain redirects
+// in the Final URL field (and a UA-sniffing auto-redirect can read as
+// cloaking), and the redirect fires before any JavaScript runs, so a
+// conversion tag on it could never report anything.
+//
+// This page renders, makes the case, and fires the conversion on an
+// explicit store tap — which is a better measurement point anyway: a
+// deliberate tap, not a page load.
+import Layout from '../layouts/Layout.astro';
+
+const APP_STORE = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+
+// Google Ads conversion label. Create the "Store tap" conversion action
+// in Google Ads (count: ONE, not Every) and paste its label here — the
+// AW- account id is already loaded sitewide by Layout.astro.
+// Until this is set, taps still navigate; they just aren't counted.
+const CONVERSION_LABEL = '';
+const CONVERSION_SEND_TO = CONVERSION_LABEL
+  ? `AW-17868194042/${CONVERSION_LABEL}`
+  : '';
+
+// Fantasy Round 1 opens Wed 9 Sep 2026 (Pacific). Monday and Tuesday
+// before it are the signing window, so the honest deadline for having a
+// team that scores in round 1 is the end of Tue 8 Sep, Pacific.
+const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
+---
+
+<Layout
+  title="Get VOLI — NCAA Volleyball Scores, Stats & Fantasy"
+  description="Live NCAA women's volleyball scores, box scores, team and player stats, AVCA rankings — and the only fantasy college volleyball league. Free on iOS and Android."
+  ogUrl="https://playvoli.com/get"
+  showFooter={false}
+  skipSupabase
+  skipNavAuth
+  bodyClass="ad-landing"
+>
+  <main class="lp">
+
+    <section class="hero">
+      <img src="/images/appicon.webp" alt="" width="72" height="72" class="lp-icon" />
+
+      <p class="deadline" id="deadline" hidden>
+        <span class="dot" aria-hidden="true"></span>
+        <span id="deadline-text"></span>
+      </p>
+
+      <h1>Every NCAA volleyball score, stat&nbsp;and&nbsp;ranking. Free.</h1>
+
+      <p class="sub">
+        Live scores as they happen, full box scores, team and player stats,
+        the AVCA Top 25 — plus the only fantasy college volleyball league anywhere.
+      </p>
+
+      <div class="cta" id="cta">
+        <a href={APP_STORE} class="btn btn-primary" data-store="ios" id="btn-ios">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+          </svg>
+          <span>Download for iPhone</span>
+        </a>
+
+        <a href={PLAY_STORE} class="btn btn-primary" data-store="android" id="btn-android">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
+          </svg>
+          <span>Download for Android</span>
+        </a>
+      </div>
+
+      <p class="trust">Free · No subscription · iOS &amp; Android</p>
+    </section>
+
+    <!-- Two shots, both deliberately player-free. Team names and team
+         stats are factual and sit with the informational use the Terms
+         already claim; a NAMED athlete in paid advertising is a
+         different act and invites a right-of-publicity / NIL argument,
+         so no player-market screenshot appears in ad creative. -->
+    <section class="shots" aria-label="Screenshots">
+      <figure>
+        <img src="/images/ad-live.webp" alt="A live NCAA volleyball match in VOLI: Kansas versus Stanford in set four, with the running score and full team stat comparison."
+             width="700" height="1400" loading="lazy" decoding="async" />
+        <figcaption>Live scores, set by set</figcaption>
+      </figure>
+      <figure>
+        <img src="/images/ad-rankings.webp" alt="The AVCA Coaches Poll Top 25 in VOLI, with each team's record and weekly movement."
+             width="700" height="1400" loading="lazy" decoding="async" />
+        <figcaption>AVCA Top 25, every week</figcaption>
+      </figure>
+    </section>
+
+    <section class="feats">
+      <div class="feat">
+        <h2>Follow every match</h2>
+        <p>Live scores, full box scores and play-by-play for Division&nbsp;I — your teams sorted to the top.</p>
+      </div>
+      <div class="feat">
+        <h2>Stats that go deep</h2>
+        <p>Team and player leaderboards, season history, AVCA Top&nbsp;25 and RPI, and a full records book.</p>
+      </div>
+      <div class="feat">
+        <h2>Fantasy nobody else has</h2>
+        <p>Sign real players to a salary cap, score them every week, and run a league with friends.</p>
+      </div>
+    </section>
+
+    <section class="closer">
+      <h2>Get it before the first round scores.</h2>
+      <div class="cta cta-end">
+        <a href={APP_STORE} class="btn btn-primary" data-store="ios">
+          <span>Download for iPhone</span>
+        </a>
+        <a href={PLAY_STORE} class="btn btn-secondary" data-store="android">
+          <span>Download for Android</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <script is:inline slot="scripts" define:vars={{ CONVERSION_SEND_TO, SIGNING_DEADLINE_ISO }}>
+    (function () {
+      // ---- Platform-aware ordering (NOT a redirect) -------------------
+      // The page must render for everyone; detection only decides which
+      // button leads. iPadOS 13+ reports a desktop Safari UA, so the
+      // plain iPad test misses modern iPads — they identify as Macintosh
+      // with touch support.
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPad|iPhone|iPod/i.test(ua) ||
+        (/Macintosh/i.test(ua) && 'ontouchend' in document);
+      var isAndroid = /android/i.test(ua);
+
+      var ios = document.getElementById('btn-ios');
+      var android = document.getElementById('btn-android');
+      if (isAndroid && ios && android) {
+        android.parentNode.insertBefore(android, ios);
+        ios.classList.remove('btn-primary');
+        ios.classList.add('btn-secondary');
+      } else if (isIOS && android) {
+        android.classList.remove('btn-primary');
+        android.classList.add('btn-secondary');
+      }
+
+      // ---- Deadline line ----------------------------------------------
+      // Real deadline, not manufactured urgency: fantasy round 1 opens
+      // Wed 9 Sep, and the signing window closes the night before.
+      // Hidden entirely once it passes so the page never reads stale.
+      var deadline = new Date(SIGNING_DEADLINE_ISO);
+      var msLeft = deadline.getTime() - Date.now();
+      if (msLeft > 0) {
+        var days = Math.ceil(msLeft / 86400000);
+        var el = document.getElementById('deadline');
+        var txt = document.getElementById('deadline-text');
+        if (el && txt) {
+          txt.textContent = days <= 1
+            ? 'Fantasy round 1 opens tomorrow — sign your team tonight'
+            : 'Fantasy round 1 opens in ' + days + ' days';
+          el.hidden = false;
+        }
+      }
+
+      // ---- Store tap -> Google Ads conversion ---------------------------
+      // Fired on the TAP, never on page load: a page-load conversion
+      // counts bounces and inflates everything.
+      //
+      // The callback matters. A bare gtag() call can be killed by the
+      // page unload before the beacon leaves, so navigation waits for
+      // the callback — but if gtag is blocked (ad blockers are common on
+      // exactly this audience) the callback never fires and the visitor
+      // is stranded on a dead button. Hence the timeout: measurement
+      // must never cost us the download.
+      function go(url) { window.location.href = url; }
+
+      document.querySelectorAll('a[data-store]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var url = a.getAttribute('href');
+          var store = a.getAttribute('data-store');
+
+          if (typeof plausible === 'function') {
+            plausible('Ad Landing Store Tap', { props: { store: store } });
+          }
+          if (typeof gtag === 'function') {
+            gtag('event', 'click', {
+              event_category: 'download',
+              event_label: store === 'ios' ? 'app_store' : 'play_store',
+              source: 'ad_landing'
+            });
+          }
+
+          if (!CONVERSION_SEND_TO || typeof gtag !== 'function') return; // let the link work normally
+
+          e.preventDefault();
+          var done = false;
+          var fire = function () { if (!done) { done = true; go(url); } };
+          setTimeout(fire, 900); // hard fallback — never strand the visitor
+          gtag('event', 'conversion', {
+            send_to: CONVERSION_SEND_TO,
+            event_callback: fire
+          });
+        });
+      });
+    })();
+  </script>
+</Layout>
+
+<style is:global>
+  /* Landing page: strip the site chrome that competes with the one CTA.
+     The logo stays (trust + a way home); the nav links go. */
+  body.ad-landing .desktop-nav,
+  body.ad-landing .more-btn,
+  body.ad-landing .about-dropdown,
+  body.ad-landing .more-dropdown { display: none !important; }
+
+  body.ad-landing .lp {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 20px calc(72px + env(safe-area-inset-bottom));
+  }
+
+  body.ad-landing .hero {
+    text-align: center;
+    padding: clamp(28px, 7vw, 56px) 0 8px;
+  }
+
+  body.ad-landing .lp-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 17px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    margin-bottom: 20px;
+  }
+
+  body.ad-landing .deadline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-subtle);
+    border: 1px solid rgba(200, 255, 0, 0.28);
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 6px 13px;
+    border-radius: 999px;
+    margin: 0 0 18px;
+  }
+  body.ad-landing .deadline .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0;
+  }
+
+  body.ad-landing h1 {
+    font-size: clamp(1.85rem, 7.2vw, 2.6rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    font-weight: 800;
+    text-wrap: balance;
+    margin: 0 0 14px;
+  }
+
+  body.ad-landing .sub {
+    color: var(--text-secondary);
+    font-size: 1.02rem;
+    line-height: 1.55;
+    margin: 0 auto 26px;
+    max-width: 34em;
+    text-wrap: pretty;
+  }
+
+  body.ad-landing .cta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  body.ad-landing .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px 22px;
+    border-radius: 14px;
+    font-size: 1.02rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  body.ad-landing .btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  body.ad-landing .btn-primary {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 4px 24px var(--accent-glow);
+  }
+  body.ad-landing .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--accent-glow); }
+  body.ad-landing .btn-primary:active { transform: translateY(0); }
+
+  body.ad-landing .btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+  }
+  body.ad-landing .btn-secondary:hover { background: rgba(255, 255, 255, 0.06); }
+
+  body.ad-landing .trust {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin: 14px 0 0;
+  }
+
+  body.ad-landing .shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 44px 0 0;
+  }
+  body.ad-landing .shots figure { margin: 0; }
+  body.ad-landing .shots img {
+    width: 100%;
+    height: auto;
+    display: block;
+    /* These are device-framed PNGs with transparent surrounds, so the
+       frame supplies the rounding — a border or border-radius here
+       would draw a rectangle around a phone, and a cover-crop would
+       slice the handset in half. Shadow only. */
+    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
+  }
+  body.ad-landing .shots figcaption {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-align: center;
+    margin-top: 9px;
+  }
+
+  body.ad-landing .feats {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--glass-border);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 44px 0 0;
+  }
+  body.ad-landing .feat { background: #0e0e10; padding: 20px 22px; }
+  body.ad-landing .feat h2 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 5px;
+  }
+  body.ad-landing .feat p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  body.ad-landing .closer { margin: 44px 0 0; text-align: center; }
+  body.ad-landing .closer h2 {
+    font-size: clamp(1.3rem, 5vw, 1.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0 0 20px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.ad-landing .btn { transition: none; }
+    body.ad-landing .btn:hover { transform: none; }
+  }
+</style>
