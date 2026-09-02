@@ -104,15 +104,14 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
         (/Macintosh/i.test(ua) && 'ontouchend' in document);
       var isAndroid = /android/i.test(ua);
 
+      // Detection ONLY reorders — it never restyles. Both buttons stay
+      // full lemon-lime: an outlined second button reads as the lesser
+      // option, and on a page whose only job is the download there is
+      // no lesser option. Android users are not a downgrade.
       var ios = document.getElementById('btn-ios');
       var android = document.getElementById('btn-android');
       if (isAndroid && ios && android) {
         android.parentNode.insertBefore(android, ios);
-        ios.classList.remove('btn-primary');
-        ios.classList.add('btn-secondary');
-      } else if (isIOS && android) {
-        android.classList.remove('btn-primary');
-        android.classList.add('btn-secondary');
       }
 
       // ---- Deadline line ----------------------------------------------
@@ -309,13 +308,6 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
   }
   body.ad-landing .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--accent-glow); }
   body.ad-landing .btn-primary:active { transform: translateY(0); }
-
-  body.ad-landing .btn-secondary {
-    background: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--glass-border);
-  }
-  body.ad-landing .btn-secondary:hover { background: rgba(255, 255, 255, 0.06); }
 
   body.ad-landing .trust {
     color: var(--text-muted);
