@@ -1,0 +1,374 @@
+---
+// /poll — the published Creators Poll.
+//
+// Rendered on the client from creators.published_poll, which is anon-readable
+// and only ever returns a week whose Monday has closed in Pacific time. There
+// is deliberately no server-side fetch here: the poll changes once a week and
+// the page is static otherwise, so the build should not be pinned to whatever
+// the ranking happened to be when it ran.
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Creators Poll - VOLI"
+  description="The VOLI Creators Poll: a weekly top 25 for NCAA women's volleyball, voted by volleyball creators and published every Tuesday."
+  ogUrl="https://playvoli.com/poll"
+  activePage="poll"
+>
+  <main class="poll-main">
+    <header class="poll-head">
+      <h1 class="poll-title">Creators Poll</h1>
+      <p class="poll-sub" id="poll-sub">Loading this week's poll…</p>
+      <p class="poll-lead">
+        A weekly top 25 for NCAA women's volleyball, voted by the creators
+        covering it. Ballots are scored 25 points for a first-place vote down
+        to 1 point for 25th, and published every Tuesday.
+      </p>
+    </header>
+
+    <!-- Empty until the fetch lands. The shell is here from the first paint so
+         the page does not jump when it does. -->
+    <div class="poll-grid" id="poll-grid" hidden>
+      <section class="poll-col-main" aria-labelledby="poll-rank-h">
+        <h2 class="poll-col-h" id="poll-rank-h">The Poll</h2>
+        <ol class="rank-list" id="rank-list"></ol>
+      </section>
+
+      <aside class="poll-col-side" aria-labelledby="poll-voters-h">
+        <h2 class="poll-col-h" id="poll-voters-h">
+          Voters <span class="voter-count" id="voter-count"></span>
+        </h2>
+        <ul class="voter-list" id="voter-list"></ul>
+      </aside>
+    </div>
+
+    <div class="poll-empty" id="poll-empty" hidden>
+      <h2>No poll published yet</h2>
+      <p>
+        The first Creators Poll goes up on a Tuesday morning once the opening
+        week's ballots are in. Check back then.
+      </p>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .poll-main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 5rem;
+  }
+
+  .poll-head { margin-bottom: 2.5rem; }
+
+  .poll-title {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    line-height: 1.02;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .poll-sub {
+    margin: 0.6rem 0 0;
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .poll-lead {
+    margin: 1rem 0 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.65;
+    max-width: 62ch;
+  }
+
+  /* Two thirds / one third, and one column once there is not room for two. */
+  .poll-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .poll-col-h {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin: 0 0 0.9rem;
+    font-weight: 700;
+  }
+
+  .voter-count { color: var(--text-muted); font-weight: 500; }
+
+  /* ---- the ranking ---- */
+  .rank-list { list-style: none; margin: 0; padding: 0; }
+
+  .rank-row {
+    display: grid;
+    grid-template-columns: 2.6rem 0.35rem 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    margin-bottom: 0.5rem;
+  }
+
+  .rank-num {
+    font-size: 1.15rem;
+    font-weight: 800;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+  }
+
+  /* The team's own colour as a spine, not a fill: 25 saturated blocks would
+     be a colour chart, not a ranking. */
+  .rank-spine {
+    width: 0.35rem;
+    height: 1.9rem;
+    border-radius: 3px;
+    background: var(--text-muted);
+  }
+
+  .rank-team { min-width: 0; }
+
+  .rank-name {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rank-meta {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rank-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .rank-points {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .rank-move {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 700;
+    min-width: 2.6rem;
+    text-align: right;
+  }
+  .move-up { color: var(--accent); }
+  .move-down { color: var(--rose); }
+  .move-flat { color: var(--text-muted); }
+  .move-new { color: var(--electric-blue); }
+
+  /* ---- the voters ---- */
+  .voter-list { list-style: none; margin: 0; padding: 0; }
+
+  .voter {
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    margin-bottom: 0.5rem;
+  }
+
+  .voter-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .voter-top {
+    margin: 0.3rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .voter-socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+
+  .voter-social {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: var(--text-secondary);
+    background: var(--glass-highlight);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 0.22rem 0.6rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .voter-social:hover {
+    color: var(--electric-blue);
+    border-color: var(--electric-blue);
+  }
+
+  .poll-empty {
+    text-align: center;
+    padding: 4rem 1rem 5rem;
+    color: var(--text-secondary);
+  }
+  .poll-empty h2 { margin: 0 0 0.6rem; font-size: 1.4rem; }
+  .poll-empty p { margin: 0 auto; max-width: 46ch; line-height: 1.6; }
+
+  @media (max-width: 860px) {
+    .poll-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .poll-main { padding: 2.5rem 1.1rem 4rem; }
+  }
+</style>
+
+<script is:inline slot="scripts">
+  var SUPABASE_URL = 'https://api.playvoli.com';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var SOCIALS = ['instagram', 'tiktok', 'youtube', 'facebook', 'website'];
+  var SOCIAL_LABEL = {
+    instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube',
+    facebook: 'Facebook', website: 'Website'
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // Hex out of vbdata, which stores it with or without the leading #.
+  function hex(c, fallback) {
+    if (!c) return fallback;
+    var v = String(c).replace('#', '').trim();
+    return /^[0-9a-fA-F]{6}$/.test(v) ? '#' + v : fallback;
+  }
+
+  function prettyDate(iso) {
+    if (!iso) return '';
+    var parts = String(iso).split('-');
+    if (parts.length < 3) return iso;
+    var m = parseInt(parts[1], 10);
+    var d = parseInt(parts[2], 10);
+    return MONTHS[m - 1] + ' ' + d + ', ' + parts[0];
+  }
+
+  // Movement against the previous published week. Missing from prev_ranks
+  // means the team was not ranked then, which is a different fact from
+  // holding its place — the app's board says NEW for exactly this.
+  function movement(teamId, rank, prev) {
+    if (!prev || !(teamId in prev)) return { cls: 'move-new', text: 'NEW' };
+    var delta = prev[teamId] - rank;
+    if (delta > 0) return { cls: 'move-up', text: '+' + delta };
+    if (delta < 0) return { cls: 'move-down', text: String(delta) };
+    return { cls: 'move-flat', text: '--' };
+  }
+
+  function renderRanking(results, prev) {
+    return results.map(function (r) {
+      var mv = movement(r.team_id, r.rank, prev);
+      var firsts = r.first_place_votes
+        ? ' · ' + r.first_place_votes + ' first-place'
+        : '';
+      return '' +
+        '<li class="rank-row">' +
+          '<span class="rank-num">' + r.rank + '</span>' +
+          '<span class="rank-spine" style="background:' +
+            hex(r.primary_color, 'var(--text-muted)') + '"></span>' +
+          '<span class="rank-team">' +
+            '<span class="rank-name">' + esc(r.name || r.abbreviation) + '</span>' +
+            '<span class="rank-meta">' + r.points + ' pts' + firsts + '</span>' +
+          '</span>' +
+          '<span class="rank-right">' +
+            '<span class="rank-points">' + r.points + '</span>' +
+            '<span class="rank-move ' + mv.cls + '">' + mv.text + '</span>' +
+          '</span>' +
+        '</li>';
+    }).join('');
+  }
+
+  function renderVoters(voters, results) {
+    // Ballots come back as team ids. Every team on any ballot also appears in
+    // results — results is built from all of them — so this lookup is total.
+    var nameById = {};
+    results.forEach(function (r) {
+      nameById[r.team_id] = r.abbreviation || r.name;
+    });
+
+    return voters.map(function (v) {
+      var top = (v.ballot || []).slice(0, 3).map(function (id) {
+        return esc(nameById[id] || '—');
+      }).join(' · ');
+
+      var links = SOCIALS.map(function (k) {
+        var s = v.socials && v.socials[k];
+        if (!s || !s.url) return '';
+        return '<a class="voter-social" href="' + esc(s.url) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          esc(SOCIAL_LABEL[k]) + '</a>';
+      }).join('');
+
+      return '' +
+        '<li class="voter">' +
+          '<p class="voter-name">' + esc(v.name) + '</p>' +
+          (top ? '<p class="voter-top">' + top + '</p>' : '') +
+          (links ? '<div class="voter-socials">' + links + '</div>' : '') +
+        '</li>';
+    }).join('');
+  }
+
+  (async function load() {
+    var $sub = document.getElementById('poll-sub');
+    var $grid = document.getElementById('poll-grid');
+    var $empty = document.getElementById('poll-empty');
+
+    var poll = null;
+    try {
+      var res = await sb.schema('creators').rpc('published_poll');
+      if (res.error) throw res.error;
+      poll = res.data;
+    } catch (e) {
+      console.error('published_poll failed', e);
+    }
+
+    var results = (poll && poll.results) || [];
+    if (!results.length) {
+      $sub.textContent = '';
+      $empty.hidden = false;
+      return;
+    }
+
+    var voters = (poll && poll.voters) || [];
+    var ballots = poll.ballots || voters.length;
+
+    $sub.textContent = prettyDate(poll.poll_date) + ' · ' + ballots +
+      (ballots === 1 ? ' ballot' : ' ballots');
+    document.getElementById('rank-list').innerHTML =
+      renderRanking(results, poll.prev_ranks);
+    document.getElementById('voter-list').innerHTML =
+      renderVoters(voters, results);
+    document.getElementById('voter-count').textContent = '(' + voters.length + ')';
+    $grid.hidden = false;
+  })();
+</script>
