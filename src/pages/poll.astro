@@ -17,7 +17,7 @@ import Layout from '../layouts/Layout.astro';
 >
   <main class="poll-main">
     <header class="poll-head">
-      <h1 class="poll-title">Creators Poll</h1>
+      <h1 class="poll-title">CREATORS POLL</h1>
       <p class="poll-sub" id="poll-sub">Loading this week's poll…</p>
       <p class="poll-lead">
         A weekly top 25 for NCAA women's volleyball, voted by the creators
@@ -25,6 +25,10 @@ import Layout from '../layouts/Layout.astro';
         to 1 point for 25th, and published every Tuesday.
       </p>
     </header>
+
+    <p class="poll-preview" id="poll-preview" hidden>
+      Sample data — this is a layout preview, not a real poll.
+    </p>
 
     <!-- Empty until the fetch lands. The shell is here from the first paint so
          the page does not jump when it does. -->
@@ -56,16 +60,21 @@ import Layout from '../layouts/Layout.astro';
   .poll-main {
     max-width: 1180px;
     margin: 0 auto;
-    padding: 3.5rem 1.5rem 5rem;
+    padding: 5rem 1.5rem 5rem;
+    /* The nav is fixed; every other page clears it the same way. */
+    padding-top: calc(5rem + env(safe-area-inset-top));
   }
 
   .poll-head { margin-bottom: 2.5rem; }
 
+  /* Designer, like the app's own masthead. The face is caps-only, which is
+     why the markup says CREATORS POLL rather than relying on the glyphs. */
   .poll-title {
-    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-family: 'Designer', 'Inter', -apple-system, sans-serif;
+    font-size: clamp(2.1rem, 5.5vw, 3.2rem);
     line-height: 1.02;
     margin: 0;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.01em;
   }
 
   .poll-sub {
@@ -85,6 +94,11 @@ import Layout from '../layouts/Layout.astro';
   }
 
   /* Two thirds / one third, and one column once there is not room for two. */
+  /* [hidden] is display:none in the UA sheet, which a class-level display
+     rule outranks — so without this the empty shell sat visible underneath
+     the empty state, two headings with nothing under them. */
+  .poll-grid[hidden] { display: none; }
+
   .poll-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -236,7 +250,25 @@ import Layout from '../layouts/Layout.astro';
 
   @media (max-width: 860px) {
     .poll-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    .poll-main { padding: 2.5rem 1.1rem 4rem; }
+    .poll-main {
+      padding: 5rem 1.1rem 4rem;
+      padding-top: calc(5rem + env(safe-area-inset-top));
+    }
+  }
+
+  /* Sample data, said plainly. A preview that cannot be told from the real
+     thing is how fake numbers end up quoted back at you. */
+  .poll-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1.5rem;
+    padding: 0.7rem 1rem;
+    border-radius: 12px;
+    border: 1px dashed var(--rose);
+    color: var(--rose);
+    font-size: 0.85rem;
+    font-weight: 600;
   }
 </style>
 
@@ -338,18 +370,104 @@ import Layout from '../layouts/Layout.astro';
     }).join('');
   }
 
+  // A layout preview, reachable only at /poll?preview and always announced on
+  // the page. Never a fallback for a failed fetch: an empty poll has to look
+  // empty, or the day something breaks the site quietly shows invented
+  // rankings with real creators' names on them.
+  function sampleData() {
+    var T = [
+      ['Nebraska','NEB','E41C38'], ['Pittsburgh','PITT','003594'],
+      ['Texas','TEX','BF5700'], ['Stanford','STAN','8C1515'],
+      ['Louisville','LOU','AD0000'], ['Wisconsin','WIS','C5050C'],
+      ['Kentucky','KY','0033A0'], ['Creighton','CREI','005CA9'],
+      ['Penn State','PSU','041E42'], ['Minnesota','MINN','7A0019'],
+      ['Arizona State','ASU','8C1D40'], ['SMU','SMU','354CA1'],
+      ['Purdue','PUR','CEB888'], ['Texas A&M','TAMU','500000'],
+      ['Missouri','MIZ','F1B82D'], ['BYU','BYU','002E5D'],
+      ['Arkansas','ARK','9D2235'], ['Georgia','UGA','BA0C2F'],
+      ['Tennessee','TENN','FF8200'], ['Ohio State','OSU','BB0000'],
+      ['Washington','UW','4B2E83'], ['Baylor','BAY','154734'],
+      ['UCLA','UCLA','2D68C4'], ['USC','USC','990000'],
+      ['Michigan State','MSU','18453B']
+    ];
+    var BALLOTS = 9;
+    var results = T.map(function (t, i) {
+      return {
+        rank: i + 1,
+        team_id: 'sample-' + i,
+        name: t[0],
+        abbreviation: t[1],
+        primary_color: t[2],
+        // Roughly what nine ballots produce: near-unanimous at the top,
+        // scattered by the bottom.
+        points: Math.max(4, BALLOTS * (25 - i) - Math.round(i * 1.7)),
+        first_place_votes: i === 0 ? 7 : i === 1 ? 2 : 0
+      };
+    });
+    // A previous week that actually moved, so the arrows show all four states.
+    var prev = {};
+    [1, 0, 4, 2, 3, 5, 8, 6, 7, 9, 10, 12, 11, 13, 15, 14, 16, 18, 17,
+     19, 21, 20, 23, 22].forEach(function (was, i) {
+      prev['sample-' + i] = was + 1;
+    });
+    var VOTERS = [
+      ['Court Captains', 'courtcaptains'], ['Major League Minute', 'mlminute'],
+      ['Volley Talk', 'volleytalk'], ['Sets on the Beach', 'setsonthebeach'],
+      ['Back Row Report', 'backrowreport'], ['The Pin Hitter', 'thepinhitter'],
+      ['Serve City', 'servecity'], ['Block Party VB', 'blockpartyvb'],
+      ['Dig Deep Volleyball', 'digdeepvb']
+    ];
+    return {
+      poll_date: '2026-09-14',
+      ballots: BALLOTS,
+      prev_ranks: prev,
+      results: results,
+      voters: VOTERS.map(function (v, i) {
+        return {
+          user_uuid: 'sample-voter-' + i,
+          name: v[0],
+          username: v[1],
+          socials: {
+            instagram: { handle: v[1], url: 'https://instagram.com/' + v[1] },
+            tiktok: i % 2 === 0
+              ? { handle: v[1], url: 'https://tiktok.com/@' + v[1] }
+              : { handle: null, url: null },
+            youtube: i % 3 === 0
+              ? { handle: v[1], url: 'https://youtube.com/@' + v[1] }
+              : { handle: null, url: null },
+            facebook: { handle: null, url: null },
+            website: i % 4 === 0
+              ? { handle: v[1] + '.com', url: 'https://' + v[1] + '.com' }
+              : { handle: null, url: null }
+          },
+          // Each voter's own order, nudged so the top threes differ.
+          ballot: results.map(function (r) { return r.team_id; })
+            .slice(i % 3).concat(results.slice(0, i % 3).map(function (r) {
+              return r.team_id;
+            }))
+        };
+      })
+    };
+  }
+
   (async function load() {
     var $sub = document.getElementById('poll-sub');
     var $grid = document.getElementById('poll-grid');
     var $empty = document.getElementById('poll-empty');
 
+    var preview = new URLSearchParams(location.search).has('preview');
     var poll = null;
-    try {
-      var res = await sb.schema('creators').rpc('published_poll');
-      if (res.error) throw res.error;
-      poll = res.data;
-    } catch (e) {
-      console.error('published_poll failed', e);
+    if (preview) {
+      poll = sampleData();
+      document.getElementById('poll-preview').hidden = false;
+    } else {
+      try {
+        var res = await sb.schema('creators').rpc('published_poll');
+        if (res.error) throw res.error;
+        poll = res.data;
+      } catch (e) {
+        console.error('published_poll failed', e);
+      }
     }
 
     var results = (poll && poll.results) || [];
