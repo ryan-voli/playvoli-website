@@ -54,6 +54,235 @@ import Layout from '../layouts/Layout.astro';
       </p>
     </div>
   </main>
+<script is:inline slot="scripts">
+  var SUPABASE_URL = 'https://api.playvoli.com';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+  // Built on demand, not at parse time. The Supabase SDK is a separate script
+  // tag, and reaching for window.supabase up here threw before anything
+  // rendered — which is why the page sat on "Loading…" with nothing under it,
+  // preview included, even though the preview needs no client at all.
+  var _sb = null;
+  function client() {
+    if (!_sb) {
+      _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return _sb;
+  }
+
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var SOCIALS = ['instagram', 'tiktok', 'youtube', 'facebook', 'website'];
+  var SOCIAL_LABEL = {
+    instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube',
+    facebook: 'Facebook', website: 'Website'
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // Hex out of vbdata, which stores it with or without the leading #.
+  function hex(c, fallback) {
+    if (!c) return fallback;
+    var v = String(c).replace('#', '').trim();
+    return /^[0-9a-fA-F]{6}$/.test(v) ? '#' + v : fallback;
+  }
+
+  function prettyDate(iso) {
+    if (!iso) return '';
+    var parts = String(iso).split('-');
+    if (parts.length < 3) return iso;
+    var m = parseInt(parts[1], 10);
+    var d = parseInt(parts[2], 10);
+    return MONTHS[m - 1] + ' ' + d + ', ' + parts[0];
+  }
+
+  // Movement against the previous published week. Missing from prev_ranks
+  // means the team was not ranked then, which is a different fact from
+  // holding its place — the app's board says NEW for exactly this.
+  function movement(teamId, rank, prev) {
+    if (!prev || !(teamId in prev)) return { cls: 'move-new', text: 'NEW' };
+    var delta = prev[teamId] - rank;
+    if (delta > 0) return { cls: 'move-up', text: '+' + delta };
+    if (delta < 0) return { cls: 'move-down', text: String(delta) };
+    return { cls: 'move-flat', text: '--' };
+  }
+
+  function renderRanking(results, prev) {
+    return results.map(function (r) {
+      var mv = movement(r.team_id, r.rank, prev);
+      var firsts = r.first_place_votes
+        ? ' · ' + r.first_place_votes + ' first-place'
+        : '';
+      return '' +
+        '<li class="rank-row">' +
+          '<span class="rank-num">' + r.rank + '</span>' +
+          '<span class="rank-spine" style="background:' +
+            hex(r.primary_color, 'var(--text-muted)') + '"></span>' +
+          '<span class="rank-team">' +
+            '<span class="rank-name">' + esc(r.name || r.abbreviation) + '</span>' +
+            '<span class="rank-meta">' + r.points + ' pts' + firsts + '</span>' +
+          '</span>' +
+          '<span class="rank-right">' +
+            '<span class="rank-points">' + r.points + '</span>' +
+            '<span class="rank-move ' + mv.cls + '">' + mv.text + '</span>' +
+          '</span>' +
+        '</li>';
+    }).join('');
+  }
+
+  function renderVoters(voters, results) {
+    // Ballots come back as team ids. Every team on any ballot also appears in
+    // results — results is built from all of them — so this lookup is total.
+    var nameById = {};
+    results.forEach(function (r) {
+      nameById[r.team_id] = r.abbreviation || r.name;
+    });
+
+    return voters.map(function (v) {
+      var top = (v.ballot || []).slice(0, 3).map(function (id) {
+        return esc(nameById[id] || '—');
+      }).join(' · ');
+
+      var links = SOCIALS.map(function (k) {
+        var s = v.socials && v.socials[k];
+        if (!s || !s.url) return '';
+        return '<a class="voter-social" href="' + esc(s.url) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          esc(SOCIAL_LABEL[k]) + '</a>';
+      }).join('');
+
+      return '' +
+        '<li class="voter">' +
+          '<p class="voter-name">' + esc(v.name) + '</p>' +
+          (top ? '<p class="voter-top">' + top + '</p>' : '') +
+          (links ? '<div class="voter-socials">' + links + '</div>' : '') +
+        '</li>';
+    }).join('');
+  }
+
+  // A layout preview, reachable only at /poll?preview and always announced on
+  // the page. Never a fallback for a failed fetch: an empty poll has to look
+  // empty, or the day something breaks the site quietly shows invented
+  // rankings with real creators' names on them.
+  function sampleData() {
+    var T = [
+      ['Nebraska','NEB','E41C38'], ['Pittsburgh','PITT','003594'],
+      ['Texas','TEX','BF5700'], ['Stanford','STAN','8C1515'],
+      ['Louisville','LOU','AD0000'], ['Wisconsin','WIS','C5050C'],
+      ['Kentucky','KY','0033A0'], ['Creighton','CREI','005CA9'],
+      ['Penn State','PSU','041E42'], ['Minnesota','MINN','7A0019'],
+      ['Arizona State','ASU','8C1D40'], ['SMU','SMU','354CA1'],
+      ['Purdue','PUR','CEB888'], ['Texas A&M','TAMU','500000'],
+      ['Missouri','MIZ','F1B82D'], ['BYU','BYU','002E5D'],
+      ['Arkansas','ARK','9D2235'], ['Georgia','UGA','BA0C2F'],
+      ['Tennessee','TENN','FF8200'], ['Ohio State','OSU','BB0000'],
+      ['Washington','UW','4B2E83'], ['Baylor','BAY','154734'],
+      ['UCLA','UCLA','2D68C4'], ['USC','USC','990000'],
+      ['Michigan State','MSU','18453B']
+    ];
+    var BALLOTS = 9;
+    var results = T.map(function (t, i) {
+      return {
+        rank: i + 1,
+        team_id: 'sample-' + i,
+        name: t[0],
+        abbreviation: t[1],
+        primary_color: t[2],
+        // Roughly what nine ballots produce: near-unanimous at the top,
+        // scattered by the bottom.
+        points: Math.max(4, BALLOTS * (25 - i) - Math.round(i * 1.7)),
+        first_place_votes: i === 0 ? 7 : i === 1 ? 2 : 0
+      };
+    });
+    // A previous week that actually moved, so the arrows show all four states.
+    var prev = {};
+    [1, 0, 4, 2, 3, 5, 8, 6, 7, 9, 10, 12, 11, 13, 15, 14, 16, 18, 17,
+     19, 21, 20, 23, 22].forEach(function (was, i) {
+      prev['sample-' + i] = was + 1;
+    });
+    var VOTERS = [
+      ['Court Captains', 'courtcaptains'], ['Major League Minute', 'mlminute'],
+      ['Volley Talk', 'volleytalk'], ['Sets on the Beach', 'setsonthebeach'],
+      ['Back Row Report', 'backrowreport'], ['The Pin Hitter', 'thepinhitter'],
+      ['Serve City', 'servecity'], ['Block Party VB', 'blockpartyvb'],
+      ['Dig Deep Volleyball', 'digdeepvb']
+    ];
+    return {
+      poll_date: '2026-09-14',
+      ballots: BALLOTS,
+      prev_ranks: prev,
+      results: results,
+      voters: VOTERS.map(function (v, i) {
+        return {
+          user_uuid: 'sample-voter-' + i,
+          name: v[0],
+          username: v[1],
+          socials: {
+            instagram: { handle: v[1], url: 'https://instagram.com/' + v[1] },
+            tiktok: i % 2 === 0
+              ? { handle: v[1], url: 'https://tiktok.com/@' + v[1] }
+              : { handle: null, url: null },
+            youtube: i % 3 === 0
+              ? { handle: v[1], url: 'https://youtube.com/@' + v[1] }
+              : { handle: null, url: null },
+            facebook: { handle: null, url: null },
+            website: i % 4 === 0
+              ? { handle: v[1] + '.com', url: 'https://' + v[1] + '.com' }
+              : { handle: null, url: null }
+          },
+          // Each voter's own order, nudged so the top threes differ.
+          ballot: results.map(function (r) { return r.team_id; })
+            .slice(i % 3).concat(results.slice(0, i % 3).map(function (r) {
+              return r.team_id;
+            }))
+        };
+      })
+    };
+  }
+
+  (async function load() {
+    var $sub = document.getElementById('poll-sub');
+    var $grid = document.getElementById('poll-grid');
+    var $empty = document.getElementById('poll-empty');
+
+    var preview = new URLSearchParams(location.search).has('preview');
+    var poll = null;
+    if (preview) {
+      poll = sampleData();
+      document.getElementById('poll-preview').hidden = false;
+    } else {
+      try {
+        var res = await client().schema('creators').rpc('published_poll');
+        if (res.error) throw res.error;
+        poll = res.data;
+      } catch (e) {
+        console.error('published_poll failed', e);
+      }
+    }
+
+    var results = (poll && poll.results) || [];
+    if (!results.length) {
+      $sub.textContent = '';
+      $empty.hidden = false;
+      return;
+    }
+    $empty.hidden = true;
+
+    var voters = (poll && poll.voters) || [];
+    var ballots = poll.ballots || voters.length;
+
+    $sub.textContent = prettyDate(poll.poll_date) + ' · ' + ballots +
+      (ballots === 1 ? ' ballot' : ' ballots');
+    document.getElementById('rank-list').innerHTML =
+      renderRanking(results, poll.prev_ranks);
+    document.getElementById('voter-list').innerHTML =
+      renderVoters(voters, results);
+    document.getElementById('voter-count').textContent = '(' + voters.length + ')';
+    $grid.hidden = false;
+  })();
+</script>
 </Layout>
 
 <style>
@@ -272,221 +501,4 @@ import Layout from '../layouts/Layout.astro';
   }
 </style>
 
-<script is:inline slot="scripts">
-  var SUPABASE_URL = 'https://api.playvoli.com';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var SOCIALS = ['instagram', 'tiktok', 'youtube', 'facebook', 'website'];
-  var SOCIAL_LABEL = {
-    instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube',
-    facebook: 'Facebook', website: 'Website'
-  };
-
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
-
-  // Hex out of vbdata, which stores it with or without the leading #.
-  function hex(c, fallback) {
-    if (!c) return fallback;
-    var v = String(c).replace('#', '').trim();
-    return /^[0-9a-fA-F]{6}$/.test(v) ? '#' + v : fallback;
-  }
-
-  function prettyDate(iso) {
-    if (!iso) return '';
-    var parts = String(iso).split('-');
-    if (parts.length < 3) return iso;
-    var m = parseInt(parts[1], 10);
-    var d = parseInt(parts[2], 10);
-    return MONTHS[m - 1] + ' ' + d + ', ' + parts[0];
-  }
-
-  // Movement against the previous published week. Missing from prev_ranks
-  // means the team was not ranked then, which is a different fact from
-  // holding its place — the app's board says NEW for exactly this.
-  function movement(teamId, rank, prev) {
-    if (!prev || !(teamId in prev)) return { cls: 'move-new', text: 'NEW' };
-    var delta = prev[teamId] - rank;
-    if (delta > 0) return { cls: 'move-up', text: '+' + delta };
-    if (delta < 0) return { cls: 'move-down', text: String(delta) };
-    return { cls: 'move-flat', text: '--' };
-  }
-
-  function renderRanking(results, prev) {
-    return results.map(function (r) {
-      var mv = movement(r.team_id, r.rank, prev);
-      var firsts = r.first_place_votes
-        ? ' · ' + r.first_place_votes + ' first-place'
-        : '';
-      return '' +
-        '<li class="rank-row">' +
-          '<span class="rank-num">' + r.rank + '</span>' +
-          '<span class="rank-spine" style="background:' +
-            hex(r.primary_color, 'var(--text-muted)') + '"></span>' +
-          '<span class="rank-team">' +
-            '<span class="rank-name">' + esc(r.name || r.abbreviation) + '</span>' +
-            '<span class="rank-meta">' + r.points + ' pts' + firsts + '</span>' +
-          '</span>' +
-          '<span class="rank-right">' +
-            '<span class="rank-points">' + r.points + '</span>' +
-            '<span class="rank-move ' + mv.cls + '">' + mv.text + '</span>' +
-          '</span>' +
-        '</li>';
-    }).join('');
-  }
-
-  function renderVoters(voters, results) {
-    // Ballots come back as team ids. Every team on any ballot also appears in
-    // results — results is built from all of them — so this lookup is total.
-    var nameById = {};
-    results.forEach(function (r) {
-      nameById[r.team_id] = r.abbreviation || r.name;
-    });
-
-    return voters.map(function (v) {
-      var top = (v.ballot || []).slice(0, 3).map(function (id) {
-        return esc(nameById[id] || '—');
-      }).join(' · ');
-
-      var links = SOCIALS.map(function (k) {
-        var s = v.socials && v.socials[k];
-        if (!s || !s.url) return '';
-        return '<a class="voter-social" href="' + esc(s.url) +
-          '" target="_blank" rel="noopener noreferrer">' +
-          esc(SOCIAL_LABEL[k]) + '</a>';
-      }).join('');
-
-      return '' +
-        '<li class="voter">' +
-          '<p class="voter-name">' + esc(v.name) + '</p>' +
-          (top ? '<p class="voter-top">' + top + '</p>' : '') +
-          (links ? '<div class="voter-socials">' + links + '</div>' : '') +
-        '</li>';
-    }).join('');
-  }
-
-  // A layout preview, reachable only at /poll?preview and always announced on
-  // the page. Never a fallback for a failed fetch: an empty poll has to look
-  // empty, or the day something breaks the site quietly shows invented
-  // rankings with real creators' names on them.
-  function sampleData() {
-    var T = [
-      ['Nebraska','NEB','E41C38'], ['Pittsburgh','PITT','003594'],
-      ['Texas','TEX','BF5700'], ['Stanford','STAN','8C1515'],
-      ['Louisville','LOU','AD0000'], ['Wisconsin','WIS','C5050C'],
-      ['Kentucky','KY','0033A0'], ['Creighton','CREI','005CA9'],
-      ['Penn State','PSU','041E42'], ['Minnesota','MINN','7A0019'],
-      ['Arizona State','ASU','8C1D40'], ['SMU','SMU','354CA1'],
-      ['Purdue','PUR','CEB888'], ['Texas A&M','TAMU','500000'],
-      ['Missouri','MIZ','F1B82D'], ['BYU','BYU','002E5D'],
-      ['Arkansas','ARK','9D2235'], ['Georgia','UGA','BA0C2F'],
-      ['Tennessee','TENN','FF8200'], ['Ohio State','OSU','BB0000'],
-      ['Washington','UW','4B2E83'], ['Baylor','BAY','154734'],
-      ['UCLA','UCLA','2D68C4'], ['USC','USC','990000'],
-      ['Michigan State','MSU','18453B']
-    ];
-    var BALLOTS = 9;
-    var results = T.map(function (t, i) {
-      return {
-        rank: i + 1,
-        team_id: 'sample-' + i,
-        name: t[0],
-        abbreviation: t[1],
-        primary_color: t[2],
-        // Roughly what nine ballots produce: near-unanimous at the top,
-        // scattered by the bottom.
-        points: Math.max(4, BALLOTS * (25 - i) - Math.round(i * 1.7)),
-        first_place_votes: i === 0 ? 7 : i === 1 ? 2 : 0
-      };
-    });
-    // A previous week that actually moved, so the arrows show all four states.
-    var prev = {};
-    [1, 0, 4, 2, 3, 5, 8, 6, 7, 9, 10, 12, 11, 13, 15, 14, 16, 18, 17,
-     19, 21, 20, 23, 22].forEach(function (was, i) {
-      prev['sample-' + i] = was + 1;
-    });
-    var VOTERS = [
-      ['Court Captains', 'courtcaptains'], ['Major League Minute', 'mlminute'],
-      ['Volley Talk', 'volleytalk'], ['Sets on the Beach', 'setsonthebeach'],
-      ['Back Row Report', 'backrowreport'], ['The Pin Hitter', 'thepinhitter'],
-      ['Serve City', 'servecity'], ['Block Party VB', 'blockpartyvb'],
-      ['Dig Deep Volleyball', 'digdeepvb']
-    ];
-    return {
-      poll_date: '2026-09-14',
-      ballots: BALLOTS,
-      prev_ranks: prev,
-      results: results,
-      voters: VOTERS.map(function (v, i) {
-        return {
-          user_uuid: 'sample-voter-' + i,
-          name: v[0],
-          username: v[1],
-          socials: {
-            instagram: { handle: v[1], url: 'https://instagram.com/' + v[1] },
-            tiktok: i % 2 === 0
-              ? { handle: v[1], url: 'https://tiktok.com/@' + v[1] }
-              : { handle: null, url: null },
-            youtube: i % 3 === 0
-              ? { handle: v[1], url: 'https://youtube.com/@' + v[1] }
-              : { handle: null, url: null },
-            facebook: { handle: null, url: null },
-            website: i % 4 === 0
-              ? { handle: v[1] + '.com', url: 'https://' + v[1] + '.com' }
-              : { handle: null, url: null }
-          },
-          // Each voter's own order, nudged so the top threes differ.
-          ballot: results.map(function (r) { return r.team_id; })
-            .slice(i % 3).concat(results.slice(0, i % 3).map(function (r) {
-              return r.team_id;
-            }))
-        };
-      })
-    };
-  }
-
-  (async function load() {
-    var $sub = document.getElementById('poll-sub');
-    var $grid = document.getElementById('poll-grid');
-    var $empty = document.getElementById('poll-empty');
-
-    var preview = new URLSearchParams(location.search).has('preview');
-    var poll = null;
-    if (preview) {
-      poll = sampleData();
-      document.getElementById('poll-preview').hidden = false;
-    } else {
-      try {
-        var res = await sb.schema('creators').rpc('published_poll');
-        if (res.error) throw res.error;
-        poll = res.data;
-      } catch (e) {
-        console.error('published_poll failed', e);
-      }
-    }
-
-    var results = (poll && poll.results) || [];
-    if (!results.length) {
-      $sub.textContent = '';
-      $empty.hidden = false;
-      return;
-    }
-
-    var voters = (poll && poll.voters) || [];
-    var ballots = poll.ballots || voters.length;
-
-    $sub.textContent = prettyDate(poll.poll_date) + ' · ' + ballots +
-      (ballots === 1 ? ' ballot' : ' ballots');
-    document.getElementById('rank-list').innerHTML =
-      renderRanking(results, poll.prev_ranks);
-    document.getElementById('voter-list').innerHTML =
-      renderVoters(voters, results);
-    document.getElementById('voter-count').textContent = '(' + voters.length + ')';
-    $grid.hidden = false;
-  })();
-</script>
