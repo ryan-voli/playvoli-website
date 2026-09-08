@@ -136,3 +136,135 @@ a {
 .btn-primary:active {
     transform: translateY(0);
 }
+
+/* ---------------------------------------------------------------------------
+   /poll — the Creators Poll's rows.
+   
+   HERE rather than in poll.astro because every one of these elements is built
+   by that page's own script at runtime. Astro scopes a component's styles by
+   stamping data-astro-cid-* onto elements IN THE TEMPLATE, so nothing created
+   later ever carries the stamp and the scoped rules never match it. All of it
+   is namespaced under .poll-main, so it reaches nothing else.
+   --------------------------------------------------------------------------- */
+/* ---- the ranking ---- */
+  .poll-main .rank-list { list-style: none; margin: 0; padding: 0; }
+
+  .poll-main .rank-row {
+    display: grid;
+    grid-template-columns: 2.6rem 0.35rem 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    margin-bottom: 0.5rem;
+  }
+
+  .poll-main .rank-num {
+    font-size: 1.15rem;
+    font-weight: 800;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+  }
+
+  /* The team's own colour as a spine, not a fill: 25 saturated blocks would
+     be a colour chart, not a ranking. */
+  .poll-main .rank-spine {
+    width: 0.35rem;
+    height: 1.9rem;
+    border-radius: 3px;
+    background: var(--text-muted);
+  }
+
+  .poll-main .rank-team { min-width: 0; }
+
+  .poll-main .rank-name {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .poll-main .rank-meta {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .poll-main .rank-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .poll-main .rank-points {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .poll-main .rank-move {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 700;
+    min-width: 2.6rem;
+    text-align: right;
+  }
+  .poll-main .move-up { color: var(--accent); }
+  .poll-main .move-down { color: var(--rose); }
+  .poll-main .move-flat { color: var(--text-muted); }
+  .poll-main .move-new { color: var(--electric-blue); }
+
+  /* ---- the voters ---- */
+  .poll-main .voter-list { list-style: none; margin: 0; padding: 0; }
+
+  .poll-main .voter {
+    padding: 0.85rem 0.95rem;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    margin-bottom: 0.5rem;
+  }
+
+  .poll-main .voter-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .poll-main .voter-top {
+    margin: 0.3rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .poll-main .voter-socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+
+  .poll-main .voter-social {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    color: var(--text-secondary);
+    background: var(--glass-highlight);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 0.22rem 0.6rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .poll-main .voter-social:hover {
+    color: var(--electric-blue);
+    border-color: var(--electric-blue);
+  }

@@ -112,8 +112,11 @@ import Layout from '../layouts/Layout.astro';
   function renderRanking(results, prev) {
     return results.map(function (r) {
       var mv = movement(r.team_id, r.rank, prev);
+      // The points total already sits on the right of the row, so the meta
+      // line carries only what it does not: the first-place count.
       var firsts = r.first_place_votes
-        ? ' · ' + r.first_place_votes + ' first-place'
+        ? r.first_place_votes + ' first-place ' +
+          (r.first_place_votes === 1 ? 'vote' : 'votes')
         : '';
       return '' +
         '<li class="rank-row">' +
@@ -122,7 +125,7 @@ import Layout from '../layouts/Layout.astro';
             hex(r.primary_color, 'var(--text-muted)') + '"></span>' +
           '<span class="rank-team">' +
             '<span class="rank-name">' + esc(r.name || r.abbreviation) + '</span>' +
-            '<span class="rank-meta">' + r.points + ' pts' + firsts + '</span>' +
+            (firsts ? '<span class="rank-meta">' + firsts + '</span>' : '') +
           '</span>' +
           '<span class="rank-right">' +
             '<span class="rank-points">' + r.points + '</span>' +
@@ -346,129 +349,6 @@ import Layout from '../layouts/Layout.astro';
 
   .voter-count { color: var(--text-muted); font-weight: 500; }
 
-  /* ---- the ranking ---- */
-  .rank-list { list-style: none; margin: 0; padding: 0; }
-
-  .rank-row {
-    display: grid;
-    grid-template-columns: 2.6rem 0.35rem 1fr auto;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0.7rem 0.9rem;
-    border-radius: 14px;
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-    margin-bottom: 0.5rem;
-  }
-
-  .rank-num {
-    font-size: 1.15rem;
-    font-weight: 800;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    color: var(--text-primary);
-  }
-
-  /* The team's own colour as a spine, not a fill: 25 saturated blocks would
-     be a colour chart, not a ranking. */
-  .rank-spine {
-    width: 0.35rem;
-    height: 1.9rem;
-    border-radius: 3px;
-    background: var(--text-muted);
-  }
-
-  .rank-team { min-width: 0; }
-
-  .rank-name {
-    display: block;
-    font-weight: 600;
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .rank-meta {
-    display: block;
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    margin-top: 0.15rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .rank-right {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .rank-points {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-
-  .rank-move {
-    font-variant-numeric: tabular-nums;
-    font-size: 0.8rem;
-    font-weight: 700;
-    min-width: 2.6rem;
-    text-align: right;
-  }
-  .move-up { color: var(--accent); }
-  .move-down { color: var(--rose); }
-  .move-flat { color: var(--text-muted); }
-  .move-new { color: var(--electric-blue); }
-
-  /* ---- the voters ---- */
-  .voter-list { list-style: none; margin: 0; padding: 0; }
-
-  .voter {
-    padding: 0.85rem 0.95rem;
-    border-radius: 14px;
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-    margin-bottom: 0.5rem;
-  }
-
-  .voter-name {
-    font-weight: 600;
-    font-size: 0.95rem;
-    margin: 0;
-  }
-
-  .voter-top {
-    margin: 0.3rem 0 0;
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    line-height: 1.5;
-  }
-
-  .voter-socials {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.6rem;
-  }
-
-  .voter-social {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-decoration: none;
-    color: var(--text-secondary);
-    background: var(--glass-highlight);
-    border: 1px solid var(--glass-border);
-    border-radius: 999px;
-    padding: 0.22rem 0.6rem;
-    transition: color 0.15s ease, border-color 0.15s ease;
-  }
-  .voter-social:hover {
-    color: var(--electric-blue);
-    border-color: var(--electric-blue);
-  }
-
   .poll-empty {
     text-align: center;
     padding: 4rem 1rem 5rem;
@@ -500,5 +380,3 @@ import Layout from '../layouts/Layout.astro';
     font-weight: 600;
   }
 </style>
-
-
