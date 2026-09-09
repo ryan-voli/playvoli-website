@@ -2,6 +2,7 @@ import {
   ELECTRIC, GLASS15, GLASS_NAV, LEMON, ROSE,
   capLabel, designer, designerWidth, el, rgb, rgba,
 } from './card-kit';
+import { VOLI_MARK } from './card-assets';
 
 /* The NCAA Head2Head section — "the seam" — from
  * lib/pages/games/widgets/ncaa_performance.dart.
@@ -118,7 +119,11 @@ export interface H2HInput {
   homeInk: [number, number, number];
   awayAbbr: string;
   homeAbbr: string;
-  official: boolean | null;
+  /** When this render happened, already formatted. The endpoint regenerates
+   *  on every request, so it is also the honest answer to "how current is
+   *  this?" — and the only one available: neither games nor basic_statistics
+   *  carries an updated_at to read instead. */
+  stamp: string;
 }
 
 const ERROR_COLS: [string, string][] = [
@@ -126,16 +131,16 @@ const ERROR_COLS: [string, string][] = [
   ['ATK', 'atk_err'], ['BLK', 'blk_err'],
 ];
 
-const OFFICIAL_H = 17 + 8;   // 12pt line + Padding(bottom: 8)
 const LEDGER_H = 12 + 16 + 8 + 16 + 34 + 34 + 10;
+const FOOTER_H = 24, FOOTER_GAP = 12, MARK = 18;
 
 /** Total height of the section, so the caller can size the canvas. */
-export function h2hHeight(official: boolean | null): number {
+export function h2hHeight(): number {
   return (
-    (official !== null ? OFFICIAL_H : 0) +
     8 + PTS_H + 12 + KLL_H + DECK_H +
     (8 + BAND_H) * 5 +
-    12 + LEDGER_H
+    12 + LEDGER_H +
+    FOOTER_GAP + FOOTER_H
   );
 }
 
@@ -329,17 +334,23 @@ export function h2hSection(i: H2HInput): any {
     );
   };
 
+  /* Quiet, and outside the ledger's card: when it is time to say where this
+   * came from, the answer belongs under the work rather than on top of it. */
+  const footer = () => {
+    const quiet = 'rgba(255,255,255,0.35)';
+    return el({ width: W, height: FOOTER_H, alignItems: 'center' }, [
+      capLabel(`Updated ${i.stamp}`, { size: 11, box: FOOTER_H, color: quiet }),
+      el({ flexGrow: 1 }),
+      {
+        type: 'img',
+        props: { src: VOLI_MARK(), width: MARK, height: MARK, style: { display: 'flex' } },
+      },
+      el({ width: 7 }),
+      capLabel('playvoli.com', { size: 11, box: FOOTER_H, color: quiet }),
+    ]);
+  };
+
   return el({ width: W, flexDirection: 'column' }, [
-    ...(i.official !== null
-      ? [
-          el({ width: W, height: OFFICIAL_H, justifyContent: 'center' }, [
-            capLabel(i.official ? 'Official Stats' : 'Unofficial Stats', {
-              size: 12, weight: 600, box: 17,
-              color: i.official ? ELECTRIC : '#9E9E9E',
-            }),
-          ]),
-        ]
-      : []),
     el({ height: 8 }),
     band('PTS', awayPts, homePts, PTS_H, PTS_NUM, PTS_EDGE,
       [PTS_R, PTS_R, PTS_R, PTS_R]),
@@ -359,5 +370,7 @@ export function h2hSection(i: H2HInput): any {
     band('DIG', a('dig_sum'), h('dig_sum')),
     el({ height: 12 }),
     ledger(),
+    el({ height: FOOTER_GAP }),
+    footer(),
   ]);
 }

@@ -223,7 +223,7 @@ const render = async (
     sb
       .from('basic_statistics')
       .select(
-        'team_uuid, official, srv_ace, srv_err, rec_sum, rec_err, ast_sum, ' +
+        'team_uuid, srv_ace, srv_err, rec_sum, rec_err, ast_sum, ' +
           'set_err, atk_kll, atk_err, atk_sum, blk_kll, blk_err, dig_sum'
       )
       .eq('game_uuid', id),
@@ -262,9 +262,7 @@ const render = async (
   ];
   const awayTotals: Totals = {};
   const homeTotals: Totals = {};
-  let official: boolean | null = null;
   for (const row of (statRows ?? []) as any[]) {
-    official ??= row.official === true;
     const into = row.team_uuid === game.away_uuid ? awayTotals : homeTotals;
     for (const k of STAT_KEYS) {
       const v = row[k];
@@ -511,7 +509,7 @@ const render = async (
    * gets the card and nothing else, rather than the app's "no team stats"
    * placeholder — a share is not a screen somebody navigated to on purpose. */
   const showH2H = hasStats && away?.league === 'NCAA' && home?.league === 'NCAA';
-  const totalH = CARD_H + (showH2H ? h2hHeight(official) : 0);
+  const totalH = CARD_H + (showH2H ? h2hHeight() : 0);
 
   const card = el(
     {
@@ -578,7 +576,10 @@ const render = async (
               homeInk: onGlass(homeFill, home?.secondary_color),
               awayAbbr: away?.abbreviation ?? 'AWAY',
               homeAbbr: home?.abbreviation ?? 'HOME',
-              official,
+              stamp: new Date().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', hour: 'numeric',
+                minute: '2-digit', timeZone: 'America/Los_Angeles',
+              }) + ' PT',
             }),
           ]),
         ]
