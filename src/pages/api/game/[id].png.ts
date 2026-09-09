@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import satori from 'satori';
-import { Resvg } from '@resvg/resvg-js';
+import { Resvg, initWasm } from '@resvg/resvg-wasm';
 import { createClient } from '@supabase/supabase-js';
 
 /* /api/game/<game_id>.png — the match card, rendered fresh on every request.
@@ -21,9 +21,24 @@ import { createClient } from '@supabase/supabase-js';
  * follow, so the route only worked in production and could not be looked at
  * locally. Satori emits glyphs as PATHS, so its SVG is self-contained and
  * resvg needs no fonts of its own.
+ *
+ * resvg's WASM build, not its native one. @resvg/resvg-js ships a prebuilt
+ * binary per platform; the one installed on a Mac does not exist on Vercel's
+ * Linux runtime, so the route rendered locally and 500'd in production. WASM
+ * is the same renderer with no platform in it.
  */
 
 export const prerender = false;
+
+/* One init per process, not per request. initWasm throws if called twice, so
+ * the promise is the guard — every request awaits the same one. */
+let wasmReady: Promise<void> | null = null;
+function ensureWasm(origin: string): Promise<void> {
+  wasmReady ??= fetch(`${origin}/resvg.wasm`)
+    .then((r) => r.arrayBuffer())
+    .then((buf) => initWasm(buf));
+  return wasmReady;
+}
 
 const SUPABASE_URL = 'https://api.playvoli.com';
 const SUPABASE_ANON_KEY =
@@ -361,6 +376,7 @@ export const GET: APIRoute = async ({ params, request }) => {
     fetch(`${origin}/fonts/Designer.otf`).then((r) => r.arrayBuffer()),
     fetch(`${origin}/fonts/Axiforma%20Book.otf`).then((r) => r.arrayBuffer()),
     fetch(`${origin}/fonts/Axiforma%20Black.otf`).then((r) => r.arrayBuffer()),
+    ensureWasm(origin),
   ]);
 
   const svg = await satori(tree, {

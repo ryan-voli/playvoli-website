@@ -9,9 +9,6 @@ export default defineConfig({
     build: {
       assetsInlineLimit: 0,
     },
-    // resvg is a native binding; Vite must not try to transform it.
-    ssr: {
-      external: ['@resvg/resvg-js'],
-    },
+    // satori and resvg-wasm are both pure JS/WASM — nothing to externalise.
   },
 });

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/vercel": "^8.1.0",
-    "@resvg/resvg-js": "^2.6.2",
+    "@resvg/resvg-wasm": "^2.6.2",
     "@supabase/supabase-js": "^2.101.1",
     "astro": "^5.7.0",
     "satori": "^0.33.4",
