@@ -3,7 +3,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-wasm';
 import { createClient } from '@supabase/supabase-js';
 import {
-  DARK, LEMON, GLASS15,
+  LEMON, GLASS15,
   AX_CAP, axAscent, axWidth, truncate, capLabel,
   designer, designerNudge, designerWidth,
   el, text, fold, encodeImage, ensureWasm, fontSet, onGlass,
@@ -520,7 +520,13 @@ const render = async (
       // Nothing paints outside the radius, so the PNG's corners carry real
       // alpha and the card sits on the forum's own background.
       overflow: 'hidden',
-      backgroundColor: DARK,
+      /* NO opaque base. _PosterGroundPainter lays down white 4% and the two
+       * washes and nothing else — the dark under a header in the app is the
+       * DRAWER, not the header. Painting one here made the card the only
+       * opaque thing in the image, so it sat as a solid slab above stat bands
+       * the board showed through. The card is translucent for the same reason
+       * they are, and by the same rule: the only ink is the ink the painter
+       * actually puts down. */
       fontFamily: 'Axiforma',
     },
     [
