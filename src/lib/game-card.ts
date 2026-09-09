@@ -119,6 +119,35 @@ function effectiveAwaySecondary(awayPri?: string, awaySec?: string, homePri?: st
   return d < 0.15 ? awayPri : awaySec;
 }
 
+/* SHARE-ONLY DIVERGENCE, and the only one in the card's ground.
+ *
+ * The header in the app is the top of a drawer: it has a dark surface under
+ * it, it never needs an edge, and its washes can be quiet because everything
+ * around them is quiet too. Out here it is a translucent object floating on a
+ * forum's background directly above seven seam bands, and against those it
+ * read as washed out and edgeless.
+ *
+ * So it borrows the BANDS' numbers rather than keeping its own: white 5%
+ * instead of 4%, the splash alphas and stops from _SeamSplitPainter instead
+ * of _PosterGroundPainter's, and the same white-12% hairline they carry. The
+ * app's header is untouched — this is the share deciding what it needs to sit
+ * next to, not a correction to the widget.
+ */
+const GROUND_ALPHA = 0.05;                  // _SeamSplitPainter's ground
+const WASH_ALPHAS = [0.62, 0.22, 0.0];      // its splash, not the poster's
+
+/* The stops are the band's HALVED, and that is the whole trick.
+ *
+ * A band's splash is clipped to one side's territory, so at an even split it
+ * dies about halfway across and the middle of the band stays dark. The
+ * header's wash is not clipped to anything — it spans the full diagonal — so
+ * handing it the band's own stops let both colours run the entire width, and
+ * the two met in a muddy brown that took the set column's dark ground with
+ * it. Halved, each wash completes near the middle: the same splash, over the
+ * same distance a band gives it. */
+const WASH_STOPS = [0, 0.26, 0.48];
+const HAIRLINE = 'rgba(255,255,255,0.12)';  // Border.all(Colors.white12)
+
 /* _PosterGroundPainter's two washes, as CSS angles.
  *
  * Flutter's Alignment.topLeft -> bottomRight gradient projects onto the
@@ -131,7 +160,8 @@ function effectiveAwaySecondary(awayPri?: string, awaySec?: string, homePri?: st
 const DIAG_DEG = (Math.atan2(W, -CARD_H) * 180) / Math.PI;
 const wash = (c: [number, number, number], fromTopLeft: boolean) =>
   `linear-gradient(${(fromTopLeft ? DIAG_DEG : DIAG_DEG + 180).toFixed(2)}deg, ` +
-  `${rgba(c, 0.42)} 0%, ${rgba(c, 0.14)} 42%, ${rgba(c, 0)} 85%)`;
+  WASH_ALPHAS.map((a, i) => `${rgba(c, a)} ${WASH_STOPS[i] * 100}%`).join(', ') +
+  ')';
 
 /** _MarqueeName._lines — one word stays one line; anything longer splits
  *  into two lines balanced by character count. */
@@ -530,9 +560,11 @@ const render = async (
       fontFamily: 'Axiforma',
     },
     [
-      layer({ backgroundColor: 'rgba(255,255,255,0.04)' }),
+      layer({ backgroundColor: `rgba(255,255,255,${GROUND_ALPHA})` }),
       layer({ backgroundImage: wash(awayFill, true) }),
       layer({ backgroundImage: wash(homeFill, false) }),
+      // Drawn over the washes, the way the bands draw theirs.
+      layer({ border: `1px solid ${HAIRLINE}` }),
       el(
         {
           position: 'relative',
