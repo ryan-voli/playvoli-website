@@ -200,6 +200,19 @@ const render = async (
   { params, url }: Parameters<APIRoute>[0],
   format: CardFormat
 ): Promise<Response> => {
+  /* Stage timings, returned as Server-Timing.
+   *
+   * This route does four things that can each be slow for different reasons
+   * — query, lay out, rasterise, encode — and until they were measured the
+   * obvious suspect (the file size) was the wrong one. Keeping the header on
+   * means the next person does not have to re-derive that. */
+  const marks: [string, number][] = [];
+  let t0 = Date.now();
+  const mark = (name: string) => {
+    marks.push([name, Date.now() - t0]);
+    t0 = Date.now();
+  };
+
   const id = (params.id ?? '').replace(/\.png$/, '');
   const asked = Number.parseInt(url.searchParams.get('w') ?? '', 10);
   const outWidth = Number.isFinite(asked)
@@ -208,6 +221,18 @@ const render = async (
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     db: { schema: 'vbdata' },
   });
+
+  /* The box score needs nothing from the game row but its id, so it goes in
+   * the FIRST round trip rather than waiting for one. Only the records and
+   * the poll genuinely depend on what comes back (season, the two uuids, the
+   * date), and those are the cheap two. */
+  const statsPromise = sb
+    .from('basic_statistics')
+    .select(
+      'team_uuid, srv_ace, srv_err, rec_sum, rec_err, ast_sum, ' +
+        'set_err, atk_kll, atk_err, atk_sum, blk_kll, blk_err, dig_sum'
+    )
+    .eq('game_uuid', id);
 
   const { data: game } = await sb
     .from('games')
@@ -221,6 +246,7 @@ const render = async (
     .maybeSingle();
 
   if (!game) return new Response('Game not found', { status: 404 });
+  mark('game');
 
   const home: any = game.home;
   const away: any = game.away;
@@ -231,6 +257,21 @@ const render = async (
    * separate reads the drawer already has in hand when it builds the
    * header, so they are fetched here rather than left off — a header
    * missing its ranks is not the header. */
+  const gameDay = kickoff
+    ? new Date(
+        kickoff.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
+      )
+    : null;
+  /* The poll that applies, chosen by the DATABASE rather than by pulling every
+   * poll of the season and its whole rankings blob across the wire to pick one
+   * here. Strictly before the game DAY: a poll released the morning of the
+   * game does not retroactively re-rank that night's card. */
+  const pollCutoff = gameDay
+    ? new Date(Date.UTC(gameDay.getFullYear(), gameDay.getMonth(), gameDay.getDate()))
+        .toISOString()
+        .slice(0, 10)
+    : null;
+
   const [{ data: results }, { data: polls }, { data: statRows }] = await Promise.all([
     sb
       .from('team_results')
@@ -240,24 +281,23 @@ const render = async (
     // Every dated poll of this season, newest first. AvcaRankService takes
     // the first one released STRICTLY BEFORE the game day — a poll that
     // dropped the morning of the match does not re-rank that night's card.
-    sb
-      .from('avca_rankings')
-      .select('published_at, rankings')
-      .eq('season', season)
-      .not('published_at', 'is', null)
-      .order('published_at', { ascending: false }),
+    pollCutoff
+      ? sb
+          .from('avca_rankings')
+          .select('published_at, rankings')
+          .eq('season', season)
+          .lt('published_at', pollCutoff)
+          .order('published_at', { ascending: false })
+          .limit(1)
+      : Promise.resolve({ data: [] as any[] }),
     /* Per-player rows, summed on this side: PostgREST has no GROUP BY, and
      * the app sums them on the client too (_NcaaPerformanceWrapper), so this
      * is the same arithmetic over the same rows rather than a second opinion
      * computed a different way. */
-    sb
-      .from('basic_statistics')
-      .select(
-        'team_uuid, srv_ace, srv_err, rec_sum, rec_err, ast_sum, ' +
-          'set_err, atk_kll, atk_err, atk_sum, blk_kll, blk_err, dig_sum'
-      )
-      .eq('game_uuid', id),
+    statsPromise,
   ]);
+
+  mark('side');
 
   const recordOf = (teamId?: string) => {
     const r = (results ?? []).find((x: any) => x.team_uuid === teamId);
@@ -266,17 +306,7 @@ const render = async (
       : null;
   };
 
-  const gameDay = kickoff
-    ? new Date(
-        kickoff.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
-      )
-    : null;
-  const activePoll = gameDay
-    ? (polls ?? []).find((p: any) => {
-        const d = new Date(String(p.published_at) + 'T00:00:00');
-        return d < new Date(gameDay.getFullYear(), gameDay.getMonth(), gameDay.getDate());
-      })
-    : null;
+  const activePoll = (polls ?? [])[0] ?? null;
   const rankOf = (teamId?: string): number | null => {
     const list = (activePoll as any)?.rankings;
     if (!Array.isArray(list) || !teamId) return null;
@@ -625,27 +655,57 @@ const render = async (
   );
 
   await ensureWasm();
+  mark('wasm');
   const svg = await satori(tree, { width: W, height: totalH, fonts: fontSet() });
+  mark('satori');
 
   // The SVG is vector, so this is a clean scale-up of the 430pt layout
   // rather than a resample of a small bitmap.
   const rendered = new Resvg(svg, { fitTo: { mode: 'width', value: outWidth } })
     .render();
+  mark('resvg');
 
   const { body, type } = await encodeImage(rendered, format);
+  mark('encode');
 
-  /* THE POINT OF THE WHOLE ENDPOINT. A forum will happily serve one cached
-   * render of this to every reader for the rest of the thread's life, which
-   * would freeze the score at whatever it was when the first person opened
-   * it. no-store is deliberately heavier than no-cache: some forum image
-   * proxies honour only the strongest header they understand. */
+  /* Cache by what can actually change.
+   *
+   * This started as no-store on the theory that a cached render would freeze
+   * the score in a thread forever. True for a live game; wrong for every
+   * other kind, and it made EVERY reader wait ~2s for a render nobody needed
+   * — the two queries and the rasterise, from scratch, per view.
+   *
+   * stale-while-revalidate is what makes this safe rather than a compromise.
+   * The edge answers instantly from what it has and refreshes underneath, so
+   * only the very first view of a card ever waits, and an edit shows up on
+   * the next view instead of the current one. The footer already stamps the
+   * render time, so the image says how old it is out loud.
+   *
+   * A FINAL game is done: the box score only moves when the officializing
+   * pass corrects it, hours later, which an hour at the edge and a day of
+   * revalidation covers. A LIVE game gets 15 seconds, which in a thread
+   * somebody is scrolling is indistinguishable from live, and the stamp
+   * names the moment either way. Anything else — pre, suspended — has
+   * records and a poll rank that move on the order of days.
+   *
+   * The browser number stays small on purpose: the reader revalidates against
+   * an edge that already has the answer, which costs a round trip and no
+   * render, so a card is never staler in a tab than it is at the CDN. */
+  const [browser, cdn, swr] = isLive
+    ? [0, 15, 30]
+    : isFinal
+      ? [300, 3600, 86400]
+      : [120, 900, 3600];
+  const edge = `s-maxage=${cdn}, stale-while-revalidate=${swr}`;
+
   return new Response(body, {
     status: 200,
     headers: {
       'Content-Type': type,
-      'Cache-Control': 'public, max-age=0, must-revalidate, no-store',
-      'CDN-Cache-Control': 'no-store',
-      'Vercel-CDN-Cache-Control': 'no-store',
+      'Server-Timing': marks.map(([n, d]) => `${n};dur=${d}`).join(', '),
+      'Cache-Control': `public, max-age=${browser}, ${edge}`,
+      'CDN-Cache-Control': `public, ${edge}`,
+      'Vercel-CDN-Cache-Control': `public, ${edge}`,
     },
   });
 };

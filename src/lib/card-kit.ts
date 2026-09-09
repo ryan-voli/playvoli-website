@@ -333,7 +333,16 @@ export async function encodeImage(
       ...WEBP_DEFAULTS,
       lossless: 1,
       quality: 100,
-      method: 0,
+      /* Method 1, not 0. It costs ~300ms and returns a third of the bytes
+       * (154KB -> 101KB on the tall card), pixel for pixel identical — a bad
+       * trade on a route that renders per request, and a free one behind the
+       * cache below, where stale-while-revalidate means that work happens in
+       * the background and no reader ever waits for it.
+       *
+       * Still lossless: measured against lossy at q88/q92/q95, which came out
+       * BIGGER as well as lossy. Flat colour, long gradients and an alpha
+       * channel are the case webp's lossy mode is worst at. */
+      method: 1,
       exact: 1, // keep transparent pixels' RGB, don't let it invent any
     }
   );
