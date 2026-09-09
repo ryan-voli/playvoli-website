@@ -366,13 +366,24 @@ const render: APIRoute = async ({ params }) => {
             fontSize: 19,
             fontWeight: 600,
           }),
+          // The render time, not just the match date. It is the honest label
+          // for a card that is regenerated per request — and it is the only
+          // way to tell, from inside a forum thread, whether you are looking
+          // at a fresh render or a cached one somebody else triggered.
           text(
             new Date(String(game.date)).toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
-              year: 'numeric',
               timeZone: 'America/Los_Angeles',
-            }),
+            }) +
+              '  ·  as of ' +
+              new Date().toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'America/Los_Angeles',
+              }) +
+              ' PT',
             {
               color: 'rgba(255,255,255,0.35)',
               fontSize: 19,
