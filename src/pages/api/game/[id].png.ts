@@ -101,12 +101,22 @@ const SUPABASE_ANON_KEY =
  * changes how many pixels come out, never the layout — and every constant
  * below can stay the number that is in the Dart file.
  *
- * SCALE 2 is the app's own retina rendering: 860x452, which lands in a
+ * SCALE 2 is the app's own retina rendering: 860x432, which lands in a
  * forum post at about the width of a phone screenshot. Higher is sharper
- * and also bigger on the page, which is the wrong trade here.
+ * and also bigger on the page, which is the wrong trade here — so it is the
+ * default rather than the ceiling, and ?w= moves it.
  */
 const SCALE = 2;
 const W = 430;
+
+/* How wide the PNG comes out, in real pixels. ?w= overrides it, clamped:
+ * below MIN the 9pt SET label stops being readable, and above MAX the file
+ * is bigger than any forum column will ever show it at. The layout does not
+ * change — the finished vector is just scaled — so every width is equally
+ * sharp and none of them reflows anything. */
+const OUT_DEFAULT = W * SCALE; // 860
+const OUT_MIN = 320;
+const OUT_MAX = 1290;
 
 const PAD_L = 8, PAD_T = 8, PAD_R = 8, PAD_B = 10;
 const STATUS_H = 36;      // the 36pt icon buttons set this row's height
@@ -298,8 +308,12 @@ export const GET: APIRoute = async (ctx) => {
   }
 };
 
-const render: APIRoute = async ({ params }) => {
+const render: APIRoute = async ({ params, url }) => {
   const id = (params.id ?? '').replace(/\.png$/, '');
+  const asked = Number.parseInt(url.searchParams.get('w') ?? '', 10);
+  const outWidth = Number.isFinite(asked)
+    ? Math.min(OUT_MAX, Math.max(OUT_MIN, asked))
+    : OUT_DEFAULT;
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     db: { schema: 'vbdata' },
   });
@@ -603,7 +617,7 @@ const render: APIRoute = async ({ params }) => {
 
   // The SVG is vector, so this is a clean scale-up of the 430pt layout
   // rather than a resample of a small bitmap.
-  const png = new Resvg(svg, { fitTo: { mode: 'width', value: W * SCALE } })
+  const png = new Resvg(svg, { fitTo: { mode: 'width', value: outWidth } })
     .render()
     .asPng();
 
