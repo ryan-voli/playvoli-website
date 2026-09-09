@@ -2,6 +2,12 @@ import type { APIRoute } from 'astro';
 import satori from 'satori';
 import { Resvg, initWasm } from '@resvg/resvg-wasm';
 import { createClient } from '@supabase/supabase-js';
+import {
+  DESIGNER,
+  AXIFORMA_BOOK,
+  AXIFORMA_BLACK,
+  RESVG_WASM,
+} from '../../../lib/card-assets';
 
 /* /api/game/<game_id>.png — the match card, rendered fresh on every request.
  *
@@ -33,10 +39,8 @@ export const prerender = false;
 /* One init per process, not per request. initWasm throws if called twice, so
  * the promise is the guard — every request awaits the same one. */
 let wasmReady: Promise<void> | null = null;
-function ensureWasm(origin: string): Promise<void> {
-  wasmReady ??= fetch(`${origin}/resvg.wasm`)
-    .then((r) => r.arrayBuffer())
-    .then((buf) => initWasm(buf));
+function ensureWasm(): Promise<void> {
+  wasmReady ??= initWasm(RESVG_WASM());
   return wasmReady;
 }
 
@@ -112,7 +116,7 @@ export const GET: APIRoute = async (ctx) => {
   }
 };
 
-const render: APIRoute = async ({ params, request }) => {
+const render: APIRoute = async ({ params }) => {
   const id = (params.id ?? '').replace(/\.png$/, '');
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     db: { schema: 'vbdata' },
@@ -380,19 +384,18 @@ const render: APIRoute = async ({ params, request }) => {
     ],
   });
 
-  // Fonts come off our own origin so this works identically on localhost,
-  // a preview deployment and production without a path to configure.
-  const origin = new URL(request.url).origin;
   // Axiforma, not Inter: satori reads ttf/otf/woff and the site's Inter is
   // woff2, which it cannot parse. Book and Black are the two real weights we
   // have, so the scale is mapped onto them rather than faked — asking for a
   // weight with no file behind it is how every label came out light.
-  const [designer, book, black] = await Promise.all([
-    fetch(`${origin}/fonts/Designer.otf`).then((r) => r.arrayBuffer()),
-    fetch(`${origin}/fonts/Axiforma%20Book.otf`).then((r) => r.arrayBuffer()),
-    fetch(`${origin}/fonts/Axiforma%20Black.otf`).then((r) => r.arrayBuffer()),
-    ensureWasm(origin),
-  ]);
+  //
+  // Inlined, not fetched. See lib/card-assets.ts: pulling these from our own
+  // origin works locally and dies inside a Vercel Function, which cannot
+  // resolve its own public domain.
+  await ensureWasm();
+  const designer = DESIGNER();
+  const book = AXIFORMA_BOOK();
+  const black = AXIFORMA_BLACK();
 
   const svg = await satori(tree, {
     width: W,
