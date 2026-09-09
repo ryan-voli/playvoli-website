@@ -97,7 +97,22 @@ function statParts(r: any): string[] {
   return parts;
 }
 
-export const GET: APIRoute = async ({ params, request }) => {
+export const GET: APIRoute = async (ctx) => {
+  // TEMPORARY. Vercel's CLI is not authenticated here, so a 500 from this
+  // route is otherwise a blank page with no way to see why. Surfacing the
+  // message is safe while nothing links to this endpoint, and comes out the
+  // moment the cause is known.
+  try {
+    return await render(ctx);
+  } catch (e: any) {
+    return new Response(
+      `render failed: ${e?.message ?? e}\n\n${e?.stack ?? ''}`,
+      { status: 500, headers: { 'Content-Type': 'text/plain' } }
+    );
+  }
+};
+
+const render: APIRoute = async ({ params, request }) => {
   const id = (params.id ?? '').replace(/\.png$/, '');
   const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     db: { schema: 'vbdata' },
