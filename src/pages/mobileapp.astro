@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout
   title="Mobile App - VOLI"
-  description="Download the Voli mobile app for iOS and Android. Fantasy volleyball, live stats, community chat, and more."
+  description="Read volleyball news from 10 publishers, listen to 13 volleyball podcasts, follow live scores and stats, and play fantasy volleyball. The Voli app is free on iOS and Android."
   ogUrl="https://playvoli.com/mobileapp"
 >
     <main class="card">
@@ -62,42 +62,87 @@ import Layout from '../layouts/Layout.astro';
 
         <div class="section">
             <div class="section-label">What's Inside</div>
-            <div class="features-list">
-                <div class="feature-row">
-                    <img src="/images/icons/fantasy_opt.png" alt="" class="feature-icon">
-                    <div>
-                        <strong>Fantasy</strong>
-                        <span>Contract-based fantasy leagues designed specifically for volleyball.</span>
-                    </div>
-                </div>
-                <div class="feature-row">
-                    <img src="/images/icons/statistics_opt.png" alt="" class="feature-icon">
-                    <div>
-                        <strong>Stats</strong>
-                        <span>More in-depth real-time statistics than anywhere else.</span>
-                    </div>
-                </div>
-                <div class="feature-row">
-                    <img src="/images/icons/games_opt.png" alt="" class="feature-icon">
-                    <div>
-                        <strong>Games</strong>
-                        <span>Live scores, play-by-plays, and detailed match information.</span>
-                    </div>
-                </div>
-                <div class="feature-row">
-                    <img src="/images/icons/content_opt.png" alt="" class="feature-icon">
-                    <div>
-                        <strong>Content</strong>
-                        <span>Podcasts, articles, and exclusive volleyball content.</span>
-                    </div>
-                </div>
-                <div class="feature-row">
-                    <img src="/images/icons/community_opt.png" alt="" class="feature-icon">
-                    <div>
-                        <strong>Community</strong>
-                        <span>Real-time chat rooms during every game.</span>
-                    </div>
-                </div>
+
+            <div class="tabs" role="tablist" aria-label="App sections">
+                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-fantasy" id="tab-fantasy" data-tab="fantasy">
+                    <img src="/images/icons/fantasy_opt.png" alt="" class="tab-icon"><span>Fantasy</span>
+                </button>
+                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-stats" id="tab-stats" data-tab="stats">
+                    <img src="/images/icons/statistics_opt.png" alt="" class="tab-icon"><span>Stats</span>
+                </button>
+                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-games" id="tab-games" data-tab="games">
+                    <img src="/images/icons/games_opt.png" alt="" class="tab-icon"><span>Games</span>
+                </button>
+                <button class="tab is-active" role="tab" aria-selected="true" aria-controls="panel-content" id="tab-content" data-tab="content">
+                    <img src="/images/icons/content_opt.png" alt="" class="tab-icon"><span>Content</span>
+                </button>
+                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-community" id="tab-community" data-tab="community">
+                    <img src="/images/icons/community_opt.png" alt="" class="tab-icon"><span>Community</span>
+                </button>
+            </div>
+
+            <div class="panel" role="tabpanel" id="panel-fantasy" aria-labelledby="tab-fantasy" data-panel="fantasy" hidden>
+                <h2 class="panel-title">Fantasy Volleyball</h2>
+                <p class="panel-lede">Contract-based fantasy volleyball leagues for NCAA women's volleyball and Major League Volleyball. Draft players to a salary cap, sign them to multi-round contracts, and score points from real match statistics.</p>
+            </div>
+
+            <div class="panel" role="tabpanel" id="panel-stats" aria-labelledby="tab-stats" data-panel="stats" hidden>
+                <h2 class="panel-title">Volleyball Statistics</h2>
+                <p class="panel-lede">In-depth player and team statistics for NCAA and professional volleyball — kills, assists, digs, blocks, aces, hitting percentage and more, sortable by season, conference and round.</p>
+            </div>
+
+            <div class="panel" role="tabpanel" id="panel-games" aria-labelledby="tab-games" data-panel="games" hidden>
+                <h2 class="panel-title">Live Scores &amp; Schedules</h2>
+                <p class="panel-lede">Live volleyball scores, full schedules, play-by-play, set-by-set breakdowns and box scores for NCAA women's volleyball and Major League Volleyball.</p>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="panel" role="tabpanel" id="panel-content" aria-labelledby="tab-content" data-panel="content">
+                <h2 class="panel-title">Volleyball News &amp; Podcasts</h2>
+                <p class="panel-lede">
+                    Voli is where you read volleyball news and listen to volleyball podcasts in one place.
+                    We aggregate coverage from <strong>10 publishers</strong> &mdash; leagues, conferences and
+                    independent writers &mdash; and carry <strong>13 volleyball podcasts</strong> with over
+                    <strong>900 episodes</strong>, streamable and downloadable inside the app. Free on iOS and Android.
+                </p>
+
+                <h3 class="panel-sub">Where our volleyball news comes from</h3>
+                <ul class="source-grid">
+                    <li><span class="source-name">Major League Volleyball</span><span class="source-meta">provolleyball.com</span></li>
+                    <li><span class="source-name">SEC Sports</span><span class="source-meta">secsports.com</span></li>
+                    <li><span class="source-name">LOVB (League One Volleyball)</span><span class="source-meta">lovb.com</span></li>
+                    <li><span class="source-name">Big Ten Conference</span><span class="source-meta">bigten.org</span></li>
+                    <li><span class="source-name">NCAA.com</span><span class="source-meta">ncaa.com</span></li>
+                    <li><span class="source-name">ACC</span><span class="source-meta">theacc.com</span></li>
+                    <li><span class="source-name">Minute Volley</span><span class="source-meta">minutevolley.com</span></li>
+                    <li><span class="source-name">Big 12 Conference</span><span class="source-meta">big12sports.com</span></li>
+                    <li><span class="source-name">Elvis Thrill</span><span class="source-meta">Substack</span></li>
+                    <li><span class="source-name">Sports Illustrated</span><span class="source-meta">si.com</span></li>
+                </ul>
+                <p class="panel-note">Coverage spans NCAA women's volleyball, Major League Volleyball, LOVB, team announcements, transfers, rankings and award news. Articles are read in-app with comments, reactions and player and team tagging.</p>
+
+                <h3 class="panel-sub">Volleyball podcasts on Voli</h3>
+                <ul class="pod-grid">
+                    <li><span class="pod-name">Volley Talk with Sarah Pavan</span><span class="pod-meta">Sarah Pavan &middot; 90 episodes</span><span class="pod-tag">Partner</span></li>
+                    <li><span class="pod-name">The Major League Minute</span><span class="pod-meta">MLM &middot; 99 episodes</span><span class="pod-tag">Partner</span></li>
+                    <li><span class="pod-name">Court Captains</span><span class="pod-meta">KWND Studios &middot; 67 episodes</span><span class="pod-tag">Partner</span></li>
+                    <li><span class="pod-name">The USA Volleyball Show</span><span class="pod-meta">USA Volleyball &middot; 152 episodes</span></li>
+                    <li><span class="pod-name">Volleyball State</span><span class="pod-meta">Jeff Sheldon &amp; Lincoln Arneal &middot; 151 episodes</span></li>
+                    <li><span class="pod-name">Dig City</span><span class="pod-meta">Purdue Volleyball &middot; 125 episodes</span></li>
+                    <li><span class="pod-name">The Side Out Society Podcast</span><span class="pod-meta">Side Out Society &middot; 88 episodes</span></li>
+                    <li><span class="pod-name">Serving Pancakes</span><span class="pod-meta">iHeartPodcasts &middot; 60 episodes</span></li>
+                    <li><span class="pod-name">Ember's Nest</span><span class="pod-meta">Edward White &middot; 48 episodes</span></li>
+                    <li><span class="pod-name">Set 6: The Official MLV Podcast</span><span class="pod-meta">Major League Volleyball &middot; 21 episodes</span></li>
+                    <li><span class="pod-name">Six Zone Duo</span><span class="pod-meta">Amie Just &amp; Erin Sorensen &middot; 3 episodes</span></li>
+                    <li><span class="pod-name">Volley Takes</span><span class="pod-meta">Abby Benton &middot; 33 episodes</span></li>
+                    <li><span class="pod-name">Out of Rotation</span><span class="pod-meta">Dan Meske &middot; 33 episodes</span></li>
+                </ul>
+                <p class="panel-note">Every episode streams or downloads for offline listening, with playback position synced across devices. Partner podcasts run their own fantasy leagues, AMAs and Take of the Talk sessions inside Voli.</p>
+            </div>
+
+            <div class="panel" role="tabpanel" id="panel-community" aria-labelledby="tab-community" data-panel="community" hidden>
+                <h2 class="panel-title">Volleyball Community</h2>
+                <p class="panel-lede">Real-time chat rooms for every match, team and league, plus daily games, polls and a volleyball encyclopedia of records, awards and rankings.</p>
             </div>
         </div>
 
@@ -138,6 +183,92 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
     </main>
+
+<script is:inline>
+    // Progressive enhancement: every panel is in the DOM and readable by
+    // crawlers whether or not this runs. It only toggles visibility.
+    (function () {
+        var tabs = document.querySelectorAll('.tab[data-tab]');
+        var panels = document.querySelectorAll('.panel[data-panel]');
+        function select(name) {
+            tabs.forEach(function (t) {
+                var on = t.dataset.tab === name;
+                t.classList.toggle('is-active', on);
+                t.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+            panels.forEach(function (p) { p.hidden = p.dataset.panel !== name; });
+        }
+        tabs.forEach(function (t) {
+            t.addEventListener('click', function () { select(t.dataset.tab); });
+        });
+    })();
+</script>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "MobileApplication",
+      "@id": "https://playvoli.com/mobileapp#app",
+      "name": "Voli - The Volleyball Hub",
+      "applicationCategory": "SportsApplication",
+      "operatingSystem": "iOS, Android",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "ratingCount": "5", "bestRating": "5" },
+      "description": "Voli is a free volleyball app for reading volleyball news, listening to volleyball podcasts, following live scores and statistics, and playing contract-based fantasy volleyball for NCAA women's volleyball and Major League Volleyball.",
+      "featureList": [
+        "Volleyball news aggregated from 10 publishers",
+        "13 volleyball podcasts with over 900 episodes",
+        "Live volleyball scores and play-by-play",
+        "NCAA and professional volleyball statistics",
+        "Contract-based fantasy volleyball leagues",
+        "Live match chat rooms"
+      ],
+      "downloadUrl": [
+        "https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982",
+        "https://play.google.com/store/apps/details?id=com.playvoli.app"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://playvoli.com/mobileapp#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Where can I read volleyball news?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Voli app aggregates volleyball news from 10 publishers in one feed: Major League Volleyball (provolleyball.com), SEC Sports, LOVB, the Big Ten Conference, NCAA.com, the ACC, Minute Volley, the Big 12 Conference, Elvis Thrill and Sports Illustrated. Coverage spans NCAA women's volleyball, Major League Volleyball and LOVB. Voli is free on iOS and Android."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What volleyball podcasts can I listen to on Voli?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Voli carries 13 volleyball podcasts with over 900 episodes: Volley Talk with Sarah Pavan, The Major League Minute, Court Captains, The USA Volleyball Show, Volleyball State, Dig City, The Side Out Society Podcast, Serving Pancakes, Ember's Nest, Set 6: The Official MLV Podcast, Six Zone Duo, Volley Takes and Out of Rotation. Episodes stream or download for offline listening."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a fantasy volleyball app?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Voli runs contract-based fantasy volleyball leagues for NCAA women's volleyball and Major League Volleyball, where you sign players to multi-round contracts against a salary cap and score from real match statistics."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I follow live volleyball scores?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Voli provides live volleyball scores, schedules, play-by-play and box scores for NCAA women's volleyball and Major League Volleyball, free on iOS and Android."
+          }
+        }
+      ]
+    }
+  ]
+})} />
 </Layout>
 
 <style>
@@ -398,5 +529,139 @@ import Layout from '../layouts/Layout.astro';
         .btn-store svg { width: 22px; height: 22px; }
         .btn-store-label { font-size: 0.55rem; }
         .btn-store-name { font-size: 0.85rem; }
+    }
+
+    /* ── Section tabs ─────────────────────────────────────────────── */
+    .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 0.95rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 999px;
+        color: var(--text-secondary);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .tab:hover { background: rgba(255, 255, 255, 0.06); color: var(--text-primary); }
+
+    .tab.is-active {
+        background: var(--accent-subtle);
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+    .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .tab-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .panel {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+
+    .panel[hidden] { display: none; }
+
+    .panel-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        letter-spacing: -0.01em;
+    }
+
+    .panel-lede {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.75;
+    }
+
+    .panel-lede strong { color: var(--text-primary); font-weight: 600; }
+
+    .panel-sub {
+        color: var(--accent);
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: 1.75rem 0 0.85rem;
+    }
+
+    .source-grid,
+    .pod-grid {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .source-grid li,
+    .pod-grid li {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        padding: 0.7rem 0.85rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+    }
+
+    .source-name,
+    .pod-name {
+        color: var(--text-primary);
+        font-size: 0.88rem;
+        font-weight: 600;
+        line-height: 1.3;
+        padding-right: 3.75rem;
+    }
+
+    .source-meta,
+    .pod-meta {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        line-height: 1.4;
+    }
+
+    .pod-tag {
+        position: absolute;
+        top: 0.7rem;
+        right: 0.85rem;
+        color: var(--accent);
+        background: var(--accent-subtle);
+        border-radius: 999px;
+        padding: 0.1rem 0.45rem;
+        font-size: 0.62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .panel-note {
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        line-height: 1.7;
+        margin-top: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+        .tab { font-size: 0.82rem; padding: 0.5rem 0.75rem; }
+        .tab-icon { width: 17px; height: 17px; }
+        .panel { padding: 1.15rem; }
+        .source-grid, .pod-grid { grid-template-columns: 1fr; }
     }
 </style>
