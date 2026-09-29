@@ -89,12 +89,14 @@ const allSchema = [...siteSchema, ...extraSchema];
     <meta name="twitter:description" content={description}>
     <meta name="twitter:image" content={ogImage}>
 
-    <!-- One logo everywhere: the mark on its dark ground. 32 is the tab's size;
-         Google wants a multiple of 48 and takes the largest, so it gets the
-         dark square rather than drawing its own white one behind the mark. -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <!-- TWO ICONS ON PURPOSE. The tab gets the app icon (32px); Google only
+         takes sizes that are multiples of 48 and prefers the largest, so it
+         gets the logo on its dark square and never draws a white one behind
+         the mark. The 32 is LAST because Firefox takes the last icon listed
+         whatever its size; Chrome and Safari match on size. -->
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Structured data: Organization + WebSite (sitewide) and any page-specific schema -->
