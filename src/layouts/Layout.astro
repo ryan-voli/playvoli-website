@@ -89,7 +89,13 @@ const allSchema = [...siteSchema, ...extraSchema];
     <meta name="twitter:description" content={description}>
     <meta name="twitter:image" content={ogImage}>
 
-    <link rel="icon" href="/images/appicon.webp">
+    <!-- One logo everywhere: the mark on its dark ground. 32 is the tab's size;
+         Google wants a multiple of 48 and takes the largest, so it gets the
+         dark square rather than drawing its own white one behind the mark. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Structured data: Organization + WebSite (sitewide) and any page-specific schema -->
     <script type="application/ld+json" set:html={JSON.stringify(allSchema)} />
