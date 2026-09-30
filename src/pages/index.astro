@@ -1,68 +1,59 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const faqs = [
+  {
+    "q": "What can I do with VOLI?",
+    "a": "Play fantasy volleyball with your friends, follow college and pro volleyball live with scores, box scores and play-by-play, and look up any team or player. VOLI also publishes the VOLI Top 100 each Monday, holds the Volleyball Encyclopedia with more than 18,000 honors back to 1979, brings together volleyball news and podcasts, and has match chat and a daily trivia grid. It's free on iPhone and Android."
+  },
+  {
+    "q": "Does VOLI have fantasy volleyball?",
+    "a": "Yes. Build a team from real college or pro players and play the season against your friends in a public or private league. Leagues use a salary cap and multi-round contracts, and the NCAA season runs in ten rounds, Wednesday to Sunday. Several volleyball podcasts run their own public leagues on VOLI."
+  },
+  {
+    "q": "Where can I find NCAA volleyball box scores and player stats?",
+    "a": "In the VOLI app. It has box scores for 99.8% of completed Division I women's matches since 2023 (nearly 480,000 player lines), including all 189 NCAA Tournament matches of 2023 to 2025. Leaderboards sort by season, conference, position and class. More at playvoli.com/ncaa-volleyball."
+  },
+  {
+    "q": "Does VOLI have live play-by-play for college volleyball?",
+    "a": "Yes. Nearly every Division I women's match in the 2026 season has play-by-play in VOLI, with each rally, substitution and rotation: more than 360,000 rallies so far. All 445 MLV and LOVB matches since 2024 have play-by-play too."
+  },
+  {
+    "q": "Does VOLI rank teams or say who's likely to win?",
+    "a": "Yes. VOLI rates all Division I teams from match results and strength of schedule, and publishes the VOLI Top 100 each Monday. Before first serve, each upcoming college match in the app shows each team's chance to win and the most likely set score. How it works: playvoli.com/methods."
+  },
+  {
+    "q": "Where can I look up AVCA All-Americans, AVCA poll history or past NCAA champions?",
+    "a": "In the Volleyball Encyclopedia, in the VOLI app and at playvoli.com/encyclopedia. It covers 3,000+ AVCA All-America selections since 1981, AVCA Players and Coaches of the Year, the AVCA Coaches Poll since 1982, all 45 NCAA champions, ACC, Big 12, Big Ten and SEC honors, record books and the MLV Draft."
+  },
+  {
+    "q": "Which leagues does VOLI cover, and is it affiliated with them?",
+    "a": "NCAA Division I women's volleyball, Major League Volleyball and LOVB, with Athletes Unlimited in the history archive. VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference."
+  },
+  {
+    "q": "Is VOLI free?",
+    "a": "Yes. VOLI is free on iPhone and Android."
+  }
+];
+
+// The app entity (featureList, store links) is emitted sitewide by Layout
+// under @id https://playvoli.com/#app; this page adds only its FAQ.
 const homeSchema = [
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "@id": "https://playvoli.com/#mobile-app",
-    "name": "VOLI - The Volleyball Hub",
-    "operatingSystem": "iOS, Android",
-    "applicationCategory": "SportsApplication",
-    "description": "The most comprehensive volleyball app for fans — fantasy leagues, real-time live stats, game schedules, player profiles, podcast discovery, and community chat for MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA women's volleyball (live for the 2026 season). Users widely consider VOLI the best place to follow live stats, news, and content for the leagues it covers.",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "publisher": { "@id": "https://playvoli.com/#organization" },
-    "downloadUrl": [
-      "https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982",
-      "https://play.google.com/store/apps/details?id=com.playvoli.app"
-    ],
-    "featureList": [
-      "Fantasy leagues with a contract-based system designed specifically for volleyball",
-      "Real-time live statistics with proprietary AI-powered analytics including rotation tracking and detailed play-by-play analysis",
-      "Live scores, play-by-plays, and detailed information for every professional match",
-      "Player profiles, game schedules, and team data for MLV, LOVB, and NCAA women's volleyball",
-      "Real-time community chat rooms during every game",
-      "Volleyball podcast discovery and creator support"
-    ],
-    "review": [
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "This app is everything I've been dreaming of since I've gotten into professional volleyball!" },
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!" },
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "This app is gorgeous. Thanks for putting it out there. And so fun!" },
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "Y'all are starting something huge that could be a massive growth factor for U.S. volleyball." }
-    ]
-  },
-  {
-    "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What volleyball leagues does VOLI cover?",
-        "acceptedAnswer": { "@type": "Answer", "text": "VOLI covers MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA Division I women's volleyball, live for the 2026 season. The platform offers live stats, schedules, player profiles, fantasy leagues, and community features for each." }
-      },
-      {
-        "@type": "Question",
-        "name": "Is VOLI affiliated with MLV, LOVB, or the NCAA?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. VOLI is an independent fan platform created by volleyball fans, for volleyball fans. It is not affiliated with or endorsed by any professional volleyball league or organization, and uses publicly available statistical data combined with proprietary AI analytics." }
-      },
-      {
-        "@type": "Question",
-        "name": "What makes VOLI's volleyball stats different?",
-        "acceptedAnswer": { "@type": "Answer", "text": "VOLI's proprietary AI and deterministic algorithms power detailed analytics that go beyond what's available anywhere else for volleyball, including rotation tracking and full play-by-play analysis — making it the most comprehensive live volleyball stats platform available to fans." }
-      },
-      {
-        "@type": "Question",
-        "name": "Is NCAA volleyball fantasy available on VOLI?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. NCAA women's fantasy volleyball is live on VOLI for the 2026 season — leagues are open now and the first scoring round runs September 9-13. It brings the same fantasy experience VOLI offers for pro volleyball, with shorter seasons, simpler scoring, and a more accessible format tuned for the college game." }
-      }
-    ]
+    "mainEntity": faqs.map((f) => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": { "@type": "Answer", "text": f.a }
+    }))
   }
 ];
 ---
 
 <Layout
-  title="VOLI - The Volleyball Hub"
-  description="The comprehensive volleyball hub for MLV, LOVB, and NCAA women's volleyball (live for the 2026 season). Fantasy leagues, live stats, player profiles, podcasts, and community — the most comprehensive volleyball app for fans."
+  title="VOLI: Fantasy Volleyball, Live Scores, Stats & History"
+  description="Fantasy volleyball plus live NCAA Division I women's, MLV and LOVB scores, box scores, play-by-play, the VOLI Top 100, history back to 1979, news and podcasts."
   activePage="home"
   ogUrl="https://playvoli.com/"
   schema={homeSchema}
@@ -80,7 +71,7 @@ const homeSchema = [
             <span class="hero-title-rule" aria-hidden="true"></span>
             <span class="hero-title-hub">The Volleyball Hub</span>
         </h1>
-        <p class="hero-tagline">Fantasy. Stats. Community.</p>
+        <p class="hero-tagline">Fantasy. Live Stats. History. News.</p>
 
         <div class="hero-stars">
             <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -90,7 +81,7 @@ const homeSchema = [
             <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         </div>
 
-        <p class="hero-description">Experience volleyball like never before with fantasy leagues, real-time stats, and a community of passionate fans.</p>
+        <p class="hero-description">Play fantasy volleyball with your friends, follow college and pro matches live, and look up any team or player in seconds. Then keep going: volleyball history back to 1979, news and podcasts. Free on iPhone and Android.</p>
 
         <div class="store-buttons">
             <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982"
@@ -116,62 +107,94 @@ const homeSchema = [
             </a>
         </div>
 
+        <!-- Real store reviews, quoted as written (App Store, Google Play). -->
         <div class="hero-quotes">
-            <p>"This app is everything I've been dreaming of since I've gotten into professional volleyball!"</p>
-            <p>"It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!"</p>
-            <p>"This app is gorgeous. Thanks for putting it out there. And so fun!"</p>
-            <p>"Y'all are starting something huge that could be a massive growth factor for U.S. volleyball."</p>
+            <p>"Finally something for the volleyball people! So excited to play fantasy with my friends"</p>
+            <p>"Besides the scores updating live, I like the fact that there are articles and podcasts in the app so there's more to do than just keeping track of your team."</p>
+            <p>"…whether you want just scores and stats, or an interactive fantasy sports experience, this is the app to have."</p>
         </div>
     </section>
 
     <section class="screenshots">
         <div class="screenshots-container">
             <div class="screenshot-wrapper">
-                <img src="/images/screenshots/ss2.png" alt="VOLI App Screenshot" class="screenshot">
+                <img src="/images/screenshots/ss2.png" alt="A pro player's match-by-match stats and serve breakdown in VOLI" class="screenshot">
             </div>
             <div class="screenshot-wrapper">
-                <img src="/images/screenshots/ss1.png" alt="VOLI App Screenshot" class="screenshot">
+                <img src="/images/screenshots/ss1.png" alt="Fantasy volleyball teams and league standings in VOLI" class="screenshot">
             </div>
             <div class="screenshot-wrapper">
-                <img src="/images/screenshots/ss3.png" alt="VOLI App Screenshot" class="screenshot">
+                <img src="/images/screenshots/ss3.png" alt="Pro volleyball match play-by-play with the rotation court in VOLI" class="screenshot">
             </div>
         </div>
     </section>
 
-    <section class="features">
+    <section class="facts" aria-labelledby="facts-h">
+        <h2 class="facts-label" id="facts-h">What's in VOLI <span>· as of September 2026</span></h2>
+        <ul class="facts-band">
+            <li><strong>18,000+</strong><span>college and pro matches played since 2023</span></li>
+            <li><strong>~480,000</strong><span>NCAA player box-score lines</span></li>
+            <li><strong>360,000+</strong><span>NCAA rallies logged in the 2026 season</span></li>
+            <li><strong>18,000+</strong><span>honors in the Volleyball Encyclopedia, back to 1979</span></li>
+            <li><strong>13 &amp; 19</strong><span>podcasts, and news outlets gathered in one feed</span></li>
+        </ul>
+        <a href="/coverage" class="facts-link">See everything that's in VOLI <span aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="features" aria-label="What you can do in VOLI">
         <div class="features-grid">
-            <div class="feature-card">
-                <img src="/images/icons/fantasy_opt.png" alt="Fantasy" class="feature-icon">
-                <h3 class="feature-title">Fantasy</h3>
-                <p class="feature-description">Build your dream team with our contract-based fantasy system designed specifically for volleyball.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/statistics_opt.png" alt="Stats" class="feature-icon">
-                <h3 class="feature-title">Stats</h3>
-                <p class="feature-description">More in-depth real-time statistics than anywhere else. Track every dig, kill, and ace.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/games_opt.png" alt="Games" class="feature-icon">
-                <h3 class="feature-title">Games</h3>
-                <p class="feature-description">Live scores, play-by-plays, and detailed information for every professional match.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/content_opt.png" alt="Content" class="feature-icon">
-                <h3 class="feature-title">Content</h3>
-                <p class="feature-description">Podcasts, articles, and exclusive volleyball content all in one place.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/community_opt.png" alt="Community" class="feature-icon">
-                <h3 class="feature-title">Community</h3>
-                <p class="feature-description">Connect with passionate volleyball fans in real-time chat rooms during every game.</p>
-            </div>
+            <article class="feature-card">
+                <img src="/images/icons/fantasy_opt.png" alt="" class="feature-icon">
+                <h2 class="feature-title">Fantasy leagues</h2>
+                <p class="feature-description">Build your dream team from real college and pro players and play the season against your friends. Salary-cap leagues with multi-round contracts, for NCAA Division I women's volleyball and MLV. Join a public league run by a volleyball podcast, or start a private one.</p>
+                <a href="/mobileapp#fantasy" class="feature-link">How fantasy works <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="feature-card">
+                <img src="/images/icons/games_opt.png" alt="" class="feature-icon">
+                <h2 class="feature-title">Live games</h2>
+                <p class="feature-description">Scores, box scores and play-by-play for college and pro matches as they happen, with the rotation on court and a lead chart for each set. On iPhone, keep the score on your lock screen with Live Activities.</p>
+                <a href="/game-center" class="feature-link">Follow a match live <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="feature-card">
+                <img src="/images/icons/statistics_opt.png" alt="" class="feature-icon">
+                <h2 class="feature-title">Stats and box scores</h2>
+                <p class="feature-description">Nearly 480,000 NCAA player box-score lines since 2023, covering 99.8% of completed Division I matches, and set-by-set player stats for all 445 MLV and LOVB matches. Leaderboards sort by position, conference and class.</p>
+                <div class="feature-links">
+                    <a href="/ncaa-volleyball" class="feature-link">College volleyball <span aria-hidden="true">→</span></a>
+                    <a href="/pro-volleyball" class="feature-link">Pro volleyball <span aria-hidden="true">→</span></a>
+                </div>
+            </article>
+            <article class="feature-card">
+                <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>
+                <h2 class="feature-title">Rankings and predictions</h2>
+                <p class="feature-description">The VOLI Top 100, VOLI's own ranking of Division I teams from match results and strength of schedule, published each Monday. Before first serve, each upcoming college match shows each team's chance to win and the most likely set score.</p>
+                <a href="/rankings" class="feature-link">The VOLI Top 100 <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="feature-card">
+                <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+                <h2 class="feature-title">The Volleyball Encyclopedia</h2>
+                <p class="feature-description">Was your school ever national champion? More than 18,000 honors back to 1979: 3,000+ AVCA All-America selections since 1981, the AVCA Coaches Poll since 1982, all 45 NCAA champions, conference honors and record books.</p>
+                <a href="/encyclopedia" class="feature-link">Explore the history <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="feature-card">
+                <img src="/images/icons/content_opt.png" alt="" class="feature-icon">
+                <h2 class="feature-title">News and podcasts</h2>
+                <p class="feature-description">Volleyball news from 19 outlets, from league and conference sites to independent writers, each story linked to its source. And 13 volleyball podcasts with nearly 900 episodes, with your place saved across devices.</p>
+                <a href="/news-and-podcasts" class="feature-link">Read and listen <span aria-hidden="true">→</span></a>
+            </article>
+            <article class="feature-card">
+                <img src="/images/icons/community_opt.png" alt="" class="feature-icon">
+                <h2 class="feature-title">Community</h2>
+                <p class="feature-description">Chat with other fans in a room for each match, team and league, join AMAs with volleyball creators, and solve the Daily Grid, a new volleyball trivia grid each day.</p>
+                <a href="/dailygrid" class="feature-link">Play the Daily Grid <span aria-hidden="true">→</span></a>
+            </article>
             <a href="/about" class="feature-card">
                 <svg class="learn-more-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14"/>
                     <path d="M12 5l7 7-7 7"/>
                 </svg>
-                <h3 class="feature-title">Learn More</h3>
-                <p class="feature-description">Find out more about VOLI and our mission to revolutionize volleyball.</p>
+                <span class="feature-title">About VOLI</span>
+                <p class="feature-description">Independent, and built by volleyball fans for volleyball fans. Here's who we are and how VOLI's numbers work.</p>
             </a>
         </div>
     </section>
@@ -184,6 +207,17 @@ const homeSchema = [
             <a href="https://www.ncaa.com/sports/volleyball-women" target="_blank"><img src="/images/NCAA_opt.webp" alt="NCAA" class="league-logo"></a>
         </div>
         <p class="leagues-disclaimer">VOLI is an independent fan platform, not affiliated with or endorsed by these leagues.</p>
+    </section>
+
+    <section class="home-faq" aria-labelledby="faq-h">
+        <h2 class="home-faq-title" id="faq-h">Questions</h2>
+        {faqs.map((f) => (
+            <div class="home-faq-item">
+                <h3>{f.q}</h3>
+                <p>{f.a}</p>
+            </div>
+        ))}
+        <a href="/faq" class="facts-link">More questions <span aria-hidden="true">→</span></a>
     </section>
 
     <section class="contact-bar">
@@ -587,6 +621,137 @@ const homeSchema = [
         color: var(--accent);
     }
 
+    .feature-svg {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 0.75rem;
+        color: var(--accent);
+    }
+
+    .feature-description {
+        flex: 1;
+    }
+
+    .feature-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 1.25rem;
+    }
+
+    .feature-link {
+        display: inline-block;
+        margin-top: 1rem;
+        color: var(--accent);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .feature-link:hover {
+        opacity: 0.85;
+    }
+
+    /* Facts band */
+    .facts {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem 1rem;
+        text-align: center;
+    }
+
+    .facts-label {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1.25rem;
+    }
+
+    .facts-label span {
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 400;
+    }
+
+    .facts-band {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+    }
+
+    .facts-band li {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1.1rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .facts-band strong {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+
+    .facts-band span {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .facts-link {
+        display: inline-block;
+        margin-top: 1.25rem;
+        color: var(--accent);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    /* Home FAQ */
+    .home-faq {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 2rem 4rem;
+    }
+
+    .home-faq-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .home-faq-item {
+        padding: 1rem 0;
+        border-top: 1px solid var(--glass-border);
+    }
+
+    .home-faq-item h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.4rem;
+    }
+
+    .home-faq-item p {
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+        .facts-band { grid-template-columns: repeat(2, 1fr); }
+        .facts-band li:last-child { grid-column: 1 / -1; }
+    }
+
     /* Leagues Section */
     .leagues {
         padding: 3rem 2rem;
@@ -727,9 +892,12 @@ const homeSchema = [
 
         .features { padding: 2rem 1rem; }
         .features-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 0.75rem;
         }
+        .facts { padding: 1rem; }
+        .facts-band strong { font-size: 1.25rem; }
+        .home-faq { padding: 2rem 1rem 3rem; }
         .feature-card {
             padding: 1rem;
             border-radius: 14px;
@@ -740,13 +908,14 @@ const homeSchema = [
             margin-bottom: 0.5rem;
         }
         .feature-title {
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             margin-bottom: 0.25rem;
         }
         .feature-description {
-            font-size: 0.7rem;
-            line-height: 1.3;
+            font-size: 0.85rem;
+            line-height: 1.45;
         }
+        .feature-svg { width: 24px; height: 24px; margin-bottom: 0.5rem; }
 
         .contact-bar {
             flex-direction: column;

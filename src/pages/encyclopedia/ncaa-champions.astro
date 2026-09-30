@@ -1,0 +1,78 @@
+---
+import Shell from './_Shell.astro';
+import { getNcaaChampions } from '../../lib/encyclopedia-data';
+
+const champs = await getNcaaChampions();
+const first = champs[champs.length - 1].year;
+const last = champs[0].year;
+
+// Titles per program, most first.
+const tally = new Map<string, number[]>();
+for (const c of champs) tally.set(c.champion, [...(tally.get(c.champion) ?? []), c.year]);
+const byProgram = [...tally.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+
+const title = `NCAA Volleyball Champions ${first}–${last} | VOLI`;
+const description = `Every NCAA Division I women's volleyball champion from ${first} to ${last}: ${champs.length} title matches with runner-up, score, coach and site.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `NCAA Division I women's volleyball champions, ${first}–${last}`,
+  description,
+  url: 'https://playvoli.com/encyclopedia/ncaa-champions',
+  temporalCoverage: `${first}/${last}`,
+  dateModified: new Date().toISOString().slice(0, 10),
+  creator: { '@id': 'https://playvoli.com/#organization' },
+  isBasedOn: { '@type': 'CreativeWork', name: 'NCAA Division I Women\'s Volleyball Championship records', publisher: { '@type': 'Organization', name: 'NCAA' } },
+  isAccessibleForFree: true,
+};
+---
+
+<Shell title={title} description={description} path="/encyclopedia/ncaa-champions" h1="NCAA volleyball champions" schema={schema} source="Source: NCAA championship records">
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      Every NCAA Division I women's volleyball national champion since the first NCAA tournament in {first}: {champs.length} champions,
+      with the runner-up, the final score, the winning coach and the site of the final.
+    </p>
+  </Fragment>
+
+  <section class="ency-section" aria-labelledby="all-h">
+    <h2 id="all-h" class="ency-h2">Champions by year</h2>
+    <p class="ency-note">The 2020 championship was played in April 2021. Semifinalists are the other two teams in the national semifinals.</p>
+    <div class="ency-table-wrap">
+      <table class="ency-table">
+        <thead><tr><th scope="col">Year</th><th scope="col">Champion</th><th scope="col">Score</th><th scope="col">Runner-up</th><th scope="col">Coach</th><th scope="col">Site</th><th scope="col">Semifinalists</th></tr></thead>
+        <tbody>
+          {champs.map((c) => (
+            <tr>
+              <th scope="row" class="num">{c.year}</th>
+              <td><strong>{c.champion}</strong></td>
+              <td class="num">{c.score ?? '—'}</td>
+              <td>{c.runnerUp ?? '—'}</td>
+              <td class="dim">{c.coach ?? '—'}</td>
+              <td class="dim">{c.site ?? '—'}</td>
+              <td class="muted">{c.semifinalists.length ? c.semifinalists.join(', ') : '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ency-section" aria-labelledby="prog-h">
+    <h2 id="prog-h" class="ency-h2">Titles by program</h2>
+    <p class="ency-note">{byProgram.length} programs have won the NCAA title.</p>
+    <div class="ency-table-wrap">
+      <table class="ency-table">
+        <thead><tr><th scope="col">Program</th><th scope="col">Titles</th><th scope="col">Years</th></tr></thead>
+        <tbody>
+          {byProgram.map(([team, years]) => (
+            <tr><th scope="row">{team}</th><td class="num">{years.length}</td><td class="dim">{[...years].sort((a, b) => a - b).join(', ')}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="ency-note">See also: <a href="/encyclopedia/avca-poll">the final AVCA Coaches Poll for each season</a> · <a href="/encyclopedia/ncaa-records">the NCAA record book</a></p>
+</Shell>

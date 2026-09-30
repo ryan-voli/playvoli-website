@@ -19,22 +19,40 @@ interface Props {
   skipNavAuth?: boolean;
   /** Page-specific Schema.org JSON-LD; merged with sitewide Organization + WebSite schema */
   schema?: Record<string, any> | Record<string, any>[];
+  /** Adds <meta name="robots" content="noindex"> (thin app deep-link shells, etc.) */
+  noindex?: boolean;
 }
+
+// THE PHONE APP'S LOGIN PAGE IS FROZEN. /oauth-callback is the OAuth return
+// path the iOS and Android apps depend on, and its built HTML must stay
+// byte-identical to what it was before the sitewide SEO changes. Everything
+// new in this head (canonical, per-page og:url, the rewritten JSON-LD,
+// robots) is emitted ONLY when legacyHead is false; on that path the head is
+// the old one, verbatim. Nav.astro and Footer.astro carry the same guard.
+const legacyHead = Astro.url.pathname.startsWith('/oauth-callback');
+
+const SITE = 'https://playvoli.com';
+const cleanPath = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+const selfUrl = cleanPath === '/' || cleanPath === '' ? `${SITE}/` : `${SITE}${cleanPath.replace(/\/+$/, '')}`;
 
 const {
   title,
-  description = 'The ultimate volleyball hub. Fantasy leagues, live stats, game schedules, and more.',
+  description = legacyHead
+    ? 'The ultimate volleyball hub. Fantasy leagues, live stats, game schedules, and more.'
+    : "Fantasy volleyball, live scores, box scores, play-by-play, the VOLI Top 100, history back to 1979, news and podcasts for NCAA Division I women's, MLV and LOVB volleyball.",
   ogImage = 'https://playvoli.com/images/official_logo_dark_bg.webp',
-  ogUrl = 'https://playvoli.com/',
+  ogUrl = legacyHead ? 'https://playvoli.com/' : selfUrl,
   activePage = '',
   showFooter = true,
   bodyClass = '',
   skipSupabase = false,
   skipNavAuth = false,
   schema = null,
+  noindex = false,
 } = Astro.props;
 
-const siteSchema = [
+// Pre-change sitewide schema. Kept ONLY for the frozen /oauth-callback head.
+const legacySiteSchema = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -63,8 +81,79 @@ const siteSchema = [
   }
 ];
 
+const APP_STORE = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
+const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
+
+// ONE app entity, one @id, sitewide. Figures are as of 30 Sep 2026.
+// FANTASY LEADS the featureList (VOLI's most-used feature); every other
+// capability follows with a concrete, checkable number. No self-published
+// reviews and no AggregateRating, on purpose.
+const siteSchema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://playvoli.com/#organization",
+    "name": "VOLI LLC",
+    "alternateName": ["VOLI", "VOLI: The Volleyball Hub"],
+    "url": "https://playvoli.com",
+    "logo": "https://playvoli.com/images/official_logo_dark_bg.webp",
+    "description": "VOLI LLC makes VOLI, a free volleyball app for iPhone and Android built by volleyball fans for volleyball fans. It covers NCAA Division I women's volleyball, Major League Volleyball (MLV) and LOVB: fantasy leagues, live scores, box scores, play-by-play, VOLI's own team ratings and weekly Top 100, pre-match win probabilities, the Volleyball Encyclopedia with history back to 1979, news and podcasts. VOLI is independent and not affiliated with any league.",
+    "founder": [
+      { "@type": "Person", "name": "Ryan", "jobTitle": "Founder" },
+      { "@type": "Person", "name": "Max", "jobTitle": "Co-Founder" }
+    ],
+    "sameAs": [
+      APP_STORE,
+      PLAY_STORE,
+      "https://instagram.com/playvoli",
+      "https://tiktok.com/@playvoli",
+      "https://youtube.com/@watchvoli",
+      "https://www.facebook.com/thevolleyballhub",
+      "https://reddit.com/r/playvoli"
+    ],
+    "knowsAbout": ["Volleyball", "Fantasy volleyball", "NCAA Division I women's volleyball", "Volleyball statistics", "Volleyball play-by-play", "Major League Volleyball", "LOVB", "Volleyball rankings", "AVCA Coaches Poll", "AVCA All-America", "Volleyball history", "Volleyball podcasts"],
+    "areaServed": "US"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://playvoli.com/#website",
+    "url": "https://playvoli.com",
+    "name": "VOLI: The Volleyball Hub",
+    "description": "VOLI: fantasy volleyball, live scores and stats, and the history of college and pro women's volleyball in the US, back to 1979.",
+    "publisher": { "@id": "https://playvoli.com/#organization" },
+    "inLanguage": "en-US"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "@id": "https://playvoli.com/#app",
+    "name": "VOLI: The Volleyball Hub",
+    "operatingSystem": "iOS, Android",
+    "applicationCategory": "SportsApplication",
+    "url": "https://playvoli.com/mobileapp",
+    "description": "Free app for NCAA Division I women's, MLV and LOVB volleyball: fantasy leagues, live scores, box scores, play-by-play, the VOLI Top 100, win probabilities, the Volleyball Encyclopedia, news, podcasts, chat and the Daily Grid.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "publisher": { "@id": "https://playvoli.com/#organization" },
+    "downloadUrl": [APP_STORE, PLAY_STORE],
+    "installUrl": [APP_STORE, PLAY_STORE],
+    "featureList": [
+      "Fantasy volleyball for NCAA Division I women's volleyball and MLV: salary-cap leagues with multi-round contracts, public and private leagues, and a 10-round NCAA season",
+      "Live scores, box scores and set-by-set scoring for NCAA Division I women's, MLV and LOVB matches: more than 18,000 matches played since 2023, with iPhone Live Activities and a Next Game widget",
+      "Nearly 480,000 NCAA player box-score lines since 2023 (99.8% of completed Division I matches) and set-by-set graded player stats for all 445 MLV and LOVB matches",
+      "Play-by-play for every MLV and LOVB match since 2024 and more than 360,000 NCAA rallies logged in the 2026 season, with rotations and momentum charts",
+      "The VOLI Top 100 Division I rankings, published each Monday, VOLI team ratings for about 360 teams a season, and pre-match win probabilities with all six set-score probabilities",
+      "The Volleyball Encyclopedia: more than 18,000 honors back to 1979, 3,000+ AVCA All-America selections since 1981, 666 AVCA Coaches Polls since 1982, all 45 NCAA champions and NCAA and pro record books",
+      "Volleyball news gathered from 19 outlets, each story linked to its source",
+      "13 volleyball podcasts with nearly 900 episodes (about 750 hours), with progress saved across devices",
+      "Chat rooms for matches, teams and leagues, plus AMAs with volleyball creators",
+      "The Daily Grid, a new volleyball trivia grid every day"
+    ]
+  }
+];
+
 const extraSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
-const allSchema = [...siteSchema, ...extraSchema];
+const allSchema = legacyHead ? [...legacySiteSchema, ...extraSchema] : [...siteSchema, ...extraSchema];
 ---
 
 <!DOCTYPE html>
@@ -73,7 +162,7 @@ const allSchema = [...siteSchema, ...extraSchema];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{title}</title>
-    <meta name="description" content={description}>
+    <meta name="description" content={description}>{!legacyHead && (<link rel="canonical" href={selfUrl} />)}{!legacyHead && noindex && (<meta name="robots" content="noindex" />)}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">

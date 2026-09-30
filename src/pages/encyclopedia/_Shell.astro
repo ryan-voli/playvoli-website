@@ -1,0 +1,133 @@
+---
+// Shared frame for every /encyclopedia page. Underscore prefix = not a route.
+import Layout from '../../layouts/Layout.astro';
+import { AS_OF, APP_STORE, PLAY_STORE } from '../../lib/encyclopedia-data';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string; // e.g. "/encyclopedia/ncaa-champions"
+  h1: string;
+  kicker?: string;
+  crumbs?: { href: string; label: string }[];
+  schema?: Record<string, any> | Record<string, any>[];
+  source?: string; // credit line
+}
+
+const { title, description, path, h1, kicker = 'The Volleyball Encyclopedia', crumbs = [], schema, source } = Astro.props;
+const url = `https://playvoli.com${path}`;
+
+const trail = [{ href: '/encyclopedia', label: 'Encyclopedia' }, ...crumbs];
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'VOLI', item: 'https://playvoli.com/' },
+    ...trail.map((c, i) => ({ '@type': 'ListItem', position: i + 2, name: c.label, item: `https://playvoli.com${c.href}` })),
+    ...(path === '/encyclopedia' ? [] : [{ '@type': 'ListItem', position: trail.length + 2, name: h1, item: url }]),
+  ].filter((c, i, a) => a.findIndex((d) => d.item === c.item) === i),
+};
+const extra = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+---
+
+<Layout title={title} description={description} ogUrl={url} activePage="encyclopedia" schema={[breadcrumb, ...extra]}>
+  <main class="ency">
+    {path !== '/encyclopedia' && (
+      <nav class="ency-crumbs" aria-label="Breadcrumb">
+        {trail.map((c) => (<><a href={c.href}>{c.label}</a><span aria-hidden="true">/</span></>))}
+        <span aria-current="page">{h1}</span>
+      </nav>
+    )}
+    <header class="ency-head">
+      <p class="ency-kicker">{kicker}</p>
+      <h1 class="ency-title">{h1}</h1>
+      <slot name="intro" />
+      <p class="ency-asof">As of {AS_OF}{source ? <> · {source}</> : null}</p>
+    </header>
+
+    <slot />
+
+    <aside class="ency-cta" aria-labelledby="ency-cta-h">
+      <h2 id="ency-cta-h">Look up any player, team or season in the VOLI app</h2>
+      <p>
+        The full Volleyball Encyclopedia is in the free VOLI app: search every honoree, AVCA All-America teams by year,
+        All-Region teams, conference honors, the weekly AVCA polls, record books and conference history. The app also has
+        live scores, box scores, play-by-play, the VOLI Top 100, news, podcasts and fantasy leagues.
+      </p>
+      <div class="ency-stores">
+        <a class="ency-store" href={APP_STORE} rel="noopener">Download on the App Store</a>
+        <a class="ency-store" href={PLAY_STORE} rel="noopener">Get it on Google Play</a>
+      </div>
+    </aside>
+  </main>
+</Layout>
+
+<style is:global>
+  .ency {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: calc(6rem + env(safe-area-inset-top)) 1.25rem 3rem;
+  }
+  .ency-crumbs { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+  .ency-crumbs a { color: var(--text-secondary); }
+  .ency-crumbs a:hover { color: var(--accent); }
+  .ency-head { text-align: center; margin-bottom: 2.5rem; }
+  .ency-kicker { color: var(--accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .ency-title { font-size: clamp(1.75rem, 5vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1rem; }
+  .ency-lead { color: var(--text-secondary); font-size: 1.05rem; line-height: 1.75; max-width: 720px; margin: 0 auto 0.75rem; }
+  .ency-asof { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.75rem; }
+
+  .ency-section { margin-bottom: 2.5rem; }
+  .ency-section > h2, .ency-h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.4rem; }
+  .ency-section > p.ency-note, .ency-note { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1rem; }
+  .ency h3 { font-size: 1.05rem; font-weight: 650; margin: 1.25rem 0 0.5rem; }
+
+  .ency-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.25rem;
+  }
+
+  .ency-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--glass-border); border-radius: 16px; background: var(--bg-card); }
+  .ency-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .ency-table caption { text-align: left; padding: 0.75rem 1rem 0.25rem; color: var(--text-muted); font-size: 0.8rem; }
+  .ency-table th, .ency-table td { padding: 0.6rem 0.9rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--glass-border); }
+  .ency-table thead th { color: var(--text-muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+  .ency-table tbody tr:last-child td, .ency-table tbody tr:last-child th { border-bottom: none; }
+  .ency-table tbody th { font-weight: 600; white-space: nowrap; }
+  .ency-table .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ency-table .dim { color: var(--text-secondary); }
+  .ency-table .muted { color: var(--text-muted); font-size: 0.82rem; }
+  .ency-table strong { color: var(--text-primary); }
+
+  .ency details { border: 1px solid var(--glass-border); border-radius: 16px; background: var(--bg-card); margin-bottom: 0.75rem; }
+  .ency summary { cursor: pointer; padding: 0.9rem 1.1rem; font-weight: 600; display: flex; justify-content: space-between; gap: 1rem; list-style: none; }
+  .ency summary::-webkit-details-marker { display: none; }
+  .ency summary::after { content: '+'; color: var(--accent); font-weight: 700; }
+  .ency details[open] > summary::after { content: '–'; }
+  .ency summary .count { color: var(--text-muted); font-weight: 500; font-size: 0.85rem; margin-left: auto; }
+  .ency details > .ency-inner { padding: 0 1.1rem 1.1rem; }
+  .ency details .ency-table-wrap { border-radius: 12px; }
+
+  .ency-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .ency-chip { padding: 0.35rem 0.8rem; border: 1px solid var(--glass-border); border-radius: 100px; font-size: 0.85rem; color: var(--text-secondary); background: rgba(255,255,255,0.03); }
+  .ency-chip:hover { color: var(--accent); border-color: var(--accent-subtle); }
+
+  .ency-cta { margin-top: 3rem; text-align: center; padding: 2rem 1.25rem; border: 1px solid var(--glass-border); border-radius: 24px; background: linear-gradient(135deg, var(--accent-subtle), rgba(0, 212, 255, 0.05)); }
+  .ency-cta h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; }
+  .ency-cta p { color: var(--text-secondary); line-height: 1.7; max-width: 680px; margin: 0 auto 1.25rem; }
+  .ency-stores { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .ency-store { padding: 0.7rem 1.3rem; border-radius: 100px; background: var(--accent); color: #0a0a0b; font-weight: 700; font-size: 0.9rem; }
+  .ency-store + .ency-store { background: transparent; color: var(--text-primary); border: 1px solid var(--glass-border); }
+  .ency-store:hover { opacity: 0.9; }
+
+  @media (max-width: 600px) {
+    .ency { padding-left: 1rem; padding-right: 1rem; }
+    .ency-table { font-size: 0.84rem; }
+    .ency-table th, .ency-table td { padding: 0.5rem 0.65rem; }
+  }
+</style>

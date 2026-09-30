@@ -1,0 +1,68 @@
+---
+import Shell from '../_Shell.astro';
+import { getAvcaFinalPolls, getNcaaChampions } from '../../../lib/encyclopedia-data';
+import type { FinalPoll } from '../../../lib/encyclopedia-data';
+
+export async function getStaticPaths() {
+  const polls = await getAvcaFinalPolls();
+  return polls.map((poll, i) => ({
+    params: { season: poll.slug },
+    props: { poll, newer: polls[i - 1] ?? null, older: polls[i + 1] ?? null },
+  }));
+}
+
+interface Props { poll: FinalPoll; newer: FinalPoll | null; older: FinalPoll | null }
+const { poll, newer, older } = Astro.props;
+const champ = (await getNcaaChampions()).find((c) => c.year === poll.seasonYear);
+const no1 = poll.teams.filter((t) => t.rank === 1).map((t) => t.team).join(' / ');
+
+const title = `${poll.seasonYear} AVCA Coaches Poll: Final Top ${poll.teams.length} | VOLI`;
+const description = `The final AVCA Coaches Poll of the ${poll.label}: ${no1} at No. 1${champ ? `, ${champ.champion} NCAA champion` : ''}. All ${poll.teams.length} ranked teams.`;
+const path = `/encyclopedia/avca-poll/${poll.slug}`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${poll.seasonYear} AVCA Coaches Poll, final`,
+  url: `https://playvoli.com${path}`,
+  numberOfItems: poll.teams.length,
+  itemListOrder: 'https://schema.org/ItemListOrderAscending',
+  isBasedOn: { '@type': 'CreativeWork', name: 'AVCA Division I Women\'s Volleyball Coaches Poll', publisher: { '@type': 'Organization', name: 'American Volleyball Coaches Association (AVCA)' } },
+  itemListElement: poll.teams.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.team })),
+};
+---
+
+<Shell title={title} description={description} path={path} h1={`${poll.seasonYear} AVCA Coaches Poll: final`} crumbs={[{ href: '/encyclopedia/avca-poll', label: 'AVCA final polls' }]} schema={schema} source="Source: AVCA Coaches Poll">
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      The final AVCA Coaches Poll of the {poll.label}{poll.publishedAt ? `, published ${poll.publishedAt}` : ''}.
+      {champ ? ` ${champ.champion} won the NCAA championship${champ.runnerUp ? `, beating ${champ.runnerUp}` : ''}${champ.score ? ` ${champ.score}` : ''}.` : ''}
+    </p>
+  </Fragment>
+
+  <section class="ency-section" aria-labelledby="poll-h">
+    <h2 id="poll-h" class="ency-h2">Final top {poll.teams.length}</h2>
+    {poll.pollName && <p class="ency-note">{poll.pollName}. Team names as printed by the AVCA.</p>}
+    <div class="ency-table-wrap">
+      <table class="ency-table">
+        <thead><tr><th scope="col">Rank</th><th scope="col">Team</th></tr></thead>
+        <tbody>
+          {poll.teams.map((t) => (
+            <tr><td class="num">{t.tied ? `T-${t.rank}` : t.rank}</td><th scope="row">{t.team}</th></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <nav class="ency-note pager" aria-label="Other seasons">
+    {older ? <a href={`/encyclopedia/avca-poll/${older.slug}`}>← {older.seasonYear} final poll</a> : <span />}
+    <a href="/encyclopedia/avca-poll">All seasons</a>
+    {newer ? <a href={`/encyclopedia/avca-poll/${newer.slug}`}>{newer.seasonYear} final poll →</a> : <span />}
+  </nav>
+</Shell>
+
+<style>
+  .pager { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .pager a { color: var(--accent); }
+</style>

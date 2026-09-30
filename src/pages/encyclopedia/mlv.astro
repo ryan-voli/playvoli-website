@@ -1,0 +1,36 @@
+---
+import Shell from './_Shell.astro';
+import ProLeagueBody from './_ProLeague.astro';
+import { getProLeague, fmt } from '../../lib/encyclopedia-data';
+
+const data = await getProLeague('MLV');
+const latest = data.champions.find((c) => c.event === 'Championship');
+
+const title = 'MLV Awards, Champions & Draft History | VOLI';
+const description = `Major League Volleyball history: ${fmt(data.honors)} honors since ${data.firstYear} (MVPs, position awards, All-League, All-Stars), every champion and all ${fmt(data.draftPicks)} MLV Draft picks.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `Major League Volleyball honors, champions and draft, ${data.firstYear}–${data.lastYear}`,
+  description,
+  url: 'https://playvoli.com/encyclopedia/mlv',
+  temporalCoverage: `${data.firstYear}/${data.lastYear}`,
+  dateModified: new Date().toISOString().slice(0, 10),
+  creator: { '@id': 'https://playvoli.com/#organization' },
+  isBasedOn: { '@type': 'CreativeWork', name: 'Major League Volleyball award and draft announcements', publisher: { '@type': 'Organization', name: 'Major League Volleyball' } },
+  isAccessibleForFree: true,
+};
+---
+
+<Shell title={title} description={description} path="/encyclopedia/mlv" h1="Major League Volleyball: honors, champions and draft" schema={schema} source="Source: Major League Volleyball announcements">
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      Every Major League Volleyball season since the league's first in {data.firstYear} (played as the Pro Volleyball Federation):
+      {fmt(data.honors)} honors, the league champions and all {fmt(data.draftPicks)} MLV Draft picks.
+      {latest && ` The ${latest.year} champion is ${latest.champion}.`}
+    </p>
+  </Fragment>
+  <ProLeagueBody data={data} name="MLV" />
+  <p class="ency-note">See also: <a href="/encyclopedia/lovb">LOVB Pro honors and champions</a></p>
+</Shell>

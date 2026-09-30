@@ -1,0 +1,231 @@
+---
+// /ncaa-volleyball — the college hub. Built at build from public vbdata:
+// recent final Division I results (either team in the current VOLI Top 100),
+// the top of the Top 100, and coverage counts. Never reads the fantasy schema.
+import Layout from '../../layouts/Layout.astro';
+import {
+  vb, fetchAll, countRows, currentTop100, teamsById, teamName, teamColor,
+  latestNcaaSeason, seasonYear, longDate, weekdayDate, pacificDay, fmtInt, roundDown,
+  setLine, GAME_COLS, type Game,
+} from '../../lib/data';
+
+const { season, lastFinal } = await latestNcaaSeason();
+const year = seasonYear(season);
+const asOf = longDate(lastFinal);
+
+const top = await currentTop100();
+const ranked = new Map(top.map((r) => [r.team_uuid, r.rank]));
+const teams = await teamsById();
+
+// Recent results: the seven days ending with the newest final match (so an
+// off day never empties the table), final matches only.
+const end = new Date(lastFinal);
+const start = new Date(end.getTime() - 7 * 864e5);
+const recent = (await fetchAll<Game>('recent NCAA finals', (from, to) =>
+  vb().from('games').select(GAME_COLS)
+    .eq('league', 'NCAA').eq('game_status', 'final')
+    .gt('date', start.toISOString()).lte('date', end.toISOString())
+    .order('date', { ascending: false }).order('game_id').range(from, to),
+)).filter((g) => ranked.has(g.home_uuid) || ranked.has(g.away_uuid))
+  .filter((g) => (g.home_sets_won ?? 0) !== (g.away_sets_won ?? 0));
+if (!recent.length) throw new Error('[ncaa hub] no recent Top 100 results');
+
+const byDay = new Map<string, Game[]>();
+for (const g of recent) {
+  const d = pacificDay(g.date);
+  if (!byDay.has(d)) byDay.set(d, []);
+  byDay.get(d)!.push(g);
+}
+function result(g: Game) {
+  const homeWon = (g.home_sets_won ?? 0) > (g.away_sets_won ?? 0);
+  const w = homeWon ? g.home_uuid : g.away_uuid;
+  const l = homeWon ? g.away_uuid : g.home_uuid;
+  return {
+    w: { name: teamName(teams.get(w)), rank: ranked.get(w), color: teamColor(teams.get(w)) },
+    l: { name: teamName(teams.get(l)), rank: ranked.get(l) },
+    sets: `${Math.max(g.home_sets_won ?? 0, g.away_sets_won ?? 0)}-${Math.min(g.home_sets_won ?? 0, g.away_sets_won ?? 0)}`,
+    line: setLine(g, homeWon),
+  };
+}
+
+// Coverage, counted at build.
+const [finals, boxLines, pbpSets, polls, honors] = await Promise.all([
+  countRows('NCAA finals', 'games', (q) => q.eq('league', 'NCAA').eq('game_status', 'final')),
+  countRows('NCAA box scores', 'basic_statistics'),
+  countRows('NCAA play-by-play sets', 'basic_play_by_plays'),
+  countRows('AVCA polls', 'avca_rankings'),
+  countRows('honors', 'player_awards'),
+]);
+const rosterTeams = new Set((await fetchAll<{ team_uuid: string }>('season rosters', (from, to) =>
+  vb().from('ncaa_rosters').select('id,team_uuid').eq('season', season).order('id').range(from, to),
+  { parallel: 4 },
+)).map((r) => r.team_uuid)).size;
+const seasonFinals = await countRows('season finals', 'games', (q) => q.eq('season', season).eq('game_status', 'final'));
+
+const title = "NCAA Women's Volleyball Scores, Stats & History";
+const description = "Division I women's volleyball live, recent results, stat leaders, box scores since 2023, the VOLI Top 100 and history back to 1979.";
+const url = 'https://playvoli.com/ncaa-volleyball';
+const topTen = top.slice(0, 10);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: "College volleyball on VOLI",
+  description,
+  url,
+  dateModified: new Date(lastFinal).toISOString().slice(0, 10),
+  about: { '@type': 'Thing', name: "NCAA Division I women's volleyball" },
+  isPartOf: { '@id': 'https://playvoli.com/#website' },
+};
+---
+
+<Layout title={title} description={description} ogUrl={url} canonical={url} schema={schema}>
+  <main class="dp-main">
+    <header class="dp-head">
+      <p class="dp-kicker">NCAA Division I women's volleyball</p>
+      <h1 class="dp-title">College volleyball on VOLI</h1>
+      <p class="dp-lead">
+        Follow Division I women's volleyball live, look up any team or player, and see who's leading
+        the country. Box scores go back to 2023. The history goes back to 1979.
+      </p>
+      <p class="dp-stamp"><strong>As of {asOf}.</strong></p>
+    </header>
+
+    <section aria-labelledby="cov-h">
+      <h2 id="cov-h" class="dp-h2">What VOLI covers</h2>
+      <ul class="dp-stats">
+        <li><strong>{fmtInt(finals)}</strong><span>Division I matches played since 2023, with scores set by set</span></li>
+        <li><strong>{fmtInt(boxLines)}</strong><span>player box-score lines: kills, errors, attempts, aces, blocks, digs, assists and more</span></li>
+        <li><strong>{fmtInt(pbpSets)}</strong><span>sets logged rally by rally in the {year} season, with substitutions and lineups</span></li>
+        <li><strong>{fmtInt(rosterTeams)}</strong><span>team rosters for {year}, with number, position, class and height</span></li>
+        <li><strong>Top 100</strong><span>VOLI's own weekly ranking of every Division I team, with each match's chance to win</span></li>
+        <li><strong>{roundDown(honors)}+</strong><span>honors back to 1979, plus {fmtInt(polls)} AVCA Coaches Polls since 1982, in the Volleyball Encyclopedia</span></li>
+      </ul>
+      <p class="dp-body">
+        In the app, every match opens to a live scoreboard, box score, play-by-play, rotations and a
+        lead chart, with iPhone Live Activities for the matches you follow. Fantasy leagues, match
+        chat, news from 19 outlets and 13 volleyball podcasts sit alongside them. The {year} season so
+        far: {fmtInt(seasonFinals)} final matches.
+      </p>
+    </section>
+
+    <section class="dp-section" aria-labelledby="res-h">
+      <h2 id="res-h" class="dp-h2">Recent results</h2>
+      <p class="dp-note">
+        Final Division I matches from the seven days through {asOf} involving a team in the current
+        VOLI Top 100 (rank shown before the name). Set scores are listed winner first. Dates are Pacific.
+      </p>
+      {[...byDay.entries()].map(([day, games]) => (
+        <div class="dp-day">
+          <h3 class="dp-h3">{weekdayDate(day)}</h3>
+          <div class="dp-table-wrap">
+            <table class="dp-table">
+              <thead>
+                <tr>
+                  <th scope="col">Winner</th>
+                  <th scope="col">Opponent</th>
+                  <th scope="col" class="num">Sets</th>
+                  <th scope="col" class="hide-sm">Set scores</th>
+                </tr>
+              </thead>
+              <tbody>
+                {games.map((g) => {
+                  const r = result(g);
+                  return (
+                    <tr>
+                      <th scope="row" class="team">
+                        <span class="spine" style={`background:${r.w.color}`}></span>
+                        {r.w.rank && <span class="rk">{r.w.rank}</span>}{r.w.name}
+                      </th>
+                      <td>{r.l.rank && <span class="rk">{r.l.rank}</span>}{r.l.name}</td>
+                      <td class="num strong">{r.sets}</td>
+                      <td class="hide-sm muted nowrap">{r.line}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <section class="dp-section" aria-labelledby="top-h">
+      <h2 id="top-h" class="dp-h2">The VOLI Top 10</h2>
+      <p class="dp-note">Week {top[0].week}, published {weekdayDate(top[0].published_at)}.</p>
+      <ol class="dp-top">
+        {topTen.map((r) => (
+          <li><span class="rank">{r.rank}</span><span class="spine" style={`background:${teamColor(teams.get(r.team_uuid))}`}></span>{r.team_name}{r.wins != null && <span class="muted small"> {r.wins}-{r.losses}</span>}</li>
+        ))}
+      </ol>
+      <p class="dp-links"><a class="dp-link" href="/rankings">See the full VOLI Top 100 and this week's matchups</a></p>
+    </section>
+
+    <section class="dp-section dp-cta" aria-labelledby="more-h">
+      <h2 id="more-h" class="dp-h2">Go deeper</h2>
+      <ul class="dp-cards">
+        <li><a href="/ncaa-volleyball/leaders"><strong>Division I stat leaders</strong><span>The top 25 per set in kills, hitting percentage, aces, blocks, digs and assists.</span></a></li>
+        <li><a href="/rankings"><strong>The VOLI Top 100</strong><span>Every Monday, computed from results and strength of schedule.</span></a></li>
+        <li><a href="/encyclopedia"><strong>The Volleyball Encyclopedia</strong><span>NCAA champions, All-Americans, AVCA polls and record books back to 1979.</span></a></li>
+        <li><a href="/mobileapp"><strong>The VOLI app</strong><span>Live scores, box scores, play-by-play, fantasy, news and podcasts. Free on iPhone and Android.</span></a></li>
+      </ul>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .dp-main { max-width: 980px; margin: 0 auto; padding: calc(5rem + env(safe-area-inset-top)) 1.5rem 5rem; }
+  .dp-head { margin-bottom: 2.25rem; }
+  .dp-kicker { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.6rem; }
+  .dp-title { font-family: 'Designer', 'Inter', -apple-system, sans-serif; font-size: clamp(2.1rem, 5.5vw, 3.2rem); line-height: 1.02; margin: 0; text-transform: uppercase; }
+  .dp-lead { margin: 1rem 0 0; color: var(--text-secondary); font-size: 1.05rem; line-height: 1.65; max-width: 62ch; }
+  .dp-stamp { margin: 0.6rem 0 0; color: var(--accent); font-size: 0.95rem; }
+  .dp-section { margin-top: 3rem; }
+  .dp-h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 0.75rem; }
+  .dp-note { color: var(--text-muted); font-size: 0.88rem; line-height: 1.55; margin: 0 0 1rem; max-width: 70ch; }
+  .dp-body { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; margin: 0 0 1rem; max-width: 68ch; }
+  .dp-link { color: var(--accent); font-weight: 600; }
+  .dp-link:hover { text-decoration: underline; }
+  .dp-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
+  .dp-table-wrap { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; overflow-x: auto; }
+  .dp-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .dp-table th, .dp-table td { padding: 0.62rem 0.85rem; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
+  .dp-table thead th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 700; }
+  .dp-table tbody tr:last-child > * { border-bottom: none; }
+  .dp-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .dp-table .rank { font-weight: 800; color: var(--text-primary); }
+  .dp-table .team { font-weight: 600; white-space: nowrap; }
+  .spine { display: inline-block; width: 4px; height: 1.1em; border-radius: 2px; margin-right: 0.6rem; vertical-align: -0.15em; }
+  .muted { color: var(--text-muted); }
+  .small { font-size: 0.8rem; }
+  .nowrap { white-space: nowrap; }
+  .mv { font-weight: 700; font-size: 0.82rem; }
+  .mv-up { color: var(--accent); }
+  .mv-down { color: var(--rose); }
+  .mv-new { color: var(--electric-blue); }
+  .mv-flat { color: var(--text-muted); }
+  .mu-line { display: block; line-height: 1.6; }
+  .rk { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; margin-right: 0.2rem; }
+  .at { color: var(--text-muted); font-size: 0.8rem; }
+  @media (max-width: 640px) {
+    .dp-main { padding: calc(5rem + env(safe-area-inset-top)) 1rem 4rem; }
+    .hide-sm { display: none; }
+    .dp-table th, .dp-table td { padding: 0.55rem 0.6rem; }
+  }
+</style>
+
+<style>
+  .strong { font-weight: 800; color: var(--text-primary); }
+  .dp-h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-secondary); margin: 1.5rem 0 0.6rem; }
+  .dp-stats { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.9rem; margin: 0 0 1.5rem; }
+  .dp-stats li { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 1.1rem 1.2rem; }
+  .dp-stats strong { display: block; font-size: 1.7rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .dp-stats span { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+  .dp-top { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5rem 1.5rem; margin: 0 0 1rem; }
+  .dp-top li { padding: 0.45rem 0; border-bottom: 1px solid var(--glass-border); font-weight: 600; }
+  .dp-top .rank { display: inline-block; width: 1.8rem; color: var(--text-muted); font-weight: 800; }
+  .dp-cards { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.9rem; }
+  .dp-cards a { display: block; height: 100%; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 1.1rem 1.2rem; transition: border-color 0.2s ease; }
+  .dp-cards a:hover { border-color: rgba(200, 255, 0, 0.3); }
+  .dp-cards strong { display: block; color: var(--text-primary); margin-bottom: 0.35rem; }
+  .dp-cards span { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+</style>

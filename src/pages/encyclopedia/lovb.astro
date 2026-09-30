@@ -1,0 +1,35 @@
+---
+import Shell from './_Shell.astro';
+import ProLeagueBody from './_ProLeague.astro';
+import { getProLeague, fmt } from '../../lib/encyclopedia-data';
+
+const data = await getProLeague('LOVB');
+const latest = data.champions.find((c) => c.event === 'Championship');
+
+const title = 'LOVB Pro Awards & Champions | VOLI';
+const description = `LOVB Pro history since ${data.firstYear}: ${fmt(data.honors)} honors including MVPs, Finals MVPs, LOVB Icons, position awards and weekly awards, plus every champion.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `LOVB Pro honors and champions, ${data.firstYear}–${data.lastYear}`,
+  description,
+  url: 'https://playvoli.com/encyclopedia/lovb',
+  temporalCoverage: `${data.firstYear}/${data.lastYear}`,
+  dateModified: new Date().toISOString().slice(0, 10),
+  creator: { '@id': 'https://playvoli.com/#organization' },
+  isBasedOn: { '@type': 'CreativeWork', name: 'LOVB award announcements', publisher: { '@type': 'Organization', name: 'LOVB' } },
+  isAccessibleForFree: true,
+};
+---
+
+<Shell title={title} description={description} path="/encyclopedia/lovb" h1="LOVB Pro: honors and champions" schema={schema} source="Source: LOVB announcements">
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      Every LOVB Pro season since the league's first in {data.firstYear}: {fmt(data.honors)} honors, the league champions and the LOVB Classic.
+      {latest && ` The ${latest.year} champion is ${latest.champion}.`}
+    </p>
+  </Fragment>
+  <ProLeagueBody data={data} name="LOVB" />
+  <p class="ency-note">See also: <a href="/encyclopedia/mlv">Major League Volleyball honors, champions and draft</a></p>
+</Shell>

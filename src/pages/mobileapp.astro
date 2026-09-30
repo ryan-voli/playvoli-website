@@ -3,14 +3,14 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-  title="Mobile App - VOLI"
-  description="Read volleyball news from 10 publishers, listen to 13 volleyball podcasts, follow live scores and stats, and play fantasy volleyball. The Voli app is free on iOS and Android."
+  title="The VOLI App: Fantasy, Live Volleyball, Stats & History"
+  description="Fantasy volleyball, live college and pro volleyball, box scores, play-by-play, the VOLI Top 100, the Volleyball Encyclopedia, news and podcasts. Free."
   ogUrl="https://playvoli.com/mobileapp"
 >
     <main class="card">
         <img src="/images/appicon_sm.webp" alt="VOLI" class="app-icon">
-        <h1 class="title">Voli Mobile App</h1>
-        <p class="subtitle">Our first product — launched January 2026.</p>
+        <h1 class="title">The VOLI App</h1>
+        <p class="subtitle">Free on iPhone and Android. Launched January 2026.</p>
 
         <div class="store-buttons">
             <div class="store-col">
@@ -56,93 +56,88 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <div class="section">
-            <div class="section-label">The Beginning</div>
-            <p class="section-text">The Voli mobile app was our first development and the foundation of everything we do. Launched in January 2026, it was built from the ground up by volleyball fans who saw a gap in the sport's digital experience. The app brings together fantasy leagues, real-time stats, live scores, community chat, podcasts, and more — all in one place.</p>
+            <div class="section-label">The App</div>
+            <p class="section-text">VOLI is one free app for NCAA Division I women's volleyball, Major League Volleyball (MLV) and LOVB. Play fantasy with your friends, follow matches live, look up any player or team, see where teams rank, and go back through the sport's history to 1979, with news, podcasts and chat alongside. Figures below are as of September 2026.</p>
         </div>
 
         <div class="section">
             <div class="section-label">What's Inside</div>
 
-            <div class="tabs" role="tablist" aria-label="App sections">
-                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-fantasy" id="tab-fantasy" data-tab="fantasy">
-                    <img src="/images/icons/fantasy_opt.png" alt="" class="tab-icon"><span>Fantasy</span>
-                </button>
-                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-stats" id="tab-stats" data-tab="stats">
-                    <img src="/images/icons/statistics_opt.png" alt="" class="tab-icon"><span>Stats</span>
-                </button>
-                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-games" id="tab-games" data-tab="games">
-                    <img src="/images/icons/games_opt.png" alt="" class="tab-icon"><span>Games</span>
-                </button>
-                <button class="tab is-active" role="tab" aria-selected="true" aria-controls="panel-content" id="tab-content" data-tab="content">
-                    <img src="/images/icons/content_opt.png" alt="" class="tab-icon"><span>Content</span>
-                </button>
-                <button class="tab" role="tab" aria-selected="false" aria-controls="panel-community" id="tab-community" data-tab="community">
-                    <img src="/images/icons/community_opt.png" alt="" class="tab-icon"><span>Community</span>
-                </button>
-            </div>
+            <nav class="tabs" aria-label="App sections">
+                <a class="tab" href="#fantasy"><img src="/images/icons/fantasy_opt.png" alt="" class="tab-icon"><span>Fantasy</span></a>
+                <a class="tab" href="#live-games"><img src="/images/icons/games_opt.png" alt="" class="tab-icon"><span>Live Games</span></a>
+                <a class="tab" href="#stats"><img src="/images/icons/statistics_opt.png" alt="" class="tab-icon"><span>Stats</span></a>
+                <a class="tab" href="#rankings"><span>Rankings</span></a>
+                <a class="tab" href="#encyclopedia"><span>Encyclopedia</span></a>
+                <a class="tab" href="#content"><img src="/images/icons/content_opt.png" alt="" class="tab-icon"><span>News &amp; Podcasts</span></a>
+                <a class="tab" href="#community"><img src="/images/icons/community_opt.png" alt="" class="tab-icon"><span>Community</span></a>
+            </nav>
 
-            <div class="panel" role="tabpanel" id="panel-fantasy" aria-labelledby="tab-fantasy" data-panel="fantasy" hidden>
+            <div class="panels">
+            <section class="panel" id="fantasy">
                 <h2 class="panel-title">Fantasy Volleyball</h2>
-                <p class="panel-lede">Contract-based fantasy volleyball leagues for NCAA women's volleyball and Major League Volleyball. Draft players to a salary cap, sign them to multi-round contracts, and score points from real match statistics.</p>
-            </div>
+                <p class="panel-lede">Contract-based fantasy leagues for NCAA Division I women's volleyball and Major League Volleyball. Build a roster of real players under a salary cap, sign them to multi-round contracts, and score points from their real match stats. Play in a private league with friends or join a public league run by a volleyball podcast.</p>
+                <p class="panel-note">The NCAA season runs in ten rounds, each Wednesday through Sunday, with Monday and Tuesday as the signing window. Trades, bench swaps, a global leaderboard and a guided setup are built in.</p>
+            </section>
 
-            <div class="panel" role="tabpanel" id="panel-stats" aria-labelledby="tab-stats" data-panel="stats" hidden>
+            <section class="panel" id="live-games">
+                <h2 class="panel-title">Live Scores &amp; Play-by-Play</h2>
+                <p class="panel-lede">Live scores, schedules, box scores, set-by-set scoring and play-by-play for college and pro matches: more than <strong>18,000 matches</strong> played since 2023. Play-by-play covers all <strong>445 MLV and LOVB matches</strong> since 2024 and more than <strong>360,000 NCAA rallies</strong> in the 2026 season, with substitutions, starting lineups, the rotation on court and a lead chart for each set.</p>
+                <p class="panel-note">On iPhone, Live Activities keep the score on your lock screen, and a home-screen widget shows your next game. Calendar sync and where-to-watch links are built in. <a href="/game-center">Follow a match live →</a></p>
+            </section>
+
+            <section class="panel" id="stats">
                 <h2 class="panel-title">Volleyball Statistics</h2>
-                <p class="panel-lede">In-depth player and team statistics for NCAA and professional volleyball — kills, assists, digs, blocks, aces, hitting percentage and more, sortable by season, conference and round.</p>
-            </div>
+                <p class="panel-lede">Nearly <strong>480,000 NCAA player box-score lines</strong> since 2023, covering 99.8% of completed Division I matches: kills, attack errors, hitting percentage, aces, receptions, assists, blocks and digs. Pro matches carry set-by-set player stats and graded skill stats for attack, serve, receive, block, dig and set.</p>
+                <p class="panel-note">Leaderboards sort by season, position, conference, class and round. Player and team pages carry game logs, history and rosters. <a href="/ncaa-volleyball">College volleyball →</a> · <a href="/pro-volleyball">Pro volleyball →</a></p>
+            </section>
 
-            <div class="panel" role="tabpanel" id="panel-games" aria-labelledby="tab-games" data-panel="games" hidden>
-                <h2 class="panel-title">Live Scores &amp; Schedules</h2>
-                <p class="panel-lede">Live volleyball scores, full schedules, play-by-play, set-by-set breakdowns and box scores for NCAA women's volleyball and Major League Volleyball.</p>
-            </div>
+            <section class="panel" id="rankings">
+                <h2 class="panel-title">Rankings &amp; Win Probabilities</h2>
+                <p class="panel-lede">The <strong>VOLI Top 100</strong> ranks Division I teams from match results and strength of schedule, published each Monday. Before first serve, each upcoming college match shows each team's chance to win and the most likely set score, from 3-0 to 0-3.</p>
+                <p class="panel-note"><a href="/rankings">The VOLI Top 100 →</a> · <a href="/methods">How VOLI's numbers work →</a></p>
+            </section>
 
-            <!-- CONTENT -->
-            <div class="panel" role="tabpanel" id="panel-content" aria-labelledby="tab-content" data-panel="content">
+            <section class="panel" id="encyclopedia">
+                <h2 class="panel-title">The Volleyball Encyclopedia</h2>
+                <p class="panel-lede">More than <strong>18,000 honors back to 1979</strong>: 3,000+ AVCA All-America selections since 1981, AVCA Players and Coaches of the Year, All-Region teams, ACC, Big 12, Big Ten and SEC honors, and MLV, LOVB and Athletes Unlimited awards. Also the AVCA Coaches Poll archive since 1982, all 45 NCAA champions, NCAA and pro record books, and the MLV Draft.</p>
+                <p class="panel-note"><a href="/encyclopedia">Explore the Encyclopedia →</a></p>
+            </section>
+
+            <section class="panel" id="content">
                 <h2 class="panel-title">Volleyball News &amp; Podcasts</h2>
                 <p class="panel-lede">
-                    Voli is where you read volleyball news and listen to volleyball podcasts in one place.
-                    We aggregate coverage from <strong>10 publishers</strong> &mdash; leagues, conferences and
-                    independent writers &mdash; and carry <strong>13 volleyball podcasts</strong> with over
-                    <strong>900 episodes</strong>, streamable and downloadable inside the app. Free on iOS and Android.
+                    Read volleyball news and listen to volleyball podcasts in one place.
+                    VOLI gathers coverage from <strong>19 outlets</strong> &mdash; league and conference sites and
+                    independent writers &mdash; and links every story to its source. It carries <strong>13 volleyball podcasts</strong> with nearly
+                    <strong>900 episodes</strong> (about 750 hours), streamable and downloadable inside the app.
                 </p>
-
-                <h3 class="panel-sub">Where our volleyball news comes from</h3>
-                <ul class="source-grid">
-                    <li><span class="source-name">Major League Volleyball</span><span class="source-meta">provolleyball.com</span></li>
-                    <li><span class="source-name">SEC Sports</span><span class="source-meta">secsports.com</span></li>
-                    <li><span class="source-name">LOVB (League One Volleyball)</span><span class="source-meta">lovb.com</span></li>
-                    <li><span class="source-name">Big Ten Conference</span><span class="source-meta">bigten.org</span></li>
-                    <li><span class="source-name">NCAA.com</span><span class="source-meta">ncaa.com</span></li>
-                    <li><span class="source-name">ACC</span><span class="source-meta">theacc.com</span></li>
-                    <li><span class="source-name">Minute Volley</span><span class="source-meta">minutevolley.com</span></li>
-                    <li><span class="source-name">Big 12 Conference</span><span class="source-meta">big12sports.com</span></li>
-                    <li><span class="source-name">Elvis Thrill</span><span class="source-meta">Substack</span></li>
-                    <li><span class="source-name">Sports Illustrated</span><span class="source-meta">si.com</span></li>
-                </ul>
                 <p class="panel-note">Coverage spans NCAA women's volleyball, Major League Volleyball, LOVB, team announcements, transfers, rankings and award news. Articles are read in-app with comments, reactions and player and team tagging.</p>
 
-                <h3 class="panel-sub">Volleyball podcasts on Voli</h3>
+                <h3 class="panel-sub">Volleyball podcasts on VOLI</h3>
                 <ul class="pod-grid">
-                    <li><span class="pod-name">Volley Talk with Sarah Pavan</span><span class="pod-meta">Sarah Pavan &middot; 90 episodes</span><span class="pod-tag">Partner</span></li>
-                    <li><span class="pod-name">The Major League Minute</span><span class="pod-meta">MLM &middot; 99 episodes</span><span class="pod-tag">Partner</span></li>
+                    <li><span class="pod-name">Volley Talk with Sarah Pavan</span><span class="pod-meta">Sarah Pavan &middot; 93 episodes</span><span class="pod-tag">Partner</span></li>
+                    <li><span class="pod-name">The Major League Minute</span><span class="pod-meta">MLM &middot; 48 episodes</span><span class="pod-tag">Partner</span></li>
                     <li><span class="pod-name">Court Captains</span><span class="pod-meta">KWND Studios &middot; 67 episodes</span><span class="pod-tag">Partner</span></li>
                     <li><span class="pod-name">The USA Volleyball Show</span><span class="pod-meta">USA Volleyball &middot; 152 episodes</span></li>
-                    <li><span class="pod-name">Volleyball State</span><span class="pod-meta">Jeff Sheldon &amp; Lincoln Arneal &middot; 151 episodes</span></li>
-                    <li><span class="pod-name">Dig City</span><span class="pod-meta">Purdue Volleyball &middot; 125 episodes</span></li>
-                    <li><span class="pod-name">The Side Out Society Podcast</span><span class="pod-meta">Side Out Society &middot; 88 episodes</span></li>
+                    <li><span class="pod-name">Volleyball State</span><span class="pod-meta">Jeff Sheldon &amp; Lincoln Arneal &middot; 133 episodes</span></li>
+                    <li><span class="pod-name">Dig City</span><span class="pod-meta">Purdue Volleyball &middot; 127 episodes</span></li>
+                    <li><span class="pod-name">The Side Out Society Podcast</span><span class="pod-meta">Side Out Society &middot; 60 episodes</span></li>
                     <li><span class="pod-name">Serving Pancakes</span><span class="pod-meta">iHeartPodcasts &middot; 60 episodes</span></li>
                     <li><span class="pod-name">Ember's Nest</span><span class="pod-meta">Edward White &middot; 48 episodes</span></li>
-                    <li><span class="pod-name">Set 6: The Official MLV Podcast</span><span class="pod-meta">Major League Volleyball &middot; 21 episodes</span></li>
-                    <li><span class="pod-name">Six Zone Duo</span><span class="pod-meta">Amie Just &amp; Erin Sorensen &middot; 3 episodes</span></li>
+                    <li><span class="pod-name">Set 6: The Official MLV Podcast</span><span class="pod-meta">Major League Volleyball &middot; 23 episodes</span></li>
+                    <li><span class="pod-name">Six Zone Duo</span><span class="pod-meta">Amie Just &amp; Erin Sorensen &middot; 6 episodes</span></li>
                     <li><span class="pod-name">Volley Takes</span><span class="pod-meta">Abby Benton &middot; 33 episodes</span></li>
-                    <li><span class="pod-name">Out of Rotation</span><span class="pod-meta">Dan Meske &middot; 33 episodes</span></li>
+                    <li><span class="pod-name">Out of Rotation</span><span class="pod-meta">Dan Meske &middot; 34 episodes</span></li>
                 </ul>
-                <p class="panel-note">Every episode streams or downloads for offline listening, with playback position synced across devices. Partner podcasts run their own fantasy leagues, AMAs and Take of the Talk sessions inside Voli.</p>
-            </div>
+                <p class="panel-note">Every episode streams or downloads for offline listening, with playback position synced across devices. Partner podcasts run their own fantasy leagues, AMAs and Take of the Talk sessions inside VOLI. <a href="/news-and-podcasts">Read and listen →</a></p>
+            </section>
 
-            <div class="panel" role="tabpanel" id="panel-community" aria-labelledby="tab-community" data-panel="community" hidden>
+            <section class="panel" id="community">
                 <h2 class="panel-title">Volleyball Community</h2>
-                <p class="panel-lede">Real-time chat rooms for every match, team and league, plus daily games, polls and a volleyball encyclopedia of records, awards and rankings.</p>
+                <p class="panel-lede">Chat rooms for each match, team and league, AMAs with volleyball creators, the weekly Creators Poll, conference pick'em, and the Daily Grid, a new volleyball trivia grid each day.</p>
+                <p class="panel-note"><a href="/dailygrid">Play the Daily Grid →</a></p>
+            </section>
             </div>
         </div>
 
@@ -184,50 +179,16 @@ import Layout from '../layouts/Layout.astro';
 
     </main>
 
-<script is:inline>
-    // Progressive enhancement: every panel is in the DOM and readable by
-    // crawlers whether or not this runs. It only toggles visibility.
-    (function () {
-        var tabs = document.querySelectorAll('.tab[data-tab]');
-        var panels = document.querySelectorAll('.panel[data-panel]');
-        function select(name) {
-            tabs.forEach(function (t) {
-                var on = t.dataset.tab === name;
-                t.classList.toggle('is-active', on);
-                t.setAttribute('aria-selected', on ? 'true' : 'false');
-            });
-            panels.forEach(function (p) { p.hidden = p.dataset.panel !== name; });
-        }
-        tabs.forEach(function (t) {
-            t.addEventListener('click', function () { select(t.dataset.tab); });
-        });
-    })();
-</script>
-
 <script type="application/ld+json" set:html={JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "MobileApplication",
-      "@id": "https://playvoli.com/mobileapp#app",
-      "name": "Voli - The Volleyball Hub",
-      "applicationCategory": "SportsApplication",
-      "operatingSystem": "iOS, Android",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "ratingCount": "5", "bestRating": "5" },
-      "description": "Voli is a free volleyball app for reading volleyball news, listening to volleyball podcasts, following live scores and statistics, and playing contract-based fantasy volleyball for NCAA women's volleyball and Major League Volleyball.",
-      "featureList": [
-        "Volleyball news aggregated from 10 publishers",
-        "13 volleyball podcasts with over 900 episodes",
-        "Live volleyball scores and play-by-play",
-        "NCAA and professional volleyball statistics",
-        "Contract-based fantasy volleyball leagues",
-        "Live match chat rooms"
-      ],
-      "downloadUrl": [
-        "https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982",
-        "https://play.google.com/store/apps/details?id=com.playvoli.app"
-      ]
+      "@type": "WebPage",
+      "@id": "https://playvoli.com/mobileapp#webpage",
+      "url": "https://playvoli.com/mobileapp",
+      "name": "The VOLI App",
+      "about": { "@id": "https://playvoli.com/#app" },
+      "mainEntity": { "@id": "https://playvoli.com/#app" }
     },
     {
       "@type": "FAQPage",
@@ -235,34 +196,50 @@ import Layout from '../layouts/Layout.astro';
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "Where can I read volleyball news?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The Voli app aggregates volleyball news from 10 publishers in one feed: Major League Volleyball (provolleyball.com), SEC Sports, LOVB, the Big Ten Conference, NCAA.com, the ACC, Minute Volley, the Big 12 Conference, Elvis Thrill and Sports Illustrated. Coverage spans NCAA women's volleyball, Major League Volleyball and LOVB. Voli is free on iOS and Android."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What volleyball podcasts can I listen to on Voli?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Voli carries 13 volleyball podcasts with over 900 episodes: Volley Talk with Sarah Pavan, The Major League Minute, Court Captains, The USA Volleyball Show, Volleyball State, Dig City, The Side Out Society Podcast, Serving Pancakes, Ember's Nest, Set 6: The Official MLV Podcast, Six Zone Duo, Volley Takes and Out of Rotation. Episodes stream or download for offline listening."
-          }
-        },
-        {
-          "@type": "Question",
           "name": "Is there a fantasy volleyball app?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Voli runs contract-based fantasy volleyball leagues for NCAA women's volleyball and Major League Volleyball, where you sign players to multi-round contracts against a salary cap and score from real match statistics."
+            "text": "Yes. VOLI runs contract-based fantasy volleyball leagues for NCAA Division I women's volleyball and Major League Volleyball, where you sign real players to multi-round contracts against a salary cap and score from their real match stats. It's free on iPhone and Android."
           }
         },
         {
           "@type": "Question",
-          "name": "Where can I follow live volleyball scores?",
+          "name": "Where can I follow live volleyball scores and play-by-play?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Voli provides live volleyball scores, schedules, play-by-play and box scores for NCAA women's volleyball and Major League Volleyball, free on iOS and Android."
+            "text": "In the VOLI app: live scores, schedules, box scores and play-by-play for NCAA Division I women's volleyball, MLV and LOVB. Play-by-play covers all 445 MLV and LOVB matches since 2024 and more than 360,000 NCAA rallies in the 2026 season."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I find NCAA volleyball player stats?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "VOLI has nearly 480,000 NCAA player box-score lines since 2023, covering 99.8% of completed Division I women's matches, with leaderboards by season, position, conference and class."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I look up volleyball history?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Volleyball Encyclopedia in VOLI holds more than 18,000 honors back to 1979, including 3,000+ AVCA All-America selections since 1981, the AVCA Coaches Poll since 1982, all 45 NCAA champions and record books."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where can I read volleyball news?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The VOLI app gathers volleyball news from 19 outlets, from league and conference sites to independent writers, in one feed, and links each story to its source. Coverage spans NCAA women's volleyball, Major League Volleyball and LOVB. VOLI is free on iPhone and Android."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What volleyball podcasts can I listen to on VOLI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "VOLI carries 13 volleyball podcasts with nearly 900 episodes: Volley Talk with Sarah Pavan, The Major League Minute, Court Captains, The USA Volleyball Show, Volleyball State, Dig City, The Side Out Society Podcast, Serving Pancakes, Ember's Nest, Set 6: The Official MLV Podcast, Six Zone Duo, Volley Takes and Out of Rotation. Episodes stream or download for offline listening."
           }
         }
       ]
@@ -575,7 +552,13 @@ import Layout from '../layouts/Layout.astro';
         padding: 1.5rem;
     }
 
-    .panel[hidden] { display: none; }
+    .panels { display: flex; flex-direction: column; gap: 1rem; }
+
+    .panel { scroll-margin-top: 6rem; }
+
+    .tab { text-decoration: none; }
+
+    .panel-note a { color: var(--accent); text-decoration: none; font-weight: 600; }
 
     .panel-title {
         font-size: 1.15rem;

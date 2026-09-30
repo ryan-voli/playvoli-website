@@ -1,0 +1,141 @@
+---
+// Body of /encyclopedia/mlv and /encyclopedia/lovb. Underscore = not a route.
+import type { ProLeague } from '../../lib/encyclopedia-data';
+import { fmt } from '../../lib/encyclopedia-data';
+
+interface Props { data: ProLeague; name: string }
+const { data, name } = Astro.props;
+
+const season = data.awards.filter((a) => a.kind === 'season');
+const teams = data.awards.filter((a) => a.kind === 'team');
+const weekly = data.awards.filter((a) => a.kind === 'weekly');
+const seasonYears = [...new Set(season.flatMap((a) => a.years.map((y) => y.year)))].sort((a, b) => b - a);
+const who = (h: { name: string; team: string | null }) => h.name;
+---
+
+<section class="ency-section" aria-labelledby="champs-h">
+  <h2 id="champs-h" class="ency-h2">{name} champions</h2>
+  <div class="ency-table-wrap">
+    <table class="ency-table">
+      <thead><tr><th scope="col">Season</th><th scope="col">Event</th><th scope="col">Champion</th><th scope="col">Runner-up</th></tr></thead>
+      <tbody>
+        {data.champions.map((c) => (
+          <tr><th scope="row" class="num">{c.year}</th><td class="dim">{c.event}</td><td><strong>{c.champion}</strong></td><td>{c.runnerUp ?? '—'}</td></tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="ency-section" aria-labelledby="season-h">
+  <h2 id="season-h" class="ency-h2">Season awards</h2>
+  <p class="ency-note">{season.length} award types, {seasonYears[seasonYears.length - 1]}–{seasonYears[0]}.</p>
+  <div class="ency-table-wrap">
+    <table class="ency-table">
+      <thead><tr><th scope="col">Award</th>{seasonYears.map((y) => <th scope="col">{y}</th>)}</tr></thead>
+      <tbody>
+        {season.map((a) => (
+          <tr>
+            <th scope="row">{a.label}</th>
+            {seasonYears.map((y) => {
+              const hs = a.years.find((x) => x.year === y)?.honorees ?? [];
+              return (
+                <td>
+                  {hs.length ? hs.map((h, i) => (<>{i > 0 && <br />}<strong>{who(h)}</strong>{h.team && <span class="muted"> · {h.team}</span>}</>)) : <span class="muted">—</span>}
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{teams.length > 0 && (
+  <section class="ency-section" aria-labelledby="teams-h">
+    <h2 id="teams-h" class="ency-h2">Honor teams</h2>
+    {teams.map((a) => (
+      <details open={a.key === 'all_league' || a.key === 'lovb_icons'}>
+        <summary><span>{a.label}</span><span class="count">{fmt(a.total)} selections</span></summary>
+        <div class="ency-inner">
+          {a.years.map((y) => (
+            <div class="ency-table-wrap yr">
+              <table class="ency-table">
+                <caption>{a.label}, {y.year}</caption>
+                <thead><tr><th scope="col">Player</th><th scope="col">Team</th><th scope="col">Pos.</th><th scope="col">Selection</th></tr></thead>
+                <tbody>
+                  {y.honorees.map((h) => (
+                    <tr><th scope="row">{h.name}</th><td class="dim">{h.team ?? '—'}</td><td class="dim">{h.position ?? '—'}</td><td class="muted">{h.tier ?? '—'}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      </details>
+    ))}
+  </section>
+)}
+
+{weekly.length > 0 && (
+  <section class="ency-section" aria-labelledby="weekly-h">
+    <h2 id="weekly-h" class="ency-h2">Weekly awards</h2>
+    {weekly.map((a) => (
+      <details>
+        <summary><span>{a.label}</span><span class="count">{fmt(a.total)} awards</span></summary>
+        <div class="ency-inner">
+          {a.years.map((y) => (
+            <div class="ency-table-wrap yr">
+              <table class="ency-table">
+                <caption>{a.label}, {y.year}</caption>
+                <thead><tr><th scope="col">Week</th><th scope="col">Player</th><th scope="col">Team</th></tr></thead>
+                <tbody>
+                  {y.honorees.map((h) => (
+                    <tr><td class="num dim">{h.week ?? '—'}</td><th scope="row">{h.name}</th><td class="dim">{h.team ?? '—'}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      </details>
+    ))}
+  </section>
+)}
+
+{data.draft.length > 0 && (
+  <section class="ency-section" aria-labelledby="draft-h">
+    <h2 id="draft-h" class="ency-h2">{name} Draft</h2>
+    <p class="ency-note">All {fmt(data.draftPicks)} picks, {data.draft[data.draft.length - 1].year}–{data.draft[0].year}. Team is the club that held the pick.</p>
+    {data.draft.map((d, i) => (
+      <details open={i === 0}>
+        <summary><span>{d.year} {name} Draft</span><span class="count">{d.picks.length} picks</span></summary>
+        <div class="ency-inner">
+          <div class="ency-table-wrap">
+            <table class="ency-table">
+              <caption>{d.year} {name} Draft</caption>
+              <thead><tr><th scope="col">Pick</th><th scope="col">Round</th><th scope="col">Player</th><th scope="col">Pos.</th><th scope="col">College</th><th scope="col">Team</th></tr></thead>
+              <tbody>
+                {d.picks.map((p) => (
+                  <tr>
+                    <td class="num">{p.overall ?? '—'}</td>
+                    <td class="num dim">{p.round}</td>
+                    <th scope="row">{p.player}</th>
+                    <td class="dim">{p.position ?? '—'}</td>
+                    <td class="dim">{p.college ?? '—'}</td>
+                    <td class="dim">{p.team ?? '—'}{p.note && <span class="muted"> ({p.note})</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    ))}
+  </section>
+)}
+
+<style>
+  .yr { margin-bottom: 0.75rem; }
+</style>

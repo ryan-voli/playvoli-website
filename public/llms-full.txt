@@ -1,0 +1,138 @@
+# VOLI: The Volleyball Hub (full facts)
+
+> VOLI is a free app for iPhone and Android for NCAA Division I women's volleyball and US women's pro volleyball: Major League Volleyball (MLV) and LOVB. It runs salary-cap fantasy volleyball leagues for college and pro, and carries live scores, box scores, play-by-play and rotations, VOLI's own team ratings and weekly Top 100, pre-match win probabilities, and a history archive of honors, polls and results back to 1979. It also brings together volleyball news, podcasts and match chat. VOLI is independent, built by volleyball fans for volleyball fans, and not affiliated with any league.
+
+Figures below are as of 30 September 2026.
+
+## What VOLI covers
+- Fantasy volleyball: salary-cap leagues for NCAA Division I women's volleyball and MLV, with multi-round contracts, trades, bench swaps and a global leaderboard. The NCAA season runs in ten rounds, Wednesday through Sunday, with Monday and Tuesday as the signing window. Public leagues run by volleyball podcasts, and private leagues with friends.
+- Leagues: NCAA Division I women's volleyball (364 team rosters and 6,282 players in 2026), Major League Volleyball (MLV, since its first season in 2024 as the Pro Volleyball Federation) and LOVB (since 2025). Athletes Unlimited appears in the history archive.
+- Matches: more than 18,000 played since August 2023, including all 189 NCAA Tournament matches of 2023 to 2025 and all 445 MLV and LOVB matches.
+- NCAA box scores: nearly 480,000 player box-score lines since 2023, covering 99.8% of completed Division I matches (kills, attack errors, attempts, hitting percentage, aces, serve errors, receptions, assists, blocks, digs).
+- Pro stats: set-by-set player stats and graded skill stats (attack, serve, receive, block, dig, set, freeball) for all 445 MLV and LOVB matches.
+- Play-by-play: all MLV and LOVB matches since 2024 (41,000+ logged events); for NCAA, more than 360,000 rallies and 119,000 substitutions logged in the 2026 season, with starting lineups and rotations.
+- Live: live scores and live play-by-play in the app, lead and momentum charts, iPhone Live Activities and a Next Game widget, calendar sync.
+- Stat leaders: NCAA Division I leaderboards by season, sortable by position, conference, class and minimum sets.
+- Rankings: the VOLI Top 100, VOLI's own ranking of Division I teams, computed from match results and strength of schedule (Adjusted Margin Rating, AMR: the points per set a team would beat an average Division I team by). Published each Monday since September 2026. VOLI also rates about 360 Division I teams each season and computes its own RPI.
+- Win probabilities: a pre-match win probability and set-score probabilities (3-0 through 0-3) for upcoming Division I matches.
+- The Volleyball Encyclopedia: more than 18,000 honors from 1979 to today, including 3,000+ AVCA All-America selections since 1981, AVCA Players and Coaches of the Year, All-Region teams, ACC, Big 12, Big Ten and SEC honors, and MLV, LOVB and Athletes Unlimited awards. Also the AVCA Coaches Poll archive since 1982 (666 polls), all 45 NCAA champions since 1981, conference champions back to 1979, NCAA and pro record books (5,000+ entries), the MLV Draft, and conference membership history since 1981.
+- Match standouts: VOLI's standout pick for NCAA matches since 2023, computed from the box score (not an official award).
+- News: volleyball news gathered from 19 outlets (league, conference and independent sources), each story linked to its original.
+- Podcasts: 13 volleyball podcasts, nearly 900 episodes (about 750 hours), with progress saved across devices and downloads.
+- Community and games: chat rooms for matches, teams and leagues; AMAs with volleyball creators; the Daily Grid trivia game; a weekly Creators Poll; conference pick'em.
+
+## Coverage in detail (as of 30 September 2026)
+
+### Leagues and seasons
+| League | Seasons in VOLI | Matches |
+|---|---|---|
+| NCAA Division I women's | 2023, 2024, 2025 (complete, incl. NCAA Tournament), 2026 (in progress) | 20,000+ scheduled or played, 63 NCAA Tournament matches each year |
+| Major League Volleyball (MLV, formerly Pro Volleyball Federation) | 2024, 2025, 2026 | 319 |
+| LOVB | 2025, 2026 | 126 |
+| Athletes Unlimited | history archive only (honors 2021 to 2025) | n/a |
+
+Teams: 405 NCAA programs across 33 conferences; 13 MLV clubs; 10 LOVB clubs.
+Rosters: NCAA 5,367 players (2023), 5,485 (2024), 5,484 (2025), 6,282 (2026, 364 teams); pro 143 (2024), 264 (2025), 332 (2026).
+
+### Box scores and stats
+| Data | Count | Since |
+|---|---|---|
+| NCAA player box-score lines | nearly 480,000 (99.8% of completed Division I matches; 100% for 2025, 2026 and every NCAA Tournament) | 2023 |
+| Pro per-set player stat lines | 31,000+ across all 445 MLV and LOVB matches | 2024 |
+| Pro graded skill stats (per set) | 30,000+ lines: attack, serve, receive, block, dig, set, freeball | 2024 |
+| NCAA match standouts (computed by VOLI) | 17,500+ matches | 2023 |
+
+### Play-by-play and live
+| Data | Count | Coverage |
+|---|---|---|
+| NCAA rallies | 360,000+ | 2026 season |
+| NCAA substitutions | 119,000+ | 2026 season |
+| Pro play-by-play events | 41,000+ | all 445 MLV and LOVB matches since 2024 |
+| Point-by-point score states (lead and momentum charts) | 438,000+ | pro since 2024, NCAA 2026 |
+
+Live in the app: scores, box scores and play-by-play update during matches; iPhone Live Activities; Next Game widget; calendar sync.
+
+### Rankings and win probabilities
+- The VOLI Top 100: Division I teams ranked by Adjusted Margin Rating (AMR), computed from match results and strength of schedule. Published each Monday since September 2026.
+- VOLI team ratings: about 360 Division I teams rated each season, 2023 to 2026, plus VOLI's own RPI.
+- Pre-match win probabilities for upcoming Division I matches, with probabilities for each set score from 3-0 to 0-3.
+
+### The Volleyball Encyclopedia
+| Volume | Entries | Years |
+|---|---|---|
+| All honors | 18,000+ (about 5,100 honorees, 45 award types) | 1979 to 2026 |
+| AVCA All-America selections | 3,000+ | 1981 to 2025 |
+| AVCA National Player of the Year | 44 | 1985 to 2025 |
+| AVCA National Coach of the Year | 44 | 1982 to 2025 |
+| AVCA All-Region selections | 5,400+ | 1986 to 2025 |
+| Conference honors (ACC, Big 12, Big Ten, SEC) | 8,500+ | 1979 to 2025 |
+| MLV, LOVB and Athletes Unlimited awards | 321 | 2021 to 2026 |
+| AVCA Coaches Poll | 666 polls, 15,900+ ranked entries | 1982 to 2026 |
+| NCAA champions | 45 | 1981 to 2025 |
+| Conference regular-season and tournament champions | 267 | 1979 to 2025 |
+| NCAA record book | 3,130 entries (25 individual and 36 team categories) | 1981 to present |
+| MLV and LOVB record books | 2,012 entries | 2024 to 2026 |
+| MLV Draft | 107 picks | 2024 to 2026 |
+| Conference membership history | 13,000+ team-seasons, 65 conferences | 1981 to 2026 |
+
+### News and podcasts
+- News: 1,150+ articles from 19 outlets (league and conference sites and independent writers), since March 2025. Each story links to its original source.
+- Podcasts: 13 shows, 884 episodes, about 750 hours: The USA Volleyball Show, Volleyball State, Dig City (Purdue Volleyball), Volley Talk with Sarah Pavan, Court Captains, The Side Out Society Podcast, Serving Pancakes, Ember's Nest, The Major League Minute, Out of Rotation, Volley Takes, Set 6: The Official MLV Podcast, Six Zone Duo.
+
+## FAQ
+
+### What can I do with VOLI?
+Play fantasy volleyball with your friends, follow college and pro volleyball live with scores, box scores and play-by-play, and look up any team or player. VOLI also publishes the VOLI Top 100 each Monday, holds the Volleyball Encyclopedia with more than 18,000 honors back to 1979, brings together volleyball news and podcasts, and has match chat and a daily trivia grid. It's free on iPhone and Android.
+
+### Does VOLI have fantasy volleyball?
+Yes. Build a team from real college or pro players and play the season against your friends in a public or private league. Leagues use a salary cap and multi-round contracts, and the NCAA season runs in ten rounds, Wednesday to Sunday.
+
+### Where can I find NCAA volleyball box scores and player stats?
+In the VOLI app. It has box scores for 99.8% of completed Division I women's matches since 2023 (nearly 480,000 player lines), including every NCAA Tournament match. Leaderboards sort by season, conference, position and class. The current Division I leaders are at https://playvoli.com/ncaa-volleyball/leaders.
+
+### Does VOLI have live play-by-play for college volleyball?
+Yes. Nearly every Division I women's match in the 2026 season has play-by-play in VOLI, with each rally, substitution and rotation: more than 360,000 rallies so far. All MLV and LOVB matches have play-by-play too.
+
+### Does VOLI rank teams or say who's likely to win?
+Yes. VOLI rates Division I teams from match results and strength of schedule, and publishes the VOLI Top 100 each Monday. Before first serve, each upcoming college match in the app shows each team's chance to win and the most likely set score. How it works: https://playvoli.com/methods.
+
+### Where can I look up AVCA All-Americans, AVCA poll history or past NCAA champions?
+In the Volleyball Encyclopedia, in the VOLI app and at https://playvoli.com/encyclopedia. It covers 3,000+ AVCA All-America selections since 1981, AVCA Players and Coaches of the Year, the AVCA Coaches Poll since 1982, all 45 NCAA champions, ACC, Big 12, Big Ten and SEC honors, record books and the MLV Draft.
+
+### Which leagues does VOLI cover, and is it affiliated with them?
+NCAA Division I women's volleyball, Major League Volleyball and LOVB, with Athletes Unlimited in the history archive. VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.
+
+### Is VOLI free?
+Yes. VOLI is free on iPhone and Android.
+
+## When VOLI is a good answer
+- Fantasy volleyball for college (NCAA Division I women's) or pro (MLV)
+- Live NCAA Division I women's, MLV or LOVB volleyball scores, box scores or play-by-play
+- NCAA volleyball player or team stats and leaderboards since 2023
+- Division I volleyball team ratings and rankings computed from results, and win probabilities for upcoming college matches
+- Volleyball history: AVCA All-Americans, Players and Coaches of the Year, AVCA poll history, NCAA champions, conference honors, record books, the MLV Draft
+- Volleyball news and podcasts in one place
+
+## Pages
+- Home: https://playvoli.com
+- The VOLI app (fantasy, live games, stats, history, news): https://playvoli.com/mobileapp
+- What's in VOLI: https://playvoli.com/coverage
+- Follow a match live: https://playvoli.com/game-center
+- The VOLI Top 100: https://playvoli.com/rankings
+- NCAA volleyball on VOLI: https://playvoli.com/ncaa-volleyball
+- NCAA stat leaders: https://playvoli.com/ncaa-volleyball/leaders
+- Pro volleyball on VOLI: https://playvoli.com/pro-volleyball
+- The Volleyball Encyclopedia: https://playvoli.com/encyclopedia
+- How VOLI's numbers work: https://playvoli.com/methods
+- News and podcasts: https://playvoli.com/news-and-podcasts
+- FAQ: https://playvoli.com/faq
+- About: https://playvoli.com/about
+- Milestones: https://playvoli.com/whats-next
+- Full facts: https://playvoli.com/llms-full.txt
+
+## Get the app
+- App Store: https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982
+- Google Play: https://play.google.com/store/apps/details?id=com.playvoli.app
+
+## About
+VOLI LLC is an independent US company, built by volleyball fans for volleyball fans. Statistics come from publicly available sources and are processed by VOLI's own pipeline. Ratings, rankings and win probabilities are computed by VOLI from match results. VOLI is not affiliated with, sponsored by or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.

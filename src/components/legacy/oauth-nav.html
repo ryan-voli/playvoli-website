@@ -1,0 +1,73 @@
+<div class="nav-container" data-astro-cid-dmqpwcec> <a href="/" class="nav-logo" data-astro-cid-dmqpwcec> <img src="/images/logo_dark_sm.webp" alt="VOLI" data-astro-cid-dmqpwcec> <span class="nav-logo-word" data-astro-cid-dmqpwcec>VOLI</span> </a> <!-- Desktop nav --> <nav class="nav desktop-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" id="about-link" data-astro-cid-dmqpwcec>About</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> <button class="more-btn" id="more-btn" data-astro-cid-dmqpwcec>More</button> </nav> <div class="about-dropdown" id="about-dropdown" data-astro-cid-dmqpwcec> <a href="/whats-next" data-astro-cid-dmqpwcec>What's Next</a> </div> <div class="more-dropdown" id="more-dropdown" data-astro-cid-dmqpwcec> <div class="more-columns" data-astro-cid-dmqpwcec> <div class="more-col" data-astro-cid-dmqpwcec> <div class="more-col-title" data-astro-cid-dmqpwcec>Products</div> <a href="/mobileapp" data-astro-cid-dmqpwcec>Mobile App</a> <a href="/discordbot" data-astro-cid-dmqpwcec>Discord Bot</a> <a href="/redditdailygrid" data-astro-cid-dmqpwcec>Reddit Daily Grid</a> <a href="/creatorscourt" data-astro-cid-dmqpwcec>Creators Court</a> </div> <div class="more-col" data-astro-cid-dmqpwcec> <a href="/partners" class="more-col-title-link" data-astro-cid-dmqpwcec><div class="more-col-title" data-astro-cid-dmqpwcec>Partners</div></a> <a href="/volleytalk" data-astro-cid-dmqpwcec>Volley Talk</a> <a href="/courtcaptains" data-astro-cid-dmqpwcec>Court Captains</a> <a href="/mlm" data-astro-cid-dmqpwcec>Major League Minute</a> </div> <div class="more-col" data-astro-cid-dmqpwcec> <div class="more-col-title" data-astro-cid-dmqpwcec>Legal</div> <a href="/privacy" data-astro-cid-dmqpwcec>Privacy</a> <a href="/terms" data-astro-cid-dmqpwcec>Terms</a> </div> </div> </div> <a href="/dailygrid" class="dg-circle-btn" aria-label="Daily Grid" data-astro-cid-dmqpwcec> <img src="/images/icons/dailygrid.png" alt="" class="dg-circle-icon" data-astro-cid-dmqpwcec> </a> <div class="download-pill desktop-pill" id="download-pill" data-astro-cid-dmqpwcec>Download</div> <!-- Mobile hamburger --> <button class="hamburger" id="hamburger" aria-label="Menu" data-astro-cid-dmqpwcec> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> <span data-astro-cid-dmqpwcec></span> </button> <!-- Mobile download icon --> <button class="mobile-download-btn" id="download-pill-mobile" aria-label="Download" data-astro-cid-dmqpwcec> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-dmqpwcec> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" data-astro-cid-dmqpwcec></path> <polyline points="7 10 12 15 17 10" data-astro-cid-dmqpwcec></polyline> <line x1="12" y1="15" x2="12" y2="3" data-astro-cid-dmqpwcec></line> </svg> </button> <div id="nav-auth" data-astro-cid-dmqpwcec></div> </div> <!-- Mobile dropdown --> <div class="mobile-menu" id="mobile-menu" data-astro-cid-dmqpwcec> <nav class="mobile-nav" data-astro-cid-dmqpwcec> <a href="/" data-astro-cid-dmqpwcec>Home</a> <a href="/about" data-astro-cid-dmqpwcec>About</a> <a href="/whats-next" data-astro-cid-dmqpwcec>What's Next</a> <a href="/contact" data-astro-cid-dmqpwcec>Contact</a> <div class="mobile-divider" data-astro-cid-dmqpwcec></div> <div class="mobile-section-title" data-astro-cid-dmqpwcec>Products</div> <a href="/mobileapp" data-astro-cid-dmqpwcec>Mobile App</a> <a href="/discordbot" data-astro-cid-dmqpwcec>Discord Bot</a> <a href="/redditdailygrid" data-astro-cid-dmqpwcec>Reddit Daily Grid</a> <a href="/creatorscourt" data-astro-cid-dmqpwcec>Creators Court</a> <div class="mobile-section-title" data-astro-cid-dmqpwcec>Partners</div> <a href="/partners" data-astro-cid-dmqpwcec>Partners</a> <a href="/volleytalk" data-astro-cid-dmqpwcec>Volley Talk</a> <a href="/courtcaptains" data-astro-cid-dmqpwcec>Court Captains</a> <a href="/mlm" data-astro-cid-dmqpwcec>Major League Minute</a> <div class="mobile-section-title" data-astro-cid-dmqpwcec>Legal</div> <a href="/privacy" data-astro-cid-dmqpwcec>Privacy</a> <a href="/terms" data-astro-cid-dmqpwcec>Terms</a> </nav> </div> <script>
+(function() {
+    var hamburger = document.getElementById('hamburger');
+    var menu = document.getElementById('mobile-menu');
+    if (!hamburger || !menu) return;
+
+    hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburger.classList.toggle('open');
+        menu.classList.toggle('open');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+            hamburger.classList.remove('open');
+            menu.classList.remove('open');
+        }
+    });
+
+    // Close menu when clicking a link
+    menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('open');
+            menu.classList.remove('open');
+        });
+    });
+
+    // Mobile download button — trigger same handler as desktop pill
+    var mobileDl = document.getElementById('download-pill-mobile');
+    if (mobileDl) {
+        mobileDl.addEventListener('click', function() {
+            var desktopPill = document.getElementById('download-pill');
+            if (desktopPill) desktopPill.click();
+        });
+    }
+
+    // More dropdown hover
+    var moreBtn = document.getElementById('more-btn');
+    var moreDd = document.getElementById('more-dropdown');
+    var moreTimer = null;
+    function showMore() { clearTimeout(moreTimer); moreDd.classList.add('open'); }
+    function hideMore() { moreTimer = setTimeout(function() { moreDd.classList.remove('open'); }, 150); }
+    if (moreBtn && moreDd) {
+        moreBtn.addEventListener('mouseenter', showMore);
+        moreBtn.addEventListener('mouseleave', hideMore);
+        moreDd.addEventListener('mouseenter', showMore);
+        moreDd.addEventListener('mouseleave', hideMore);
+    }
+
+    // About dropdown hover
+    var aboutLink = document.getElementById('about-link');
+    var aboutDd = document.getElementById('about-dropdown');
+    var navContainer = document.querySelector('.nav-container');
+    var aboutTimer = null;
+    function positionAboutDd() {
+        if (!aboutLink || !aboutDd || !navContainer) return;
+        var linkRect = aboutLink.getBoundingClientRect();
+        var containerRect = navContainer.getBoundingClientRect();
+        aboutDd.style.left = (linkRect.left + linkRect.width / 2 - containerRect.left) + 'px';
+    }
+    function showAbout() { clearTimeout(aboutTimer); positionAboutDd(); aboutDd.classList.add('open'); }
+    function hideAbout() { aboutTimer = setTimeout(function() { aboutDd.classList.remove('open'); }, 150); }
+    if (aboutLink && aboutDd) {
+        aboutLink.addEventListener('mouseenter', showAbout);
+        aboutLink.addEventListener('mouseleave', hideAbout);
+        aboutDd.addEventListener('mouseenter', showAbout);
+        aboutDd.addEventListener('mouseleave', hideAbout);
+        window.addEventListener('resize', positionAboutDd);
+        positionAboutDd();
+    }
+})();
+</script> 

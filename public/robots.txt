@@ -43,4 +43,6 @@ User-agent: Bytespider
 Allow: /
 
 # AI / LLM optimization manifest
-# See: /llms.txt
+# See: /llms.txt and /llms-full.txt
+
+Sitemap: https://playvoli.com/sitemap-index.xml

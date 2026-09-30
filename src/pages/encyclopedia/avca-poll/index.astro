@@ -1,0 +1,61 @@
+---
+import Shell from '../_Shell.astro';
+import { getAvcaFinalPolls, getNcaaChampions } from '../../../lib/encyclopedia-data';
+
+const polls = await getAvcaFinalPolls();
+const champs = new Map((await getNcaaChampions()).map((c) => [c.year, c.champion]));
+const first = polls[polls.length - 1].seasonYear;
+const last = polls[0].seasonYear;
+
+const title = `AVCA Coaches Poll Final Rankings ${first}–${last} | VOLI`;
+const description = `The final AVCA Coaches Poll for each Division I women's volleyball season from ${first} to ${last}: No. 1 to the last ranked team, season by season.`;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `AVCA Coaches Poll final rankings, ${first}–${last}`,
+  description,
+  url: 'https://playvoli.com/encyclopedia/avca-poll',
+  temporalCoverage: `${first}/${last}`,
+  dateModified: new Date().toISOString().slice(0, 10),
+  creator: { '@id': 'https://playvoli.com/#organization' },
+  isBasedOn: { '@type': 'CreativeWork', name: 'AVCA Division I Women\'s Volleyball Coaches Poll', publisher: { '@type': 'Organization', name: 'American Volleyball Coaches Association (AVCA)' } },
+  isAccessibleForFree: true,
+};
+---
+
+<Shell title={title} description={description} path="/encyclopedia/avca-poll" h1="AVCA Coaches Poll: final rankings" schema={schema} source="Source: AVCA Coaches Poll">
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      The final AVCA Coaches Poll of each Division I women's volleyball season, {first}–{last}, as published by the
+      American Volleyball Coaches Association. Pick a season for the full final poll.
+    </p>
+  </Fragment>
+
+  <section class="ency-section" aria-labelledby="seasons-h">
+    <h2 id="seasons-h" class="ency-h2">Final polls by season</h2>
+    <p class="ency-note">{polls.length} seasons. Team names are shown as the AVCA printed them. The 2020 season was played in spring 2021. Every weekly poll is in the VOLI app.</p>
+    <div class="ency-table-wrap">
+      <table class="ency-table">
+        <thead><tr><th scope="col">Season</th><th scope="col">No. 1</th><th scope="col">No. 2</th><th scope="col">No. 3</th><th scope="col">NCAA champion</th><th scope="col">Teams ranked</th></tr></thead>
+        <tbody>
+          {polls.map((p) => {
+            const at = (r: number) => p.teams.filter((t) => t.rank === r).map((t) => t.team).join(' / ') || '—';
+            return (
+              <tr>
+                <th scope="row"><a href={`/encyclopedia/avca-poll/${p.slug}`}>{p.label}</a></th>
+                <td><strong>{at(1)}</strong></td>
+                <td>{at(2)}</td>
+                <td>{at(3)}</td>
+                <td class="dim">{champs.get(p.seasonYear) ?? '—'}</td>
+                <td class="num dim">{p.teams.length}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="ency-note">See also: <a href="/encyclopedia/ncaa-champions">every NCAA champion</a></p>
+</Shell>

@@ -1,0 +1,279 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="How VOLI's Numbers Work"
+  description="Where VOLI's volleyball stats come from, how often they update, and how the VOLI Top 100 and match win probabilities are computed."
+  activePage="methods"
+  ogUrl="https://playvoli.com/methods"
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://playvoli.com/methods#webpage",
+    "url": "https://playvoli.com/methods",
+    "name": "How VOLI's numbers work",
+    "isPartOf": { "@id": "https://playvoli.com/#website" },
+    "publisher": { "@id": "https://playvoli.com/#organization" }
+  }}
+>
+  <main class="page">
+    <article class="card">
+      <p class="eyebrow">Methods</p>
+      <h1>How VOLI's numbers work</h1>
+      <p class="lead">Where VOLI's stats come from, how often they update, and how the VOLI Top 100 and each match's chance to win are computed.</p>
+
+      <section class="block" id="sources">
+        <h2>Where the stats come from</h2>
+        <p>VOLI's match data comes from publicly available sources: the official box scores, play-by-play and schedules published for NCAA Division I women's, MLV and LOVB matches. VOLI processes it with its own pipeline, which matches each player and team across seasons, checks the numbers against each other, and builds everything else in the app from them: box scores, per-set rates, leaderboards, play-by-play, rotations, lead charts, match MVPs, fantasy scoring, team ratings and the VOLI Top 100.</p>
+        <p>The history in the Volleyball Encyclopedia (honors, AVCA Coaches Polls, NCAA and conference champions, record books and the MLV Draft) is compiled from published records of the AVCA, the NCAA, the conferences and the leagues, and each volume credits its source.</p>
+      </section>
+
+      <section class="block" id="cadence">
+        <h2>How often it updates</h2>
+        <ul class="plain">
+          <li><strong>During a match:</strong> the score, box score and play-by-play update in the app as the match is played.</li>
+          <li><strong>After a match:</strong> the final box score and play-by-play are checked and stored, and leaderboards update with them.</li>
+          <li><strong>Team ratings:</strong> recomputed nightly from all completed matches.</li>
+          <li><strong>The VOLI Top 100:</strong> set each Monday from the latest ratings, and it doesn't change afterwards. It has been published each Monday since September 2026.</li>
+          <li><strong>History:</strong> honors, AVCA polls and records are added through the season.</li>
+        </ul>
+      </section>
+
+      <section class="block" id="top-100">
+        <h2>How the VOLI Top 100 is computed</h2>
+        <p>The VOLI Top 100 is computed from match results and strength of schedule. Each team's rating, <strong>AMR (Adjusted Margin Rating)</strong>, is the number of points per set it would beat an average Division I team by. A rating of +4.2 means the team beats an average Division I team by about 4 points a set.</p>
+        <p>The rating starts from each set's point margin and adjusts it for the opponent: a close set against a strong team can say more than a lopsided one against a weak team. Early in the season, when teams have played only a few matches, a preseason starting point carries some of the weight. It comes from the team's rating last season and how many of its players return, and it fades as real results come in.</p>
+        <p>Ratings are computed for every Division I team, so the list stops at 100 only for display.</p>
+      </section>
+
+      <section class="block" id="chance-to-win">
+        <h2>How each match's chance to win is computed</h2>
+        <p>Before first serve, each upcoming college match in the app shows each team's chance to win and the most likely set score. Both come from the gap between the two teams' ratings: the bigger the gap, the more likely the higher-rated team wins. From that, VOLI works out the chance of each of the six possible final scores (3–0, 3–1, 3–2 and their reverses) and shows the most likely one.</p>
+      </section>
+
+      <section class="block" id="not-claimed">
+        <h2>What VOLI doesn't claim</h2>
+        <ul class="plain">
+          <li>No in-match win probability: the chance to win is set before first serve.</li>
+          <li>No individual player ratings: VOLI rates teams, and shows players through their stats.</li>
+          <li>No official awards: VOLI's match MVPs and the VOLI Top 100 are VOLI's own. Honors in the Volleyball Encyclopedia are the ones the awarding bodies gave.</li>
+        </ul>
+      </section>
+
+      <section class="block" id="independent">
+        <h2>Independent</h2>
+        <p>VOLI is independent, built by volleyball fans for volleyball fans, and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.</p>
+      </section>
+
+      <div class="cta">
+        <p>See the ratings, the Top 100 and each match's chance to win in VOLI. Free on iPhone and Android.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Download on the App Store</a>
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.playvoli.app">Get it on Google Play</a>
+        </div>
+      </div>
+      <p class="related"><a href="/coverage">What's in VOLI</a> · <a href="/game-center">Follow a match live</a> · <a href="/faq">FAQ</a></p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+    .page {
+        width: 100%;
+        max-width: 880px;
+        margin: 0 auto;
+        padding: calc(6rem + env(safe-area-inset-top)) 1rem 3rem;
+    }
+    .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2.75rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+    .eyebrow {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+    .lead {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.75;
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .asof {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .block { margin-top: 2.75rem; }
+    h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.6rem;
+    }
+    h2 .tag {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 0.5rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 100px;
+        background: var(--accent-subtle);
+        color: var(--accent);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.5rem;
+    }
+    p, li {
+        color: var(--text-secondary);
+        font-size: 0.97rem;
+        line-height: 1.75;
+    }
+    p + p { margin-top: 0.75rem; }
+    ul.plain { padding-left: 1.15rem; }
+    ul.plain li { margin-bottom: 0.35rem; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a.inline { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .limits {
+        margin-top: 0.75rem;
+        padding: 0.7rem 0.9rem;
+        border-left: 2px solid var(--electric-blue);
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 0 10px 10px 0;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+    .limits strong { color: var(--text-secondary); }
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.6rem;
+        margin: 1rem 0 0.25rem;
+    }
+    .stat {
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    .stat b {
+        display: block;
+        color: var(--text-primary);
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+    }
+    .stat span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 0.75rem;
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        font-variant-numeric: tabular-nums;
+    }
+    caption {
+        caption-side: top;
+        text-align: left;
+        padding: 0.7rem 0.9rem 0.3rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+    }
+    th, td {
+        padding: 0.55rem 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+        white-space: nowrap;
+    }
+    th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    td { color: var(--text-secondary); }
+    td.num, th.num { text-align: right; }
+    tr:last-child td { border-bottom: none; }
+    tr.total td { color: var(--text-primary); font-weight: 600; background: rgba(255, 255, 255, 0.02); }
+    td.win { color: var(--accent); font-weight: 700; }
+    .cta {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+    }
+    .cta p { margin-bottom: 1rem; }
+    .cta-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.7rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        transition: background 0.2s;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn.primary:hover { background: #d4ff33; }
+    .related { margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    .related a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; margin: 0 0.35rem; }
+    .fine { color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 1.5rem; line-height: 1.6; }
+    @media (max-width: 480px) {
+        .page { padding-left: 1rem; padding-right: 1rem; }
+        .card { padding: 2rem 1.1rem; border-radius: 20px; }
+        h1 { font-size: 1.6rem; }
+        .lead { font-size: 0.98rem; }
+        th, td { padding: 0.5rem 0.6rem; }
+    }
+</style>

@@ -1,0 +1,31 @@
+# Rebuilds the live site on a schedule so the data pages (rankings, NCAA and
+# pro hubs, leaders, encyclopedia, AVCA poll archive) carry current numbers.
+# Those pages read Supabase at BUILD time; nothing refreshes them otherwise.
+#
+# It only pokes a Vercel deploy hook. If a data read fails, the build throws
+# and Vercel keeps the previous deploy live, so a bad night never publishes a
+# broken or empty page.
+#
+# Needs the repo secret VERCEL_DEPLOY_HOOK (Vercel > Project > Settings > Git >
+# Deploy Hooks, branch: master). Without it the job skips.
+name: Rebuild site data
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # daily, 06:00 Pacific (PDT)
+    - cron: '30 16 * * 1'  # Mondays 09:30 Pacific, after the 08:00 Top 100 publish
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK is not set; skipping."
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK"

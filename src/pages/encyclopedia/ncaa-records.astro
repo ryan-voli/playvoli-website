@@ -1,0 +1,93 @@
+---
+import Shell from './_Shell.astro';
+import { getNcaaRecords, fmt, RECORDS_TOP_N } from '../../lib/encyclopedia-data';
+import type { RecordCategory } from '../../lib/encyclopedia-data';
+
+const book = await getNcaaRecords();
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const title = 'NCAA Volleyball Record Book: Player & Team Records | VOLI';
+const description = `The NCAA Division I women's volleyball record book: ${fmt(book.total)} entries for kills, assists, digs, blocks, aces and more, by match, season and career since 1981.`;
+
+const sections: { id: string; name: string; cats: RecordCategory[] }[] = [
+  { id: 'player', name: 'Player records', cats: book.player },
+  { id: 'team', name: 'Team records', cats: book.team },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: "NCAA Division I women's volleyball record book",
+  description,
+  url: 'https://playvoli.com/encyclopedia/ncaa-records',
+  temporalCoverage: '1981/..',
+  dateModified: new Date().toISOString().slice(0, 10),
+  creator: { '@id': 'https://playvoli.com/#organization' },
+  isBasedOn: { '@type': 'CreativeWork', name: "NCAA Division I Women's Volleyball Records Book", publisher: { '@type': 'Organization', name: 'NCAA' } },
+  isAccessibleForFree: true,
+};
+---
+
+<Shell title={title} description={description} path="/encyclopedia/ncaa-records" h1="NCAA volleyball record book" schema={schema} source="Source: NCAA Division I Women's Volleyball Records Book">
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      The official NCAA Division I women's volleyball records: {fmt(book.total)} entries across {book.player.length} player
+      and {book.team.length} team categories, for a single match (by three, four and five sets), a season and a career.
+      Records are split by scoring era where the NCAA splits them: side-out scoring through 2000, 30-point sets from 2001 to 2007,
+      and 25-point sets since 2008.
+    </p>
+  </Fragment>
+
+  <nav class="ency-section" aria-label="Categories">
+    {sections.map((s) => (
+      <div class="jump">
+        <p class="jump-label">{s.name}</p>
+        <div class="ency-chips">
+          {s.cats.map((c) => <a class="ency-chip" href={`#${s.id}-${slug(c.key)}`}>{c.label}</a>)}
+        </div>
+      </div>
+    ))}
+  </nav>
+
+  <p class="ency-note">Each list shows the top {RECORDS_TOP_N} (ties included). The full lists are in the VOLI app.</p>
+
+  {sections.map((s) => (
+    <section class="ency-section" aria-labelledby={`${s.id}-h`}>
+      <h2 id={`${s.id}-h`} class="ency-h2">{s.name}</h2>
+      {s.cats.map((c) => (
+        <details id={`${s.id}-${slug(c.key)}`}>
+          <summary><span>{c.label}</span><span class="count">{c.ladders.length} {c.ladders.length === 1 ? 'list' : 'lists'}</span></summary>
+          <div class="ency-inner">
+            {c.ladders.map((l) => (
+              <div class="ency-table-wrap ladder">
+                <table class="ency-table">
+                  <caption>{c.label}: {l.label}{l.total > l.entries.length ? ` (top ${RECORDS_TOP_N} of ${l.total})` : ''}</caption>
+                  <thead><tr><th scope="col">#</th><th scope="col">Record</th><th scope="col">{s.id === 'player' ? 'Player' : 'Team'}</th><th scope="col">Details</th></tr></thead>
+                  <tbody>
+                    {l.entries.map((e) => (
+                      <tr>
+                        <td class="num dim">{e.rank}</td>
+                        <td class="num"><strong>{e.value}</strong></td>
+                        <th scope="row">{e.name}{e.team ? <span class="muted"> · {e.team}</span> : null}</th>
+                        <td class="muted">{[e.opponent, e.when, e.detail].filter(Boolean).join(' · ') || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+        </details>
+      ))}
+    </section>
+  ))}
+
+  <p class="ency-note">See also: <a href="/encyclopedia/ncaa-champions">every NCAA champion</a> · <a href="/encyclopedia/avca-poll">final AVCA Coaches Polls</a></p>
+</Shell>
+
+<style>
+  .jump { margin-bottom: 1.25rem; }
+  .jump-label { font-weight: 600; margin-bottom: 0.6rem; color: var(--text-secondary); }
+  .ladder { margin-bottom: 0.75rem; }
+  .ladder tbody th { white-space: normal; font-weight: 600; }
+</style>

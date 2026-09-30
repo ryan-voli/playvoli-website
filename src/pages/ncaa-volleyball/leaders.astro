@@ -1,0 +1,251 @@
+---
+// /ncaa-volleyball/leaders — Division I stat leaders per set, built at build.
+//
+// Data: vbdata.basic_statistics for the final matches (vbdata.games) of the
+// current NCAA season. Team attribution comes from vbdata.ncaa_rosters
+// for that season — never players.team_uuid. Public vbdata only; the fantasy
+// schema is never read. Empty data fails the build.
+import Layout from '../../layouts/Layout.astro';
+import {
+  vb, fetchAll, fetchByIds, chunk, teamsById, teamName, teamColor, latestNcaaSeason,
+  seasonYear, longDate, fmtInt, fmtPct3, type Game,
+} from '../../lib/data';
+
+const { season, lastFinal } = await latestNcaaSeason();
+const year = seasonYear(season);
+const asOf = longDate(lastFinal);
+
+// Sets each team has played, for the minimum-sets rule.
+const games = await fetchAll<Game>('season final games', (from, to) =>
+  vb().from('games').select('game_id,date,home_uuid,away_uuid,home_sets_won,away_sets_won')
+    .eq('season', season).eq('game_status', 'final')
+    .order('game_id').range(from, to),
+);
+interface Line {
+  player_uuid: string; team_uuid: string; game_uuid: string; sets_played: number | null;
+  atk_kll: number | null; atk_err: number | null; atk_sum: number | null;
+  srv_ace: number | null; blk_kll: number | null; dig_sum: number | null; ast_sum: number | null;
+}
+// One read of the season's box scores, by batches of final game ids (the
+// game_uuid index), reused for all six boards. Never an unfiltered scan.
+const lines = await fetchByIds<Line>('basic_statistics (season)', games.map((g) => g.game_id), 30, (ids, from, to) =>
+  vb().from('basic_statistics')
+    .select('id,game_uuid,player_uuid,team_uuid,sets_played,atk_kll,atk_err,atk_sum,srv_ace,blk_kll,dig_sum,ast_sum')
+    .in('game_uuid', ids)
+    .order('id').range(from, to),
+);
+if (!lines.length) throw new Error('[leaders] no box scores for the season');
+
+const teamSets = new Map<string, number>();
+for (const g of games) {
+  const s = (g.home_sets_won ?? 0) + (g.away_sets_won ?? 0);
+  teamSets.set(g.home_uuid, (teamSets.get(g.home_uuid) ?? 0) + s);
+  teamSets.set(g.away_uuid, (teamSets.get(g.away_uuid) ?? 0) + s);
+}
+const sortedSets = [...teamSets.values()].sort((a, b) => a - b);
+const medianSets = sortedSets[Math.floor(sortedSets.length / 2)];
+// Three quarters of the typical team's sets so far, rounded to a 5.
+const MIN_SETS = Math.max(10, Math.round((medianSets * 0.75) / 5) * 5);
+const MIN_ATT = MIN_SETS * 5;
+
+// Season totals per player.
+interface Tot { sets: number; k: number; e: number; ta: number; sa: number; b: number; d: number; a: number; team: Map<string, number>; }
+const tot = new Map<string, Tot>();
+for (const l of lines) {
+  const t = tot.get(l.player_uuid) ?? { sets: 0, k: 0, e: 0, ta: 0, sa: 0, b: 0, d: 0, a: 0, team: new Map() };
+  t.sets += l.sets_played ?? 0;
+  t.k += l.atk_kll ?? 0; t.e += l.atk_err ?? 0; t.ta += l.atk_sum ?? 0;
+  t.sa += l.srv_ace ?? 0; t.b += Number(l.blk_kll ?? 0); t.d += l.dig_sum ?? 0; t.a += l.ast_sum ?? 0;
+  if (l.team_uuid) t.team.set(l.team_uuid, (t.team.get(l.team_uuid) ?? 0) + 1);
+  tot.set(l.player_uuid, t);
+}
+const qualified = [...tot.entries()].filter(([, t]) => t.sets >= MIN_SETS);
+if (qualified.length < 25) throw new Error(`[leaders] only ${qualified.length} players meet ${MIN_SETS} sets`);
+
+type Cat = { id: string; label: string; stat: string; per: boolean; val: (t: Tot) => number; total: (t: Tot) => string; fmt: (x: number) => string; eligible?: (t: Tot) => boolean };
+const CATS: Cat[] = [
+  { id: 'kills', label: 'Kills per set', stat: 'Kills', per: true, val: (t) => t.k / t.sets, total: (t) => fmtInt(t.k), fmt: (x) => x.toFixed(2) },
+  { id: 'hitting', label: 'Hitting percentage', stat: 'Att', per: false, val: (t) => (t.k - t.e) / t.ta, total: (t) => fmtInt(t.ta), fmt: fmtPct3, eligible: (t) => t.ta >= MIN_ATT },
+  { id: 'aces', label: 'Aces per set', stat: 'Aces', per: true, val: (t) => t.sa / t.sets, total: (t) => fmtInt(t.sa), fmt: (x) => x.toFixed(2) },
+  { id: 'blocks', label: 'Blocks per set', stat: 'Blocks', per: true, val: (t) => t.b / t.sets, total: (t) => (Number.isInteger(t.b) ? fmtInt(t.b) : t.b.toFixed(1)), fmt: (x) => x.toFixed(2) },
+  { id: 'digs', label: 'Digs per set', stat: 'Digs', per: true, val: (t) => t.d / t.sets, total: (t) => fmtInt(t.d), fmt: (x) => x.toFixed(2) },
+  { id: 'assists', label: 'Assists per set', stat: 'Assists', per: true, val: (t) => t.a / t.sets, total: (t) => fmtInt(t.a), fmt: (x) => x.toFixed(2) },
+];
+const boards = CATS.map((c) => {
+  const rows = qualified
+    .filter(([, t]) => (c.eligible ? c.eligible(t) : true))
+    .map(([pid, t]) => ({ pid, t, v: c.val(t) }))
+    .filter((r) => Number.isFinite(r.v))
+    .sort((a, b) => b.v - a.v)
+    .slice(0, 25);
+  if (rows.length < 25) throw new Error(`[leaders] ${c.id}: only ${rows.length} qualified players`);
+  return { c, rows };
+});
+
+// Names and teams for the players on the boards, from the season roster.
+const pids = [...new Set(boards.flatMap((b) => b.rows.map((r) => r.pid)))];
+interface Ros { player_uuid: string; team_uuid: string; ncaa_name: string | null; position: string | null; class_year: string | null; }
+const roster = new Map<string, Ros>();
+for (const ids of chunk(pids, 60)) {
+  const rows = await fetchAll<Ros>('ncaa_rosters', (from, to) =>
+    vb().from('ncaa_rosters').select('id,player_uuid,team_uuid,ncaa_name,position,class_year')
+      .eq('season', season).in('player_uuid', ids).order('id').range(from, to),
+    { allowEmpty: true },
+  );
+  for (const r of rows) roster.set(r.player_uuid, r);
+}
+const names = new Map<string, string>();
+for (const ids of chunk(pids, 60)) {
+  const rows = await fetchAll<{ player_id: string; first_name: string | null; last_name: string | null }>('players', (from, to) =>
+    vb().from('players').select('player_id,first_name,last_name').in('player_id', ids).order('player_id').range(from, to),
+    { allowEmpty: true },
+  );
+  for (const p of rows) names.set(p.player_id, [p.first_name, p.last_name].filter(Boolean).join(' '));
+}
+const teams = await teamsById();
+function who(pid: string, t: Tot) {
+  const r = roster.get(pid);
+  // Roster is the truth for team attribution; the stat line's own team is the
+  // fallback for a player missing from the roster table.
+  const teamId = r?.team_uuid ?? [...t.team.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const team = teams.get(teamId ?? '');
+  const name = names.get(pid) || r?.ncaa_name || 'Unknown';
+  return { name, team: teamName(team), color: teamColor(team), pos: r?.position ?? '', cls: r?.class_year ?? '' };
+}
+
+const title = `NCAA Volleyball Stat Leaders ${year}`;
+const description = `Division I women's volleyball leaders in kills, hitting percentage, aces, blocks, digs and assists per set, as of ${asOf}.`;
+const url = 'https://playvoli.com/ncaa-volleyball/leaders';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: `NCAA Division I women's volleyball stat leaders, ${year}`,
+  description: `Top 25 Division I women's volleyball players per set in kills, hitting percentage, aces, blocks, digs and assists for the ${year} season, minimum ${MIN_SETS} sets played. As of ${asOf}.`,
+  url,
+  dateModified: new Date(lastFinal).toISOString().slice(0, 10),
+  temporalCoverage: `${year}`,
+  creator: { '@id': 'https://playvoli.com/#organization' },
+  variableMeasured: CATS.map((c) => c.label),
+};
+---
+
+<Layout title={title} description={description} ogUrl={url} canonical={url} schema={schema}>
+  <main class="dp-main">
+    <header class="dp-head">
+      <p class="dp-kicker">NCAA Division I women's volleyball · {year}</p>
+      <h1 class="dp-title">Division I stat leaders</h1>
+      <p class="dp-lead">
+        The top 25 in Division I women's volleyball, per set, as of {asOf}. Minimum {MIN_SETS} sets
+        played. Tap into any player in the VOLI app for the full game log.
+      </p>
+      <p class="dp-stamp"><strong>As of {asOf} · {fmtInt(lines.length)} player box scores from {fmtInt(games.length)} final matches.</strong></p>
+    </header>
+
+    <nav class="dp-jump" aria-label="Stat categories">
+      {CATS.map((c) => <a href={`#${c.id}`}>{c.label}</a>)}
+    </nav>
+
+    {boards.map(({ c, rows }) => (
+      <section class="dp-section" id={c.id} aria-labelledby={`${c.id}-h`}>
+        <h2 id={`${c.id}-h`} class="dp-h2">{c.label}</h2>
+        {c.id === 'hitting' && (
+          <p class="dp-note">Hitting percentage = (kills − attack errors) ÷ attempts. Minimum {MIN_SETS} sets and {MIN_ATT} attempts.</p>
+        )}
+        <div class="dp-table-wrap">
+          <table class="dp-table">
+            <thead>
+              <tr>
+                <th scope="col" class="num">#</th>
+                <th scope="col">Player</th>
+                <th scope="col">Team</th>
+                <th scope="col" class="num hide-sm">Sets</th>
+                <th scope="col" class="num">{c.stat}</th>
+                <th scope="col" class="num">{c.per ? 'Per set' : 'Pct'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => {
+                const w = who(r.pid, r.t);
+                return (
+                  <tr>
+                    <td class="num rank">{i + 1}</td>
+                    <th scope="row" class="team">
+                      <span class="spine" style={`background:${w.color}`}></span>{w.name}
+                    </th>
+                    <td class="muted">{w.team}<span class="hide-sm">{w.pos ? ` · ${w.pos}` : ''}{w.cls ? ` · ${w.cls}` : ''}</span></td>
+                    <td class="num hide-sm">{fmtInt(r.t.sets)}</td>
+                    <td class="num">{c.total(r.t)}</td>
+                    <td class="num strong">{c.fmt(r.v)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))}
+
+    <section class="dp-section dp-cta">
+      <h2 class="dp-h2">How these are counted</h2>
+      <p class="dp-body">
+        Per-set figures are season totals divided by sets played, from final Division I matches of
+        the {year} season. Players need at least {MIN_SETS} sets, about three quarters of the sets a
+        typical team has played so far. Teams come from each school's {year} roster. The list is
+        rebuilt from VOLI's box scores as matches finish.
+      </p>
+      <p class="dp-links">
+        <a class="dp-link" href="/ncaa-volleyball">College volleyball on VOLI</a>
+        <a class="dp-link" href="/rankings">The VOLI Top 100</a>
+        <a class="dp-link" href="/mobileapp">Get the VOLI app</a>
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .dp-main { max-width: 980px; margin: 0 auto; padding: calc(5rem + env(safe-area-inset-top)) 1.5rem 5rem; }
+  .dp-head { margin-bottom: 2.25rem; }
+  .dp-kicker { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.6rem; }
+  .dp-title { font-family: 'Designer', 'Inter', -apple-system, sans-serif; font-size: clamp(2.1rem, 5.5vw, 3.2rem); line-height: 1.02; margin: 0; text-transform: uppercase; }
+  .dp-lead { margin: 1rem 0 0; color: var(--text-secondary); font-size: 1.05rem; line-height: 1.65; max-width: 62ch; }
+  .dp-stamp { margin: 0.6rem 0 0; color: var(--accent); font-size: 0.95rem; }
+  .dp-section { margin-top: 3rem; }
+  .dp-h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 0.75rem; }
+  .dp-note { color: var(--text-muted); font-size: 0.88rem; line-height: 1.55; margin: 0 0 1rem; max-width: 70ch; }
+  .dp-body { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; margin: 0 0 1rem; max-width: 68ch; }
+  .dp-link { color: var(--accent); font-weight: 600; }
+  .dp-link:hover { text-decoration: underline; }
+  .dp-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
+  .dp-table-wrap { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; overflow-x: auto; }
+  .dp-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .dp-table th, .dp-table td { padding: 0.62rem 0.85rem; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
+  .dp-table thead th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 700; }
+  .dp-table tbody tr:last-child > * { border-bottom: none; }
+  .dp-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .dp-table .rank { font-weight: 800; color: var(--text-primary); }
+  .dp-table .team { font-weight: 600; white-space: nowrap; }
+  .spine { display: inline-block; width: 4px; height: 1.1em; border-radius: 2px; margin-right: 0.6rem; vertical-align: -0.15em; }
+  .muted { color: var(--text-muted); }
+  .small { font-size: 0.8rem; }
+  .nowrap { white-space: nowrap; }
+  .mv { font-weight: 700; font-size: 0.82rem; }
+  .mv-up { color: var(--accent); }
+  .mv-down { color: var(--rose); }
+  .mv-new { color: var(--electric-blue); }
+  .mv-flat { color: var(--text-muted); }
+  .mu-line { display: block; line-height: 1.6; }
+  .rk { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; margin-right: 0.2rem; }
+  .at { color: var(--text-muted); font-size: 0.8rem; }
+  @media (max-width: 640px) {
+    .dp-main { padding: calc(5rem + env(safe-area-inset-top)) 1rem 4rem; }
+    .hide-sm { display: none; }
+    .dp-table th, .dp-table td { padding: 0.55rem 0.6rem; }
+  }
+</style>
+
+<style>
+  .dp-jump { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .dp-jump a { font-size: 0.82rem; font-weight: 600; padding: 0.4rem 0.8rem; border-radius: 999px; background: var(--bg-card); border: 1px solid var(--glass-border); color: var(--text-secondary); }
+  .dp-jump a:hover { color: var(--accent); border-color: rgba(200, 255, 0, 0.3); }
+  .strong { font-weight: 800; color: var(--text-primary); }
+</style>

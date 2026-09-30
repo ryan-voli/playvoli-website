@@ -1,0 +1,294 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+/* Numbers measured 30 Sep 2026 (read-only counts). News outlets are given
+ * as a count and categories only, never by name. Podcast shows are public
+ * partners and are named. */
+const AS_OF = 'September 30, 2026';
+const AS_OF_ISO = '2026-09-30';
+
+const shows = [
+  { name: 'The USA Volleyball Show', eps: 152, hrs: 156, span: '2021–2026' },
+  { name: 'Volleyball State', eps: 133, hrs: 141, span: '2023–2026' },
+  { name: 'Dig City: Purdue Volleyball Podcast', eps: 127, hrs: 63, span: '2019–2026' },
+  { name: 'Volley Talk with Sarah Pavan', eps: 93, hrs: 106, span: '2024–2026' },
+  { name: 'Court Captains', eps: 67, hrs: 63, span: '2024–2026' },
+  { name: 'The Side Out Society Podcast', eps: 60, hrs: 39, span: '2025–2026' },
+  { name: 'Serving Pancakes', eps: 60, hrs: 35, span: '2024–2026' },
+  { name: "Ember's Nest", eps: 48, hrs: 25, span: '2024–2026' },
+  { name: 'The Major League Minute', eps: 48, hrs: 48, span: '2026' },
+  { name: 'Out of Rotation', eps: 34, hrs: 27, span: '2023–2026' },
+  { name: 'Volley Takes', eps: 33, hrs: 20, span: '2023–2025' },
+  { name: 'Set 6: The Official MLV Podcast', eps: 23, hrs: 23, span: '2026' },
+  { name: 'Six Zone Duo', eps: 6, hrs: 5, span: '2026' },
+];
+---
+
+<Layout
+  title="Volleyball News & Podcasts in One Place"
+  description="Volleyball news from 19 outlets and 13 podcasts with nearly 900 episodes, together in the free VOLI app."
+  activePage="news-and-podcasts"
+  ogUrl="https://playvoli.com/news-and-podcasts"
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://playvoli.com/news-and-podcasts#webpage",
+    "url": "https://playvoli.com/news-and-podcasts",
+    "name": "Read and listen",
+    "dateModified": AS_OF_ISO,
+    "isPartOf": { "@id": "https://playvoli.com/#website" },
+    "about": { "@id": "https://playvoli.com/#app" }
+  }}
+>
+  <main class="page">
+    <article class="card">
+      <p class="eyebrow">News &amp; podcasts</p>
+      <h1>Read and listen</h1>
+      <p class="lead">VOLI gathers volleyball news from 19 outlets, from league and conference sites to independent writers, and links every story back to its source. It also carries 13 volleyball podcasts with nearly 900 episodes, and it remembers where you stopped listening on every device.</p>
+      <p class="asof">Numbers as of <time datetime={AS_OF_ISO}>{AS_OF}</time>.</p>
+
+      <section class="block" id="news">
+        <h2>News</h2>
+        <p>The Read tab brings the day's volleyball stories into one feed: college and pro, national and local. Stories are tagged to the teams, players and matches they are about.</p>
+        <div class="stats">
+          <div class="stat"><b>19</b><span>outlets</span></div>
+          <div class="stat"><b>1,157</b><span>articles since March 2025</span></div>
+          <div class="stat"><b>71</b><span>writers</span></div>
+        </div>
+        <p>Where the stories come from: league sites, conference sites, national sports outlets and independent volleyball writers and newsletters. Each story shows the outlet and writer and opens the original.</p>
+      </section>
+
+      <section class="block" id="podcasts">
+        <h2>Podcasts</h2>
+        <p>The Listen tab is a volleyball podcast library with a full player: scrub through an episode, favorite a show, download for later, and pick up where you stopped on your phone, tablet or another device. Some shows run their own fantasy leagues and AMAs inside VOLI.</p>
+        <div class="stats">
+          <div class="stat"><b>13</b><span>shows</span></div>
+          <div class="stat"><b>884</b><span>episodes</span></div>
+          <div class="stat"><b>~751</b><span>hours of listening</span></div>
+          <div class="stat"><b>2019</b><span>earliest episode</span></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <caption>Volleyball podcasts in VOLI</caption>
+            <thead><tr><th>Show</th><th class="num">Episodes</th><th class="num">Hours</th><th>Years</th></tr></thead>
+            <tbody>
+              {shows.map(s => (
+                <tr><td>{s.name}</td><td class="num">{s.eps}</td><td class="num">{s.hrs}</td><td>{s.span}</td></tr>
+              ))}
+              <tr class="total"><td>13 shows</td><td class="num">{shows.reduce((t, s) => t + s.eps, 0)}</td><td class="num">~751</td><td>2019–2026</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="cta">
+        <p>Read and listen in VOLI, alongside fantasy, live games, stats and history. Free on iPhone and Android.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Download on the App Store</a>
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.playvoli.app">Get it on Google Play</a>
+        </div>
+      </div>
+      <p class="related"><a href="/coverage">What's in VOLI</a> · <a href="/game-center">Follow a match live</a> · <a href="/faq">FAQ</a></p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+    .page {
+        width: 100%;
+        max-width: 880px;
+        margin: 0 auto;
+        padding: calc(6rem + env(safe-area-inset-top)) 1rem 3rem;
+    }
+    .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2.75rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+    .eyebrow {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+    .lead {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.75;
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .asof {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .block { margin-top: 2.75rem; }
+    h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.6rem;
+    }
+    h2 .tag {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 0.5rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 100px;
+        background: var(--accent-subtle);
+        color: var(--accent);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.5rem;
+    }
+    p, li {
+        color: var(--text-secondary);
+        font-size: 0.97rem;
+        line-height: 1.75;
+    }
+    p + p { margin-top: 0.75rem; }
+    ul.plain { padding-left: 1.15rem; }
+    ul.plain li { margin-bottom: 0.35rem; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a.inline { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .limits {
+        margin-top: 0.75rem;
+        padding: 0.7rem 0.9rem;
+        border-left: 2px solid var(--electric-blue);
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 0 10px 10px 0;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+    .limits strong { color: var(--text-secondary); }
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.6rem;
+        margin: 1rem 0 0.25rem;
+    }
+    .stat {
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    .stat b {
+        display: block;
+        color: var(--text-primary);
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+    }
+    .stat span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 0.75rem;
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        font-variant-numeric: tabular-nums;
+    }
+    caption {
+        caption-side: top;
+        text-align: left;
+        padding: 0.7rem 0.9rem 0.3rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+    }
+    th, td {
+        padding: 0.55rem 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+        white-space: nowrap;
+    }
+    th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    td { color: var(--text-secondary); }
+    td.num, th.num { text-align: right; }
+    tr:last-child td { border-bottom: none; }
+    tr.total td { color: var(--text-primary); font-weight: 600; background: rgba(255, 255, 255, 0.02); }
+    td.win { color: var(--accent); font-weight: 700; }
+    .cta {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+    }
+    .cta p { margin-bottom: 1rem; }
+    .cta-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.7rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        transition: background 0.2s;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn.primary:hover { background: #d4ff33; }
+    .related { margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    .related a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; margin: 0 0.35rem; }
+    .fine { color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 1.5rem; line-height: 1.6; }
+    @media (max-width: 480px) {
+        .page { padding-left: 1rem; padding-right: 1rem; }
+        .card { padding: 2rem 1.1rem; border-radius: 20px; }
+        h1 { font-size: 1.6rem; }
+        .lead { font-size: 0.98rem; }
+        th, td { padding: 0.5rem 0.6rem; }
+    }
+</style>

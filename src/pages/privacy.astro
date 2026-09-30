@@ -1,5 +1,47 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+/*
+ * READ AT BUILD TIME, so the full text is in the first HTML that crawlers and
+ * readers get (it used to arrive by a browser fetch, leaving crawlers an
+ * empty placeholder). Same public row, same markup as the old browser
+ * renderer. The build fails rather than ship an empty legal page.
+ */
+const SUPABASE_URL = 'https://api.playvoli.com';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+const res = await fetch(SUPABASE_URL + '/rest/v1/global_settings?select=privacy_policy&limit=1', {
+  headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY },
+});
+if (!res.ok) throw new Error('privacy: global_settings read failed (' + res.status + ')');
+const rows = await res.json();
+const doc = rows?.[0]?.privacy_policy;
+if (!doc?.sections?.length) throw new Error('privacy: no privacy_policy in global_settings');
+
+function render(d: any): string {
+  let html = '<div style="margin-bottom: 3rem;"><p>' + d.header + '</p></div>';
+  for (const section of d.sections ?? []) {
+    html += '<div style="margin-bottom: 3rem;">';
+    html += '<div style="color: var(--electric-blue); font-size: 0.8rem; font-weight: 400; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">' + section.section_number + '. ' + section.section_title + '</div>';
+    for (const item of section.content ?? []) {
+      if (item.title) html += '<h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--text-primary);">' + item.title + '</h3>';
+      const text = String(item.text ?? '');
+      if (text.indexOf('•') !== -1) {
+        const parts = text.split('•');
+        if (parts[0].trim()) html += '<p>' + parts[0].trim() + '</p>';
+        if (parts.length > 1) {
+          html += '<ul style="margin-bottom: 1rem; padding-left: 1.5rem; color: var(--text-secondary);">';
+          for (let i = 1; i < parts.length; i++) html += '<li>' + parts[i].trim() + '</li>';
+          html += '</ul>';
+        }
+      } else {
+        html += '<p>' + text + '</p>';
+      }
+    }
+    html += '</div>';
+  }
+  return html;
+}
+const contentHtml = render(doc);
 ---
 
 <Layout
@@ -8,85 +50,10 @@ import Layout from '../layouts/Layout.astro';
 >
     <main class="card">
         <h1 class="title">Privacy Policy</h1>
-        <p class="subtitle" id="privacy-last-updated">Last updated: Loading...</p>
+        <p class="subtitle" id="privacy-last-updated">Last updated: {doc.last_updated}</p>
 
-        <div class="content" id="privacy-content">
-            <p>Loading privacy policy...</p>
-        </div>
+        <div class="content" id="privacy-content" set:html={contentHtml} />
     </main>
-
-    <script is:inline slot="scripts">
-        var SUPABASE_URL = 'https://api.playvoli.com';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
-
-        (async function() {
-            var container = document.getElementById('privacy-content');
-            if (!container) return;
-
-            try {
-                var response = await fetch(SUPABASE_URL + '/rest/v1/global_settings?select=privacy_policy&limit=1', {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                    }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch privacy policy');
-
-                var data = await response.json();
-                if (data && data.length > 0 && data[0].privacy_policy) {
-                    renderPrivacyPolicy(data[0].privacy_policy, container);
-                } else {
-                    container.innerHTML = '<p style="color: var(--text-secondary);">No privacy policy available.</p>';
-                }
-            } catch (error) {
-                console.error('[Privacy] Error:', error);
-                container.innerHTML = '<p style="color: var(--text-secondary);">Unable to load privacy policy. Please try again later.</p>';
-            }
-        })();
-
-        function renderPrivacyPolicy(privacyData, container) {
-            var header = privacyData.header;
-            var lastUpdated = privacyData.last_updated;
-            var sections = privacyData.sections;
-
-            var lastUpdatedEl = document.getElementById('privacy-last-updated');
-            if (lastUpdatedEl) lastUpdatedEl.textContent = 'Last updated: ' + lastUpdated;
-
-            var html = '<div style="margin-bottom: 3rem;"><p>' + header + '</p></div>';
-
-            sections.forEach(function(section) {
-                html += '<div style="margin-bottom: 3rem;">';
-                html += '<div style="color: var(--electric-blue); font-size: 0.8rem; font-weight: 400; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">' + section.section_number + '. ' + section.section_title + '</div>';
-
-                section.content.forEach(function(item) {
-                    if (item.title) {
-                        html += '<h3 style="margin-bottom: 0.5rem; font-size: 1rem; color: var(--text-primary);">' + item.title + '</h3>';
-                    }
-
-                    if (item.text.indexOf('\u2022') !== -1) {
-                        var parts = item.text.split('\u2022');
-                        if (parts[0].trim()) {
-                            html += '<p>' + parts[0].trim() + '</p>';
-                        }
-                        if (parts.length > 1) {
-                            html += '<ul style="margin-bottom: 1rem; padding-left: 1.5rem; color: var(--text-secondary);">';
-                            for (var i = 1; i < parts.length; i++) {
-                                html += '<li>' + parts[i].trim() + '</li>';
-                            }
-                            html += '</ul>';
-                        }
-                    } else {
-                        html += '<p>' + item.text + '</p>';
-                    }
-                });
-
-                html += '</div>';
-            });
-
-            container.innerHTML = html;
-        }
-    </script>
 </Layout>
 
 <style>

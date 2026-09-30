@@ -1,0 +1,369 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getProofMatch } from '../lib/game-center-data';
+
+// Build-time, read-only, public vbdata only. Throws (fails the build) if
+// any part of the match comes back empty.
+const m = await getProofMatch();
+const builtOn = new Date().toLocaleDateString('en-US', {
+  timeZone: 'America/Los_Angeles', month: 'long', day: 'numeric', year: 'numeric',
+});
+const winnerName = m.winner === 'home' ? m.home.name : m.away.name;
+const loserName = m.winner === 'home' ? m.away.name : m.home.name;
+const wSets = Math.max(m.home.setsWon, m.away.setsWon);
+const lSets = Math.min(m.home.setsWon, m.away.setsWon);
+const setNums = m.home.setScores.map((_, i) => i + 1);
+const sides = [
+  { key: 'away' as const, t: m.away, box: m.box.away },
+  { key: 'home' as const, t: m.home, box: m.box.home },
+];
+
+const eventSchema = {
+  "@context": "https://schema.org",
+  "@type": "SportsEvent",
+  "name": `${m.away.name} at ${m.home.name}, NCAA Division I women's volleyball`,
+  "sport": "Volleyball",
+  "startDate": m.isoDate,
+  "eventStatus": "https://schema.org/EventScheduled",
+  ...(m.arena ? { "location": { "@type": "Place", "name": m.arena } } : {}),
+  "homeTeam": { "@type": "SportsTeam", "name": m.home.name },
+  "awayTeam": { "@type": "SportsTeam", "name": m.away.name },
+  "description": `${winnerName} beat ${loserName} ${wSets}-${lSets}. Set scores (${m.away.abbr}-${m.home.abbr}): ${setNums.map(i => `${m.away.setScores[i-1]}-${m.home.setScores[i-1]}`).join(', ')}.`,
+};
+---
+
+<Layout
+  title="Follow a Volleyball Match Live in VOLI"
+  description="Live scores, box scores, play-by-play, rotations and lead charts for college and pro volleyball, plus iPhone Live Activities. See a real match."
+  activePage="game-center"
+  ogUrl="https://playvoli.com/game-center"
+  schema={eventSchema}
+>
+  <main class="page">
+    <article class="card">
+      <p class="eyebrow">Game center</p>
+      <h1>Follow a match live</h1>
+      <p class="lead">Open any college or pro match in VOLI and follow it point by point. The scoreboard, box score and play-by-play update as the match is played. The rotation view shows who is on the court, and the lead chart shows how each set swung. Below is a real match from the 2026 season, exactly as VOLI recorded it.</p>
+
+      <section class="block" id="inside">
+        <h2>What's in a match</h2>
+        <ul class="plain">
+          <li><strong>Preview:</strong> before first serve, each college match shows each team's chance to win, the most likely set score, the matchup and players to watch.</li>
+          <li><strong>Overview:</strong> live score tiles, the lead chart for each set and a set-by-set ledger.</li>
+          <li><strong>Box score:</strong> kills, errors, attempts, hitting percentage, assists, aces, blocks and digs for each player, with a toggle between teams.</li>
+          <li><strong>Performance:</strong> attack, serve, receive, block, dig and set, head to head and set by set.</li>
+          <li><strong>Play-by-play:</strong> each rally and substitution, in order, with the score after each point.</li>
+          <li><strong>Rotation view:</strong> who is on the court in each rotation.</li>
+          <li><strong>Roster, standouts and match info:</strong> the match MVP, arena, officials and attendance where available, plus where to watch.</li>
+          <li><strong>Chat:</strong> a chat room for each match.</li>
+        </ul>
+      </section>
+
+      <section class="block" id="real-match">
+        <h2>A real match: {m.away.name} at {m.home.name}</h2>
+        <p><time datetime={m.isoDate}>{m.dateLabel}</time>{m.arena ? `, ${m.arena}` : ''}. {winnerName} won {wSets}–{lSets}{m.setsLogged === 5 ? ' in five sets' : ''}. NCAA Division I women's volleyball{m.home.conference && m.home.conference === m.away.conference ? `, ${m.home.conference}` : ''}.</p>
+
+        <h3>Set scores</h3>
+        <div class="table-wrap">
+          <table>
+            <caption>Final, set by set</caption>
+            <thead>
+              <tr><th>Team</th>{setNums.map(i => <th class="num">Set {i}</th>)}<th class="num">Sets</th></tr>
+            </thead>
+            <tbody>
+              {sides.map(({ key, t }) => (
+                <tr>
+                  <td>{t.name}</td>
+                  {setNums.map(i => {
+                    const mine = t.setScores[i - 1];
+                    const other = (key === 'home' ? m.away : m.home).setScores[i - 1];
+                    return <td class:list={['num', { win: mine > other }]}>{mine}</td>;
+                  })}
+                  <td class:list={['num', { win: t.setsWon > (key === 'home' ? m.away : m.home).setsWon }]}>{t.setsWon}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Box score</h3>
+        <p>The top five players on each side by kills, then the team totals. The app shows all {m.box.away.players + m.box.home.players} players who took the court.</p>
+        {sides.map(({ box }) => (
+          <div class="table-wrap">
+            <table>
+              <caption>{box.team}</caption>
+              <thead>
+                <tr><th>Player</th><th class="num">K</th><th class="num">E</th><th class="num">TA</th><th class="num">Hit %</th><th class="num">A</th><th class="num">SA</th><th class="num">B</th><th class="num">D</th></tr>
+              </thead>
+              <tbody>
+                {box.top.map(l => (
+                  <tr><td>{l.name}</td><td class="num">{l.kills}</td><td class="num">{l.errors}</td><td class="num">{l.attempts}</td><td class="num">{l.hitPct}</td><td class="num">{l.assists}</td><td class="num">{l.aces}</td><td class="num">{l.blocks}</td><td class="num">{l.digs}</td></tr>
+                ))}
+                <tr class="total"><td>{box.team} total</td><td class="num">{box.totals.kills}</td><td class="num">{box.totals.errors}</td><td class="num">{box.totals.attempts}</td><td class="num">{box.totals.hitPct}</td><td class="num">{box.totals.assists}</td><td class="num">{box.totals.aces}</td><td class="num">{box.totals.blocks}</td><td class="num">{box.totals.digs}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        ))}
+        <p class="limits">K kills · E attack errors · TA total attempts · Hit % (kills − errors) ÷ attempts · A assists · SA service aces · B blocks · D digs.</p>
+
+        <h3>Play-by-play: the end of set {m.excerptSet}</h3>
+        <p>VOLI logged {m.totalRallies.toLocaleString('en-US')} rallies and {m.totalSubs.toLocaleString('en-US')} substitutions across the {m.setsLogged} sets of this match. Here are the last {m.excerpt.length} rallies of set {m.excerptSet}{m.excerptSkipped ? `, picking up after rally ${m.excerptSkipped}` : ''}.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Set {m.excerptSet}, score shown {m.away.abbr}–{m.home.abbr} after each rally</caption>
+            <thead><tr><th class="num">{m.away.abbr}–{m.home.abbr}</th><th>Point to</th><th>Rally</th></tr></thead>
+            <tbody>
+              {m.excerpt.map(r => (
+                <tr>
+                  <td class="num">{r.away}–{r.home}</td>
+                  <td>{r.winner === 'home' ? m.home.abbr : m.away.abbr}</td>
+                  <td style="white-space:normal">{r.text}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="asof">Rendered from VOLI's match record on {builtOn}. The match is final, so these numbers do not change.</p>
+      </section>
+
+      <section class="block" id="screens">
+        <h2>In the app</h2>
+        <div class="shots">
+          <figure>
+            <img src="/images/screenshots/games2.webp" width="1000" height="2000" loading="lazy" decoding="async"
+                 alt="VOLI game center for a five-set LOVB match: final set scores by set at the top, set 5 selected, and the play-by-play below showing each touch of a rally as serve, reception, set, attack and dig, with the player's name and number.">
+            <figcaption>Play-by-play for a single set, touch by touch.</figcaption>
+          </figure>
+          <figure>
+            <img src="/images/gamedetails.webp" width="1290" height="2796" loading="lazy" decoding="async"
+                 alt="VOLI performance view for a four-set MLV match: attack, reception and serve rings for each team with hitting percentage, kills, blocks and errors, and dig and block totals.">
+            <figcaption>Performance, head to head: attack, reception and serve.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="block" id="live-activities">
+        <h2>On your lock screen</h2>
+        <p>On iPhone, Live Activities keep the live score of the matches you follow on the lock screen and in the Dynamic Island, up to three at a time, without opening the app. A home-screen widget shows your next game, and calendar sync puts your team's schedule in your phone's calendar.</p>
+      </section>
+
+      <div class="cta">
+        <p>Follow your next match in VOLI. Free on iPhone and Android.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Download on the App Store</a>
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.playvoli.app">Get it on Google Play</a>
+        </div>
+      </div>
+      <p class="related"><a href="/coverage">What's in VOLI</a> · <a href="/methods">How VOLI's numbers work</a> · <a href="/faq">FAQ</a></p>
+      <p class="fine">VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB or any conference.</p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+    .page {
+        width: 100%;
+        max-width: 880px;
+        margin: 0 auto;
+        padding: calc(6rem + env(safe-area-inset-top)) 1rem 3rem;
+    }
+    .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2.75rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+    .eyebrow {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+    .lead {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.75;
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .asof {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .block { margin-top: 2.75rem; }
+    h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.6rem;
+    }
+    h2 .tag {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 0.5rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 100px;
+        background: var(--accent-subtle);
+        color: var(--accent);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.5rem;
+    }
+    p, li {
+        color: var(--text-secondary);
+        font-size: 0.97rem;
+        line-height: 1.75;
+    }
+    p + p { margin-top: 0.75rem; }
+    ul.plain { padding-left: 1.15rem; }
+    ul.plain li { margin-bottom: 0.35rem; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a.inline { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .limits {
+        margin-top: 0.75rem;
+        padding: 0.7rem 0.9rem;
+        border-left: 2px solid var(--electric-blue);
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 0 10px 10px 0;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+    .limits strong { color: var(--text-secondary); }
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.6rem;
+        margin: 1rem 0 0.25rem;
+    }
+    .stat {
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    .stat b {
+        display: block;
+        color: var(--text-primary);
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+    }
+    .stat span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 0.75rem;
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        font-variant-numeric: tabular-nums;
+    }
+    caption {
+        caption-side: top;
+        text-align: left;
+        padding: 0.7rem 0.9rem 0.3rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+    }
+    th, td {
+        padding: 0.55rem 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+        white-space: nowrap;
+    }
+    th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    td { color: var(--text-secondary); }
+    td.num, th.num { text-align: right; }
+    tr:last-child td { border-bottom: none; }
+    tr.total td { color: var(--text-primary); font-weight: 600; background: rgba(255, 255, 255, 0.02); }
+    td.win { color: var(--accent); font-weight: 700; }
+    .cta {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+    }
+    .cta p { margin-bottom: 1rem; }
+    .cta-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.7rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        transition: background 0.2s;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn.primary:hover { background: #d4ff33; }
+    .related { margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    .related a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; margin: 0 0.35rem; }
+    .fine { color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 1.5rem; line-height: 1.6; }
+    @media (max-width: 480px) {
+        .page { padding-left: 1rem; padding-right: 1rem; }
+        .card { padding: 2rem 1.1rem; border-radius: 20px; }
+        h1 { font-size: 1.6rem; }
+        .lead { font-size: 0.98rem; }
+        th, td { padding: 0.5rem 0.6rem; }
+    }
+</style>
+<style>
+    .shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
+    .shots figure { margin: 0; text-align: center; }
+    .shots img { width: 100%; max-width: 280px; height: auto; border-radius: 22px; }
+    .shots figcaption { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.5rem; line-height: 1.5; }
+    .table-wrap + .table-wrap { margin-top: 1rem; }
+    @media (max-width: 480px) { .shots { grid-template-columns: 1fr; } }
+</style>

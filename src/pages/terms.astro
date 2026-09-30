@@ -1,5 +1,35 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+/*
+ * READ AT BUILD TIME, so the full text is in the first HTML that crawlers and
+ * readers get (it used to arrive by a browser fetch, leaving crawlers an
+ * empty placeholder). Same public row, same markup as the old browser
+ * renderer. The build fails rather than ship an empty legal page.
+ */
+const SUPABASE_URL = 'https://api.playvoli.com';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
+const res = await fetch(SUPABASE_URL + '/rest/v1/global_settings?select=terms_of_use&limit=1', {
+  headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY },
+});
+if (!res.ok) throw new Error('terms: global_settings read failed (' + res.status + ')');
+const rows = await res.json();
+const doc = rows?.[0]?.terms_of_use;
+if (!doc?.sections?.length) throw new Error('terms: no terms_of_use in global_settings');
+
+function render(d: any): string {
+  let html = '<p style="margin-bottom: 2rem;">' + d.header + '</p>';
+  for (const section of d.sections ?? []) {
+    html += '<h2 style="color: var(--electric-blue); font-size: 1.2rem; margin: 2rem 0 1rem 0;">' + section.section_number + '. ' + section.section_title + '</h2>';
+    for (const item of section.content ?? []) {
+      html += item.subsection
+        ? '<p><strong>' + item.subsection + ' ' + item.title + '.</strong> ' + item.text + '</p>'
+        : '<p>' + item.text + '</p>';
+    }
+  }
+  return html;
+}
+const contentHtml = render(doc);
 ---
 
 <Layout
@@ -8,72 +38,11 @@ import Layout from '../layouts/Layout.astro';
 >
     <main class="card">
         <h1 class="title">Terms of Use</h1>
-        <p class="subtitle" id="terms-effective-date">Effective Date: Loading...</p>
-        <p class="subtitle last" id="terms-last-updated">Last Updated: Loading...</p>
+        <p class="subtitle" id="terms-effective-date">Effective Date: {doc.effective_date}</p>
+        <p class="subtitle last" id="terms-last-updated">Last Updated: {doc.last_updated}</p>
 
-        <div class="content" id="terms-content">
-            <p>Loading terms of use...</p>
-        </div>
+        <div class="content" id="terms-content" set:html={contentHtml} />
     </main>
-
-    <script is:inline slot="scripts">
-        var SUPABASE_URL = 'https://api.playvoli.com';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
-
-        (async function() {
-            var container = document.getElementById('terms-content');
-            if (!container) return;
-
-            try {
-                var response = await fetch(SUPABASE_URL + '/rest/v1/global_settings?select=terms_of_use&limit=1', {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                    }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch terms of use');
-
-                var data = await response.json();
-                if (data && data.length > 0 && data[0].terms_of_use) {
-                    renderTermsOfUse(data[0].terms_of_use, container);
-                } else {
-                    container.innerHTML = '<p style="color: var(--text-secondary);">No terms of use available.</p>';
-                }
-            } catch (error) {
-                console.error('[Terms] Error:', error);
-                container.innerHTML = '<p style="color: var(--text-secondary);">Unable to load terms of use. Please try again later.</p>';
-            }
-        })();
-
-        function renderTermsOfUse(termsData, container) {
-            var header = termsData.header;
-            var effectiveDate = termsData.effective_date;
-            var lastUpdated = termsData.last_updated;
-            var sections = termsData.sections;
-
-            var effectiveDateEl = document.getElementById('terms-effective-date');
-            var lastUpdatedEl = document.getElementById('terms-last-updated');
-            if (effectiveDateEl) effectiveDateEl.textContent = 'Effective Date: ' + effectiveDate;
-            if (lastUpdatedEl) lastUpdatedEl.textContent = 'Last Updated: ' + lastUpdated;
-
-            var html = '<p style="margin-bottom: 2rem;">' + header + '</p>';
-
-            sections.forEach(function(section) {
-                html += '<h2 style="color: var(--electric-blue); font-size: 1.2rem; margin: 2rem 0 1rem 0;">' + section.section_number + '. ' + section.section_title + '</h2>';
-
-                section.content.forEach(function(item) {
-                    if (item.subsection) {
-                        html += '<p><strong>' + item.subsection + ' ' + item.title + '.</strong> ' + item.text + '</p>';
-                    } else {
-                        html += '<p>' + item.text + '</p>';
-                    }
-                });
-            });
-
-            container.innerHTML = html;
-        }
-    </script>
 </Layout>
 
 <style>

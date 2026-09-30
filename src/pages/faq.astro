@@ -1,0 +1,295 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+/* Plan §D.7, with fantasy moved up (it is VOLI's most-used feature).
+ * The same text feeds the visible answers and the FAQPage JSON-LD, so the
+ * two can never drift. */
+const faqs = [
+  {
+    q: 'What can I do with VOLI?',
+    a: "Play fantasy volleyball with your friends, and follow college and pro volleyball live, with scores, box scores and play-by-play. Look up any team or player, see the VOLI Top 100 each Monday, and explore the Volleyball Encyclopedia, with more than 18,000 honors back to 1979. VOLI also brings together volleyball news and podcasts, and has match chat and a daily trivia grid. It's free on iPhone and Android.",
+  },
+  {
+    q: 'Does VOLI have fantasy volleyball?',
+    a: 'Yes. You can build a team from real college or pro players and play the season against your friends in a public or private league. Fantasy is optional: you can use everything else in VOLI without it.',
+  },
+  {
+    q: 'Where can I find NCAA volleyball box scores and player stats?',
+    a: 'In the VOLI app. It has box scores for 99.8% of completed Division I women\'s matches since 2023 (nearly 480,000 player box scores), including every NCAA Tournament match. Leaderboards sort by season, conference, position and class. The current Division I leaders are also at playvoli.com/ncaa-volleyball/leaders.',
+  },
+  {
+    q: 'Does VOLI have live play-by-play for college volleyball?',
+    a: 'Yes. Nearly every Division I women\'s match in the 2026 season has play-by-play in VOLI, with each rally, substitution and rotation: more than 360,000 rallies so far. MLV and LOVB matches have play-by-play too, since each league\'s first season in VOLI.',
+  },
+  {
+    q: 'Where can I look up AVCA All-Americans, AVCA poll history or past NCAA champions?',
+    a: 'In the Volleyball Encyclopedia, in the VOLI app and at playvoli.com/encyclopedia. It covers 3,000+ AVCA All-America selections since 1981, AVCA Players and Coaches of the Year, the AVCA Coaches Poll since 1982, all 45 NCAA champions, ACC, Big 12, Big Ten and SEC honors, record books and the MLV Draft.',
+  },
+  {
+    q: "Does VOLI rank teams or say who's likely to win?",
+    a: "Yes. VOLI rates Division I teams from match results and strength of schedule, and publishes the VOLI Top 100 each Monday. Before first serve, each upcoming college match in the app shows each team's chance to win and the most likely set score. How it works: playvoli.com/methods.",
+  },
+  {
+    q: 'Which leagues does VOLI cover, and is it affiliated with them?',
+    a: 'NCAA Division I women\'s volleyball, Major League Volleyball and LOVB, with Athletes Unlimited in the history archive. VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.',
+  },
+  {
+    q: 'Is VOLI free?',
+    a: 'Yes. VOLI is free on iPhone and Android.',
+  },
+];
+
+// Bare "playvoli.com/…" mentions become links on the page.
+const linkify = (text: string) =>
+  text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/playvoli\.com(\/[a-z0-9\-\/]+)/g, '<a class="inline" href="$1">playvoli.com$1</a>');
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://playvoli.com/faq#faq",
+  "url": "https://playvoli.com/faq",
+  "mainEntity": faqs.map(f => ({
+    "@type": "Question",
+    "name": f.q,
+    "acceptedAnswer": { "@type": "Answer", "text": f.a },
+  })),
+};
+---
+
+<Layout
+  title="VOLI FAQ: Volleyball Scores, Stats, History & Fantasy"
+  description="Answers about VOLI: fantasy volleyball, NCAA box scores and play-by-play, the VOLI Top 100, AVCA history, leagues covered, and the free app."
+  activePage="faq"
+  ogUrl="https://playvoli.com/faq"
+  schema={faqSchema}
+>
+  <main class="page">
+    <article class="card">
+      <p class="eyebrow">FAQ</p>
+      <h1>Questions about VOLI</h1>
+      <p class="lead">Fantasy, live games, stats, rankings, history, news and podcasts: what's in the free VOLI app and how it works.</p>
+
+      {faqs.map((f, i) => (
+        <section class="block qa" id={`q${i + 1}`}>
+          <h2>{f.q}</h2>
+          <p set:html={linkify(f.a)} />
+        </section>
+      ))}
+
+      <div class="cta">
+        <p>VOLI is free on iPhone and Android.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Download on the App Store</a>
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.playvoli.app">Get it on Google Play</a>
+        </div>
+      </div>
+      <p class="related"><a href="/coverage">What's in VOLI</a> · <a href="/game-center">Follow a match live</a> · <a href="/methods">How VOLI's numbers work</a> · <a href="/news-and-podcasts">News and podcasts</a> · <a href="/contact">Contact</a></p>
+    </article>
+  </main>
+</Layout>
+
+<style>
+    .page {
+        width: 100%;
+        max-width: 880px;
+        margin: 0 auto;
+        padding: calc(6rem + env(safe-area-inset-top)) 1rem 3rem;
+    }
+    .card {
+        background: var(--bg-card);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2.75rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+    }
+    .eyebrow {
+        color: var(--accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: center;
+        margin-bottom: 0.75rem;
+    }
+    h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+    .lead {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+        line-height: 1.75;
+        text-align: center;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    .asof {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .block { margin-top: 2.75rem; }
+    h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.6rem;
+    }
+    h2 .tag {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 0.5rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 100px;
+        background: var(--accent-subtle);
+        color: var(--accent);
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+    h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.5rem;
+    }
+    p, li {
+        color: var(--text-secondary);
+        font-size: 0.97rem;
+        line-height: 1.75;
+    }
+    p + p { margin-top: 0.75rem; }
+    ul.plain { padding-left: 1.15rem; }
+    ul.plain li { margin-bottom: 0.35rem; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    a.inline { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .limits {
+        margin-top: 0.75rem;
+        padding: 0.7rem 0.9rem;
+        border-left: 2px solid var(--electric-blue);
+        background: rgba(0, 212, 255, 0.05);
+        border-radius: 0 10px 10px 0;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+    }
+    .limits strong { color: var(--text-secondary); }
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 0.6rem;
+        margin: 1rem 0 0.25rem;
+    }
+    .stat {
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    .stat b {
+        display: block;
+        color: var(--text-primary);
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums;
+    }
+    .stat span {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 0.75rem;
+        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        font-variant-numeric: tabular-nums;
+    }
+    caption {
+        caption-side: top;
+        text-align: left;
+        padding: 0.7rem 0.9rem 0.3rem;
+        color: var(--text-muted);
+        font-size: 0.78rem;
+    }
+    th, td {
+        padding: 0.55rem 0.8rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+        white-space: nowrap;
+    }
+    th {
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    td { color: var(--text-secondary); }
+    td.num, th.num { text-align: right; }
+    tr:last-child td { border-bottom: none; }
+    tr.total td { color: var(--text-primary); font-weight: 600; background: rgba(255, 255, 255, 0.02); }
+    td.win { color: var(--accent); font-weight: 700; }
+    .cta {
+        margin-top: 3rem;
+        padding: 1.5rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+    }
+    .cta p { margin-bottom: 1rem; }
+    .cta-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.7rem 1.2rem;
+        border-radius: 100px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-primary);
+        transition: background 0.2s;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.08); }
+    .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+    .btn.primary:hover { background: #d4ff33; }
+    .related { margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    .related a { color: var(--text-secondary); text-decoration: underline; text-underline-offset: 3px; margin: 0 0.35rem; }
+    .fine { color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 1.5rem; line-height: 1.6; }
+    @media (max-width: 480px) {
+        .page { padding-left: 1rem; padding-right: 1rem; }
+        .card { padding: 2rem 1.1rem; border-radius: 20px; }
+        h1 { font-size: 1.6rem; }
+        .lead { font-size: 0.98rem; }
+        th, td { padding: 0.5rem 0.6rem; }
+    }
+</style>
+<style>
+    .qa { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); }
+    .qa h2 { font-size: 1.1rem; }
+</style>

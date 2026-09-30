@@ -1,0 +1,247 @@
+---
+// /pro-volleyball — MLV and LOVB on VOLI. Built at build from public vbdata:
+// the most recent matches of each league's latest season (set scores), the
+// champions and final standings (vbdata.season_results), and coverage counts.
+// Never reads the fantasy schema. Empty data fails the build.
+import Layout from '../layouts/Layout.astro';
+import {
+  vb, fetchAll, fetchRows, countRows, teamsById, teamName, teamColor,
+  longDate, weekdayDate, pacificDay, fmtInt, setLine, GAME_COLS, type Game,
+} from '../lib/data';
+
+const LEAGUES = [
+  { id: 'MLV', name: 'Major League Volleyball (MLV)', since: 2024, blurb: 'MLV began in 2024 as the Pro Volleyball Federation. VOLI has every match since its first serve.' },
+  { id: 'LOVB', name: 'LOVB Pro', since: 2025, blurb: 'LOVB Pro began play in January 2025. VOLI has every match since its first season.' },
+];
+
+const teams = await teamsById();
+
+interface SR { league: string; year: number; stage: string; rank: number | null; team_name: string; wins: number | null; losses: number | null; outcome: string | null; note: string | null; }
+
+const leagues = await Promise.all(LEAGUES.map(async (L) => {
+  const [lastGame] = await fetchRows<Game>(`${L.id} last final`,
+    vb().from('games').select(GAME_COLS).eq('league', L.id).eq('game_status', 'final')
+      .order('date', { ascending: false }).limit(1));
+  // The closing stretch of the latest season: the 14 days before its last match.
+  const start = new Date(new Date(lastGame.date).getTime() - 14 * 864e5);
+  const recent = await fetchAll<Game>(`${L.id} recent finals`, (from, to) =>
+    vb().from('games').select(GAME_COLS).eq('league', L.id).eq('game_status', 'final')
+      .gte('date', start.toISOString()).order('date', { ascending: false }).order('game_id').range(from, to));
+
+  const [latestYear] = await fetchRows<{ year: number }>(`${L.id} results year`,
+    vb().from('season_results').select('year').eq('league', L.id).order('year', { ascending: false }).limit(1));
+  const results = await fetchRows<SR>(`${L.id} season results`,
+    vb().from('season_results').select('league,year,stage,rank,team_name,wins,losses,outcome,note')
+      .eq('league', L.id).eq('year', latestYear.year).order('stage').order('rank'));
+  const champion = results.find((r) => r.outcome === 'Champion');
+  const runnerUp = results.find((r) => r.outcome === 'Runner-up');
+  const standings = results.filter((r) => r.stage === 'standings').sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99));
+  if (!champion || !standings.length) throw new Error(`[pro] ${L.id} ${latestYear.year}: missing champion or standings`);
+
+  const matches = await countRows(`${L.id} matches`, 'games', (q) => q.eq('league', L.id).eq('game_status', 'final'));
+  const clubs = [...teams.values()].filter((t) => t.league === L.id && !t.is_all_star).map(teamName).sort();
+  return { ...L, lastGame, recent, year: latestYear.year, champion, runnerUp, standings, matches, clubs };
+}));
+
+// Pro-wide coverage counts.
+const [perSetLines, pbpSetLogs, proFinals] = await Promise.all([
+  countRows('pro per-set stat lines', 'statistics'),
+  countRows('pro play-by-play sets', 'play_by_plays'),
+  countRows('pro finals', 'games', (q) => q.in('league', ['MLV', 'LOVB']).eq('game_status', 'final')),
+]);
+const pbpGames = new Set((await fetchAll<{ game_uuid: string }>('pro pbp games', (from, to) =>
+  vb().from('play_by_plays').select('playbyplay_id,game_uuid').order('playbyplay_id').range(from, to),
+)).map((r) => r.game_uuid)).size;
+const statGames = new Set((await fetchAll<{ game_uuid: string }>('pro stat games', (from, to) =>
+  vb().from('statistics').select('stat_id,game_uuid').order('stat_id').range(from, to),
+  { parallel: 8 },
+)).map((r) => r.game_uuid)).size;
+
+const newest = leagues.map((l) => l.lastGame.date).sort().at(-1)!;
+const asOf = longDate(new Date());
+
+function result(g: Game) {
+  const homeWon = (g.home_sets_won ?? 0) > (g.away_sets_won ?? 0);
+  const w = teams.get(homeWon ? g.home_uuid : g.away_uuid);
+  const l = teams.get(homeWon ? g.away_uuid : g.home_uuid);
+  return {
+    day: pacificDay(g.date),
+    w: teamName(w), wColor: teamColor(w), l: teamName(l),
+    sets: `${Math.max(g.home_sets_won ?? 0, g.away_sets_won ?? 0)}-${Math.min(g.home_sets_won ?? 0, g.away_sets_won ?? 0)}`,
+    line: setLine(g, homeWon),
+  };
+}
+
+const title = 'MLV & LOVB Scores, Stats & Records';
+const description = 'Every MLV and LOVB match set by set: play-by-play, player stats, rosters, awards and record books, in the free VOLI app.';
+const url = 'https://playvoli.com/pro-volleyball';
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Pro volleyball on VOLI',
+  description,
+  url,
+  dateModified: new Date(newest).toISOString().slice(0, 10),
+  about: [
+    { '@type': 'SportsOrganization', name: 'Major League Volleyball', alternateName: 'MLV', sport: 'Volleyball' },
+    { '@type': 'SportsOrganization', name: 'LOVB Pro', alternateName: 'LOVB', sport: 'Volleyball' },
+  ],
+  isPartOf: { '@id': 'https://playvoli.com/#website' },
+};
+---
+
+<Layout title={title} description={description} ogUrl={url} canonical={url} schema={schema}>
+  <main class="dp-main">
+    <header class="dp-head">
+      <p class="dp-kicker">US women's pro volleyball · MLV · LOVB</p>
+      <h1 class="dp-title">Pro volleyball on VOLI</h1>
+      <p class="dp-lead">
+        Every MLV match since the league's first season in 2024 and every LOVB match since 2025 is in
+        VOLI, set by set, with play-by-play, player stats, rosters, record books and each league's awards.
+      </p>
+      <p class="dp-stamp"><strong>As of {asOf}.</strong></p>
+    </header>
+
+    <section aria-labelledby="cov-h">
+      <h2 id="cov-h" class="dp-h2">What VOLI covers</h2>
+      <ul class="dp-stats">
+        <li><strong>{fmtInt(proFinals)}</strong><span>MLV and LOVB matches: {leagues.map((l) => `${fmtInt(l.matches)} ${l.id}`).join(', ')}</span></li>
+        <li><strong>{fmtInt(statGames)}</strong><span>matches with player stats set by set: {fmtInt(perSetLines)} per-set player lines covering attacks, serves, reception, blocks, digs and setting</span></li>
+        <li><strong>{fmtInt(pbpGames)}</strong><span>matches with play-by-play, {fmtInt(pbpSetLogs)} sets logged point by point with starting lineups</span></li>
+        <li><strong>Live</strong><span>scoreboard, box score, play-by-play, rotations and lead chart during every match, with iPhone Live Activities</span></li>
+      </ul>
+      <p class="dp-body">
+        Player and team pages carry rosters by season, transactions, each league's awards and a record
+        book for MLV and LOVB. Fantasy leagues for the pro season, match chat, news and podcasts sit
+        alongside them in the free VOLI app.
+      </p>
+    </section>
+
+    {leagues.map((L) => (
+      <section class="dp-section" aria-labelledby={`${L.id}-h`}>
+        <h2 id={`${L.id}-h`} class="dp-h2">{L.name}</h2>
+        <p class="dp-body">{L.blurb}</p>
+        <p class="dp-body">
+          <strong class="hl">{L.year} champion: {L.champion.team_name}</strong>
+          {L.runnerUp && <span> · runner-up {L.runnerUp.team_name}</span>}
+          {L.champion.note && <span class="muted"> · {L.champion.note}</span>}
+        </p>
+
+        <h3 class="dp-h3">Most recent matches</h3>
+        <p class="dp-note">The final stretch of the {L.year} season, through {weekdayDate(pacificDay(L.lastGame.date))}. Set scores winner first.</p>
+        <div class="dp-table-wrap">
+          <table class="dp-table">
+            <thead>
+              <tr><th scope="col">Date</th><th scope="col">Winner</th><th scope="col">Opponent</th><th scope="col" class="num">Sets</th><th scope="col" class="hide-sm">Set scores</th></tr>
+            </thead>
+            <tbody>
+              {L.recent.map((g) => {
+                const r = result(g);
+                return (
+                  <tr>
+                    <td class="muted nowrap">{longDate(r.day)}</td>
+                    <th scope="row" class="team"><span class="spine" style={`background:${r.wColor}`}></span>{r.w}</th>
+                    <td>{r.l}</td>
+                    <td class="num strong">{r.sets}</td>
+                    <td class="hide-sm muted nowrap">{r.line}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="dp-h3">{L.year} regular-season standings</h3>
+        <div class="dp-table-wrap">
+          <table class="dp-table">
+            <thead><tr><th scope="col" class="num">#</th><th scope="col">Team</th><th scope="col" class="num">W-L</th><th scope="col" class="hide-sm">Note</th></tr></thead>
+            <tbody>
+              {L.standings.map((s) => (
+                <tr>
+                  <td class="num rank">{s.rank}</td>
+                  <th scope="row" class="team">{s.team_name}</th>
+                  <td class="num">{s.wins != null ? `${s.wins}-${s.losses}` : '—'}</td>
+                  <td class="hide-sm muted">{s.note ?? ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="dp-note dp-clubs">Clubs in VOLI: {L.clubs.join(', ')}.</p>
+      </section>
+    ))}
+
+    <section class="dp-section dp-cta" aria-labelledby="more-h">
+      <h2 id="more-h" class="dp-h2">Go deeper</h2>
+      <ul class="dp-cards">
+        <li><a href="/encyclopedia"><strong>The Volleyball Encyclopedia</strong><span>MLV and LOVB awards, record books and the MLV Draft, alongside NCAA history back to 1979.</span></a></li>
+        <li><a href="/ncaa-volleyball"><strong>College volleyball on VOLI</strong><span>Division I results, stat leaders and the VOLI Top 100.</span></a></li>
+        <li><a href="/mobileapp"><strong>The VOLI app</strong><span>Live scores, box scores, play-by-play, fantasy, news and podcasts. Free on iPhone and Android.</span></a></li>
+      </ul>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .dp-main { max-width: 980px; margin: 0 auto; padding: calc(5rem + env(safe-area-inset-top)) 1.5rem 5rem; }
+  .dp-head { margin-bottom: 2.25rem; }
+  .dp-kicker { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.6rem; }
+  .dp-title { font-family: 'Designer', 'Inter', -apple-system, sans-serif; font-size: clamp(2.1rem, 5.5vw, 3.2rem); line-height: 1.02; margin: 0; text-transform: uppercase; }
+  .dp-lead { margin: 1rem 0 0; color: var(--text-secondary); font-size: 1.05rem; line-height: 1.65; max-width: 62ch; }
+  .dp-stamp { margin: 0.6rem 0 0; color: var(--accent); font-size: 0.95rem; }
+  .dp-section { margin-top: 3rem; }
+  .dp-h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 0.75rem; }
+  .dp-note { color: var(--text-muted); font-size: 0.88rem; line-height: 1.55; margin: 0 0 1rem; max-width: 70ch; }
+  .dp-body { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; margin: 0 0 1rem; max-width: 68ch; }
+  .dp-link { color: var(--accent); font-weight: 600; }
+  .dp-link:hover { text-decoration: underline; }
+  .dp-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; }
+  .dp-table-wrap { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; overflow-x: auto; }
+  .dp-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .dp-table th, .dp-table td { padding: 0.62rem 0.85rem; text-align: left; border-bottom: 1px solid var(--glass-border); vertical-align: middle; }
+  .dp-table thead th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 700; }
+  .dp-table tbody tr:last-child > * { border-bottom: none; }
+  .dp-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .dp-table .rank { font-weight: 800; color: var(--text-primary); }
+  .dp-table .team { font-weight: 600; white-space: nowrap; }
+  .spine { display: inline-block; width: 4px; height: 1.1em; border-radius: 2px; margin-right: 0.6rem; vertical-align: -0.15em; }
+  .muted { color: var(--text-muted); }
+  .small { font-size: 0.8rem; }
+  .nowrap { white-space: nowrap; }
+  .mv { font-weight: 700; font-size: 0.82rem; }
+  .mv-up { color: var(--accent); }
+  .mv-down { color: var(--rose); }
+  .mv-new { color: var(--electric-blue); }
+  .mv-flat { color: var(--text-muted); }
+  .mu-line { display: block; line-height: 1.6; }
+  .rk { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; margin-right: 0.2rem; }
+  .at { color: var(--text-muted); font-size: 0.8rem; }
+  @media (max-width: 640px) {
+    .dp-main { padding: calc(5rem + env(safe-area-inset-top)) 1rem 4rem; }
+    .hide-sm { display: none; }
+    .dp-table th, .dp-table td { padding: 0.55rem 0.6rem; }
+  }
+</style>
+
+<style>
+  .strong { font-weight: 800; color: var(--text-primary); }
+  .dp-h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-secondary); margin: 1.5rem 0 0.6rem; }
+  .dp-stats { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0.9rem; margin: 0 0 1.5rem; }
+  .dp-stats li { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 1.1rem 1.2rem; }
+  .dp-stats strong { display: block; font-size: 1.7rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .dp-stats span { display: block; margin-top: 0.3rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+  .dp-top { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5rem 1.5rem; margin: 0 0 1rem; }
+  .dp-top li { padding: 0.45rem 0; border-bottom: 1px solid var(--glass-border); font-weight: 600; }
+  .dp-top .rank { display: inline-block; width: 1.8rem; color: var(--text-muted); font-weight: 800; }
+  .dp-cards { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.9rem; }
+  .dp-cards a { display: block; height: 100%; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 18px; padding: 1.1rem 1.2rem; transition: border-color 0.2s ease; }
+  .dp-cards a:hover { border-color: rgba(200, 255, 0, 0.3); }
+  .dp-cards strong { display: block; color: var(--text-primary); margin-bottom: 0.35rem; }
+  .dp-cards span { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; }
+</style>
+
+<style>
+  .hl { color: var(--accent); }
+  .dp-clubs { margin-top: 1rem; }
+</style>

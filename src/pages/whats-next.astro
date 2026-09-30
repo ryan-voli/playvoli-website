@@ -5,32 +5,37 @@ const timeline = [
   {
     id: 'fantasyvb', date: 'Mar 2024', dateFull: 'March 2024',
     title: 'FantasyVB Begins', status: 'past',
-    body: "FantasyVB started as an experimental sandbox — a personal testbed to figure out whether a real fantasy volleyball product was even possible. The early work focused on comparing fantasy formats to find the one that fit volleyball best, iterating on a scoring system that was fair across every position, and validating the right tech stack. Alongside the build came classes to pick up the full-stack skills the real product would need. By the end, the answer was clear: it was possible — and there was a concrete plan for the knowledge, technical capabilities, and backing it would take to ship it.",
+    body: "FantasyVB started as an experimental sandbox: a testbed to find out whether a real fantasy volleyball product was possible. The early work compared fantasy formats to find the one that fit volleyball best, built a scoring system that was fair across every position, and settled the tech stack. By the end, the answer was clear: it was possible, with a concrete plan for what it would take to ship it.",
   },
   {
     id: 'voli-app', date: 'Jan 2025', dateFull: 'January 2025',
     title: 'VOLI App Begins', status: 'past',
-    body: "VOLI App development began as the project's scope grew beyond fantasy alone. The data already needed to power the fantasy system — stats, player profiles, game schedules — meant those features were essentially free to build into a full hub for US pro volleyball. The simpler pieces were built first, which doubled as a way to build confidence in the tech stack before tackling fantasy. Fantasy came next, validated through extensive simulations and testing against two years of MLV data and one year of LOVB data. Just before launch, podcast discovery and support tools were added so fans could find — and back — the creators putting in serious work to grow the sport.",
+    body: "Development of the full VOLI app began in January 2025, and it launched in January 2026 with live games, stats, player and team pages, news and podcasts alongside fantasy, all on one data pipeline. Fantasy was validated through extensive simulations against two years of MLV data and one year of LOVB data before launch.",
   },
   {
     id: 'app-beta', date: 'Jan 2026', dateFull: 'January 2026',
-    title: 'App Beta Launch', status: 'past',
-    body: "The app went public with MLV fantasy for the 2026 pro season — the first time the fantasy system ran live at scale, with real managers instead of simulations. Partnerships with volleyball creators put it in front of the fans most likely to put it through its paces: Major League Minute, Volley Talk with Sarah Pavan, and Court Captains. The season closed with 1,300+ downloads, and it taught us things no amount of testing could: how the scoring held up once real managers were optimising against it, where the contract rules helped and where they got in the way, and what a fantasy week should actually feel like week to week. Those lessons are what shaped everything that followed — starting with a scoring system rebuilt from the ground up for the college game.",
+    title: 'App Launch', status: 'past',
+    body: "The app went public for the 2026 pro season with live MLV and LOVB games, stats, news, podcasts and MLV fantasy, the first time the fantasy system ran live with real managers instead of simulations. Volleyball creators brought VOLI to the fans most likely to put it through its paces: Major League Minute, Volley Talk with Sarah Pavan, and Court Captains. The season shaped everything that followed, starting with a scoring system rebuilt from the ground up for the college game.",
   },
   {
-    id: 'ncaa-fantasy', date: 'Aug 2026', dateFull: 'August 2026',
-    title: 'NCAA Fantasy Launch', status: 'current', live: true,
-    body: "It's here. The same fantasy experience fans enjoyed during the pro season is now running for NCAA women's volleyball, tuned for the college game — shorter seasons, simpler scoring, and a more accessible format. Leagues are open now, and the first scoring round runs September 9–13. The season is ten rounds, each running Wednesday through Sunday, with Monday and Tuesday as the signing window to set your roster for the week ahead.",
+    id: 'ncaa-launch', date: 'Aug 2026', dateFull: 'August 2026',
+    title: 'NCAA Season Launch', status: 'past',
+    body: "NCAA Division I women's volleyball arrived in full for the 2026 season. NCAA fantasy launched with a ten-round season, each round Wednesday through Sunday, with Monday and Tuesday as the signing window. Live NCAA play-by-play arrived with it: more than 360,000 rallies logged so far this season, with substitutions and rotations. The Volleyball Encyclopedia opened with more than 18,000 honors back to 1979, the AVCA Coaches Poll since 1982 and all 45 NCAA champions. iPhone Live Activities put the live score on the lock screen.",
+  },
+  {
+    id: 'voli-top-100', date: 'Sep 2026', dateFull: 'September 2026',
+    title: 'The VOLI Top 100', status: 'current', live: true,
+    body: "The VOLI Top 100, VOLI's own ranking of Division I teams from match results and strength of schedule, is published each Monday. Each upcoming college match in the app shows each team's chance to win and the most likely set score.",
   },
   {
     id: 'ncaa-bracket', date: 'Nov 2026', dateFull: 'November 2026',
     title: 'NCAA Bracket Challenge', status: 'upcoming',
-    body: "A March Madness-style bracket challenge for the NCAA women's volleyball tournament. Pick the whole field, call the upsets, and follow it round by round against everyone else. It's the format that turns college basketball's postseason into something the entire country follows together — volleyball's tournament has never had its equivalent, and that's the gap this fills.",
+    body: "A bracket challenge for the NCAA women's volleyball tournament. Pick the whole field, call the upsets, and follow it round by round against everyone else.",
   },
   {
     id: 'lovb-fantasy', date: 'Jan 2027', dateFull: 'January 2027',
     title: 'LOVB Fantasy Launch', status: 'upcoming',
-    body: "LOVB joins the fantasy system. The 2026 pro season proved the format works at scale, and this brings the same experience to a second professional league — so managers can run teams across both rather than picking one. VOLI has carried LOVB stats, schedules, and player profiles from the start; fantasy is the piece that has been missing.",
+    body: "LOVB joins the fantasy system, so managers can run teams across both pro leagues. VOLI has carried LOVB games, stats and player profiles since the league's first season.",
   },
 ];
 
@@ -44,15 +49,15 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
 ---
 
 <Layout
-  title="What's Next - VOLI"
-  description="The VOLI roadmap: announcements, upcoming features, and what we're building next for professional and college volleyball fans."
+  title="VOLI Milestones and What's Next"
+  description="VOLI milestones: the app launch, NCAA fantasy, live NCAA play-by-play, the Volleyball Encyclopedia, the VOLI Top 100, and what's coming next for fans."
   activePage="whats-next"
 >
     <main class="card">
-        <h1 class="title">What's Next</h1>
-        <p class="lead">A look at what we're building, what's launching, and where VOLI is headed.</p>
+        <h1 class="title">Milestones</h1>
+        <p class="lead">What VOLI has shipped for volleyball fans, and what's coming next.</p>
 
-        <div class="section-label">Roadmap</div>
+        <div class="section-label">Timeline</div>
         <div class="timeline-wrap">
             <div class="timeline-scroll" id="timeline-scroll">
                 <div class="timeline-track">
@@ -74,9 +79,19 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
 
         <div class="detail-card" id="timeline-detail">
             <span class="detail-pill" id="detail-pill">Live now</span>
-            <h2 class="detail-title" id="detail-title">NCAA Fantasy Launch</h2>
-            <p class="detail-body" id="detail-body">It's here. The same fantasy experience fans enjoyed during the pro season is now running for NCAA women's volleyball, tuned for the college game — shorter seasons, simpler scoring, and a more accessible format. Leagues are open now, and the first scoring round runs September 9–13. The season is ten rounds, each running Wednesday through Sunday, with Monday and Tuesday as the signing window to set your roster for the week ahead.</p>
+            <h2 class="detail-title" id="detail-title">The VOLI Top 100</h2>
+            <p class="detail-body" id="detail-body">The VOLI Top 100, VOLI's own ranking of Division I teams from match results and strength of schedule, is published each Monday. Each upcoming college match in the app shows each team's chance to win and the most likely set score.</p>
         </div>
+
+        <div class="section-label milestones-label">All milestones</div>
+        <ol class="milestone-list">
+            {timeline.map(item => (
+                <li class:list={['milestone', item.status]}>
+                    <h2 class="milestone-title"><span class="milestone-date">{item.dateFull}</span>{item.title}{item.status === 'upcoming' && <span class="milestone-soon"> · coming</span>}</h2>
+                    <p class="milestone-body">{item.body}</p>
+                </li>
+            ))}
+        </ol>
 
         <p class="footer-note">
             <span class="footer-dot" aria-hidden="true"></span>
@@ -386,4 +401,12 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
         .timeline-item { flex-basis: 140px; }
         .detail-title { font-size: 1.05rem; }
     }
+
+    .milestones-label { margin-top: 2.5rem; }
+    .milestone-list { list-style: none; padding: 0; margin: 0 0 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .milestone { padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 14px; }
+    .milestone-title { font-size: 1rem; font-weight: 650; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .milestone-date { display: block; color: var(--accent); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .milestone-soon { color: var(--text-muted); font-weight: 500; font-size: 0.85rem; }
+    .milestone-body { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
 </style>

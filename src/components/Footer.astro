@@ -1,30 +1,55 @@
 ---
+import legacyFooterHtml from './legacy/oauth-footer.html?raw';
+
+// /oauth-callback (the phone app's login return) must render byte-for-byte
+// as before, so it gets the exact pre-change footer HTML. Do not edit
+// src/components/legacy/*.
+const legacy = Astro.url.pathname.startsWith('/oauth-callback');
 ---
 
-<footer class="footer">
-    <div class="footer-columns">
+{legacy ? (<Fragment set:html={legacyFooterHtml} />) : (<Fragment><footer class="footer">
+    <div class="footer-columns" id="footer-columns">
         <div class="footer-col">
-            <h4 class="footer-col-title">Pages</h4>
-            <a href="/">Home</a>
+            <h2 class="footer-col-title">VOLI</h2>
+            <a href="/mobileapp#fantasy">Fantasy</a>
+            <a href="/ncaa-volleyball">College Volleyball</a>
+            <a href="/pro-volleyball">Pro Volleyball</a>
+            <a href="/rankings">VOLI Top 100</a>
+            <a href="/encyclopedia">Volleyball Encyclopedia</a>
+            <a href="/news-and-podcasts">News &amp; Podcasts</a>
+        </div>
+        <div class="footer-col">
+            <h2 class="footer-col-title">Explore</h2>
+            <a href="/coverage">What's in VOLI</a>
+            <a href="/game-center">Follow a Match Live</a>
+            <a href="/methods">How Our Numbers Work</a>
+            <a href="/faq">FAQ</a>
             <a href="/dailygrid">Daily Grid</a>
+        </div>
+        <div class="footer-col">
+            <h2 class="footer-col-title">Company</h2>
+            <a href="/">Home</a>
             <a href="/about">About</a>
+            <a href="/whats-next">What's Next</a>
             <a href="/contact">Contact</a>
         </div>
         <div class="footer-col">
-            <h4 class="footer-col-title">Products</h4>
+            <h2 class="footer-col-title">Products</h2>
             <a href="/mobileapp">Mobile App</a>
             <a href="/discordbot">Discord Bot</a>
             <a href="/redditdailygrid">Reddit Daily Grid</a>
             <a href="/creatorscourt">Creators Court</a>
         </div>
         <div class="footer-col">
-            <a href="/partners" class="footer-col-title-link"><h4 class="footer-col-title">Partners</h4></a>
+            <a href="/partners" class="footer-col-title-link"><h2 class="footer-col-title">Podcast Leagues</h2></a>
             <a href="/volleytalk">Volley Talk</a>
             <a href="/courtcaptains">Court Captains</a>
             <a href="/mlm">Major League Minute</a>
+            <a href="/lshotvb">Line Shot</a>
+            <a href="/canaan">Canaan Courtside</a>
         </div>
         <div class="footer-col">
-            <h4 class="footer-col-title">Legal</h4>
+            <h2 class="footer-col-title">Legal</h2>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
         </div>
@@ -50,6 +75,12 @@
 
     <p class="footer-copyright">&copy; 2026 VOLI LLC. All rights reserved.</p>
 </footer>
+<style is:inline>
+    /* Inline so the shared CSS bundle (also linked by /oauth-callback) is untouched. */
+    #footer-columns { flex-wrap: wrap; gap: 2rem 3rem; max-width: 1100px; margin-left: auto; margin-right: auto; }
+    #footer-columns h2 { line-height: 1.2; }
+    @media (max-width: 480px) { #footer-columns { gap: 1.5rem 2rem; } }
+</style></Fragment>)}
 
 <style>
     .footer {

@@ -1,0 +1,131 @@
+---
+import Shell from './_Shell.astro';
+import { getOverview, getNcaaChampions, getAvcaFinalPolls, fmt, AS_OF } from '../../lib/encyclopedia-data';
+
+const o = await getOverview();
+const champs = await getNcaaChampions();
+const polls = await getAvcaFinalPolls();
+const latest = champs[0];
+
+const title = 'The Volleyball Encyclopedia: All-Americans, Polls, Champions';
+const description = `${fmt(Math.floor(o.allAmericans / 1000) * 1000)}+ AVCA All-America selections since ${o.allAmericaFirstYear}, the AVCA Coaches Poll since ${o.pollsFirstYear}, all ${o.champions} NCAA champions, conference honors and record books.`;
+
+const volumes = [
+  {
+    href: '/encyclopedia/ncaa-champions',
+    name: 'NCAA champions',
+    fact: `All ${o.champions} NCAA Division I women's volleyball champions, ${o.championsFirstYear}–${o.championsLastYear}, with runners-up, final scores and coaches.`,
+  },
+  {
+    href: '/encyclopedia/avca-poll',
+    name: 'AVCA Coaches Poll: final polls',
+    fact: `The final AVCA Coaches Poll for ${polls.length} seasons, ${polls[polls.length - 1].seasonYear}–${polls[0].seasonYear}.`,
+  },
+  {
+    href: '/encyclopedia/ncaa-records',
+    name: 'NCAA record book',
+    fact: `${fmt(o.ncaaRecords)} entries from the NCAA Division I women's volleyball record book, player and team, match, season and career.`,
+  },
+  {
+    href: '/encyclopedia/mlv',
+    name: 'Major League Volleyball',
+    fact: `${fmt(o.mlvHonors)} MLV honors since 2024, league champions and all ${fmt(o.draftPicks)} MLV Draft picks.`,
+  },
+  {
+    href: '/encyclopedia/lovb',
+    name: 'LOVB Pro',
+    fact: `${fmt(o.lovbHonors)} LOVB honors since 2025: MVPs, LOVB Icons, position awards, weekly awards and champions.`,
+  },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'The Volleyball Encyclopedia',
+  url: 'https://playvoli.com/encyclopedia',
+  description,
+  dateModified: new Date().toISOString().slice(0, 10),
+  publisher: { '@id': 'https://playvoli.com/#organization' },
+  hasPart: volumes.map((v) => ({ '@type': 'WebPage', name: v.name, url: `https://playvoli.com${v.href}` })),
+};
+---
+
+<Shell title={title} description={description} path="/encyclopedia" h1="The Volleyball Encyclopedia" kicker="Volleyball history on VOLI" schema={schema}>
+  <Fragment slot="intro">
+    <p class="ency-lead">
+      Was your school ever national champion? Who were the All-Americans the year you graduated? Look it up.
+      The Volleyball Encyclopedia holds more than {fmt(Math.floor(o.honors / 1000) * 1000)} honors back to {o.honorsFirstYear},
+      the AVCA Coaches Poll since {o.pollsFirstYear}, all {o.champions} NCAA champions, conference champions, record books and the MLV Draft.
+    </p>
+  </Fragment>
+
+  <section class="ency-section" aria-labelledby="numbers-h">
+    <h2 id="numbers-h" class="ency-h2">By the numbers</h2>
+    <p class="ency-note">Counted from the encyclopedia's tables on {AS_OF}.</p>
+    <dl class="ency-stats">
+      <div><dt>Honors</dt><dd>{fmt(o.honors)}</dd><span>{o.honorsFirstYear}–{o.honorsLastYear}, {o.awardTypes} award types from {o.awardingBodies} awarding bodies</span></div>
+      <div><dt>AVCA All-America selections</dt><dd>{fmt(o.allAmericans)}</dd><span>since {o.allAmericaFirstYear}</span></div>
+      <div><dt>AVCA Coaches Polls</dt><dd>{fmt(o.polls)}</dd><span>since {o.pollsFirstYear}, including {o.finalPolls} final polls</span></div>
+      <div><dt>NCAA champions</dt><dd>{o.champions}</dd><span>{o.championsFirstYear}–{o.championsLastYear}</span></div>
+      <div><dt>NCAA record book entries</dt><dd>{fmt(o.ncaaRecords)}</dd><span>player and team records since 1981</span></div>
+      <div><dt>MLV Draft picks</dt><dd>{fmt(o.draftPicks)}</dd><span>every pick since the first draft</span></div>
+    </dl>
+    <p class="ency-note">Conference champions go back to {o.confTitlesFirstYear}. The most recent NCAA champion is {latest.champion} ({latest.year}).</p>
+  </section>
+
+  <section class="ency-section" aria-labelledby="volumes-h">
+    <h2 id="volumes-h" class="ency-h2">Volumes on this site</h2>
+    <div class="ency-vols">
+      {volumes.map((v) => (
+        <a class="ency-vol" href={v.href}>
+          <h3>{v.name}</h3>
+          <p>{v.fact}</p>
+          <span class="go">Open →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="ency-section" aria-labelledby="app-h">
+    <h2 id="app-h" class="ency-h2">More volumes in the VOLI app</h2>
+    <p class="ency-note">These live in the app today:</p>
+    <ul class="ency-list">
+      <li>AVCA All-America teams by year, and AVCA Players, Freshmen and Coaches of the Year</li>
+      <li>AVCA All-Region teams and regional award winners</li>
+      <li>ACC, Big 12, Big Ten and SEC honors: all-conference teams, players and coaches of the year, weekly awards</li>
+      <li>Every weekly AVCA Coaches Poll since {o.pollsFirstYear}</li>
+      <li>Athletes Unlimited honors and the pro record books for MLV and LOVB</li>
+      <li>Conference champions and conference membership, season by season</li>
+      <li>A search across every honoree, team and season</li>
+    </ul>
+  </section>
+
+  <section class="ency-section" aria-labelledby="sources-h">
+    <h2 id="sources-h" class="ency-h2">Sources</h2>
+    <p class="ency-note">
+      Honors are credited to the body that awarded them: the AVCA (American Volleyball Coaches Association), the conferences,
+      Major League Volleyball, LOVB and Athletes Unlimited. Polls are the AVCA Coaches Poll. Champions and records come from the
+      NCAA's official records. VOLI is independent and not affiliated with any of them.
+    </p>
+  </section>
+</Shell>
+
+<style>
+  .ency-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+  .ency-stats > div { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.2rem; }
+  .ency-stats dt { color: var(--text-muted); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; order: 1; }
+  .ency-stats dd { font-size: 1.8rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; order: 0; }
+  .ency-stats span { color: var(--text-secondary); font-size: 0.82rem; line-height: 1.45; order: 2; }
+  .ency-vols { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  .ency-vol { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.25rem; border: 1px solid var(--glass-border); border-radius: 18px; background: var(--bg-card); transition: transform 0.2s, background 0.2s; }
+  .ency-vol:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
+  .ency-vol h3 { margin: 0; font-size: 1.05rem; }
+  .ency-vol p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55; }
+  .ency-vol .go { color: var(--accent); font-size: 0.85rem; font-weight: 600; margin-top: auto; }
+  .ency-list { color: var(--text-secondary); line-height: 1.8; padding-left: 1.25rem; }
+  @media (max-width: 720px) {
+    .ency-stats { grid-template-columns: repeat(2, 1fr); }
+    .ency-vols { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 420px) { .ency-stats { grid-template-columns: 1fr; } }
+</style>
