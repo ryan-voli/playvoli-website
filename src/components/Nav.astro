@@ -7,65 +7,59 @@ interface Props {
 
 const { activePage = '' } = Astro.props;
 
-// /oauth-callback (the phone app's login return) must render byte-for-byte
-// as it did before the nav rewrite, so it keeps the old markup verbatim.
-// New nav styles live in an is:inline block inside the new branch only, so
-// the shared CSS bundle that page links to is unchanged too.
+// /oauth-callback (the phone app's login return) must render byte-for-byte as
+// it always has, so it keeps the old markup verbatim. Do not edit
+// src/components/legacy/*.
 const legacy = Astro.url.pathname.startsWith('/oauth-callback');
-// Exact pre-change rendered HTML of this nav on /oauth-callback (whitespace
-// included). Do not edit src/components/legacy/*.
-const path = Astro.url.pathname;
-const on = (...prefixes: string[]) => prefixes.some((p) => path === p || path.startsWith(p + '/'));
-const isFantasy = activePage === 'fantasy';
-const isScores = on('/ncaa-volleyball', '/pro-volleyball', '/game-center', '/coverage');
-const isRankings = on('/rankings');
-const isHistory = on('/encyclopedia');
-const isListen = on('/news-and-podcasts');
 ---
 
-{legacy ? (<Fragment set:html={legacyNavHtml} />) : (<Fragment><div class="nav-container" id="nav-container">
-    <a href="/" class="nav-logo" aria-label="VOLI home">
+{legacy ? (<Fragment set:html={legacyNavHtml} />) : (<Fragment><div class="nav-container">
+    <a href="/" class="nav-logo">
         <img src="/images/logo_dark_sm.webp" alt="VOLI">
         <span class="nav-logo-word">VOLI</span>
     </a>
 
-    <!-- Desktop nav. Fantasy leads: it is VOLI's most-used feature. -->
-    <nav class="nav desktop-nav" id="desktop-nav" aria-label="Main">
-        <a href="/mobileapp#fantasy" class:list={[{ active: isFantasy }]}>Fantasy</a>
-        <a href="/ncaa-volleyball" class:list={[{ active: isScores }]}>Scores &amp; Stats</a>
-        <a href="/rankings" class:list={[{ active: isRankings }]}>Rankings</a>
-        <a href="/encyclopedia" class:list={[{ active: isHistory }]}>History</a>
-        <a href="/news-and-podcasts" class:list={[{ active: isListen }]}>Listen</a>
-        <button class="more-btn" id="more-btn" aria-haspopup="true">More</button>
+    <!-- Desktop nav -->
+    <nav class="nav desktop-nav">
+        <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
+        <a href="/about" id="about-link" class:list={[{ active: activePage === 'about' || activePage === 'whats-next' }]}>About</a>
+        <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
+        <button class="more-btn" id="more-btn">More</button>
     </nav>
+    <div class="about-dropdown" id="about-dropdown">
+        <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
+    </div>
     <div class="more-dropdown" id="more-dropdown">
         <div class="more-columns">
             <div class="more-col">
                 <div class="more-col-title">Explore</div>
-                <a href="/coverage">What's in VOLI</a>
-                <a href="/game-center">Follow a Match Live</a>
                 <a href="/ncaa-volleyball">College Volleyball</a>
                 <a href="/pro-volleyball">Pro Volleyball</a>
-                <a href="/dailygrid">Daily Grid</a>
-            </div>
-            <div class="more-col">
-                <div class="more-col-title">VOLI</div>
-                <a href="/about">About</a>
-                <a href="/whats-next">What's Next</a>
+                <a href="/rankings">VOLI Top 100</a>
+                <a href="/encyclopedia">Encyclopedia</a>
+                <a href="/game-center">Game Center</a>
+                <a href="/news-and-podcasts">News &amp; Podcasts</a>
+                <a href="/coverage">What's in VOLI</a>
                 <a href="/methods">How Our Numbers Work</a>
                 <a href="/faq">FAQ</a>
-                <a href="/contact">Contact</a>
             </div>
             <div class="more-col">
                 <div class="more-col-title">Products</div>
                 <a href="/mobileapp">Mobile App</a>
                 <a href="/discordbot">Discord Bot</a>
+                <a href="/redditdailygrid">Reddit Daily Grid</a>
+                <a href="/creatorscourt">Creators Court</a>
             </div>
             <div class="more-col">
-                <a href="/partners" class="more-col-title-link"><div class="more-col-title">Podcast Leagues</div></a>
+                <a href="/partners" class="more-col-title-link"><div class="more-col-title">Partners</div></a>
                 <a href="/volleytalk">Volley Talk</a>
                 <a href="/courtcaptains">Court Captains</a>
                 <a href="/mlm">Major League Minute</a>
+            </div>
+            <div class="more-col">
+                <div class="more-col-title">Legal</div>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
             </div>
         </div>
     </div>
@@ -74,7 +68,7 @@ const isListen = on('/news-and-podcasts');
     </a>
     <div class="download-pill desktop-pill" id="download-pill">Download</div>
 
-    <!-- Compact hamburger (phones, and narrow desktop windows) -->
+    <!-- Mobile hamburger -->
     <button class="hamburger" id="hamburger" aria-label="Menu">
         <span></span>
         <span></span>
@@ -95,29 +89,28 @@ const isListen = on('/news-and-podcasts');
 
 <!-- Mobile dropdown -->
 <div class="mobile-menu" id="mobile-menu">
-    <nav class="mobile-nav" aria-label="Main">
-        <a href="/mobileapp#fantasy" class:list={[{ active: isFantasy }]}>Fantasy</a>
-        <a href="/ncaa-volleyball" class:list={[{ active: isScores }]}>Scores &amp; Stats</a>
-        <a href="/rankings" class:list={[{ active: isRankings }]}>Rankings</a>
-        <a href="/encyclopedia" class:list={[{ active: isHistory }]}>History</a>
-        <a href="/news-and-podcasts" class:list={[{ active: isListen }]}>Listen</a>
-        <div class="mobile-divider"></div>
-        <div class="mobile-section-title">Explore</div>
-        <a href="/">Home</a>
-        <a href="/coverage">What's in VOLI</a>
-        <a href="/game-center">Follow a Match Live</a>
-        <a href="/pro-volleyball">Pro Volleyball</a>
-        <a href="/dailygrid">Daily Grid</a>
-        <div class="mobile-section-title">VOLI</div>
+    <nav class="mobile-nav">
+        <a href="/" class:list={[{ active: activePage === 'home' }]}>Home</a>
         <a href="/about" class:list={[{ active: activePage === 'about' }]}>About</a>
         <a href="/whats-next" class:list={[{ active: activePage === 'whats-next' }]}>What's Next</a>
+        <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
+        <div class="mobile-divider"></div>
+        <div class="mobile-section-title">Explore</div>
+        <a href="/ncaa-volleyball">College Volleyball</a>
+        <a href="/pro-volleyball">Pro Volleyball</a>
+        <a href="/rankings">VOLI Top 100</a>
+        <a href="/encyclopedia">Encyclopedia</a>
+        <a href="/game-center">Game Center</a>
+        <a href="/news-and-podcasts">News &amp; Podcasts</a>
+        <a href="/coverage">What's in VOLI</a>
         <a href="/methods">How Our Numbers Work</a>
         <a href="/faq">FAQ</a>
-        <a href="/contact" class:list={[{ active: activePage === 'contact' }]}>Contact</a>
         <div class="mobile-section-title">Products</div>
         <a href="/mobileapp">Mobile App</a>
         <a href="/discordbot">Discord Bot</a>
-        <div class="mobile-section-title">Podcast Leagues</div>
+        <a href="/redditdailygrid">Reddit Daily Grid</a>
+        <a href="/creatorscourt">Creators Court</a>
+        <div class="mobile-section-title">Partners</div>
         <a href="/partners">Partners</a>
         <a href="/volleytalk">Volley Talk</a>
         <a href="/courtcaptains">Court Captains</a>
@@ -128,20 +121,6 @@ const isListen = on('/news-and-podcasts');
     </nav>
 </div>
 
-<style is:inline>
-    /* New-nav layout rules. Inline on purpose (see the frontmatter): ids
-       outrank the scoped [data-astro-cid] selectors in the block below. */
-    @media (min-width: 641px) and (max-width: 1100px) {
-        #nav-container { width: calc(100% - 2rem); left: 1rem; transform: none; }
-        #nav-container .nav-logo { margin-right: auto; }
-        #desktop-nav, #download-pill { display: none !important; }
-        #hamburger, #download-pill-mobile { display: flex; }
-        #mobile-menu { display: block; }
-    }
-    @media (max-width: 1100px) {
-        #mobile-menu { max-height: calc(100vh - 6rem - env(safe-area-inset-top)); overflow-y: auto; }
-    }
-</style>
 <script is:inline>
 (function() {
     var hamburger = document.getElementById('hamburger');
