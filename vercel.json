@@ -3,34 +3,81 @@
     {
       "source": "/.well-known/assetlinks.json",
       "headers": [
-        { "key": "Content-Type", "value": "application/json" },
-        { "key": "Cache-Control", "value": "max-age=3600" }
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "max-age=3600"
+        }
       ]
     },
     {
       "source": "/.well-known/apple-app-site-association",
       "headers": [
-        { "key": "Content-Type", "value": "application/json" },
-        { "key": "Cache-Control", "value": "max-age=3600" }
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "max-age=3600"
+        }
       ]
     },
     {
       "source": "/images/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/fonts/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/embed/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "cross-origin"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
       ]
     }
   ],
   "rewrites": [
-    { "source": "/podcast/:path*", "destination": "/podcast" },
-    { "source": "/game/:path*", "destination": "/game" },
-    { "source": "/league/:path*", "destination": "/league" },
-    { "source": "/dailygrid/:path*", "destination": "/dailygrid" }
+    {
+      "source": "/podcast/:path*",
+      "destination": "/podcast"
+    },
+    {
+      "source": "/game/:path*",
+      "destination": "/game"
+    },
+    {
+      "source": "/league/:path*",
+      "destination": "/league"
+    },
+    {
+      "source": "/dailygrid/:path*",
+      "destination": "/dailygrid"
+    }
   ]
 }
