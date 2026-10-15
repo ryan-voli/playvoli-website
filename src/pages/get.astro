@@ -11,7 +11,7 @@
 // This page renders, makes the case, and fires the conversion on an
 // explicit store tap — which is a better measurement point anyway: a
 // deliberate tap, not a page load.
-import Layout from '../layouts/Layout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 
 const APP_STORE = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
 const PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.playvoli.app';
@@ -31,11 +31,11 @@ const CONVERSION_SEND_TO = CONVERSION_LABEL
 const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
 ---
 
-<Layout
+<SiteLayout
   title="Get VOLI — NCAA Volleyball Scores, Stats & Fantasy"
   description="Live NCAA women's volleyball scores, box scores, team and player stats, AVCA rankings — and the only fantasy college volleyball league. Free on iOS and Android."
   ogUrl="https://playvoli.com/get"
-  showFooter={false}
+  chrome={false}
   skipSupabase
   skipNavAuth
   bodyClass="ad-landing"
@@ -45,17 +45,17 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
     <div class="top">
       <header class="brand">
         <a href="/" class="brand-lockup" aria-label="VOLI home">
-          <span class="brand-word">VOLI</span>
+          <span class="brand-word v-display">VOLI</span>
         </a>
         <p class="brand-tag">The Volleyball Hub</p>
       </header>
 
-      <p class="deadline" id="deadline" hidden>
+      <p class="deadline v-chip v-chip--verdict" id="deadline" hidden>
         <span class="dot" aria-hidden="true"></span>
         <span id="deadline-text"></span>
       </p>
 
-      <h1>Every NCAA volleyball score, live.</h1>
+      <h1 class="v-title-plain">Every NCAA volleyball score, live.</h1>
 
       <p class="sub">
         Box scores, team and player stats, the AVCA Top&nbsp;25 —
@@ -173,7 +173,7 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
       });
     })();
   </script>
-</Layout>
+</SiteLayout>
 
 <style is:global>
   /* A PAID LANDING PAGE, NOT A SITE PAGE. One screen, one job, no
@@ -181,8 +181,7 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
      visitor can go that isn't the App Store. */
 
   /* The whole nav goes, not just the links — keeping a nav bar would
-     eat viewport height we need and hand back the exit paths. The app
-     icon in the page is the brand mark. */
+     eat viewport height we need and hand back the exit paths. */
   body.ad-landing .nav-container { display: none !important; }
 
   body.ad-landing {
@@ -196,7 +195,7 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: max(20px, env(safe-area-inset-top)) 20px 0;
+    padding: max(20px, env(safe-area-inset-top)) 16px 0;
     overflow: hidden;
   }
 
@@ -206,79 +205,69 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
     flex: 0 0 auto;
   }
 
-  /* Brand header. The store listing is "VOLI - The Volleyball Hub", and
-     naming it identically here keeps the ad -> page -> store chain
-     reading as one thing; a visitor who lands on a differently-named
-     page is a visitor deciding whether they're in the right place. */
+  /* Brand header: named exactly like the store listing,
+     "VOLI - The Volleyball Hub". */
   body.ad-landing .brand { margin-bottom: clamp(10px, 2.4vh, 18px); }
 
-  /* The one sanctioned exit. A landing page normally strips every link
-     that isn't the download, but an unclickable logo reads as a
-     throwaway page — and a visitor who wants to check you're a real
-     company should be able to. */
+  /* The one sanctioned exit: the wordmark links home. */
   body.ad-landing .brand-lockup {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     text-decoration: none;
     color: inherit;
     border-radius: 10px;
   }
   body.ad-landing .brand-lockup:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 1.5px solid var(--electric-blue);
     outline-offset: 6px;
   }
   body.ad-landing .brand-word {
-    /* Brand lockup ratio from the nav: wordmark at 0.70x the mark. */
-    font-family: 'Designer', sans-serif;
     font-size: clamp(2rem, 6vw, 2.6rem);
     line-height: 1;
     letter-spacing: 0.02em;
-    color: var(--text-primary);
-    /* Designer's caps sit high in the line box — nudge onto the
-       optical centre of the mark beside it. */
-    transform: translateY(2px);
+    color: var(--ink);
   }
   body.ad-landing .brand-tag {
-    font-size: clamp(0.72rem, 2.8vw, 0.82rem);
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font: 400 13px/1.2 var(--font-display);
+    letter-spacing: 0.12em;
+    margin-right: -0.12em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--ink-2);
     margin: 8px 0 0;
   }
 
+  /* Deadline: lime verdict chip. [hidden] must win over the chip's display. */
   body.ad-landing .deadline {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: var(--accent-subtle);
-    border: 1px solid rgba(200, 255, 0, 0.28);
-    color: var(--accent);
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 5px 12px;
-    border-radius: 999px;
+    gap: 6px;
+    height: auto;
+    min-height: 22px;
+    max-width: 100%;
+    padding: 3px 10px;
+    border-radius: 11px;
+    font: 600 11px/1.3 var(--font-body);
+    letter-spacing: .02em;
+    text-transform: none;
+    white-space: normal;
+    text-align: left;
     margin: 0 0 clamp(10px, 2.2vh, 16px);
   }
+  body.ad-landing .deadline[hidden] { display: none; }
   body.ad-landing .deadline .dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); flex-shrink: 0;
+    background: var(--lemon-lime); flex-shrink: 0;
   }
 
   body.ad-landing h1 {
-    font-size: clamp(1.7rem, 7.4vw, 2.35rem);
-    line-height: 1.08;
-    letter-spacing: -0.028em;
-    font-weight: 800;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1;
     text-wrap: balance;
     margin: 0 0 clamp(8px, 1.6vh, 12px);
   }
 
   body.ad-landing .sub {
-    color: var(--text-secondary);
-    font-size: clamp(0.92rem, 3.6vw, 1rem);
+    color: var(--ink-body);
+    font-size: clamp(15px, 3.6vw, 16px);
     line-height: 1.45;
     text-wrap: pretty;
     margin: 0 auto clamp(16px, 3vh, 24px);
@@ -288,35 +277,38 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
   body.ad-landing .cta {
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 12px;
   }
 
+  /* The one sanctioned filled slab on the site: both store buttons stay
+     full lemon-lime (see the script comment). Flat, no glow, no lift. */
   body.ad-landing .btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     width: 100%;
-    padding: 15px 22px;
-    border-radius: 14px;
-    font-size: 1rem;
-    font-weight: 700;
+    height: 52px;
+    padding: 0 22px;
+    border-radius: 26px;
+    border: 0;
+    font: 700 16px/1 var(--font-body);
     text-decoration: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    transition: opacity 100ms;
   }
   body.ad-landing .btn svg { width: 19px; height: 19px; flex-shrink: 0; }
 
   body.ad-landing .btn-primary {
-    background: var(--accent);
+    background: #F0FF1E;
     color: #000;
-    box-shadow: 0 4px 24px var(--accent-glow);
+    box-shadow: none;
   }
-  body.ad-landing .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px var(--accent-glow); }
-  body.ad-landing .btn-primary:active { transform: translateY(0); }
+  @media (hover: hover) { body.ad-landing .btn-primary:hover { opacity: .9; transform: none; box-shadow: none; } }
+  body.ad-landing .btn-primary:active { opacity: .72; transform: none; }
 
   body.ad-landing .trust {
-    color: var(--text-muted);
-    font-size: 0.78rem;
+    color: var(--ink-2);
+    font-size: 13px;
     margin: clamp(10px, 2vh, 14px) 0 0;
   }
 
@@ -339,9 +331,7 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
     max-width: 47%;
     object-fit: contain;
     object-position: top center;
-    /* Device-framed transparent art: the frame supplies the rounding,
-       so shadow only — a border would draw a box around a phone. */
-    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.55));
+    border-radius: 22px;
   }
 
   /* Very short viewports (landscape phones): the proof art is the first
@@ -353,6 +343,5 @@ const SIGNING_DEADLINE_ISO = '2026-09-09T07:00:00Z'; // Wed 9 Sep 00:00 PT
 
   @media (prefers-reduced-motion: reduce) {
     body.ad-landing .btn { transition: none; }
-    body.ad-landing .btn:hover { transform: none; }
   }
 </style>

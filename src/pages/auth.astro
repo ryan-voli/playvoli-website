@@ -1,8 +1,8 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 ---
 
-<Layout
+<SiteLayout
     title="Sign In - VOLI"
     description="Sign in or create a VOLI account to play Daily Grid and access all features."
     ogUrl="https://playvoli.com/auth"
@@ -11,9 +11,11 @@ import Layout from '../layouts/Layout.astro';
     bodyClass="auth-body"
 >
 
+<main class="v-page v-page--center auth-page">
+
 <!-- Loading State -->
 <div id="loading-state">
-    <div class="loading-spinner"></div>
+    <div class="v-spinner"></div>
 </div>
 
 <!-- Auth Card -->
@@ -21,47 +23,48 @@ import Layout from '../layouts/Layout.astro';
 
     <!-- Main View: Login / Signup -->
     <div id="view-main" class="auth-view active">
-        <h1 class="auth-title">Welcome to Voli</h1>
-        <p class="auth-subtitle">Sign in or create an account</p>
+        <h1 class="v-h1 auth-title">Welcome to Voli</h1>
+        <p class="v-body auth-subtitle">Sign in or create an account</p>
 
-        <div class="tab-toggle">
-            <button id="tab-login" class="active" onclick="switchTab('login')">Log In</button>
-            <button id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+        <div class="v-tabs tab-toggle">
+            <span class="v-tabs__hole" aria-hidden="true"></span>
+            <button id="tab-login" class="v-tabs__tab active" onclick="switchTab('login')">Log In</button>
+            <button id="tab-signup" class="v-tabs__tab" onclick="switchTab('signup')">Sign Up</button>
         </div>
 
         <div id="auth-message" class="message"></div>
 
         <!-- Login Form -->
         <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
-            <input type="email" class="form-input" id="login-email" placeholder="Email" required autocomplete="email">
-            <input type="password" class="form-input" id="login-password" placeholder="Password" required autocomplete="current-password">
+            <input type="email" class="v-input" id="login-email" placeholder="Email" required autocomplete="email">
+            <input type="password" class="v-input" id="login-password" placeholder="Password" required autocomplete="current-password">
             <div class="forgot-link">
                 <a onclick="showForgotPassword()">Forgot password?</a>
             </div>
-            <button type="submit" class="btn-primary" id="login-btn">Log In</button>
+            <button type="submit" class="v-pill v-pill--cta v-pill--action v-pill--block" id="login-btn">Log In</button>
         </form>
 
         <!-- Signup Form -->
         <form id="signup-form" class="auth-form hidden" onsubmit="handleSignup(event)">
-            <input type="text" class="form-input" id="signup-username" placeholder="Username" required autocomplete="username" minlength="3" maxlength="20">
-            <input type="email" class="form-input" id="signup-email" placeholder="Email" required autocomplete="email">
-            <input type="password" class="form-input" id="signup-password" placeholder="Password" required autocomplete="new-password" minlength="8">
-            <input type="password" class="form-input" id="signup-confirm" placeholder="Confirm Password" required autocomplete="new-password">
-            <button type="submit" class="btn-primary" id="signup-btn">Create Account</button>
+            <input type="text" class="v-input" id="signup-username" placeholder="Username" required autocomplete="username" minlength="3" maxlength="20">
+            <input type="email" class="v-input" id="signup-email" placeholder="Email" required autocomplete="email">
+            <input type="password" class="v-input" id="signup-password" placeholder="Password" required autocomplete="new-password" minlength="8">
+            <input type="password" class="v-input" id="signup-confirm" placeholder="Confirm Password" required autocomplete="new-password">
+            <button type="submit" class="v-pill v-pill--cta v-pill--action v-pill--block" id="signup-btn">Create Account</button>
         </form>
 
-        <div class="divider"><span>or</span></div>
+        <div class="v-rule-label auth-or"><span>or</span></div>
 
         <div class="oauth-buttons">
-            <button class="btn-oauth" onclick="handleOAuth('google')">
+            <button class="v-pill v-pill--block btn-oauth" onclick="handleOAuth('google')">
                 <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                 Continue with Google
             </button>
-            <button class="btn-oauth" onclick="handleOAuth('apple')">
+            <button class="v-pill v-pill--block btn-oauth" onclick="handleOAuth('apple')">
                 <svg viewBox="0 0 24 24"><path fill="white" d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
                 Continue with Apple
             </button>
-            <button class="btn-oauth" onclick="handleOAuth('discord')">
+            <button class="v-pill v-pill--block btn-oauth" onclick="handleOAuth('discord')">
                 <svg viewBox="0 0 24 24"><path fill="#5865F2" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
                 Continue with Discord
             </button>
@@ -70,21 +73,21 @@ import Layout from '../layouts/Layout.astro';
 
     <!-- Forgot Password: Step 1 - Enter Email -->
     <div id="view-forgot-email" class="auth-view">
-        <button class="back-link" onclick="showMainView()">&larr; Back to login</button>
-        <h1 class="auth-title">Reset Password</h1>
-        <p class="auth-subtitle">Enter your email to receive a reset code</p>
+        <button class="v-path back-link" onclick="showMainView()">&larr; Back to login</button>
+        <h1 class="v-h1 auth-title">Reset Password</h1>
+        <p class="v-body auth-subtitle">Enter your email to receive a reset code</p>
         <div id="forgot-message" class="message"></div>
         <form class="auth-form" onsubmit="handleSendResetCode(event)">
-            <input type="email" class="form-input" id="forgot-email" placeholder="Email" required autocomplete="email">
-            <button type="submit" class="btn-primary" id="forgot-send-btn">Send Code</button>
+            <input type="email" class="v-input" id="forgot-email" placeholder="Email" required autocomplete="email">
+            <button type="submit" class="v-pill v-pill--cta v-pill--action v-pill--block" id="forgot-send-btn">Send Code</button>
         </form>
     </div>
 
     <!-- Forgot Password: Step 2 - Enter Code -->
     <div id="view-forgot-code" class="auth-view">
-        <button class="back-link" onclick="showView('view-forgot-email')">&larr; Back</button>
-        <h1 class="auth-title">Enter Code</h1>
-        <p class="step-hint">We sent a 6-digit code to <strong id="reset-email-display"></strong></p>
+        <button class="v-path back-link" onclick="showView('view-forgot-email')">&larr; Back</button>
+        <h1 class="v-h1 auth-title">Enter Code</h1>
+        <p class="v-body step-hint">We sent a 6-digit code to <strong id="reset-email-display"></strong></p>
         <div id="code-message" class="message"></div>
         <div class="code-inputs" id="code-inputs">
             <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
@@ -94,24 +97,24 @@ import Layout from '../layouts/Layout.astro';
             <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
             <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
         </div>
-        <button class="btn-primary" id="verify-code-btn" onclick="handleVerifyCode()" disabled>Verify Code</button>
+        <button class="v-pill v-pill--cta v-pill--action v-pill--block" id="verify-code-btn" onclick="handleVerifyCode()" disabled>Verify Code</button>
         <div class="resend-link"><a onclick="handleResendResetCode()">Resend code</a></div>
     </div>
 
     <!-- Forgot Password: Step 3 - New Password -->
     <div id="view-forgot-password" class="auth-view">
-        <h1 class="auth-title">New Password</h1>
-        <p class="auth-subtitle">Choose a strong new password</p>
+        <h1 class="v-h1 auth-title">New Password</h1>
+        <p class="v-body auth-subtitle">Choose a strong new password</p>
         <div id="newpw-message" class="message"></div>
         <form class="auth-form" onsubmit="handleSetNewPassword(event)">
-            <input type="password" class="form-input" id="new-password" placeholder="New password" required autocomplete="new-password" oninput="checkPasswordRules()">
-            <input type="password" class="form-input" id="new-password-confirm" placeholder="Confirm new password" required autocomplete="new-password">
+            <input type="password" class="v-input" id="new-password" placeholder="New password" required autocomplete="new-password" oninput="checkPasswordRules()">
+            <input type="password" class="v-input" id="new-password-confirm" placeholder="Confirm new password" required autocomplete="new-password">
             <div class="password-rules" id="password-rules">
                 <span id="rule-length">At least 8 characters</span>
                 <span id="rule-upper">At least 1 uppercase letter</span>
                 <span id="rule-number">At least 1 number</span>
             </div>
-            <button type="submit" class="btn-primary" id="set-password-btn">Set Password</button>
+            <button type="submit" class="v-pill v-pill--cta v-pill--action v-pill--block" id="set-password-btn">Set Password</button>
         </form>
     </div>
 
@@ -120,11 +123,13 @@ import Layout from '../layouts/Layout.astro';
         <div class="success-check">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
         </div>
-        <h1 class="auth-title">Password Updated</h1>
-        <p class="auth-subtitle">Your password has been changed. You can now sign in.</p>
-        <button class="btn-primary" onclick="showMainView()">Back to Log In</button>
+        <h1 class="v-h1 auth-title">Password Updated</h1>
+        <p class="v-body auth-subtitle">Your password has been changed. You can now sign in.</p>
+        <button class="v-pill v-pill--cta v-pill--action v-pill--block" onclick="showMainView()">Back to Log In</button>
     </div>
 </div>
+
+</main>
 
 <script is:inline slot="scripts">
     const SUPABASE_URL = 'https://api.playvoli.com';
@@ -352,94 +357,47 @@ import Layout from '../layouts/Layout.astro';
     init();
 </script>
 
-</Layout>
+</SiteLayout>
 
 <style is:global>
     /* ============================================
        Auth Page Styles
-       Scoped under body.auth-body to prevent leaking
+       Scoped under body.auth-body / .auth-page to prevent leaking
        ============================================ */
 
-    body.auth-body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 5rem 2rem 2rem;
-        padding-top: calc(5rem + env(safe-area-inset-top));
-        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
-        overflow-x: hidden;
-    }
-
+    /* Dark glass card, centred by .v-page--center */
     .auth-card {
         width: 100%;
         max-width: 420px;
-        background: var(--bg-card);
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
-        border: 1px solid var(--glass-border);
-        border-radius: 24px;
-        padding: 2.5rem 2rem;
-        position: relative;
-        overflow: hidden;
-        margin-top: auto;
-        margin-bottom: auto;
+        background: var(--glass-d60);
+        -webkit-backdrop-filter: var(--blur);
+        backdrop-filter: var(--blur);
+        box-shadow: var(--shadow-card);
+        border: 0;
+        border-radius: var(--r-plate);
+        padding: 24px;
     }
 
-    .auth-card::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
-    }
-
-    .auth-title {
-        font-size: 1.5rem;
-        font-weight: 700;
+    .auth-card .auth-title {
+        font-size: clamp(28px, 7vw, 34px);
         text-align: center;
-        margin-bottom: 0.25rem;
-        letter-spacing: -0.02em;
+        margin: 0 0 8px;
     }
 
-    .auth-subtitle {
-        font-size: 0.9rem;
+    .auth-card .auth-subtitle {
         text-align: center;
-        color: var(--text-secondary);
-        margin-bottom: 1.5rem;
+        margin: 0 0 24px;
     }
 
-    .tab-toggle {
-        display: flex;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 100px;
-        padding: 4px;
-        margin-bottom: 1.5rem;
-    }
-
-    .tab-toggle button {
-        flex: 1;
-        padding: 0.6rem 1rem;
-        border: none;
-        border-radius: 100px;
-        background: transparent;
-        color: var(--text-muted);
-        font-family: inherit;
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.25s ease;
-    }
-
-    .tab-toggle button.active {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--text-primary);
-    }
+    .auth-card .tab-toggle { margin-bottom: 20px; }
 
     .auth-form {
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 12px;
     }
+
+    .auth-form .v-pill--cta { margin-top: 4px; }
 
     .auth-view {
         display: none;
@@ -451,10 +409,10 @@ import Layout from '../layouts/Layout.astro';
 
     .auth-card .message {
         display: none;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
-        font-size: 0.85rem;
-        margin-bottom: 0.75rem;
+        padding: 12px 14px;
+        border-radius: 14px;
+        font-size: 14px;
+        margin-bottom: 12px;
         line-height: 1.4;
     }
 
@@ -463,15 +421,13 @@ import Layout from '../layouts/Layout.astro';
     }
 
     .auth-card .message.error {
-        background: var(--error-subtle, rgba(255, 77, 106, 0.1));
-        border: 1px solid rgba(255, 77, 106, 0.2);
-        color: var(--error, #ff4d6a);
+        background: rgba(255, 31, 109, 0.12);
+        color: var(--rose);
     }
 
     .auth-card .message.success {
-        background: var(--accent-subtle);
-        border: 1px solid rgba(200, 255, 0, 0.2);
-        color: var(--accent);
+        background: rgba(240, 255, 30, 0.10);
+        color: var(--lemon-lime);
     }
 
     .auth-card .message .inline-btn {
@@ -485,209 +441,132 @@ import Layout from '../layouts/Layout.astro';
         padding: 0;
     }
 
-    .auth-card .divider {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin: 1.25rem 0;
-        color: var(--text-muted);
-        font-size: 0.8rem;
-    }
-
-    .auth-card .divider::before,
-    .auth-card .divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: var(--glass-border);
-    }
+    .auth-card .auth-or { margin: 20px 0; }
 
     .oauth-buttons {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 8px;
     }
 
-    .btn-oauth {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-        width: 100%;
-        padding: 0.75rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--glass-border);
-        border-radius: 12px;
-        color: var(--text-primary);
-        font-family: inherit;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
+    .auth-card .btn-oauth {
+        height: 44px;
+        border-radius: 22px;
+        gap: 10px;
     }
 
-    .btn-oauth:hover {
-        background: rgba(255, 255, 255, 0.06);
-    }
-
-    .btn-oauth svg {
+    .auth-card .btn-oauth svg {
         width: 20px;
         height: 20px;
-        flex-shrink: 0;
     }
 
     .forgot-link {
         text-align: right;
-        margin-top: -0.25rem;
+        margin-top: -4px;
     }
 
-    .forgot-link a {
-        color: var(--text-muted);
-        font-size: 0.8rem;
+    .forgot-link a,
+    .resend-link a {
+        color: var(--ink-2);
+        font-size: 13px;
         cursor: pointer;
-        transition: color 0.2s;
-    }
-
-    .forgot-link a:hover {
-        color: var(--text-secondary);
+        transition: color 150ms;
     }
 
     .back-link {
-        color: var(--text-muted);
-        font-size: 0.85rem;
         cursor: pointer;
         border: none;
         background: none;
-        font-family: inherit;
         padding: 0;
-        margin-bottom: 1rem;
-        transition: color 0.2s;
+        margin-bottom: 16px;
+        transition: color 150ms;
     }
 
-    .back-link:hover {
-        color: var(--text-secondary);
+    @media (hover: hover) {
+        .forgot-link a:hover,
+        .resend-link a:hover,
+        .back-link:hover { color: #fff; }
     }
 
     .code-inputs {
         display: flex;
-        gap: 0.5rem;
+        gap: 8px;
         justify-content: center;
-        margin: 0.75rem 0;
+        margin: 16px 0 20px;
     }
 
     .code-inputs input {
-        width: 48px;
-        height: 56px;
+        width: 44px;
+        height: 52px;
         text-align: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        font-family: inherit;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--glass-border);
-        border-radius: 12px;
-        color: var(--text-primary);
+        font: 700 22px/1 var(--font-body);
+        font-variant-numeric: tabular-nums;
+        background: var(--glass-10);
+        border: 0;
+        border-radius: 14px;
+        color: #fff;
         outline: none;
-        transition: all 0.2s;
+        min-width: 0;
     }
 
-    .code-inputs input:focus {
-        border-color: rgba(200, 255, 0, 0.3);
-        background: rgba(255, 255, 255, 0.05);
+    .code-inputs input:focus,
+    .code-inputs input:focus-visible {
+        box-shadow: 0 0 0 1.5px var(--electric-blue);
+        outline: none;
     }
 
-    .step-hint {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
+    .auth-card .step-hint {
         text-align: center;
-        margin-bottom: 0.5rem;
+        margin: 0 0 4px;
     }
+
+    .step-hint strong { color: #fff; font-weight: 600; }
 
     .resend-link {
         text-align: center;
-        margin-top: 0.25rem;
-    }
-
-    .resend-link a {
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        text-decoration: none;
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-
-    .resend-link a:hover {
-        color: var(--text-secondary);
+        margin-top: 12px;
     }
 
     .password-rules {
-        font-size: 0.8rem;
-        color: var(--text-muted);
+        font-size: 13px;
+        color: var(--ink-2);
         line-height: 1.6;
+        padding: 0 4px;
     }
 
     .password-rules span {
         display: block;
-        transition: color 0.2s;
+        transition: color 150ms;
     }
 
     .password-rules span.valid {
-        color: var(--accent);
+        color: var(--lemon-lime);
     }
 
     .success-check {
         width: 64px;
         height: 64px;
         border-radius: 50%;
-        background: var(--accent-subtle);
-        border: 2px solid var(--accent);
+        background: var(--glass-10);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 1rem;
+        margin: 0 auto 16px;
     }
 
     .success-check svg {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
     }
 
     .hidden {
         display: none !important;
     }
 
-    #loading-state .loading-spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid rgba(255, 255, 255, 0.1);
-        border-top: 3px solid var(--accent);
-        border-radius: 50%;
-        animation: auth-spin 0.8s linear infinite;
-        margin: 4rem auto;
-    }
+    #loading-state { display: flex; justify-content: center; padding: 64px 0; }
 
-    @keyframes auth-spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 480px) {
-        body.auth-body {
-            padding: 6rem 1rem 1rem;
-        }
-
-        .auth-card {
-            padding: 2rem 1.5rem;
-            border-radius: 20px;
-        }
-
-        .auth-title {
-            font-size: 1.3rem;
-        }
-
-        .code-inputs input {
-            width: 42px;
-            height: 50px;
-            font-size: 1.3rem;
-        }
+    @media (max-width: 600px) {
+        .auth-card { padding: 24px 16px; }
+        .code-inputs { gap: 6px; }
     }
 </style>

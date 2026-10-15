@@ -44,3 +44,5 @@ Allow: /
 
 # AI / LLM optimization manifest
 # See: /llms.txt
+
+Sitemap: https://playvoli.com/sitemap.xml

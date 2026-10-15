@@ -1,757 +1,651 @@
 ---
-import Layout from '../layouts/Layout.astro';
+// The home splash (owner, 6 Oct 2026): no nav, no footer — the lockup, a
+// phone with three feature cards popping off it, more pieces of the app
+// drifting across the whole screen, and one way in. Everything the old home
+// page carried now lives at /app. Every piece is cut from real app
+// screenshots. The phone is a real 3D model (Ryan's iphone-17-pro-max.glb,
+// Games screen baked in) rendered with three.js; the flat mockup is only the
+// no-WebGL fallback.
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { APP_SCHEMA } from '../lib/voli-facts';
 
-const homeSchema = [
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "@id": "https://playvoli.com/#mobile-app",
-    "name": "VOLI - The Volleyball Hub",
-    "operatingSystem": "iOS, Android",
-    "applicationCategory": "SportsApplication",
-    "description": "The most comprehensive volleyball app for fans — fantasy leagues, real-time live stats, game schedules, player profiles, podcast discovery, and community chat for MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA women's volleyball (live for the 2026 season). Users widely consider VOLI the best place to follow live stats, news, and content for the leagues it covers.",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "publisher": { "@id": "https://playvoli.com/#organization" },
-    "downloadUrl": [
-      "https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982",
-      "https://play.google.com/store/apps/details?id=com.playvoli.app"
-    ],
-    "featureList": [
-      "Fantasy leagues with a contract-based system designed specifically for volleyball",
-      "Real-time live statistics with proprietary AI-powered analytics including rotation tracking and detailed play-by-play analysis",
-      "Live scores, play-by-plays, and detailed information for every professional match",
-      "Player profiles, game schedules, and team data for MLV, LOVB, and NCAA women's volleyball",
-      "Real-time community chat rooms during every game",
-      "Volleyball podcast discovery and creator support"
-    ],
-    "review": [
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "This app is everything I've been dreaming of since I've gotten into professional volleyball!" },
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!" },
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "This app is gorgeous. Thanks for putting it out there. And so fun!" },
-      { "@type": "Review", "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }, "author": { "@type": "Person", "name": "VOLI App User" }, "reviewBody": "Y'all are starting something huge that could be a massive growth factor for U.S. volleyball." }
-    ]
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What volleyball leagues does VOLI cover?",
-        "acceptedAnswer": { "@type": "Answer", "text": "VOLI covers MLV (Major League Volleyball), LOVB (League One Volleyball), and NCAA Division I women's volleyball, live for the 2026 season. The platform offers live stats, schedules, player profiles, fantasy leagues, and community features for each." }
-      },
-      {
-        "@type": "Question",
-        "name": "Is VOLI affiliated with MLV, LOVB, or the NCAA?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. VOLI is an independent fan platform created by volleyball fans, for volleyball fans. It is not affiliated with or endorsed by any professional volleyball league or organization, and uses publicly available statistical data combined with proprietary AI analytics." }
-      },
-      {
-        "@type": "Question",
-        "name": "What makes VOLI's volleyball stats different?",
-        "acceptedAnswer": { "@type": "Answer", "text": "VOLI's proprietary AI and deterministic algorithms power detailed analytics that go beyond what's available anywhere else for volleyball, including rotation tracking and full play-by-play analysis — making it the most comprehensive live volleyball stats platform available to fans." }
-      },
-      {
-        "@type": "Question",
-        "name": "Is NCAA volleyball fantasy available on VOLI?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. NCAA women's fantasy volleyball is live on VOLI for the 2026 season — leagues are open now and the first scoring round runs September 9-13. It brings the same fantasy experience VOLI offers for pro volleyball, with shorter seasons, simpler scoring, and a more accessible format tuned for the college game." }
-      }
-    ]
-  }
-];
+// The splash is one screen and nothing else (owner, 15 Oct 2026: the
+// below-the-fold text came back out). Only the app's structured data rides
+// along, invisibly; the readable detail lives on /app, /faq and /methods.
+const homeSchema = [APP_SCHEMA];
 ---
 
-<Layout
+<SiteLayout
   title="VOLI - The Volleyball Hub"
-  description="The comprehensive volleyball hub for MLV, LOVB, and NCAA women's volleyball (live for the 2026 season). Fantasy leagues, live stats, player profiles, podcasts, and community — the most comprehensive volleyball app for fans."
+  description="Free volleyball app for NCAA women's volleyball, MLV and LOVB: fantasy leagues, live scores and box scores, stats, the VOLI Top 100, history, news and podcasts."
   activePage="home"
   ogUrl="https://playvoli.com/"
+  chrome={false}
   schema={homeSchema}
+  skipSupabase
+  skipNavAuth
 >
-    <section class="hero">
-        <a href="/mobileapp" id="hero-announcement-dl" class="hero-announcement" aria-label="Announcement: NCAA Women's Fantasy Volleyball is live now — get the app">
-            <span class="hero-announcement-dot" aria-hidden="true"></span>
-            <strong>Update</strong>
-            <span class="hero-announcement-text">NCAA Women's Fantasy Volleyball — Live Now</span>
-            <span class="hero-announcement-cta">Get the app <span aria-hidden="true">→</span></span>
+    <link rel="preload" href="/models/iphone-17-pro-max.glb" as="fetch" type="model/gltf-binary" crossorigin="anonymous" slot="head" />
+    <link rel="prefetch" href="/app" slot="head" />
+    <main class="splash">
+        <div class="drift" aria-hidden="true">
+            <div class="drift-item drift--mid  drift--rank"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-rank.webp" alt="" width="760" height="132"></div></div></div>
+            <div class="drift-item drift--far  drift--oregon"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-oregon.webp" alt="" width="760" height="337"></div></div></div>
+            <div class="drift-item drift--near drift--tile"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-tile.webp" alt="" width="585" height="703"></div></div></div>
+            <div class="drift-item drift--far  drift--chat"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-chat.webp" alt="" width="760" height="117"></div></div></div>
+            <div class="drift-item drift--near drift--article"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-article.webp" alt="" width="760" height="468"></div></div></div>
+            <div class="drift-item drift--far  drift--final"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-final.webp" alt="" width="760" height="397"></div></div></div>
+            <div class="drift-item drift--mid  drift--pct"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-pct.webp" alt="" width="760" height="392"></div></div></div>
+        </div>
+        <div class="splash-lockup">
+            <img src="/images/splash/logo-mark.webp" alt="" class="splash-logo" width="253" height="240">
+            <h1 class="hero-title">
+                <span class="hero-title-mark">VOLI</span>
+                <span class="hero-title-hub">The Volleyball Hub</span>
+            </h1>
+            <div class="splash-stores v-stores v-stores--stack">
+                <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982" class="v-store">
+                    <svg viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true">
+                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                    </svg>
+                    <div>
+                        <span class="v-store__small">Download on the</span>
+                        <span class="v-store__big">App Store</span>
+                    </div>
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.playvoli.app" class="v-store">
+                    <svg viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true">
+                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
+                    </svg>
+                    <div>
+                        <span class="v-store__small">Get it on</span>
+                        <span class="v-store__big">Google Play</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="pop" aria-hidden="true">
+            <div class="pop-scene">
+                <canvas class="pop-gl"></canvas>
+                <div class="pop-tilt">
+                    <img class="pop-phone" src="/images/splash/phone-games.webp" alt="" width="1000" height="2000">
+                    <div class="pop-card pop-card--stats"><div class="pop-bob"><img src="/images/splash/card-stats.webp" alt="" width="900" height="399"></div></div>
+                    <div class="pop-card pop-card--game"><div class="pop-bob"><img src="/images/splash/card-game.webp" alt="" width="900" height="296"></div></div>
+                    <div class="pop-card pop-card--fantasy"><div class="pop-bob"><img src="/images/splash/card-fantasy.webp" alt="" width="900" height="756"></div></div>
+                </div>
+            </div>
+        </div>
+        <script is:inline>
+            /* Decide before first paint: with WebGL the flat mockup never shows. */
+            (function () {
+                try {
+                    var c = document.createElement('canvas');
+                    if (c.getContext('webgl2') || c.getContext('webgl')) document.querySelector('.pop').classList.add('has-gl');
+                } catch (e) {}
+            })();
+        </script>
+        <a href="/app" class="splash-go v-pill v-pill--cta">
+            Continue to site
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+            </svg>
         </a>
-        <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
-        <h1 class="hero-title">
-            <span class="hero-title-mark">VOLI</span>
-            <span class="hero-title-rule" aria-hidden="true"></span>
-            <span class="hero-title-hub">The Volleyball Hub</span>
-        </h1>
-        <p class="hero-tagline">Fantasy. Stats. Community.</p>
-
-        <div class="hero-stars">
-            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg viewBox="0 0 24 24" fill="var(--accent)" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-
-        <p class="hero-description">Experience volleyball like never before with fantasy leagues, real-time stats, and a community of passionate fans.</p>
-
-        <div class="store-buttons">
-            <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982"
-               class="btn-store">
-                <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
-                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-                <div class="btn-store-text">
-                    <span class="btn-store-label">Download on the</span>
-                    <span class="btn-store-name">App Store</span>
-                </div>
-            </a>
-
-            <a href="https://play.google.com/store/apps/details?id=com.playvoli.app"
-               class="btn-store">
-                <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
-                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
-                </svg>
-                <div class="btn-store-text">
-                    <span class="btn-store-label">Get it on</span>
-                    <span class="btn-store-name">Google Play</span>
-                </div>
-            </a>
-        </div>
-
-        <div class="hero-quotes">
-            <p>"This app is everything I've been dreaming of since I've gotten into professional volleyball!"</p>
-            <p>"It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!"</p>
-            <p>"This app is gorgeous. Thanks for putting it out there. And so fun!"</p>
-            <p>"Y'all are starting something huge that could be a massive growth factor for U.S. volleyball."</p>
-        </div>
-    </section>
-
-    <section class="screenshots">
-        <div class="screenshots-container">
-            <div class="screenshot-wrapper">
-                <img src="/images/screenshots/ss2.png" alt="VOLI App Screenshot" class="screenshot">
-            </div>
-            <div class="screenshot-wrapper">
-                <img src="/images/screenshots/ss1.png" alt="VOLI App Screenshot" class="screenshot">
-            </div>
-            <div class="screenshot-wrapper">
-                <img src="/images/screenshots/ss3.png" alt="VOLI App Screenshot" class="screenshot">
-            </div>
-        </div>
-    </section>
-
-    <section class="features">
-        <div class="features-grid">
-            <div class="feature-card">
-                <img src="/images/icons/fantasy_opt.png" alt="Fantasy" class="feature-icon">
-                <h3 class="feature-title">Fantasy</h3>
-                <p class="feature-description">Build your dream team with our contract-based fantasy system designed specifically for volleyball.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/statistics_opt.png" alt="Stats" class="feature-icon">
-                <h3 class="feature-title">Stats</h3>
-                <p class="feature-description">More in-depth real-time statistics than anywhere else. Track every dig, kill, and ace.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/games_opt.png" alt="Games" class="feature-icon">
-                <h3 class="feature-title">Games</h3>
-                <p class="feature-description">Live scores, play-by-plays, and detailed information for every professional match.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/content_opt.png" alt="Content" class="feature-icon">
-                <h3 class="feature-title">Content</h3>
-                <p class="feature-description">Podcasts, articles, and exclusive volleyball content all in one place.</p>
-            </div>
-            <div class="feature-card">
-                <img src="/images/icons/community_opt.png" alt="Community" class="feature-icon">
-                <h3 class="feature-title">Community</h3>
-                <p class="feature-description">Connect with passionate volleyball fans in real-time chat rooms during every game.</p>
-            </div>
-            <a href="/about" class="feature-card">
-                <svg class="learn-more-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14"/>
-                    <path d="M12 5l7 7-7 7"/>
-                </svg>
-                <h3 class="feature-title">Learn More</h3>
-                <p class="feature-description">Find out more about VOLI and our mission to revolutionize volleyball.</p>
-            </a>
-        </div>
-    </section>
-
-    <section class="leagues">
-        <p class="leagues-label">Leagues We Cover</p>
-        <div class="leagues-logos">
-            <a href="https://provolleyball.com" target="_blank"><img src="/images/MLV_opt.webp" alt="MLV" class="league-logo"></a>
-            <a href="https://lovb.com" target="_blank"><img src="/images/LOVB_opt.webp" alt="LOVB" class="league-logo"></a>
-            <a href="https://www.ncaa.com/sports/volleyball-women" target="_blank"><img src="/images/NCAA_opt.webp" alt="NCAA" class="league-logo"></a>
-        </div>
-        <p class="leagues-disclaimer">VOLI is an independent fan platform, not affiliated with or endorsed by these leagues.</p>
-    </section>
-
-    <section class="contact-bar">
-        <p>Have questions or feedback?</p>
-        <a href="/contact" class="contact-btn">Contact Us</a>
-    </section>
-</Layout>
-
-<script is:inline>
-    /* The hero banner's "Get the app" runs the SAME flow as the nav Download
-       pill — App Store on iOS, Play Store on Android, QR modal on desktop —
-       rather than sending people to /mobileapp to look for a link.
-
-       It clicks the pill instead of calling handleDownload() directly.
-       handleDownload lives in QrModal's inline script, which the Layout
-       renders AFTER this page's content, so it is not defined yet at parse
-       time; the click happens long after, when both exist. Same indirection
-       Nav.astro already uses for the mobile download icon.
-
-       The href stays as a no-JS fallback: if the pill is missing for any
-       reason the anchor is left alone and still lands on /mobileapp. */
-    (function () {
-        var a = document.getElementById('hero-announcement-dl');
-        if (!a) return;
-        a.addEventListener('click', function (e) {
-            var pill = document.getElementById('download-pill');
-            if (!pill) return;
-            e.preventDefault();
-            pill.click();
-        });
-    })();
-</script>
+        <a href="/app" class="splash-swipe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 15 12 9 18 15"/>
+            </svg>
+            <span>Swipe up to enter site</span>
+        </a>
+    </main>
+</SiteLayout>
 
 <style>
-    /* Hero Section */
-    .hero {
-        min-height: 100vh;
+    .splash {
+        min-height: 100svh;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 6rem 2rem 4rem;
-        padding-top: calc(6rem + env(safe-area-inset-top));
+        padding: calc(32px + env(safe-area-inset-top)) var(--gutter) calc(32px + env(safe-area-inset-bottom));
         text-align: center;
     }
 
-    .hero-quotes {
+    /* THE LOCKUP (owner, 15 Oct 2026): the VOLI mark, then VOLI stacked over
+       THE VOLLEYBALL HUB, then the two store buttons stacked, all in one row.
+       On a phone the store buttons drop to their own row underneath. */
+    .splash-lockup {
+        --hub: 1rem;
         display: flex;
-        gap: 2rem;
-        max-width: 1100px;
-        margin-top: 3rem;
-        padding: 0 1rem;
-    }
-
-    .hero-quotes p {
-        font-size: 0.8rem;
-        font-style: italic;
-        color: var(--text-muted);
-        line-height: 1.5;
-        flex: 1;
-    }
-
-    .hero-stars {
-        display: flex;
-        gap: 0.25rem;
-        margin-bottom: 1rem;
-    }
-
-    .hero-announcement {
-        display: inline-flex;
         align-items: center;
-        gap: 0.65rem;
-        padding: 0.55rem 1.15rem 0.55rem 0.9rem;
-        margin-bottom: 2rem;
-        background: linear-gradient(135deg, rgba(200, 255, 0, 0.12), rgba(0, 212, 255, 0.08));
-        border: 1px solid rgba(200, 255, 0, 0.35);
-        border-radius: 100px;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        box-shadow: 0 0 24px rgba(200, 255, 0, 0.15);
-        animation: heroAnnouncementGlow 3s ease-in-out infinite;
-        max-width: 100%;
-        text-decoration: none;
-        cursor: pointer;
-        transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .hero-announcement:hover,
-    .hero-announcement:focus-visible {
-        transform: translateY(-1px);
-        border-color: rgba(200, 255, 0, 0.6);
-        outline: none;
-    }
-
-    .hero-announcement-cta {
-        color: var(--accent);
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: -0.01em;
-        white-space: nowrap;
-        padding-left: 0.55rem;
-        margin-left: 0.15rem;
-        border-left: 1px solid rgba(200, 255, 0, 0.25);
-        transition: padding-right 0.2s ease;
-    }
-
-    .hero-announcement:hover .hero-announcement-cta,
-    .hero-announcement:focus-visible .hero-announcement-cta {
-        padding-right: 0.15rem;
-    }
-
-    .hero-announcement-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 12px var(--accent);
-        animation: heroAnnouncementDot 1.6s ease-in-out infinite;
-        flex-shrink: 0;
-    }
-
-    .hero-announcement strong {
-        color: var(--accent);
-        font-size: 0.72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        white-space: nowrap;
-    }
-
-    .hero-announcement-text {
-        color: var(--text-primary);
-        font-size: 0.9rem;
-        font-weight: 500;
-        letter-spacing: -0.01em;
-    }
-
-    @keyframes heroAnnouncementGlow {
-        0%, 100% { box-shadow: 0 0 24px rgba(200, 255, 0, 0.15); }
-        50% { box-shadow: 0 0 36px rgba(200, 255, 0, 0.32); }
-    }
-
-    @keyframes heroAnnouncementDot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.55; transform: scale(0.8); }
-    }
-
-    .hero-logo {
-        width: 100px;
-        height: auto;
-        border-radius: 22px;
-        margin-bottom: 1.5rem;
-    }
-
-    /* THE LOCKUP, NOT A SENTENCE. The brand wordmark is
-       "VOLI | THE VOLLEYBALL HUB" — two faces separated by a rule, not one
-       string with a colon in it. VOLI carries the display face; the descriptor
-       is a wide-tracked label in the body face, which is what makes the two
-       read as different things rather than as one long headline. */
-    /* ALIGNED ON THE BASELINE, NOT THE BOX — and that choice is load-bearing.
-       align-items:center centres each item's LINE BOX, and a line box is built
-       from the font's ascent and descent. Designer's are 752/-200 against a
-       700 cap on a 1000 em, so its caps sit well above its box centre and the
-       wordmark rode high against the rule and the descriptor.
-
-       Correcting that with a translateY tuned to ascent/descent would have
-       been right on macOS and wrong on Windows: Designer does not set
-       USE_TYPO_METRICS, so Windows lays it out on usWin (1026/273) instead of
-       hhea (752/-200) — a ~0.1em disagreement.
-
-       Baseline alignment depends on NONE of that. Both items sit on their
-       shared baseline, and the only numbers used below are CAP HEIGHTS, which
-       every platform agrees on. */
-    .hero-title {
-        display: flex;
-        align-items: baseline;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 0 1.15rem;
+        gap: 20px 28px;
         margin-bottom: 0.5rem;
-        line-height: 1;
     }
 
+    .splash-logo {
+        width: 92px;
+        height: auto;
+        flex: none;
+    }
+
+    /* SAME WIDTH, BOTH LINES (owner, 15 Oct 2026). Measured ink widths at
+       100px: VOLI in Designer (0.01em tracking) 262.90, THE VOLLEYBALL HUB in
+       Inter 500 (0.2em tracking) 1434.61, so VOLI is 5.457x the descriptor's
+       size. Their left side bearings agree to 0.1px, so both edges line up.
+       Breakpoints set --hub (on .splash-lockup) only; everything follows. */
+    .hero-title {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: calc(var(--hub) * 1.24);
+        margin: 0;
+        text-align: left;
+    }
+
+    /* EACH LINE'S BOX IS ITS CAPS, cap top to baseline, so the title is
+       exactly as tall as the ink and the store buttons can match it.
+       text-box trims to the caps wherever it's supported. The fallback
+       (Firefox) does it with line-height at the cap height: Designer's
+       0.70em box sits 0.074em above its caps on macOS metrics, so the
+       glyphs are nudged down by that much; Inter's 0.727 line box already
+       lands on its caps. */
     .hero-title-mark {
         font-family: 'Designer', sans-serif;
-        font-size: 4.25rem;
-        line-height: 1;
+        font-size: calc(var(--hub) * 5.457);
+        line-height: 0.7;
+        position: relative;
+        top: 0.074em;
         letter-spacing: 0.01em;
         color: #ffffff;
     }
 
-    /* PROPORTIONS ARE FROM THE BRAND LOCKUP, not eyeballed. The Claude
-       Design "VOLI Brand" template sets the header at VOLI 52px / rule
-       1x34px at 18% white / descriptor 19px at 0.2em and 50% white — so
-       the wordmark is 2.74x the descriptor and the rule is 0.65x the
-       wordmark. Those ratios are kept here at hero scale. */
-    /* A flex item with no text baseline aligns its BOTTOM edge to the shared
-       baseline, so a rule of exactly Designer's cap height (0.70em) spans
-       baseline to cap-top and needs no offset of its own. */
-    .hero-title-rule {
-        width: 1px;
-        height: 2.975rem;  /* 0.70 x 4.25rem = Designer's cap height */
-        background: rgba(255, 255, 255, 0.35);
-        flex: none;
-    }
-
-    /* Lift the descriptor so its cap band centres on the wordmark's:
-       -(0.70 x 2.74 - 0.72754) / 2 = -0.5952em, where 0.72754 is Inter's cap
-       height and 2.74 the brand size ratio. Because that ratio is fixed, the
-       figure is CONSTANT — it holds at every breakpoint without retuning. */
     .hero-title-hub {
-        font-size: 1.55rem; /* 4.25rem / 2.74 */
+        font-size: var(--hub);
+        line-height: 0.727;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.2em;
         color: #ffffff;
         white-space: nowrap;
-        transform: translateY(-0.5952em);
-        /* letter-spacing also pads the LAST glyph, which shifts a centred
-           label right by half a space. Pull it back so the lockup is
-           optically centred rather than metrically. */
-        margin-right: -0.2em;
     }
 
-    .hero-tagline {
-        font-size: 1.5rem;
-        font-weight: 400;
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
+    @supports (text-box: trim-both cap alphabetic) {
+        .hero-title-mark, .hero-title-hub { line-height: 1; top: 0; text-box: trim-both cap alphabetic; }
     }
 
-    .hero-description {
-        font-size: 1.1rem;
-        color: var(--text-muted);
-        max-width: 500px;
-        line-height: 1.6;
-        margin-bottom: 3rem;
+    /* THE TWO STORE BUTTONS ARE AS TALL AS THE TITLE (owner, 15 Oct 2026).
+       Title = VOLI caps (0.70 x 5.457 = 3.82) + gap 1.24 + descriptor caps
+       0.7275 = 5.787 x --hub, so with a 0.5 gap each pill is
+       (5.787 - 0.5) / 2 = 2.64 x --hub: 42px tall at 16px, 92.6px together.
+       A little wider than the stock pill too: 11.5 x --hub = 184px. */
+    .splash-stores {
+        flex: none;
+        width: calc(var(--hub) * 11.5);
+        gap: calc(var(--hub) * 0.5);
     }
+    .splash-stores .v-store { height: calc(var(--hub) * 2.64); border-radius: 10px; }
 
-    /* Store buttons */
-    .store-buttons {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+    /* THE PHONE STAGE. One tilted 3D plane holds the phone and the cards, so
+       the cards hover at real depths above its screen (translateZ) instead of
+       being pasted beside it. Every size is in cqw of the stage, so the whole
+       composition scales as one object from phone to desktop, and the stage
+       shrinks on short screens so the button never falls below the fold. */
+    .pop {
+        container-type: inline-size;
+        width: min(600px, 100%, calc((100svh - 320px) * 8 / 7));
+        aspect-ratio: 8 / 7;
+        margin-top: 24px;
+    }
+    .pop-scene { position: relative; width: 100%; height: 100%; perspective: 300cqw; }
+    /* The 3D phone's canvas: flat (no CSS transform of its own), centred on the
+       stage and 10% taller each way so the tilted phone never clips. The
+       script reads .pop-tilt's live transform every frame and turns the phone
+       to match, so it and the CSS cards share one tilt and one perspective. */
+    .pop-gl {
+        position: absolute;
+        left: 0;
+        top: -10%;
         width: 100%;
-        max-width: 600px;
+        height: 120%;
+        opacity: 0;
+        pointer-events: none;
     }
-
-    .btn-store {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-        padding: 1rem 1.5rem;
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-radius: 14px;
-        text-decoration: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .pop.has-gl .pop-phone { display: none; }
+    .pop.is-3d .pop-gl { opacity: 1; animation: gl-in 800ms cubic-bezier(.2, .8, .2, 1) both; }
+    @keyframes gl-in {
+        from { opacity: 0; transform: translateY(4cqw); }
+        to   { opacity: 1; transform: none; }
     }
-
-    .btn-store:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.15);
-        transform: translateY(-2px);
-    }
-
-    .btn-store svg {
-        width: 28px;
-        height: 28px;
-        flex-shrink: 0;
-    }
-
-    .btn-store-text {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-    }
-
-    .btn-store-label {
-        font-size: 0.65rem;
-        font-weight: 400;
-        color: white;
-        opacity: 0.7;
-    }
-
-    .btn-store-name {
-        font-size: 1rem;
-        font-weight: 600;
-        color: white;
-        line-height: 1;
-        margin-top: 2px;
-    }
-
-    /* Screenshots Section */
-    .screenshots {
-        padding: 2rem 2rem 4rem;
-        overflow: hidden;
-    }
-
-    .screenshots-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1.5rem;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .screenshot-wrapper {
-        flex: 1;
-        max-width: 280px;
-    }
-
-    .screenshot-wrapper:nth-child(2) {
-        transform: scale(1.1);
-        z-index: 2;
-    }
-
-    .screenshot {
-        width: 100%;
-        height: auto;
-        border-radius: 24px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Features Section */
-    .features {
-        padding: 4rem 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        align-items: stretch;
-    }
-
-    .features-grid > * {
-        height: 100%;
-    }
-
-    .feature-card {
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        padding: 2rem;
+    .pop-tilt {
         position: relative;
-        overflow: hidden;
-        text-decoration: none;
-        display: flex;
-        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transform:
+            rotateX(calc(12deg - var(--py, 0) * 4deg))
+            rotateY(calc(-20deg + var(--px, 0) * 6deg))
+            rotateZ(5deg);
+        transition: transform 900ms cubic-bezier(.2, .8, .2, 1);
     }
+    .pop-phone {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        height: 100%;
+        width: auto;
+        transform: translateX(-50%);
+        filter: drop-shadow(0 6cqw 8cqw rgba(0, 0, 0, .55));
+        animation: phone-in 800ms cubic-bezier(.2, .8, .2, 1) both;
+    }
+    .pop-card {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        width: var(--w);
+        transform: translateZ(var(--z));
+        animation: card-pop 900ms cubic-bezier(.34, 1.56, .64, 1) var(--d) both;
+    }
+    .pop-bob {
+        border-radius: var(--r);
+        overflow: hidden;
+        box-shadow: 0 5cqw 9cqw -2cqw rgba(0, 0, 0, .65), 0 0 0 1px rgba(255, 255, 255, .12);
+        animation: card-bob 6s ease-in-out var(--b) infinite alternate;
+    }
+    .pop-bob { position: relative; }
+    .pop-bob img { display: block; width: 100%; height: auto; }
 
-    .feature-card::before {
+    /* GLARE (owner, 6 Oct 2026): every floating piece catches the same soft
+       reflection the 3D phone's glass does, a broad diagonal sheen that slides
+       across it as the pointer leans the scene. The sheet is twice the card's
+       size and travels against the pointer; --g staggers where each card's
+       band rests so they don't all flash in step. */
+    .pop-bob::after,
+    .drift-face::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
+        inset: -50%;
+        pointer-events: none;
+        background:
+            linear-gradient(115deg,
+                rgba(255, 255, 255, 0) 36%,
+                rgba(255, 255, 255, .16) 45%,
+                rgba(255, 255, 255, .05) 52%,
+                rgba(255, 255, 255, 0) 60%),
+            linear-gradient(160deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 45%);
+        transform: translate(calc((var(--g, 0) - var(--px, 0)) * 22%), calc(var(--py, 0) * -12%));
+        transition: transform 900ms cubic-bezier(.2, .8, .2, 1);
+    }
+    .pop-card--stats   { --g: -.4; }
+    .pop-card--game    { --g: .3; }
+    .pop-card--fantasy { --g: -.1; }
+    .drift--rank   { --g: .5; }
+    .drift--oregon { --g: -.3; }
+    .drift--tile   { --g: .2; }
+    .drift--chat    { --g: -.6; }
+    .drift--article { --g: .1; }
+    .drift--final   { --g: -.5; }
+    .drift--pct    { --g: .4; }
+    /* Games pops straight out of its own card on the phone's screen; Stats
+       off the top-left; Fantasy off the bottom-left. */
+    .pop-card--stats   { --x: 3%;  --y: 9%;  --w: 48%; --z: 20cqw; --r: 5.45% / 12.31%; --d: 350ms; --b: 0s; }
+    .pop-card--game    { --x: 50%; --y: 31%; --w: 44%; --z: 15cqw; --r: 5.31% / 16.17%; --d: 500ms; --b: -2s; }
+    .pop-card--fantasy { --x: 6%;  --y: 57%; --w: 38%; --z: 11cqw; --r: 4.32% / 5.15%;  --d: 650ms; --b: -4s; }
+
+    @keyframes phone-in {
+        from { opacity: 0; transform: translateX(-50%) translateY(4cqw); }
+        to   { opacity: 1; transform: translateX(-50%); }
+    }
+    @keyframes card-pop {
+        from { opacity: 0; transform: translateZ(0) scale(.9); }
+        to   { opacity: 1; transform: translateZ(var(--z)); }
+    }
+    @keyframes card-bob {
+        from { transform: translateY(0); }
+        to   { transform: translateY(-1.6cqw); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .pop-tilt { transition: none; }
+        .pop-phone, .pop-card, .pop-bob, .pop.is-3d .pop-gl { animation: none; }
     }
 
-    .feature-icon {
-        width: 32px;
-        height: 32px;
-        margin-bottom: 0.75rem;
-        object-fit: contain;
-    }
+    .splash-go { margin-top: 24px; }
 
-    .feature-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-primary);
-    }
-
-    .feature-description {
-        color: var(--text-secondary);
-        font-size: 0.95rem;
-        line-height: 1.5;
-    }
-
-    a.feature-card:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .feature-card .learn-more-icon {
-        width: 32px;
-        height: 32px;
-        margin-bottom: 0.75rem;
-        color: var(--accent);
-    }
-
-    /* Leagues Section */
-    .leagues {
-        padding: 3rem 2rem;
-        text-align: center;
-    }
-
-    .leagues-label {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 1.5rem;
-    }
-
-    .leagues-logos {
-        display: flex;
-        justify-content: center;
+    /* PHONES SWIPE IN (owner, 15 Oct 2026): on touch screens the button
+       gives way to a "Swipe up to enter site" hint. The hint is still a link,
+       so a tap (or VoiceOver) gets in too. */
+    .splash-swipe {
+        display: none;
+        flex-direction: column;
         align-items: center;
-        gap: 3rem;
-        flex-wrap: wrap;
-    }
-
-    .league-logo {
-        height: 60px;
-        width: auto;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-    }
-
-    .league-logo:hover {
-        opacity: 1;
-    }
-
-    .leagues-disclaimer {
-        margin-top: 1.25rem;
-        color: var(--text-muted);
-        font-size: 0.7rem;
-        opacity: 0.6;
-    }
-
-    /* Contact Bar */
-    .contact-bar {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1.5rem;
-        padding: 2rem;
-        background: var(--bg-card);
-        border-top: 1px solid var(--glass-border);
-        border-bottom: 1px solid var(--glass-border);
-    }
-
-    .contact-bar p {
-        color: var(--text-secondary);
-        font-size: 1rem;
-    }
-
-    .contact-btn {
-        padding: 0.75rem 1.5rem;
-        background: transparent;
-        border: 1px solid var(--accent);
-        border-radius: 100px;
-        color: var(--accent);
-        font-size: 0.9rem;
-        font-weight: 500;
+        gap: 2px;
+        margin-top: 20px;
+        padding: 6px 16px;
+        color: var(--ink-2);
         text-decoration: none;
-        transition: all 0.2s;
+        font: 600 14px/1.2 var(--font-body);
+        letter-spacing: .02em;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .splash-swipe svg { width: 22px; height: 22px; animation: swipe-bob 1.6s ease-in-out infinite; }
+    @keyframes swipe-bob {
+        0%, 100% { transform: translateY(2px); opacity: .6; }
+        50% { transform: translateY(-4px); opacity: 1; }
+    }
+    @media (hover: none) and (pointer: coarse) {
+        .splash-go { display: none; }
+        .splash-swipe { display: flex; }
+        /* The page doesn't scroll, so the swipe never fights it. */
+        :global(html), :global(body) { overscroll-behavior-y: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .splash-swipe svg { animation: none; }
     }
 
-    .contact-btn:hover {
-        background: var(--accent);
-        color: #000;
+
+    /* THE DRIFT. More of the app floating across the whole screen, behind the
+       lockup / phone / button. Three depths: near is sharp with a strong
+       shadow, far is small, soft and dim, and on a mouse each depth slides a
+       different distance against the pointer (--k px at full deflection). */
+    .splash > :not(.drift) { position: relative; z-index: 1; }
+    .drift {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .drift-item {
+        position: absolute;
+        left: var(--l, auto);
+        right: var(--rt, auto);
+        top: var(--t);
+        width: calc(var(--w) * var(--ds, 1));
+        transform: translate3d(calc(var(--px, 0) * var(--k) * -1px), calc(var(--py, 0) * var(--k) * -1px), 0);
+        transition: transform 1200ms cubic-bezier(.2, .8, .2, 1);
+        animation: drift-in 1000ms ease-out var(--d) both;
+    }
+    .drift-bob { animation: drift-bob var(--s) ease-in-out var(--b) infinite alternate; }
+    .drift-face {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--rad, 14px);
+        transform: perspective(1400px) rotateX(8deg) rotateY(var(--ry)) rotateZ(var(--rz));
+        box-shadow: 0 24px 48px -12px rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 255, 255, .10);
+    }
+    .drift-face img { display: block; width: 100%; height: auto; }
+    .drift--near { --k: 24; }
+    .drift--mid  { --k: 14; }
+    .drift--mid  .drift-face { filter: blur(.6px); opacity: .8; }
+    .drift--far  { --k: 7; }
+    .drift--far  .drift-face { filter: blur(2px); opacity: .5; }
+    /* With a cursor, focus follows it (owner, 6 Oct 2026): each piece is sharp
+       when the pointer is on or near it and softens as the pointer moves away.
+       --f is set per piece by the script below, 1 on it to 0 far off. Touch
+       screens never get .is-aware and keep the depth blur above. */
+    .drift-face { transition: filter 350ms ease, opacity 350ms ease; }
+    .splash.is-aware .drift-face {
+        filter: blur(calc((1 - var(--f, 0)) * 3px));
+        opacity: calc(.45 + var(--f, 0) * .55);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-        .hero-quotes { display: none; }
-        .hero-title { gap: 0.6rem 0; flex-direction: column; align-items: center; }
-        .hero-title-mark { font-size: 3.25rem; }
-        .hero-title-rule { width: 44px; height: 1px; }
-        .hero-title-hub { font-size: 1.19rem; letter-spacing: 0.2em; margin-right: -0.2em; transform: none; }
-        .hero-tagline { font-size: 1.25rem; }
-        .hero-description { font-size: 1rem; }
-        .screenshots-container { gap: 1rem; }
-        .screenshot-wrapper { max-width: 180px; }
-        .screenshot { border-radius: 16px; }
+    /* --rad is each card's own measured corner, as % of the card. */
+    .drift--rank    { --l: 4%;  --t: 10%; --w: 290px; --ry: 14deg;  --rz: -4deg; --d: 900ms;  --s: 9s;  --b: 0s;  --rad: 4.41% / 25.46%; }
+    .drift--chat    { --l: 9%;  --t: 25%; --w: 250px; --ry: 14deg;  --rz: 2deg;  --d: 1300ms; --s: 10s; --b: -2s; --rad: 4.41% / 28.65%; }
+    .drift--oregon  { --l: 2%;  --t: 40%; --w: 310px; --ry: 16deg;  --rz: 3deg;  --d: 1100ms; --s: 11s; --b: -3s; --rad: 5.45% / 12.31%; }
+    .drift--tile    { --l: 15%; --t: 66%; --w: 160px; --ry: 12deg;  --rz: -6deg; --d: 1000ms; --s: 8s;  --b: -5s; --rad: 7.52% / 6.26%; }
+    .drift--article { --rt: 4%; --t: 9%;  --w: 300px; --ry: -14deg; --rz: 5deg;  --d: 950ms;  --s: 10s; --b: -4s; --rad: 4.33% / 7.03%; }
+    .drift--final   { --rt: 2%; --t: 38%; --w: 290px; --ry: -16deg; --rz: -3deg; --d: 1150ms; --s: 9s;  --b: -6s; --rad: 5.45% / 10.43%; }
+    .drift--pct     { --rt: 7%; --t: 69%; --w: 300px; --ry: -12deg; --rz: 4deg;  --d: 1050ms; --s: 12s; --b: -1s; --rad: 4.32% / 8.38%; }
+
+    @keyframes drift-in {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+    @keyframes drift-bob {
+        from { transform: translateY(0); }
+        to   { transform: translateY(-14px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .drift-item { transition: none; animation: none; }
+        .pop-bob::after, .drift-face::after { transition: none; }
+        .drift-bob { animation: none; }
+    }
+
+    /* Narrower desktops: same layout, smaller pieces so they clear the phone. */
+    @media (max-width: 1280px) {
+        .drift { --ds: .8; }
+    }
+    /* Tablets and phones: no side room, so four far pieces peek in from the
+       corners, above the lockup and below the button. */
+    @media (max-width: 1100px) {
+        .drift { --ds: 1; }
+        .drift--oregon, .drift--tile, .drift--chat { display: none; }
+        .drift--rank, .drift--article, .drift--final, .drift--pct { --k: 7; }
+        .drift--rank  .drift-face, .drift--article .drift-face,
+        .drift--final .drift-face, .drift--pct     .drift-face { filter: blur(1.5px); opacity: .5; }
+        .drift--rank    { --l: -60px; --rt: auto; --t: 2.5%; --w: 200px; }
+        .drift--article { --l: auto; --rt: -50px; --t: 4%;   --w: 170px; }
+        .drift--final   { --l: -40px; --rt: auto; --t: 90%;  --w: 180px; }
+        .drift--pct     { --l: auto; --rt: -60px; --t: 92%;  --w: 200px; }
+    }
+
+    @media (max-width: 600px) {
+        .splash-lockup { gap: 16px 18px; }
+        .splash-stores { flex-basis: 100%; width: auto; flex-direction: row; justify-content: center; gap: 10px; }
+        .splash-stores .v-store { width: auto; height: 52px; }
+        .pop { width: min(100%, calc((100svh - 360px) * 8 / 7)); }
     }
 
     @media (max-width: 480px) {
-        .hero {
-            padding: 5rem 1.5rem 3rem;
-        }
-
-        .hero-announcement {
-            flex-wrap: wrap;
-            justify-content: center;
-            row-gap: 0.3rem;
-            padding: 0.55rem 1rem 0.55rem 0.85rem;
-        }
-        .hero-announcement-text { font-size: 0.78rem; }
-        .hero-announcement strong { font-size: 0.65rem; }
-        .hero-announcement-cta {
-            font-size: 0.72rem;
-            border-left: none;
-            padding-left: 0;
-            margin-left: 0;
-            width: 100%;
-            text-align: center;
-            padding-top: 0.1rem;
-            border-top: 1px solid rgba(200, 255, 0, 0.25);
-        }
-
-        .hero-logo { width: 80px; }
-        .hero-title-mark { font-size: 2.6rem; }
-        .hero-title-hub { font-size: 0.95rem; letter-spacing: 0.2em; margin-right: -0.2em; transform: none; }
-        .hero-tagline { font-size: 1.1rem; }
-
-        .store-buttons { gap: 0.75rem; }
-        .btn-store {
-            padding: 0.75rem 0.5rem;
-            gap: 0.5rem;
-        }
-        .btn-store svg { width: 22px; height: 22px; }
-        .btn-store-label { font-size: 0.55rem; }
-        .btn-store-name { font-size: 0.85rem; }
-
-        .screenshots { padding: 2rem 0; }
-        .screenshots-container {
-            gap: 0.75rem;
-            width: 130%;
-            margin-left: -15%;
-        }
-        .screenshot-wrapper {
-            max-width: 160px;
-            flex-shrink: 0;
-        }
-        .screenshot { border-radius: 16px; }
-
-        .features { padding: 2rem 1rem; }
-        .features-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-        .feature-card {
-            padding: 1rem;
-            border-radius: 14px;
-        }
-        .feature-icon, .feature-card .learn-more-icon {
-            width: 24px;
-            height: 24px;
-            margin-bottom: 0.5rem;
-        }
-        .feature-title {
-            font-size: 0.9rem;
-            margin-bottom: 0.25rem;
-        }
-        .feature-description {
-            font-size: 0.7rem;
-            line-height: 1.3;
-        }
-
-        .contact-bar {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
-        }
+        .splash-logo { width: 62px; }
+        .splash-lockup { --hub: 0.68rem; }
     }
 </style>
+
+<script is:inline>
+    /* Swipe up to enter (touch screens only). Only the hint follows the
+       finger and the page fades: the splash itself never moves, because a
+       transform on it would re-anchor the fixed drift pieces inside it. */
+    (function () {
+        if (!matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+        var splash = document.querySelector('.splash');
+        var hint = document.querySelector('.splash-swipe');
+        if (!splash || !hint) return;
+        var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var startX = 0, startY = null, startT = 0, dy = 0, leaving = false;
+
+        function show(lift) {
+            hint.style.transform = lift ? 'translateY(' + lift + 'px)' : '';
+            splash.style.opacity = lift ? String(Math.max(0.35, 1 + lift / 320)) : '';
+        }
+        function settle(ms) {
+            hint.style.transition = 'transform ' + ms + 'ms ease';
+            splash.style.transition = 'opacity ' + ms + 'ms ease';
+        }
+
+        document.addEventListener('touchstart', function (e) {
+            if (leaving || e.touches.length !== 1) return;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            startT = Date.now();
+            dy = 0;
+            settle(0);
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function (e) {
+            if (startY === null) return;
+            var dx = e.touches[0].clientX - startX;
+            dy = e.touches[0].clientY - startY;
+            if (dy < 0 && Math.abs(dy) > Math.abs(dx)) {
+                e.preventDefault();
+                if (!reduce) show(Math.max(dy * 0.6, -160));
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', function () {
+            if (startY === null) return;
+            var quick = Date.now() - startT < 300;
+            var go = dy < -90 || (quick && dy < -40);
+            startY = null;
+            if (!go) { settle(220); show(0); return; }
+            leaving = true;
+            settle(reduce ? 0 : 200);
+            if (!reduce) { hint.style.transform = 'translateY(-200px)'; splash.style.opacity = '0'; }
+            setTimeout(function () { location.href = '/app'; }, reduce ? 0 : 180);
+        });
+
+        // Back from /app restores this page from the cache mid-exit: reset it.
+        window.addEventListener('pageshow', function () {
+            leaving = false;
+            settle(0);
+            show(0);
+        });
+    })();
+</script>
+
+<script is:inline>
+    /* Mouse and trackpad only. The stage leans a few degrees toward the
+       pointer and the drift slides against it by depth (skipped under reduced
+       motion); each drifting piece also comes into focus as the pointer nears
+       it. The parallax vars sit on the splash so the stage and drift share them. */
+    (function () {
+        var splash = document.querySelector('.splash');
+        if (!splash || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var items = [].slice.call(document.querySelectorAll('.drift-item'));
+        var raf = 0, cx = 0, cy = 0;
+        function frame() {
+            raf = 0;
+            if (!still) {
+                splash.style.setProperty('--px', ((cx / innerWidth) * 2 - 1).toFixed(3));
+                splash.style.setProperty('--py', ((cy / innerHeight) * 2 - 1).toFixed(3));
+            }
+            items.forEach(function (el) {
+                // Distance from the pointer to the piece's edge: 0 when on it.
+                var r = el.getBoundingClientRect();
+                var dx = Math.max(r.left - cx, 0, cx - r.right);
+                var dy = Math.max(r.top - cy, 0, cy - r.bottom);
+                var t = Math.min(Math.max((Math.sqrt(dx * dx + dy * dy) - 40) / 480, 0), 1);
+                el.style.setProperty('--f', (1 - t * t * (3 - 2 * t)).toFixed(3));
+            });
+        }
+        addEventListener('pointermove', function (e) {
+            cx = e.clientX;
+            cy = e.clientY;
+            splash.classList.add('is-aware');
+            if (!raf) raf = requestAnimationFrame(frame);
+        });
+        document.documentElement.addEventListener('mouseleave', function () {
+            splash.classList.remove('is-aware');
+        });
+    })();
+</script>
+
+<script>
+    /* THE 3D PHONE. The CSS stage owns the tilt (base angle + pointer lean);
+       this renders the model in exactly that pose. World units are CSS px, the
+       camera sits where CSS's perspective puts the viewer (300cqw = 3x the
+       stage width), and every frame .pop-tilt's computed matrix is copied onto
+       the phone with the y axis flipped (CSS y runs down, three's runs up). */
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+    import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+    import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+
+    const pop = document.querySelector('.pop');
+    const stage = pop?.querySelector('.pop-scene');
+    const tilt = pop?.querySelector('.pop-tilt');
+    const canvas = pop?.querySelector('.pop-gl');
+
+    function fallBack() {
+        pop?.classList.remove('has-gl', 'is-3d');
+    }
+
+    function start() {
+        let renderer;
+        try {
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        } catch (e) {
+            fallBack();
+            return;
+        }
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+
+        const world = new THREE.Scene();
+        world.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+        const key = new THREE.DirectionalLight(0xffffff, 1.4);
+        key.position.set(-1, 1.6, 2);
+        world.add(key);
+
+        const camera = new THREE.PerspectiveCamera(20, 1, 1, 100000);
+        const phone = new THREE.Group();
+        world.add(phone);
+
+        const flipY = new THREE.Matrix4().makeScale(1, -1, 1);
+        const pose = new THREE.Matrix4();
+        let model = null;
+        let modelH = 1;
+        let lastTransform = '';
+        let dirty = true;
+
+        function size() {
+            const w = canvas.clientWidth;
+            const h = canvas.clientHeight;
+            if (!w || !h) return;
+            renderer.setSize(w, h, false);
+            const d = 3 * stage.clientWidth;
+            camera.aspect = w / h;
+            camera.fov = (2 * Math.atan(h / 2 / d) * 180) / Math.PI;
+            camera.position.set(0, 0, d);
+            camera.near = d / 20;
+            camera.far = d * 20;
+            camera.updateProjectionMatrix();
+            // The phone fills the stage height, as the flat mockup did.
+            phone.scale.setScalar((stage.clientHeight * 0.96) / modelH);
+            dirty = true;
+        }
+
+        function frame() {
+            requestAnimationFrame(frame);
+            const t = getComputedStyle(tilt).transform;
+            if (t !== lastTransform) {
+                lastTransform = t;
+                pose.fromArray(new DOMMatrix(t === 'none' ? undefined : t).toFloat32Array());
+                pose.premultiply(flipY).multiply(flipY);
+                phone.quaternion.setFromRotationMatrix(pose);
+                dirty = true;
+            }
+            if (dirty) {
+                renderer.render(world, camera);
+                dirty = false;
+            }
+        }
+
+        new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(
+            '/models/iphone-17-pro-max.glb',
+            (gltf) => {
+                model = gltf.scene;
+                const box = new THREE.Box3().setFromObject(model);
+                model.position.sub(box.getCenter(new THREE.Vector3()));
+                modelH = box.getSize(new THREE.Vector3()).y;
+                // The screen shows the screenshot's own colours, untouched by tone mapping.
+                model.traverse((o) => {
+                    if (o.isMesh && o.material && o.material.name === 'display_panel') o.material.toneMapped = false;
+                });
+                phone.add(model);
+                size();
+                new ResizeObserver(size).observe(stage);
+                frame();
+                requestAnimationFrame(() => pop.classList.add('is-3d'));
+            },
+            undefined,
+            fallBack,
+        );
+    }
+
+    if (pop && stage && tilt && canvas && pop.classList.contains('has-gl')) start();
+</script>

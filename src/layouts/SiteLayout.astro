@@ -1,0 +1,114 @@
+---
+// VOLI 1.4 site layout. WRAPS the frozen Layout.astro (which oauth-callback
+// still uses directly, byte-for-byte) and layers the new language on top:
+// site.css (tokens, v-* patterns, Nav/Footer/QrModal overrides), the Aurora
+// background, and the cutout-tab sync script. Do not fork Layout: any change
+// to its import graph changes the built oauth-callback page.
+import Layout from './Layout.astro';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import '../styles/site.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogUrl?: string;
+  activePage?: string;
+  showFooter?: boolean;
+  bodyClass?: string;
+  /** Set to true for pages that load Supabase SDK themselves */
+  skipSupabase?: boolean;
+  /** Set to true for pages that don't need the nav auth slot */
+  skipNavAuth?: boolean;
+  /** Page-specific Schema.org JSON-LD; merged with sitewide Organization + WebSite schema */
+  schema?: Record<string, any> | Record<string, any>[];
+  /** Aurora resting spot [x, y] (0-0.8 into the field); defaults from the route */
+  aurora?: [number, number];
+  /** false = no nav and no footer (the home splash, ad landings) */
+  chrome?: boolean;
+}
+
+const { bodyClass = '', aurora, chrome = true, showFooter = true, activePage = '', ...rest } = Astro.props;
+
+// One canonical address per page (playvoli.com, no trailing slash), so a
+// preview copy, a trailing slash or a ?query never splits a page in search.
+const canonicalPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonical = canonicalPath === '/404' ? null : `https://playvoli.com${canonicalPath}`;
+
+// Aurora resting spots. First match wins. Kept in the field's dark middle
+// band, around [0.38, 0.36]: the corners are the field's brightest colour and
+// read as "off" behind ordinary pages (owner, 5 Oct 2026). Small offsets keep
+// a glide between sections.
+const SPOTS: [RegExp, [number, number]][] = [
+  [/^\/$/, [0.38, 0.36]],
+  [/^\/(app|get|download)\/?$/, [0.34, 0.30]],
+  [/^\/league(\/|$)/, [0.30, 0.40]],
+  [/^\/poll\/?$/, [0.44, 0.28]],
+  [/^\/game(\/|$)/, [0.36, 0.46]],
+  [/^\/(podcast(\/|$)|creatorscourt\/?$)/, [0.48, 0.44]],
+  [/^\/(dailygrid(\/|$)|redditdailygrid\/?$)/, [0.32, 0.48]],
+  [/^\/discordbot\/?$/, [0.40, 0.30]],
+  [/^\/(about|whats-next)\/?$/, [0.42, 0.40]],
+  [/^\/(partners|contact|volleytalk|courtcaptains|mlm|lshotvb|canaan|evollve)\/?$/, [0.46, 0.32]],
+  [/^\/(auth|profile|confirmation)(\/|$)/, [0.44, 0.46]],
+];
+const path = Astro.url.pathname;
+const [ax, ay] = aurora ?? SPOTS.find(([re]) => re.test(path))?.[1] ?? [0.38, 0.36];
+---
+
+{/* Layout still renders the frozen Nav (hidden on body.site) and never its
+    Footer here: SiteNav / SiteFooter replace both (owner, 6 Oct 2026). */}
+<Layout {...rest} activePage={activePage} showFooter={false} bodyClass={('site ' + bodyClass).trim()}>
+  <link rel="preload" href="/fonts/Designer.otf" as="font" type="font/otf" crossorigin slot="head" />
+  {canonical && <link rel="canonical" href={canonical} slot="head" />}
+  <slot name="head" slot="head" />
+
+  <div class="v-aurora" aria-hidden="true"><div class="v-aurora__field" id="v-aurora" style={`--ax:${ax};--ay:${ay}`}></div></div>
+  <script is:inline>
+  (() => {
+    const f = document.getElementById('v-aurora'); if (!f) return;
+    const spot = [parseFloat(f.style.getPropertyValue('--ax')), parseFloat(f.style.getPropertyValue('--ay'))];
+    const still = navigator.webdriver || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let prev = null; try { prev = JSON.parse(sessionStorage.getItem('voli:aurora')); } catch (e) {}
+    if (!still) {
+      const from = Array.isArray(prev) && prev.length === 2 ? prev : [0.38, 0.36];
+      if (from[0] !== spot[0] || from[1] !== spot[1]) {
+        f.style.transition = 'none';
+        f.style.setProperty('--ax', from[0]); f.style.setProperty('--ay', from[1]);
+        f.getBoundingClientRect();
+        f.style.transition = ''; f.style.willChange = 'transform';
+        f.addEventListener('transitionend', () => { f.style.willChange = ''; }, { once: true });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          f.style.setProperty('--ax', spot[0]); f.style.setProperty('--ay', spot[1]);
+        }));
+      }
+    }
+    try { sessionStorage.setItem('voli:aurora', JSON.stringify(spot)); } catch (e) {}
+  })();
+  </script>
+
+  {chrome && <SiteNav activePage={activePage} />}
+
+  <slot />
+
+  {chrome && showFooter && <SiteFooter />}
+
+  <script is:inline>
+  (() => {
+    const SEL = '.v-tabs__tab[aria-selected="true"], .v-tabs__tab.active, .v-tabs__tab.is-active';
+    const sync = (t) => { const h = t.querySelector('.v-tabs__hole'), s = t.querySelector(SEL); if (!h || !s) return;
+      h.style.setProperty('--x', (s.offsetLeft + 4) + 'px'); h.style.setProperty('--w', (s.offsetWidth - 8) + 'px'); };
+    const all = () => document.querySelectorAll('.v-tabs').forEach(sync);
+    window.vTabsSync = all;
+    document.querySelectorAll('.v-tabs').forEach((t) => {
+      t.classList.add('is-instant'); sync(t); requestAnimationFrame(() => t.classList.remove('is-instant'));
+      new MutationObserver(() => sync(t)).observe(t, { subtree: true, attributes: true, attributeFilter: ['class', 'aria-selected'] });
+      if ('ResizeObserver' in window) new ResizeObserver(() => sync(t)).observe(t);
+    });
+    addEventListener('resize', all); if (document.fonts) document.fonts.ready.then(all);
+  })();
+  </script>
+
+  <slot name="scripts" slot="scripts" />
+</Layout>

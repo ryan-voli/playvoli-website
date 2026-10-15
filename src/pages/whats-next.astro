@@ -1,5 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 
 const timeline = [
   {
@@ -43,16 +43,18 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
 }]));
 ---
 
-<Layout
+<SiteLayout
   title="What's Next - VOLI"
   description="The VOLI roadmap: announcements, upcoming features, and what we're building next for professional and college volleyball fans."
   activePage="whats-next"
 >
-    <main class="card">
-        <h1 class="title">What's Next</h1>
-        <p class="lead">A look at what we're building, what's launching, and where VOLI is headed.</p>
+    <main class="v-page">
+      <div class="v-wrap v-wrap--read">
+        <h1 class="v-title-plain v-center wn-title">What's Next</h1>
+        <p class="lead v-lede v-center">A look at what we're building, what's launching, and where VOLI is headed.</p>
 
-        <div class="section-label">Roadmap</div>
+        <section class="v-card v-card--plate is-labelled">
+        <div class="v-label">Roadmap</div>
         <div class="timeline-wrap">
             <div class="timeline-scroll" id="timeline-scroll">
                 <div class="timeline-track">
@@ -72,18 +74,20 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
             </div>
         </div>
 
-        <div class="detail-card" id="timeline-detail">
-            <span class="detail-pill" id="detail-pill">Live now</span>
-            <h2 class="detail-title" id="detail-title">NCAA Fantasy Launch</h2>
-            <p class="detail-body" id="detail-body">It's here. The same fantasy experience fans enjoyed during the pro season is now running for NCAA women's volleyball, tuned for the college game — shorter seasons, simpler scoring, and a more accessible format. Leagues are open now, and the first scoring round runs September 9–13. The season is ten rounds, each running Wednesday through Sunday, with Monday and Tuesday as the signing window to set your roster for the week ahead.</p>
+        <div class="detail-card v-tile" id="timeline-detail">
+            <span class="detail-pill v-chip v-chip--verdict" id="detail-pill">Live now</span>
+            <h2 class="detail-title v-h3-plain" id="detail-title">NCAA Fantasy Launch</h2>
+            <p class="detail-body v-body" id="detail-body">It's here. The same fantasy experience fans enjoyed during the pro season is now running for NCAA women's volleyball, tuned for the college game — shorter seasons, simpler scoring, and a more accessible format. Leagues are open now, and the first scoring round runs September 9–13. The season is ten rounds, each running Wednesday through Sunday, with Monday and Tuesday as the signing window to set your roster for the week ahead.</p>
         </div>
+        </section>
 
-        <p class="footer-note">
+        <p class="footer-note v-path">
             <span class="footer-dot" aria-hidden="true"></span>
             More details, announcements, and feature updates will roll out here as we build.
         </p>
+      </div>
     </main>
-</Layout>
+</SiteLayout>
 
 <script define:vars={{ details }}>
 (function() {
@@ -138,94 +142,36 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
 </script>
 
 <style>
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 5rem 2rem 2rem;
-        padding-top: calc(5rem + env(safe-area-inset-top));
-    }
+    .wn-title { margin: 0 0 12px; }
+    .lead { margin: 0 0 32px; }
 
-    .card {
-        width: 100%;
-        max-width: 800px;
-        background: var(--bg-card);
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
-        border: 1px solid var(--glass-border);
-        border-radius: 24px;
-        padding: 3rem 2rem;
-        position: relative;
-        overflow: hidden;
-        margin-top: 1rem;
-    }
-
-    .card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
-    }
-
-    .title {
-        font-size: 1.75rem;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 0.75rem;
-        letter-spacing: -0.02em;
-    }
-
-    .lead {
-        color: var(--text-secondary);
-        font-size: 1rem;
-        line-height: 1.7;
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .section-label {
-        color: var(--accent);
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-
-    /* Timeline */
+    /* Timeline: scrolls inside the plate, full-bleed to its edges */
     .timeline-wrap {
-        margin: 0 -2rem 2rem;
+        margin-inline: calc(-1 * var(--plate-pad));
+        margin-bottom: 16px;
     }
-
     .timeline-scroll {
         position: relative;
         overflow-x: auto;
         overflow-y: hidden;
-        padding: 0.5rem 0 0.75rem;
+        padding: 8px 0 12px;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
         scroll-behavior: smooth;
     }
-
     .timeline-scroll::-webkit-scrollbar { display: none; }
-
     .timeline-track {
         display: inline-flex;
         align-items: flex-start;
         position: relative;
         padding: 0 calc(50% - 75px);
     }
-
     .timeline-item {
         flex: 0 0 150px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
+        gap: 8px;
         padding: 0;
         background: transparent;
         border: none;
@@ -233,157 +179,70 @@ const details = Object.fromEntries(timeline.map(t => [t.id, {
         font-family: inherit;
         position: relative;
         z-index: 1;
-        transition: transform 0.2s;
     }
-
-    .timeline-item:hover { transform: translateY(-2px); }
+    .timeline-item:active { opacity: .72; }
     .timeline-item:focus-visible { outline: none; }
     .timeline-item:focus-visible .timeline-dot {
-        box-shadow: 0 0 0 4px var(--bg-card), 0 0 0 6px var(--accent);
+        box-shadow: 0 0 0 3px var(--ground), 0 0 0 4.5px var(--electric-blue);
     }
-
     .timeline-date {
-        font-size: 0.65rem;
+        font: 700 10px/1.25 var(--font-body);
+        letter-spacing: .06em;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        font-weight: 700;
-        color: var(--text-muted);
+        color: var(--ink-2);
         white-space: nowrap;
-        transition: color 0.2s;
+        transition: color 150ms;
     }
-
     .timeline-dot {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
-        background: var(--bg-card);
-        border: 2px solid var(--text-muted);
-        box-shadow: 0 0 0 4px var(--bg-card);
-        transition: all 0.2s;
+        background: var(--line-plate);
+        transition: background-color 150ms;
     }
-
     .timeline-title {
-        font-size: 0.78rem;
-        font-weight: 600;
-        line-height: 1.3;
+        font: 600 14px/1.3 var(--font-body);
         text-align: center;
-        color: var(--text-primary);
+        color: var(--ink);
         max-width: 130px;
-        transition: color 0.2s;
     }
 
     /* States */
-    .timeline-item.past .timeline-dot {
-        background: var(--text-muted);
-        border-color: var(--text-muted);
-    }
-    .timeline-item.past .timeline-date,
-    .timeline-item.past .timeline-title { opacity: 0.65; }
-
+    .timeline-item.past .timeline-dot { background: var(--ink-off); }
+    .timeline-item.past .timeline-title { color: var(--ink-2); }
     .timeline-item.upcoming .timeline-dot,
+    .timeline-item.current .timeline-dot { background: var(--line-plate); }
     .timeline-item.current .timeline-dot {
-        background: var(--bg-card);
-        border-color: var(--text-muted);
+        box-shadow: 0 0 0 3px var(--ground), 0 0 0 4.5px var(--lemon-lime);
     }
-    .timeline-item.upcoming .timeline-date,
-    .timeline-item.upcoming .timeline-title,
-    .timeline-item.current .timeline-date,
-    .timeline-item.current .timeline-title { opacity: 0.85; }
-
-    /* Selected: bright accent treatment (highlight follows selection) */
-    .timeline-item.selected .timeline-dot {
-        background: var(--accent);
-        border-color: var(--accent);
-        box-shadow: 0 0 0 4px var(--bg-card), 0 0 14px var(--accent-glow);
-    }
-    .timeline-item.selected .timeline-date { color: var(--accent); opacity: 1; }
-    .timeline-item.selected .timeline-title { opacity: 1; }
-
-    /* Current + Selected: also pulses to signal active project */
-    .timeline-item.current.selected .timeline-dot {
-        box-shadow: 0 0 0 4px var(--bg-card), 0 0 18px var(--accent-glow);
-        animation: timelinePulse 2.2s ease-in-out infinite;
-    }
+    .timeline-item.selected .timeline-dot { background: var(--lemon-lime); }
+    .timeline-item.selected .timeline-date { color: var(--lemon-lime); }
+    .timeline-item.selected .timeline-title { color: var(--ink); }
     .timeline-item.current.selected .timeline-title { font-weight: 700; }
 
-    @keyframes timelinePulse {
-        0%, 100% { box-shadow: 0 0 0 4px var(--bg-card), 0 0 14px var(--accent-glow); }
-        50% { box-shadow: 0 0 0 4px var(--bg-card), 0 0 26px var(--accent); }
-    }
-
-    /* Detail card */
-    .detail-card {
-        padding: 1.75rem 1.75rem;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid var(--glass-border);
-        border-radius: 16px;
-        margin-bottom: 2rem;
-    }
-
-    .detail-pill {
-        display: inline-block;
-        padding: 0.25rem 0.7rem;
-        background: linear-gradient(135deg, rgba(200, 255, 0, 0.18), rgba(0, 212, 255, 0.12));
-        border: 1px solid rgba(200, 255, 0, 0.35);
-        border-radius: 100px;
-        color: var(--accent);
-        font-size: 0.65rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        margin-bottom: 0.85rem;
-    }
-
-    .detail-title {
-        color: var(--text-primary);
-        font-size: 1.2rem;
-        font-weight: 650;
-        letter-spacing: -0.01em;
-        margin: 0 0 0.6rem;
-    }
-
-    .detail-body {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        line-height: 1.65;
-        margin: 0;
-    }
+    /* Detail */
+    .detail-card { padding: 16px; }
+    .detail-pill { margin-bottom: 12px; }
+    .detail-title { margin: 0 0 8px; }
+    .detail-body { margin: 0; }
 
     .footer-note {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        line-height: 1.5;
-        margin: 0;
+        margin: 24px 0 0;
         text-align: center;
     }
-
     .footer-dot {
+        display: inline-block;
+        vertical-align: middle;
+        margin: -2px 8px 0 0;
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: var(--accent);
-        box-shadow: 0 0 8px var(--accent);
-        animation: footerDot 1.6s ease-in-out infinite;
+        background: var(--lemon-lime);
         flex-shrink: 0;
     }
 
-    @keyframes footerDot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.55; transform: scale(0.8); }
-    }
-
     @media (max-width: 480px) {
-        body { padding: 6rem 1rem 1rem; }
-        .card { padding: 2rem 1.5rem; border-radius: 20px; }
-        .title { font-size: 1.5rem; }
-        .lead { font-size: 0.95rem; }
-        .timeline-wrap { margin: 0 -1.5rem 1.75rem; }
         .timeline-track { padding: 0 calc(50% - 70px); }
         .timeline-item { flex-basis: 140px; }
-        .detail-title { font-size: 1.05rem; }
     }
 </style>

@@ -1,12 +1,12 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 
 export function getStaticPaths() {
   return [{ params: { slug: undefined } }];
 }
 ---
 
-<Layout
+<SiteLayout
   title="Daily Grid - VOLI"
   description="Play the Voli Daily Grid — fill a 3x3 grid with volleyball players matching row and column categories."
   ogUrl="https://playvoli.com/dailygrid"
@@ -14,24 +14,27 @@ export function getStaticPaths() {
   skipNavAuth
   bodyClass="dg-body"
 >
+  <!-- Hidden for now (owner, 4 Oct 2026): unlinked site-wide, kept out of search. -->
+  <meta slot="head" name="robots" content="noindex" />
 
+<main class="v-page dg-page">
 <!-- Loading -->
 <div id="dg-loading"><div class="dg-spinner"></div></div>
 
 <!-- Sign-in Prompt -->
 <div id="dg-signin" class="dg-center" style="display:none">
-    <h1 class="dg-page-title">DAILY GRID</h1>
-    <p class="dg-page-sub">Sign in to play today's grid</p>
-    <a href="/auth?redirect=/dailygrid" class="btn-primary" style="display:inline-block; width:auto; padding:0.875rem 2.5rem;">Sign In</a>
+    <h1 class="dg-page-title v-h1">DAILY GRID</h1>
+    <p class="dg-page-sub v-body">Sign in to play today's grid</p>
+    <a href="/auth?redirect=/dailygrid" class="v-pill v-pill--cta v-pill--action">Sign In</a>
 </div>
 
 <!-- Game -->
 <div id="dg-game" style="display:none">
 
     <div class="dg-title-row">
-        <button class="dg-title-btn" id="dg-leaderboard-btn"><img src="/images/icons/leaderboard.png" alt="Leaderboard"></button>
+        <button class="dg-title-btn v-icon-btn" id="dg-leaderboard-btn"><img src="/images/icons/leaderboard.png" alt="Leaderboard"></button>
         <h1 class="dg-page-title">DAILY GRID</h1>
-        <button class="dg-title-btn" id="dg-info-btn"><img src="/images/icons/info.png" alt="Info"></button>
+        <button class="dg-title-btn v-icon-btn" id="dg-info-btn"><img src="/images/icons/info.png" alt="Info"></button>
     </div>
 
     <!-- Status Bar -->
@@ -80,24 +83,25 @@ export function getStaticPaths() {
                 </div>
                 <div class="dg-mini-grid" id="dg-mini-grid"></div>
             </div>
-            <button class="btn-primary" id="dg-share-btn">Share Results</button>
+            <button class="v-pill v-pill--action v-pill--block" id="dg-share-btn">Share Results</button>
             <div id="dg-share-msg" class="dg-share-msg"></div>
         </div>
     </div>
 
     <!-- Countdown -->
-    <div class="dg-countdown" id="dg-countdown"></div>
+    <div class="dg-countdown v-path v-num" id="dg-countdown"></div>
 
     <!-- Historical grids CTA -->
     <p class="dg-historical">Play historical grids on the <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Voli app</a></p>
 </div>
+</main>
 
 <!-- Player Search Modal -->
 <div id="dg-search" style="display:none">
     <div class="dg-search-backdrop"></div>
     <div class="dg-search-sheet">
-        <div class="dg-drag-handle"></div>
-        <input type="text" id="dg-search-input" class="form-input" placeholder="Search players..." autocomplete="off">
+        <div class="dg-drag-handle v-handle"></div>
+        <input type="text" id="dg-search-input" class="form-input v-input" placeholder="Search players..." autocomplete="off">
         <div id="dg-search-results" class="dg-search-results"></div>
     </div>
 </div>
@@ -106,11 +110,11 @@ export function getStaticPaths() {
 <div id="dg-info" style="display:none">
     <div class="dg-info-backdrop"></div>
     <div class="dg-info-sheet">
-        <div class="dg-drag-handle"></div>
+        <div class="dg-drag-handle v-handle"></div>
         <div class="dg-info-header">
             <img src="/images/icons/info.png" class="dg-info-icon" alt="">
             <span class="dg-info-title">How To Play</span>
-            <button class="dg-info-close" id="dg-info-close">&times;</button>
+            <button class="dg-info-close v-icon-btn" id="dg-info-close">&times;</button>
         </div>
         <div class="dg-info-scroll">
 
@@ -154,7 +158,7 @@ export function getStaticPaths() {
 
             <h3 class="dg-info-heading">Categories</h3>
             <p class="dg-info-text">Each row and column has a category. Players must match both to be a valid answer. Only statistics from US pro leagues count (MLV and LOVB).</p>
-            <div class="dg-info-card">
+            <div class="dg-info-card dg-cat-table">
                 <div class="dg-cat-row"><span class="dg-cat-label">Teams</span><span class="dg-cat-desc">Player must have been signed to that team</span></div>
                 <div class="dg-cat-row"><span class="dg-cat-label">Stats</span><span class="dg-cat-desc">Player must meet a statistical threshold</span></div>
                 <div class="dg-cat-row"><span class="dg-cat-label">All Star</span><span class="dg-cat-desc">Player must have played in an All Star match</span></div>
@@ -186,7 +190,7 @@ export function getStaticPaths() {
             <p class="dg-info-text">Once you've used all 9 guesses, share your results with friends and compare scores!</p>
             <p class="dg-info-text">Your past grids are saved in the Voli app. Tap any to review your answers or finish an incomplete grid.</p>
 
-            <button class="dg-info-got-it" id="dg-info-gotit">Got it!</button>
+            <button class="dg-info-got-it v-pill v-pill--action" id="dg-info-gotit">Got it!</button>
         </div>
     </div>
 </div>
@@ -195,20 +199,21 @@ export function getStaticPaths() {
 <div id="dg-lb" style="display:none">
     <div class="dg-lb-backdrop"></div>
     <div class="dg-lb-sheet">
-        <div class="dg-drag-handle"></div>
+        <div class="dg-drag-handle v-handle"></div>
         <div class="dg-lb-header">
             <img src="/images/icons/leaderboard.png" class="dg-lb-icon" alt="">
             <span class="dg-lb-title">Leaderboard</span>
-            <button class="dg-info-close" id="dg-lb-close">&times;</button>
+            <button class="dg-info-close v-icon-btn" id="dg-lb-close">&times;</button>
         </div>
 
-        <div class="dg-lb-tabs">
-            <button class="dg-lb-tab active" data-period="daily">Grid</button>
-            <button class="dg-lb-tab" data-period="season">Season</button>
+        <div class="dg-lb-tabs v-tabs">
+            <span class="v-tabs__hole" aria-hidden="true"></span>
+            <button class="dg-lb-tab v-tabs__tab active" data-period="daily">Grid</button>
+            <button class="dg-lb-tab v-tabs__tab" data-period="season">Season</button>
         </div>
 
         <div class="dg-lb-search-row">
-            <input type="text" id="dg-lb-search" class="form-input" placeholder="Search username..." autocomplete="off">
+            <input type="text" id="dg-lb-search" class="form-input v-input v-input--card" placeholder="Search username..." autocomplete="off">
         </div>
 
         <div id="dg-lb-myrank" style="display:none"></div>
@@ -224,10 +229,10 @@ export function getStaticPaths() {
 <div id="dg-valid" style="display:none">
     <div class="dg-valid-backdrop"></div>
     <div class="dg-valid-sheet">
-        <div class="dg-drag-handle"></div>
+        <div class="dg-drag-handle v-handle"></div>
         <div class="dg-valid-header">
             <span class="dg-valid-title" id="dg-valid-title"></span>
-            <button class="dg-info-close" id="dg-valid-close">&times;</button>
+            <button class="dg-info-close v-icon-btn" id="dg-valid-close">&times;</button>
         </div>
         <div class="dg-valid-count" id="dg-valid-count"></div>
         <div class="dg-valid-list" id="dg-valid-list"></div>
@@ -345,7 +350,7 @@ export function getStaticPaths() {
         if (av) {
             h += '<img class="nav-avatar" src="' + esc(av) + '" alt="Avatar" onclick="toggleDD(event)">';
         } else {
-            h += '<div class="nav-avatar-fallback" onclick="toggleDD(event)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
+            h += '<div class="nav-avatar-fallback" onclick="toggleDD(event)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#17E9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
         }
         h += '<div class="avatar-dropdown" id="avatar-dropdown"><button onclick="navProfile()">Profile</button><button onclick="navLogout()">Log Out</button></div></div>';
         $navAuth.innerHTML = h;
@@ -999,7 +1004,7 @@ export function getStaticPaths() {
     // Open/close leaderboard
     function openLeaderboard() {
         $lb.style.display = '';
-        setTimeout(function() { $lb.classList.add('open'); }, 10);
+        setTimeout(function() { $lb.classList.add('open'); if (window.vTabsSync) window.vTabsSync(); }, 10);
         loadLeaderboard(true);
     }
 
@@ -1043,17 +1048,16 @@ export function getStaticPaths() {
     init();
 </script>
 
-</Layout>
+</SiteLayout>
 
 <style is:global>
-    body.dg-body {
+
+    /* v-page clears the nav; the column centres the sign-in prompt like before */
+    .dg-page {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 5rem 1rem 2rem;
-        padding-top: calc(5rem + env(safe-area-inset-top));
-        padding-bottom: calc(2rem + env(safe-area-inset-bottom));
-        overflow-x: hidden;
+        min-height: 100svh;
     }
 
     .dg-center {
@@ -1071,8 +1075,10 @@ export function getStaticPaths() {
     }
 
     .dg-page-title {
-        font-family: 'Designer', sans-serif;
-        font-size: 2rem;
+        font-family: var(--font-display);
+        font-size: 32px;
+        line-height: 1;
+        text-transform: uppercase;
         margin: 0;
     }
 
@@ -1080,21 +1086,16 @@ export function getStaticPaths() {
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        border: 1px solid var(--glass-border);
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        border: 0;
+        background: var(--glass-10);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 0;
-        transition: background 0.15s;
+        transition: background-color 150ms, opacity 100ms;
     }
 
-    .dg-title-btn:hover {
-        background: rgba(255,255,255,0.06);
-    }
 
     .dg-title-btn img {
         width: 18px;
@@ -1103,19 +1104,18 @@ export function getStaticPaths() {
     }
 
     .dg-page-sub {
-        color: var(--text-secondary);
-        margin-bottom: 2rem;
+        margin: 12px 0 24px;
     }
 
     /* Spinner */
     .dg-spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid rgba(255,255,255,0.1);
-        border-top: 3px solid #17E9FC;
+        width: 28px;
+        height: 28px;
+        border: 2px solid rgba(255,255,255,0.15);
+        border-top-color: #fff;
         border-radius: 50%;
-        animation: dg-spin 0.8s linear infinite;
-        margin: 4rem auto;
+        animation: dg-spin 800ms linear infinite;
+        margin: 64px auto;
     }
     @keyframes dg-spin { to { transform: rotate(360deg); } }
 
@@ -1132,20 +1132,24 @@ export function getStaticPaths() {
     /* Status Bar */
     .dg-status {
         display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin: 12px 0 16px;
     }
 
     .dg-stat {
-        font-size: 0.85rem;
-        font-weight: 600;
-        padding: 0.4rem 0.75rem;
-        border-radius: 100px;
-        background: var(--bg-card);
-        border: 1px solid var(--glass-border);
+        height: 36px;
+        padding: 0 14px;
+        border-radius: 18px;
+        background: var(--glass-10);
+        border: 0;
         display: flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 6px;
+        font: 700 15px/1 var(--font-body);
+        font-variant-numeric: tabular-nums;
+        color: #fff;
     }
 
     .dg-stat-icon {
@@ -1155,9 +1159,9 @@ export function getStaticPaths() {
         display: block;
     }
 
-    .dg-correct { color: #F0FF1E; border-color: rgba(240,255,30,0.3); }
-    .dg-wrong { color: #FF1F6D; border-color: rgba(255,31,109,0.3); }
-    .dg-remaining { color: #17E9FC; border-color: rgba(23,233,252,0.3); }
+    .dg-correct { color: var(--lemon-lime); }
+    .dg-wrong { color: var(--rose); }
+    .dg-remaining { color: var(--electric-blue); }
 
     /* Grid */
     .dg-grid {
@@ -1206,7 +1210,7 @@ export function getStaticPaths() {
 
     .dg-h-scope {
         font-size: 10px;
-        color: rgba(255,255,255,0.5);
+        color: var(--ink-2);
         line-height: 1.2;
     }
 
@@ -1220,14 +1224,14 @@ export function getStaticPaths() {
     /* Cells */
     .dg-cell {
         aspect-ratio: 1;
-        border-radius: 22px;
-        background: var(--bg-card);
-        border: 1px solid var(--glass-border);
+        border-radius: 14px;
+        background: var(--glass-10);
+        border: 0;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        transition: all 0.2s;
+        transition: background-color 150ms, box-shadow 150ms;
         cursor: default;
         overflow: hidden;
         min-width: 0;
@@ -1238,29 +1242,25 @@ export function getStaticPaths() {
     }
 
     .dg-cell.dg-empty:hover {
-        background: rgba(255,255,255,0.06);
-        border-color: rgba(255,255,255,0.15);
+        background: var(--glass-15);
     }
 
     .dg-plus {
-        font-size: 1.5rem;
-        color: var(--text-muted);
+        font-size: 24px;
+        color: var(--ink-2);
         font-weight: 300;
     }
 
     .dg-correct-cell {
-        border-color: #F0FF1E;
-        background: rgba(240,255,30,0.25);
+        box-shadow: inset 0 0 0 1.5px var(--lemon-lime);
     }
 
     .dg-wrong-cell {
-        border-color: rgba(255,31,109,0.4);
-        background: rgba(255,31,109,0.06);
+        box-shadow: inset 0 0 0 1.5px var(--rose);
     }
 
     .dg-initials {
-        font-family: 'Designer', sans-serif;
-        font-size: 0.6rem;
+        font: 600 11px/1.15 var(--font-body);
         color: #fff;
         text-align: center;
         padding: 0 4px;
@@ -1308,7 +1308,7 @@ export function getStaticPaths() {
     }
 
     .dg-creator-by {
-        color: rgba(255,255,255,0.4);
+        color: var(--ink-2);
         font-size: 12px;
     }
 
@@ -1336,10 +1336,19 @@ export function getStaticPaths() {
     }
 
     /* Results */
-    .dg-results-card.glass-card {
-        margin-top: 1.5rem;
-        padding: 1.5rem 1.25rem 1rem;
+
+    body.site .dg-results-card.glass-card {
+        margin-top: 24px;
+        padding: 20px 20px 16px;
+        background: var(--glass-d60);
+        -webkit-backdrop-filter: var(--blur);
+        backdrop-filter: var(--blur);
+        box-shadow: var(--shadow-card);
+        border: 0;
+        border-radius: var(--r-plate);
+        overflow: visible;
     }
+    body.site .dg-results-card.glass-card::before { display: none; }
 
     .dg-results-top {
         display: flex;
@@ -1349,20 +1358,15 @@ export function getStaticPaths() {
         margin-bottom: 0.75rem;
     }
 
-    .dg-results-card .btn-primary {
-        padding: 0.65rem 1rem;
-        font-size: 0.85rem;
-    }
 
     .dg-results-left {
         text-align: left;
     }
 
     .dg-results-score {
-        font-family: 'Designer', sans-serif;
-        font-size: 3rem;
-        line-height: 1;
-        margin-bottom: 0.25rem;
+        font: 700 44px/1 var(--font-body);
+        font-variant-numeric: tabular-nums;
+        margin-bottom: 4px;
     }
 
     .dg-score-great { color: #F0FF1E; }
@@ -1370,8 +1374,8 @@ export function getStaticPaths() {
     .dg-score-low { color: #FF1F6D; }
 
     .dg-results-msg {
-        color: var(--text-secondary);
-        font-size: 1rem;
+        color: var(--ink-body);
+        font-size: 15px;
     }
 
     .dg-mini-grid {
@@ -1392,31 +1396,29 @@ export function getStaticPaths() {
     .dg-mini-empty { background: rgba(255,255,255,0.1); }
 
     .dg-share-msg {
-        color: var(--accent);
-        font-size: 0.8rem;
-        margin-top: 0.5rem;
+        color: var(--lemon-lime);
+        font-size: 13px;
+        margin-top: 8px;
         min-height: 0;
         text-align: center;
     }
 
     /* Countdown */
     .dg-countdown {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        margin-top: 1.5rem;
+        margin-top: 24px;
         text-align: center;
     }
 
     .dg-historical {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        margin-top: 1rem;
-        margin-bottom: 3rem;
+        color: var(--ink-path);
+        font-size: 13px;
+        margin-top: 12px;
+        margin-bottom: 0;
         text-align: center;
     }
 
     .dg-historical a {
-        color: var(--accent);
+        color: var(--electric-blue);
         text-decoration: none;
     }
 
@@ -1430,7 +1432,7 @@ export function getStaticPaths() {
     .dg-search-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0,0,0,0.5);
         opacity: 0;
         transition: opacity 0.25s;
     }
@@ -1447,12 +1449,12 @@ export function getStaticPaths() {
         width: 100%;
         max-width: 500px;
         max-height: 80vh;
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-bottom: none;
-        border-radius: 22px 22px 0 0;
+        background: var(--glass-d80);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 0;
+        border-radius: 24px 24px 0 0;
+        box-shadow: var(--shadow-float);
         padding: 0.75rem 1rem 1rem;
         display: flex;
         flex-direction: column;
@@ -1472,9 +1474,22 @@ export function getStaticPaths() {
         width: 36px;
         height: 4px;
         border-radius: 2px;
-        background: rgba(255,255,255,0.2);
-        margin: 0 auto 0.75rem;
+        background: var(--lemon-lime);
+        margin: 0 auto 12px;
     }
+
+    /* the search fields: v-input look (global.css loads later, hence body.site) */
+    body.site.dg-body .form-input {
+        padding: 0 18px;
+        border: 0;
+        background: var(--glass-10);
+        color: #fff;
+        font: 400 15px/1 var(--font-body);
+        transition: none;
+    }
+    body.site.dg-body .form-input::placeholder { color: var(--ink-3); }
+    body.site.dg-body .form-input:focus { background: var(--glass-10); border-color: transparent; }
+    body.site.dg-body .form-input:focus-visible { outline: 1.5px solid var(--electric-blue); outline-offset: 0; }
 
     .dg-search-results {
         overflow-y: auto;
@@ -1485,60 +1500,58 @@ export function getStaticPaths() {
     .dg-player-card {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 12px;
         width: 100%;
-        padding: 0.625rem 0.75rem;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid var(--glass-border);
-        border-radius: 14px;
+        padding: 8px 12px;
+        background: var(--glass-10);
+        border: 0;
+        border-radius: 18px;
         cursor: pointer;
-        transition: all 0.15s;
-        margin-bottom: 0.375rem;
+        transition: background-color 150ms, opacity 100ms;
+        margin-bottom: 6px;
         text-align: left;
         color: inherit;
         font-family: inherit;
     }
 
     .dg-player-card:hover {
-        background: rgba(255,255,255,0.06);
+        background: var(--glass-15);
     }
 
     .dg-player-avatar {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        border: 1px solid var(--glass-border);
+        border: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        background: rgba(255,255,255,0.05);
+        background: var(--glass-10);
         gap: 1px;
     }
 
     .dg-avatar-initials {
-        font-family: 'Designer', sans-serif;
-        font-size: 0.7rem;
+        font: 700 12px/1 var(--font-body);
         color: #fff;
-        line-height: 1;
     }
 
     .dg-avatar-number {
-        font-size: 0.55rem;
-        color: rgba(255,255,255,0.5);
+        font-size: 9px;
+        color: var(--ink-2);
         line-height: 1;
     }
 
     .dg-player-name {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
     }
 
     .dg-player-meta {
-        font-size: 0.8rem;
-        color: var(--text-muted);
+        font-size: 13px;
+        color: var(--ink-2);
     }
 
     /* Info Drawer */
@@ -1551,7 +1564,7 @@ export function getStaticPaths() {
     .dg-info-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0,0,0,0.5);
         opacity: 0;
         transition: opacity 0.25s;
     }
@@ -1568,12 +1581,12 @@ export function getStaticPaths() {
         width: 100%;
         max-width: 500px;
         max-height: 85vh;
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-bottom: none;
-        border-radius: 22px 22px 0 0;
+        background: var(--glass-d80);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 0;
+        border-radius: 24px 24px 0 0;
+        box-shadow: var(--shadow-float);
         padding: 0.75rem 1rem 1rem;
         display: flex;
         flex-direction: column;
@@ -1605,13 +1618,13 @@ export function getStaticPaths() {
     }
 
     .dg-info-close {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        border: 1px solid var(--glass-border);
-        background: rgba(255,255,255,0.05);
+        border: 0;
+        background: var(--glass-10);
         color: #fff;
-        font-size: 1.2rem;
+        font-size: 20px;
         line-height: 1;
         cursor: pointer;
         display: flex;
@@ -1633,9 +1646,9 @@ export function getStaticPaths() {
 
     .dg-welcome-sub {
         display: block;
-        font-family: 'Designer', sans-serif;
-        font-size: 1.2rem;
-        color: rgba(255,255,255,0.5);
+        font-family: var(--font-display);
+        font-size: 18px;
+        color: var(--ink-2);
         letter-spacing: 4px;
     }
 
@@ -1655,20 +1668,20 @@ export function getStaticPaths() {
     }
 
     .dg-info-text {
-        font-size: 0.85rem;
-        color: rgba(255,255,255,0.7);
+        font-size: 14px;
+        color: var(--ink-body);
         line-height: 1.5;
-        margin-bottom: 0.5rem;
+        margin-bottom: 8px;
     }
 
     .dg-step-card {
         display: flex;
-        gap: 0.75rem;
-        padding: 0.75rem;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--glass-border);
-        border-radius: 18px;
-        margin-bottom: 0.5rem;
+        gap: 12px;
+        padding: 12px;
+        background: var(--glass-10);
+        border: 0;
+        border-radius: 14px;
+        margin-bottom: 8px;
     }
 
     .dg-step-num {
@@ -1693,38 +1706,48 @@ export function getStaticPaths() {
     }
 
     .dg-step-desc {
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.55);
+        font-size: 13px;
+        color: var(--ink-2);
         line-height: 1.4;
     }
 
     .dg-info-card {
-        padding: 0.75rem;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--glass-border);
-        border-radius: 18px;
-        margin-bottom: 0.5rem;
+        padding: 12px;
+        background: var(--glass-10);
+        border: 0;
+        border-radius: 14px;
+        margin-bottom: 8px;
     }
 
     .dg-info-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.35rem 0;
-        font-size: 0.85rem;
-        color: rgba(255,255,255,0.7);
+        padding: 6px 0;
+        font-size: 14px;
+        color: var(--ink-body);
     }
 
-    .dg-val-blue { font-weight: 600; color: #17E9FC; }
-    .dg-val-lemon { font-weight: 600; color: #F0FF1E; }
+    .dg-val-blue { font-weight: 700; color: var(--electric-blue); font-variant-numeric: tabular-nums; }
+    .dg-val-lemon { font-weight: 700; color: var(--lemon-lime); font-variant-numeric: tabular-nums; }
 
     .dg-info-note {
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.45);
+        font-size: 13px;
+        color: var(--ink-2);
         line-height: 1.4;
-        margin-top: 0.5rem;
+        margin-top: 8px;
         margin-bottom: 0;
     }
+
+    /* the category list reads as a stat table */
+    .dg-info-card.dg-cat-table {
+        padding: 0;
+        background: var(--surface-table);
+        border-radius: 18px;
+        overflow: hidden;
+    }
+    .dg-cat-table .dg-cat-row { padding: 10px 14px; border-bottom: 1px solid var(--line-table); }
+    .dg-cat-table .dg-cat-row:last-child { border-bottom: none; }
 
     .dg-cat-row {
         padding: 0.4rem 0;
@@ -1744,8 +1767,8 @@ export function getStaticPaths() {
 
     .dg-cat-desc {
         display: block;
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.45);
+        font-size: 13px;
+        color: var(--ink-2);
         line-height: 1.3;
     }
 
@@ -1779,27 +1802,17 @@ export function getStaticPaths() {
     }
 
     .dg-league-ex-desc {
-        font-size: 0.75rem;
-        color: rgba(255,255,255,0.4);
+        font-size: 12px;
+        color: var(--ink-2);
     }
 
-    .dg-info-got-it {
-        display: block;
-        margin: 1.5rem auto 0;
-        padding: 0.5rem 2.5rem;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--glass-border);
-        border-radius: 18px;
-        color: #17E9FC;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.15s;
+    .dg-info-scroll .dg-info-got-it {
+        display: flex;
+        width: fit-content;
+        margin: 24px auto 0;
+        padding: 0 28px;
     }
 
-    .dg-info-got-it:hover {
-        background: rgba(255,255,255,0.1);
-    }
 
     /* ── Valid Players Drawer ── */
     #dg-valid {
@@ -1811,7 +1824,7 @@ export function getStaticPaths() {
     .dg-valid-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0,0,0,0.5);
         opacity: 0;
         transition: opacity 0.25s;
     }
@@ -1828,12 +1841,12 @@ export function getStaticPaths() {
         width: 100%;
         max-width: 500px;
         max-height: 70vh;
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-bottom: none;
-        border-radius: 22px 22px 0 0;
+        background: var(--glass-d80);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 0;
+        border-radius: 24px 24px 0 0;
+        box-shadow: var(--shadow-float);
         padding: 0.75rem 1rem 1rem;
         display: flex;
         flex-direction: column;
@@ -1859,9 +1872,9 @@ export function getStaticPaths() {
     }
 
     .dg-valid-count {
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.35);
-        margin-bottom: 0.75rem;
+        font-size: 13px;
+        color: var(--ink-2);
+        margin-bottom: 12px;
     }
 
     .dg-valid-list {
@@ -1876,17 +1889,17 @@ export function getStaticPaths() {
     .dg-valid-card {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        padding: 0.5rem 0.65rem;
-        background: rgba(255,255,255,0.05);
+        gap: 12px;
+        padding: 8px 12px;
+        background: var(--glass-10);
         border-radius: 14px;
     }
 
     .dg-valid-avatar {
         width: 40px;
         height: 40px;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+        background: var(--glass-10);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1904,7 +1917,7 @@ export function getStaticPaths() {
     .dg-valid-num {
         font-size: 9px;
         font-weight: 600;
-        color: rgba(255,255,255,0.35);
+        color: var(--ink-2);
         line-height: 1;
         margin-top: 2px;
     }
@@ -1922,14 +1935,15 @@ export function getStaticPaths() {
     }
 
     .dg-valid-pos {
-        font-size: 0.75rem;
-        color: rgba(255,255,255,0.5);
+        font-size: 12px;
+        color: var(--ink-2);
     }
 
     .dg-valid-jersey {
-        font-size: 1rem;
+        font-size: 16px;
         font-weight: 700;
-        color: rgba(255,255,255,0.2);
+        font-variant-numeric: tabular-nums;
+        color: var(--ink-3);
     }
 
     /* ── Leaderboard Drawer ── */
@@ -1942,7 +1956,7 @@ export function getStaticPaths() {
     .dg-lb-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0,0,0,0.6);
+        background: rgba(0,0,0,0.5);
         opacity: 0;
         transition: opacity 0.25s;
     }
@@ -1959,12 +1973,12 @@ export function getStaticPaths() {
         width: 100%;
         max-width: 500px;
         max-height: 85vh;
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--glass-border);
-        border-bottom: none;
-        border-radius: 22px 22px 0 0;
+        background: var(--glass-d80);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 0;
+        border-radius: 24px 24px 0 0;
+        box-shadow: var(--shadow-float);
         padding: 0.75rem 1rem 0;
         display: flex;
         flex-direction: column;
@@ -1996,51 +2010,29 @@ export function getStaticPaths() {
     }
 
     .dg-lb-tabs {
-        display: flex;
-        gap: 4px;
-        padding: 3px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--glass-border);
-        border-radius: 22px;
-        margin-bottom: 0.75rem;
+        margin-bottom: 12px;
+        flex-shrink: 0;
     }
 
-    .dg-lb-tab {
-        flex: 1;
-        height: 36px;
-        border: none;
-        background: transparent;
-        border-radius: 18px;
-        color: rgba(255,255,255,0.5);
-        font-family: inherit;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.15s;
-    }
 
-    .dg-lb-tab.active {
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-    }
 
     .dg-lb-search-row {
-        margin-bottom: 0.75rem;
+        margin-bottom: 12px;
     }
 
     .dg-lb-search-row .form-input {
-        height: 40px;
-        border-radius: 20px;
-        font-size: 0.85rem;
+        height: 36px;
+        border-radius: 18px;
+        font-size: 14px;
     }
 
     /* My rank card */
     .dg-lb-myrank-card {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid var(--glass-border);
+        background: var(--glass-10);
+        border: 0;
         border-radius: 18px;
-        padding: 0.75rem;
-        margin-bottom: 0.75rem;
+        padding: 12px 14px;
+        margin-bottom: 12px;
     }
 
     .dg-lb-myrank-top {
@@ -2051,15 +2043,16 @@ export function getStaticPaths() {
     }
 
     .dg-lb-myrank-label {
-        font-size: 0.8rem;
+        font-size: 13px;
         font-weight: 600;
-        color: rgba(255,255,255,0.5);
+        color: var(--ink-2);
     }
 
     .dg-lb-myrank-rank {
-        font-size: 1rem;
+        font-size: 16px;
         font-weight: 700;
-        color: #17E9FC;
+        font-variant-numeric: tabular-nums;
+        color: var(--electric-blue);
     }
 
     .dg-lb-myrank-row {
@@ -2077,15 +2070,19 @@ export function getStaticPaths() {
     }
 
     .dg-lb-myrank-val {
-        font-size: 1rem;
+        font-size: 16px;
         font-weight: 700;
+        font-variant-numeric: tabular-nums;
         color: #fff;
     }
 
     .dg-lb-myrank-lbl {
-        font-size: 0.65rem;
-        color: rgba(255,255,255,0.4);
-        margin-top: 2px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        margin-top: 4px;
     }
 
     .dg-lb-myrank-dots {
@@ -2108,21 +2105,22 @@ export function getStaticPaths() {
     .dg-lb-entry {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
-        padding: 0.5rem 0.6rem;
-        background: rgba(255,255,255,0.04);
-        border-radius: 14px;
+        gap: 12px;
+        min-height: 56px;
+        padding: 8px 14px;
+        background: var(--glass-10);
+        border-radius: 18px;
         flex-shrink: 0;
     }
 
     .dg-lb-entry-me {
-        border: 1px solid rgba(23,233,252,0.2);
+        box-shadow: 0 0 0 1.5px var(--electric-blue);
     }
 
     .dg-lb-rank {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: #17E9FC;
+        font: 600 14px/1 var(--font-body);
+        font-variant-numeric: tabular-nums;
+        color: #fff;
         min-width: 32px;
         text-align: center;
     }
@@ -2142,7 +2140,7 @@ export function getStaticPaths() {
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background: rgba(255,255,255,0.08);
+        background: var(--glass-10);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -2156,8 +2154,7 @@ export function getStaticPaths() {
     }
 
     .dg-lb-name {
-        font-size: 0.85rem;
-        font-weight: 600;
+        font: 700 14px/1.25 var(--font-body);
         color: #fff;
         white-space: nowrap;
         overflow: hidden;
@@ -2165,18 +2162,18 @@ export function getStaticPaths() {
     }
 
     .dg-lb-name-own {
-        color: #17E9FC;
+        color: var(--electric-blue);
     }
 
     .dg-lb-stats {
-        font-size: 0.7rem;
-        color: rgba(255,255,255,0.4);
+        font-size: 12px;
+        color: var(--ink-body);
     }
 
     .dg-lb-score {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #F0FF1E;
+        font: 700 16px/1 var(--font-body);
+        font-variant-numeric: tabular-nums;
+        color: var(--lemon-lime);
         min-width: 28px;
         text-align: center;
     }
@@ -2208,9 +2205,17 @@ export function getStaticPaths() {
 
     .dg-lb-empty {
         text-align: center;
-        color: rgba(255,255,255,0.4);
-        font-size: 0.85rem;
-        padding: 2rem 1rem;
+        color: var(--ink-2);
+        font-size: 14px;
+        padding: 32px 16px;
+    }
+
+    @media (hover: hover) { .dg-title-btn:hover, .dg-info-close:hover { background: var(--glass-15); } }
+    .dg-title-btn:active, .dg-info-close:active, .dg-player-card:active { opacity: .72; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .dg-cell, .dg-player-card, .dg-title-btn { transition: none; }
+        .dg-anim-correct, .dg-anim-wrong { animation: none; }
     }
 
     @media (max-width: 400px) {

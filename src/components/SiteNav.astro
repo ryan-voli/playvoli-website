@@ -1,0 +1,80 @@
+---
+// The site nav (owner, 6 Oct 2026): About · App · Top 100 · Contact (Top 100
+// added 15 Oct 2026), the logo goes
+// home, and everything else lives in the footer. The home splash renders no
+// nav at all (SiteLayout chrome={false}).
+//
+// The frozen Nav.astro still renders inside Layout (oauth-callback needs it
+// byte-for-byte) and site.css hides it on body.site pages. Its hidden
+// #download-pill stays the QrModal's trigger, so Download here clicks that.
+// No scoped <style>: styles live in site.css §1.15.
+interface Props {
+  activePage?: string;
+}
+
+const { activePage = '' } = Astro.props;
+const links = [
+  { href: '/about', label: 'About', on: ['about', 'whats-next'] },
+  { href: '/app', label: 'App', on: ['app'] },
+  { href: '/rankings', label: 'Top 100', on: ['rankings'] },
+  { href: '/contact', label: 'Contact', on: ['contact'] },
+];
+---
+
+<header class="snav">
+    <a href="/" class="snav-logo" aria-label="VOLI home">
+        <img src="/images/logo_dark_sm.webp" alt="">
+        <span class="snav-word">VOLI</span>
+    </a>
+    <nav class="snav-links" aria-label="Main">
+        {links.map((l) => <a href={l.href} aria-current={l.on.includes(activePage) ? 'page' : undefined}>{l.label}</a>)}
+    </nav>
+    <button type="button" class="snav-download" data-download>Download</button>
+    <button type="button" class="snav-round snav-download-icon" data-download aria-label="Download the app">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+    </button>
+    <button type="button" class="snav-round snav-burger" id="snav-burger" aria-label="Menu" aria-expanded="false" aria-controls="snav-menu">
+        <span></span><span></span><span></span>
+    </button>
+</header>
+
+<div class="snav-menu" id="snav-menu">
+    <nav aria-label="Main">
+        {links.map((l) => <a href={l.href} aria-current={l.on.includes(activePage) ? 'page' : undefined}>{l.label}</a>)}
+    </nav>
+</div>
+
+<script is:inline>
+(function () {
+    var burger = document.getElementById('snav-burger');
+    var menu = document.getElementById('snav-menu');
+    function setOpen(open) {
+        menu.classList.toggle('open', open);
+        burger.classList.toggle('open', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    if (burger && menu) {
+        burger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            setOpen(!menu.classList.contains('open'));
+        });
+        document.addEventListener('click', function (e) {
+            if (!menu.contains(e.target)) setOpen(false);
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') setOpen(false);
+        });
+    }
+    // Desktop gets the QR code, phones go straight to their store.
+    document.querySelectorAll('.snav [data-download]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var pill = document.getElementById('download-pill');
+            if (pill) pill.click();
+        });
+    });
+})();
+</script>

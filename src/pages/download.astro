@@ -69,6 +69,11 @@ const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=8&da
   </script>
 
   <style>
+    @font-face {
+      font-family: "Designer";
+      src: url("/fonts/Designer.otf") format("opentype");
+      font-display: swap;
+    }
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
     body {
@@ -77,46 +82,62 @@ const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=8&da
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px;
-      background: #131819;
+      padding: 24px 16px;
+      background: #0F1314;
       color: #fff;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         Helvetica, Arial, sans-serif;
       text-align: center;
     }
+    /* Aurora, still (no script on this page) */
+    .v-aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: #0F1314; }
+    .v-aurora__field {
+      position: absolute; left: 0; top: 0; width: 180vw; height: 180vh; height: 180lvh;
+      background: url("/images/refresh/bg-aurora.webp") 0 0 / 100% 100% no-repeat;
+      transform: translate3d(calc(var(--ax, .38) * -100vw), calc(var(--ay, .36) * -100lvh), 0);
+    }
     .card {
       width: 100%;
-      max-width: 360px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 22px;
-      padding: 32px 24px;
+      max-width: 400px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 20px;
+      padding: 24px;
     }
-    h1 { margin: 0 0 6px; font-size: 1.4rem; letter-spacing: -0.01em; }
-    p  { margin: 0 0 22px; font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.62); }
+    h1 {
+      margin: 0 0 8px;
+      font: 400 34px/1 "Designer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+    p  { margin: 0 0 24px; font-size: 15px; line-height: 1.45; color: rgba(255,255,255,0.70); }
     .qr {
       background: #fff;
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 12px;
       display: inline-block;
       line-height: 0;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
     .qr img { width: 200px; height: 200px; display: block; }
-    .stores { display: flex; flex-direction: column; gap: 10px; }
+    .stores { display: flex; flex-direction: column; gap: 12px; }
     a.store {
-      display: block;
-      padding: 13px 16px;
-      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 22px;
       text-decoration: none;
-      font-size: 0.92rem;
+      font-size: 15px;
       font-weight: 600;
       background: rgba(255, 255, 255, 0.10);
-      border: 1px solid rgba(255, 255, 255, 0.14);
       color: #fff;
-      transition: background 0.15s ease;
+      transition: background-color 150ms, opacity 100ms;
     }
-    a.store:hover { background: rgba(255, 255, 255, 0.16); }
+    a.store:hover { background: rgba(255, 255, 255, 0.15); }
+    a.store:active { opacity: .72; }
+    @media (max-width: 420px) { h1 { font-size: 28px; } }
   </style>
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
@@ -124,6 +145,7 @@ const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=8&da
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 </head>
 <body>
+  <div class="v-aurora" aria-hidden="true"><div class="v-aurora__field" style="--ax:.18;--ay:.22"></div></div>
   <main class="card">
     <h1>Download VOLI</h1>
     <p>Scan with your phone, or pick your store below.</p>

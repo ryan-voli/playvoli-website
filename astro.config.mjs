@@ -3,6 +3,10 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   output: 'static',
+  // The old app page; its content is now /app (owner, 6 Oct 2026).
+  redirects: {
+    '/mobileapp': '/app',
+  },
   // satori loads harfbuzz's wasm from node_modules at RUNTIME, and Vercel's
   // function bundle only carries what it can see statically — so the route
   // rendered locally and died in production with ENOENT on hb.wasm.
