@@ -8,6 +8,7 @@
           "/podcast/*",
           "/game/*",
           "/league/*",
+          "/bracket",
           "/oauth-callback"
         ]
       }

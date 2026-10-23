@@ -1,0 +1,186 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+
+<SiteLayout
+  title="Join the Bracket Challenge - VOLI"
+  description="You're invited to the College Volleyball Bracket Challenge on VOLI. Pick the NCAA tournament, match by match. Brackets open at noon Central on November 29."
+  ogUrl="https://playvoli.com/bracket"
+  ogImage="https://playvoli.com/images/bracket/bracket-challenge-2026-og.png"
+  skipSupabase
+  skipNavAuth
+  bodyClass="landing-card-page"
+>
+    <script is:inline slot="scripts">
+        // Track page source
+        gtag('event', 'page_view', {
+            'source': 'bracket_invite'
+        });
+
+        // Smart deep link handler with popup fallback
+        function handleDeepLink(event, deepLink) {
+            event.preventDefault();
+            window.location.href = deepLink;
+
+            setTimeout(function() {
+                if (!document.hidden) {
+                    showAppDownloadPopup();
+                }
+            }, 2000);
+        }
+
+        function showAppDownloadPopup() {
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.innerHTML = '\
+                <h2>Download VOLI to Play!</h2>\
+                <p>Get the VOLI app to fill out your bracket in the Bracket Challenge.</p>\
+                <button id="close-popup">Got it</button>\
+            ';
+
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay || e.target.id === 'close-popup') {
+                    document.body.removeChild(overlay);
+                }
+            });
+
+            setTimeout(function() {
+                const storeButtons = document.querySelector('.store-buttons');
+                if (storeButtons) {
+                    storeButtons.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 300);
+        }
+    </script>
+
+    <main class="v-page v-page--center">
+        <div class="v-stub">
+            <img src="/images/bracket/bracket-challenge-2026-logo.webp"
+                 alt="College Volleyball '26 Bracket Challenge, presented by VOLI"
+                 class="bracket-logo" width="420" height="319">
+
+            <h1 class="v-stub__heading">You're invited to the <span class="v-hl">Bracket Challenge</span></h1>
+            <p class="v-body v-stub__sub">Pick the NCAA volleyball tournament, match by match, and see how your bracket stacks up on VOLI. Brackets open at noon Central on November 29.</p>
+
+            <div class="v-actions">
+                <a href="voli://bracket"
+                   id="open-bracket-btn"
+                   onclick="handleDeepLink(event, 'voli://bracket'); plausible('Bracket Invite Open App'); gtag('event', 'click', {'event_category': 'bracket_open', 'event_label': 'bracket_invite', 'source': 'bracket_invite'});"
+                   class="v-pill v-pill--cta v-pill--action v-pill--block">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    Open the Bracket Challenge
+                </a>
+            </div>
+
+            <div class="v-rule-label v-stub__divider">
+                <span>Don't have the app?</span>
+            </div>
+
+            <div class="store-buttons v-stores v-stores--stack">
+                <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982"
+                   onclick="plausible('Bracket Invite App Store'); gtag('event', 'click', {'event_category': 'download', 'event_label': 'app_store', 'source': 'bracket_invite'});"
+                   class="v-store">
+                    <svg viewBox="0 0 24 24" fill="white">
+                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                    </svg>
+                    <div>
+                        <span class="v-store__small">Download on the</span>
+                        <span class="v-store__big">App Store</span>
+                    </div>
+                </a>
+
+                <a href="https://play.google.com/store/apps/details?id=com.playvoli.app"
+                   onclick="plausible('Bracket Invite Google Play'); gtag('event', 'click', {'event_category': 'download', 'event_label': 'play_store', 'source': 'bracket_invite'});"
+                   class="v-store">
+                    <svg viewBox="0 0 24 24" fill="white">
+                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
+                    </svg>
+                    <div>
+                        <span class="v-store__small">Get it on</span>
+                        <span class="v-store__big">Google Play</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+</SiteLayout>
+
+<style is:global>
+    /* The partner lander's v-stub markup; only the Bracket Challenge logo
+       (the app's own art, its square's empty bands trimmed, in place of the
+       partner pair) and the JS-built popup (handleDeepLink) need page CSS. */
+    body.landing-card-page .bracket-logo {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        margin: 0 auto 20px;
+    }
+
+    body.landing-card-page .popup-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    body.landing-card-page .popup {
+        width: min(100%, 360px);
+        background: var(--glass-d80);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 24px;
+        text-align: center;
+        box-shadow: var(--shadow-float);
+    }
+
+    body.landing-card-page .popup h2 {
+        font: 700 clamp(20px, 1.8vw, 24px)/1.2 var(--font-body);
+        color: #fff;
+        margin: 0 0 8px;
+    }
+
+    body.landing-card-page .popup p {
+        font: 400 var(--fs-body)/1.5 var(--font-body);
+        color: var(--ink-body);
+        margin: 0 0 20px;
+    }
+
+    body.landing-card-page .popup button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 36px;
+        padding: 0 18px;
+        border-radius: 18px;
+        border: 0;
+        background: var(--glass-15);
+        -webkit-backdrop-filter: var(--blur);
+        backdrop-filter: var(--blur);
+        color: #fff;
+        font: 500 15px/1 var(--font-body);
+        cursor: pointer;
+        transition: background-color 150ms, opacity 100ms;
+    }
+
+    body.landing-card-page .popup button:active { opacity: 0.72; }
+
+    @media (hover: hover) {
+        body.landing-card-page .popup button:hover { background: var(--glass-15); }
+    }
+</style>
