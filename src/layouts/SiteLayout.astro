@@ -29,7 +29,12 @@ interface Props {
   chrome?: boolean;
 }
 
-const { bodyClass = '', aurora, chrome = true, showFooter = true, activePage = '', ...rest } = Astro.props;
+// The link-preview image for every site page (owner, 24 Oct 2026). Set here,
+// not in the frozen Layout, so oauth-callback's built output never changes.
+// A page with its own card (bracket) still passes ogImage.
+const SHARE_IMAGE = 'https://playvoli.com/images/og/voli-share.jpg';
+
+const { bodyClass = '', aurora, chrome = true, showFooter = true, activePage = '', ogImage = SHARE_IMAGE, ...rest } = Astro.props;
 
 // One canonical address per page (playvoli.com, no trailing slash), so a
 // preview copy, a trailing slash or a ?query never splits a page in search.
@@ -59,7 +64,7 @@ const [ax, ay] = aurora ?? SPOTS.find(([re]) => re.test(path))?.[1] ?? [0.38, 0.
 
 {/* Layout still renders the frozen Nav (hidden on body.site) and never its
     Footer here: SiteNav / SiteFooter replace both (owner, 6 Oct 2026). */}
-<Layout {...rest} activePage={activePage} showFooter={false} bodyClass={('site ' + bodyClass).trim()}>
+<Layout {...rest} ogImage={ogImage} activePage={activePage} showFooter={false} bodyClass={('site ' + bodyClass).trim()}>
   <link rel="preload" href="/fonts/Designer.otf" as="font" type="font/otf" crossorigin slot="head" />
   {canonical && <link rel="canonical" href={canonical} slot="head" />}
   <slot name="head" slot="head" />
