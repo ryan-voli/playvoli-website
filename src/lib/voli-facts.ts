@@ -22,7 +22,7 @@
 export const FACTS_AS_OF = 'October 2026';
 
 /** App downloads, iOS + Android (owner, 23 Oct 2026). Update as it grows. */
-export const DOWNLOADS = '3k+';
+export const DOWNLOADS = '3.3k+';
 
 export const FACTS = [
   { value: '18,700+', label: 'college and pro matches since 2023' },
