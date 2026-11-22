@@ -16,6 +16,7 @@ const PAGES: { path: string; priority: string; changefreq: string }[] = [
   { path: '/evollve', priority: '0.6', changefreq: 'monthly' },
   { path: '/partners', priority: '0.6', changefreq: 'monthly' },
   { path: '/volleytalk', priority: '0.5', changefreq: 'monthly' },
+  { path: '/cvt', priority: '0.5', changefreq: 'monthly' },
   { path: '/mlm', priority: '0.5', changefreq: 'monthly' },
   { path: '/discordbot', priority: '0.5', changefreq: 'monthly' },
   { path: '/creatorscourt', priority: '0.4', changefreq: 'monthly' },
