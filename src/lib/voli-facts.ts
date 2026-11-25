@@ -55,6 +55,11 @@ export const FAQS: Faq[] = [
     a: 'Yes. Build a team from real college or pro players and play the season against your friends in a public or private league. Leagues use a salary cap and multi-round contracts, and the NCAA season runs in ten rounds, Wednesday to Sunday. Volleyball podcasts run their own public leagues on VOLI. Fantasy is optional: everything else in VOLI works without it.',
   },
   {
+    id: 'bracket',
+    q: 'Does VOLI have a bracket challenge for the NCAA volleyball tournament?',
+    a: "Yes. The College Volleyball Bracket Challenge is a free bracket game in the VOLI app for the NCAA Division I women's volleyball tournament. You pick the winner of all 63 matches, follow a live leaderboard, and can play against your friends in a group. In 2026 one $500 cash prize goes to the top eligible bracket: no purchase necessary, open to legal residents of the 50 U.S. states and D.C. who are 18 or older and have reached the age of majority in their state. How it works is at playvoli.com/bracket and the Official Rules are at playvoli.com/bracket/rules.",
+  },
+  {
     id: 'box-scores',
     q: 'Where can I find NCAA volleyball box scores and player stats?',
     a: "In the VOLI app. It has box scores for 99.8% of completed Division I women's matches since 2023 (nearly 500,000 player lines), and set-by-set player stats for every MLV and LOVB match. Leaderboards sort by season, conference, position and class, in totals or per set.",
@@ -121,6 +126,7 @@ export const APP_SCHEMA = {
   downloadUrl: [STORE.ios, STORE.android],
   featureList: [
     "Fantasy volleyball leagues for NCAA Division I women's volleyball and MLV, with a salary cap and multi-round contracts; public leagues run by volleyball podcasts, and private leagues",
+    "The College Volleyball Bracket Challenge: a free bracket game for the NCAA Division I women's volleyball tournament, with a live leaderboard and friend groups",
     'Live scores and box scores for college and pro matches with a lead chart for each set, and play-by-play with the rotation on court for MLV and LOVB matches; Live Activities on iPhone',
     "Box scores for 99.8% of completed Division I women's matches since 2023, nearly 500,000 NCAA player lines, and set-by-set stats for all 445 MLV and LOVB matches",
     "The VOLI Top 100, VOLI's own Division I ranking from match results and strength of schedule, published each Monday, plus each college match's chance to win before first serve and after every set",

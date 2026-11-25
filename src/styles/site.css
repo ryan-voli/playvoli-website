@@ -493,3 +493,64 @@ body.site .sfoot a[href="/redditdailygrid"],
 body.site .product-card[href="/redditdailygrid"] {
   display: none !important;
 }
+
+/* 1.17 Bracket Challenge promo (BracketPromo.astro) ---------------------------
+   One block, two placements: the home splash (gate) and the top of /app
+   (banner). A dark-glass bar with the game's name, the prize in the app's
+   electric blue, and one way in. It hides itself once picks lock. */
+.bpromo { width:100%; margin-inline:auto; }
+.bpromo[hidden] { display:none; }
+.bpromo__link {
+  display:flex; align-items:center; gap:14px; padding:10px 10px 10px 18px; border-radius:24px;
+  background:var(--glass-d60); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); box-shadow:var(--shadow-pill);
+  color:#fff; text-decoration:none; text-align:left; transition:background-color 150ms, opacity 100ms;
+}
+.bpromo__link:active { opacity:.72; }
+.bpromo__mark { width:28px; height:28px; flex:none; color:var(--lemon-lime); }
+.bpromo__copy { display:flex; flex-direction:column; gap:3px; min-width:0; flex:1; }
+.bpromo__kicker { font:700 10px/1.2 var(--font-body); letter-spacing:.10em; text-transform:uppercase; color:var(--lemon-lime-90); }
+.bpromo__kicker-prize { display:none; }
+.bpromo__kicker-prize b { font-weight:700; color:var(--electric-blue); }
+.bpromo__name { font:700 16px/1.2 var(--font-body); letter-spacing:-.005em; color:#fff; }
+.bpromo__sub { font:400 13px/1.35 var(--font-body); color:var(--ink-body); }
+.bpromo__sub b { font-weight:700; color:var(--electric-blue); }
+.bpromo__go { flex:none; display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 18px; border-radius:20px;
+  background:var(--glass-15); font:700 14px/1 var(--font-body); color:var(--electric-blue); white-space:nowrap;
+  transition:background-color 150ms; }
+.bpromo__go svg { width:16px; height:16px; flex:none; }
+@media (hover:hover) {
+  .bpromo__link:hover { background-color:var(--glass-d74); }
+  .bpromo__link:hover .bpromo__go { background-color:var(--glass-20); }
+}
+.bpromo__legal { margin:8px auto 0; text-align:center; text-wrap:balance;
+  font:400 11px/1.45 var(--font-body); color:var(--ink-3); }
+.bpromo__legal a { color:var(--ink-2); text-decoration:underline; text-underline-offset:2px; }
+@media (hover:hover) { .bpromo__legal a:hover { color:#fff; } }
+/* On the gate the promo sits above the fixed drift layer, like the splash's
+   own children (their rule is scoped to index.astro and cannot reach here). */
+.bpromo--gate { max-width:640px; margin-bottom:28px; position:relative; z-index:1; }
+.bpromo--banner { max-width:720px; margin-bottom:8px; }
+@media (max-width:600px) {
+  .bpromo__link { gap:12px; padding:10px 10px 10px 14px; border-radius:22px; }
+  .bpromo__mark { width:24px; height:24px; }
+  .bpromo__name { font-size:14px; letter-spacing:-.01em; }
+  .bpromo__sub { font-size:12px; }
+  .bpromo__go { width:36px; height:36px; padding:0; justify-content:center; border-radius:50%; }
+  .bpromo__go-label { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+  /* The gate is one screen, so on a phone its promo is two lines: when and
+     how much, then the name. The sentence waits on /bracket, one tap away. */
+  .bpromo--gate { margin-bottom:16px; }
+  .bpromo--gate .bpromo__link { gap:10px; padding:8px 8px 8px 12px; border-radius:20px; }
+  .bpromo--gate .bpromo__mark { width:22px; height:22px; }
+  .bpromo--gate .bpromo__sub { display:none; }
+  .bpromo--gate .bpromo__kicker-prize { display:inline; }
+  .bpromo--gate .bpromo__go { width:32px; height:32px; }
+  .bpromo--gate .bpromo__legal { margin-top:6px; font-size:10.5px; }
+}
+/* A very short or very narrow screen has no room on the gate (the phone stage
+   is already down to about 70px there); the promo stays on /app and in the
+   footer. index.astro zeroes the stage's --promo on the same condition. */
+@media (max-width:319px), (max-height:480px) { .bpromo--gate { display:none; } }
+@media (max-width:380px) { .bpromo--gate .bpromo__mark { display:none; } }
+@media (max-width:340px) { .bpromo--gate .bpromo__name { font-size:12.5px; } }
+@media (prefers-reduced-motion:reduce) { .bpromo__link, .bpromo__go { transition:none; } }

@@ -1,0 +1,44 @@
+---
+// The College Volleyball Bracket Challenge promo: one block, two placements.
+// "gate" sits at the top of the home splash, "banner" at the top of /app.
+// It comes down by itself once picks lock: on a build after the lock the
+// component renders nothing, and between deploys BracketClock hides it.
+// No scoped <style>: the styles are site.css 1.17, with the other shared
+// components.
+import BracketClock from './BracketClock.astro';
+import { BRACKET, BRACKET_STATUS, bracketPhase, promoIsLive } from '../lib/bracket-facts';
+
+interface Props {
+  variant: 'gate' | 'banner';
+}
+
+const { variant } = Astro.props;
+const phase = bracketPhase();
+const track = `try{gtag('event','click',{event_category:'bracket_promo',event_label:'${variant}'})}catch(e){}`;
+---
+
+{promoIsLive(phase) && (
+    <Fragment>
+    <aside class={`bpromo bpromo--${variant}`} data-bracket-promo aria-label={BRACKET.name}>
+        <a class="bpromo__link" href={BRACKET.path} onclick={track}>
+            <svg class="bpromo__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 4h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2M2 14h4a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2M8 7h4a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8M14 12h8"/>
+            </svg>
+            <span class="bpromo__copy">
+                <span class="bpromo__kicker"><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span><span class="bpromo__kicker-prize"> · <b>{BRACKET.prize} cash</b></span></span>
+                <strong class="bpromo__name">{BRACKET.name}</strong>
+                <span class="bpromo__sub"><b>{BRACKET.prize} cash</b> to the top eligible bracket. Free to play.</span>
+            </span>
+            <span class="bpromo__go">
+                <span class="bpromo__go-label">Play free</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </span>
+        </a>
+        <p class="bpromo__legal">No purchase necessary. 50 U.S. states &amp; D.C., 18+ (19+ AL/NE, 21+ MS). <a href={BRACKET.rulesPath}>Official Rules</a> apply.</p>
+    </aside>
+    <BracketClock />
+    </Fragment>
+)}

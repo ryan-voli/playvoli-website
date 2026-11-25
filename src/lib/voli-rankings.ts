@@ -9,8 +9,8 @@
 // same table. Here the NCAA list is the newest published NCAA week, by date.
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = 'https://api.playvoli.com';
-const SUPABASE_ANON_KEY =
+export const SUPABASE_URL = 'https://api.playvoli.com';
+export const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
 
 export interface RankedTeam {

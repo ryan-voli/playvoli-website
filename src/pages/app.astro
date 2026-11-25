@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import BracketPromo from '../components/BracketPromo.astro';
 
 import { DOWNLOADS, FACTS, FACTS_AS_OF, NEWS_OUTLETS, PODCASTS, appSchemaWithReviews } from '../lib/voli-facts';
 
@@ -15,6 +16,9 @@ const appSchema = [appSchemaWithReviews];---
   schema={appSchema}
 >
     <div class="v-page">
+    {/* The Bracket Challenge, at the very top of the page (owner, 26 Nov 2026).
+        It takes itself down once picks lock. */}
+    <BracketPromo variant="banner" />
     <section class="hero">
         <img src="/images/appicon.webp" alt="VOLI" class="hero-logo">
         <h1 class="hero-title">

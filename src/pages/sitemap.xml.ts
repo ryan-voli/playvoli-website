@@ -9,6 +9,8 @@ const SITE = 'https://playvoli.com';
 const PAGES: { path: string; priority: string; changefreq: string }[] = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/app', priority: '0.9', changefreq: 'weekly' },
+  { path: '/bracket', priority: '0.9', changefreq: 'daily' },
+  { path: '/bracket/rules', priority: '0.3', changefreq: 'monthly' },
   { path: '/rankings', priority: '0.8', changefreq: 'weekly' },
   { path: '/faq', priority: '0.8', changefreq: 'monthly' },
   { path: '/methods', priority: '0.7', changefreq: 'monthly' },

@@ -7,12 +7,18 @@
 // Games screen baked in) rendered with three.js; the flat mockup is only the
 // no-WebGL fallback.
 import SiteLayout from '../layouts/SiteLayout.astro';
+import BracketPromo from '../components/BracketPromo.astro';
+import { bracketPhase, promoIsLive } from '../lib/bracket-facts';
 import { APP_SCHEMA } from '../lib/voli-facts';
 
 // The splash is one screen and nothing else (owner, 15 Oct 2026: the
 // below-the-fold text came back out). Only the app's structured data rides
 // along, invisibly; the readable detail lives on /app, /faq and /methods.
 const homeSchema = [APP_SCHEMA];
+
+// While the Bracket Challenge promo is up, the phone stage gives it room
+// (the --promo budget below). BracketClock clears the mark when it hides the promo.
+const promoOn = promoIsLive(bracketPhase());
 ---
 
 <SiteLayout
@@ -27,7 +33,7 @@ const homeSchema = [APP_SCHEMA];
 >
     <link rel="preload" href="/models/iphone-17-pro-max.glb" as="fetch" type="model/gltf-binary" crossorigin="anonymous" slot="head" />
     <link rel="prefetch" href="/app" slot="head" />
-    <main class="splash">
+    <main class="splash" data-bracket-promo-host={promoOn ? 'on' : undefined}>
         <div class="drift" aria-hidden="true">
             <div class="drift-item drift--mid  drift--rank"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-rank.webp" alt="" width="760" height="132"></div></div></div>
             <div class="drift-item drift--far  drift--oregon"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-oregon.webp" alt="" width="760" height="337"></div></div></div>
@@ -37,6 +43,9 @@ const homeSchema = [APP_SCHEMA];
             <div class="drift-item drift--far  drift--final"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-final.webp" alt="" width="760" height="397"></div></div></div>
             <div class="drift-item drift--mid  drift--pct"><div class="drift-bob"><div class="drift-face"><img src="/images/splash/float-pct.webp" alt="" width="760" height="392"></div></div></div>
         </div>
+        {/* The Bracket Challenge, first thing on the gate (owner, 26 Nov 2026).
+            It takes itself down once picks lock. */}
+        <BracketPromo variant="gate" />
         <div class="splash-lockup">
             <img src="/images/splash/logo-mark.webp" alt="" class="splash-logo" width="253" height="240">
             <h1 class="hero-title">
@@ -214,7 +223,7 @@ const homeSchema = [APP_SCHEMA];
        shrinks on short screens so the button never falls below the fold. */
     .pop {
         container-type: inline-size;
-        width: min(600px, 100%, calc((100svh - 320px) * 8 / 7));
+        width: min(600px, 100%, calc((100svh - 320px - var(--promo, 0px)) * 8 / 7));
         aspect-ratio: 8 / 7;
         margin-top: 24px;
     }
@@ -328,6 +337,37 @@ const homeSchema = [APP_SCHEMA];
     @media (prefers-reduced-motion: reduce) {
         .pop-tilt { transition: none; }
         .pop-phone, .pop-card, .pop-bob, .pop.is-3d .pop-gl { animation: none; }
+    }
+
+    /* THE BRACKET PROMO comes out of the phone stage's budget, so the gate is
+       still one screen with it on. --promo is what the stage gives up. Where
+       the budgets above (320px, 360px on phones) hold about 64px of air, that
+       is the promo block's height less the air; where the layout has no air
+       (tablets, narrow windows where the lockup wraps) it is the whole block
+       or more. The mark is on .splash only while the promo is showing. Every
+       band was measured against the live page's height. */
+    .splash[data-bracket-promo-host] { --promo: 72px; }
+    @media (max-width: 700px) {
+        .splash[data-bracket-promo-host] { --promo: 144px; }
+    }
+    @media (min-width: 601px) and (max-width: 620px) {
+        .splash[data-bracket-promo-host] { --promo: 176px; }
+    }
+    @media (max-width: 600px) {
+        .splash[data-bracket-promo-host] { --promo: 46px; }
+    }
+    @media (min-width: 481px) and (max-width: 600px) {
+        .splash[data-bracket-promo-host] { --promo: 68px; }
+    }
+    @media (max-width: 340px) {
+        .splash[data-bracket-promo-host] { --promo: 104px; }
+    }
+    @media (hover: none) and (pointer: coarse) and (min-width: 701px) {
+        .splash[data-bracket-promo-host] { --promo: 132px; }
+    }
+    /* site.css hides the gate promo on the same condition. */
+    @media (max-width: 319px), (max-height: 480px) {
+        .splash[data-bracket-promo-host] { --promo: 0px; }
     }
 
     .splash-go { margin-top: 24px; }
@@ -468,7 +508,7 @@ const homeSchema = [APP_SCHEMA];
         .splash-lockup { gap: 16px 18px; }
         .splash-stores { flex-basis: 100%; width: auto; flex-direction: row; justify-content: center; gap: 10px; }
         .splash-stores .v-store { width: auto; height: 52px; }
-        .pop { width: min(100%, calc((100svh - 360px) * 8 / 7)); }
+        .pop { width: min(100%, calc((100svh - 360px - var(--promo, 0px)) * 8 / 7)); }
     }
 
     @media (max-width: 480px) {
