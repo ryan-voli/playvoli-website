@@ -74,6 +74,10 @@
     .sec .stage > .pop, .card__pop { --depth: 64px; }
     .sec .stage > *, .card__pop { animation: pm-depth linear both; animation-timeline: view(); animation-range: cover; }
     .hero .stage > * { --depth: 0px; }
+    /* Each phone is a big image with a rounded frame and soft shadows. iPhone
+       Safari repainted all of it on every frame it moved (choppy); as its own
+       layer it is drawn once and only slid. */
+    .hero .stage > *, .sec .stage > *, .card__pop { will-change: transform; }
     @keyframes pm-depth {
       from { transform: translateY(var(--depth, 24px)); }
       to { transform: translateY(calc(var(--depth, 24px) * -1)); }

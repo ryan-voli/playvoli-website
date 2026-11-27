@@ -71,8 +71,7 @@
 /* ---------- Fact chip (Badge) --------------------------------------------- */
 .kbadge {
   display: inline-flex; flex-direction: column; gap: 6px; max-width: 15rem; padding: 14px 18px 15px;
-  border-radius: var(--r-card); border: 1px solid var(--stroke); background: var(--surface-hi);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-radius: var(--r-card); border: 1px solid var(--stroke); background: var(--surface-hi-solid);
   box-shadow: 0 16px 38px rgba(30, 36, 72, .16), 0 4px 10px rgba(40, 50, 90, .08);
 }
 .kbadge strong { font: 400 clamp(32px, 3.2vw, 46px)/1 var(--f-display); letter-spacing: -.01em; color: var(--ink); font-variant-numeric: lining-nums; }

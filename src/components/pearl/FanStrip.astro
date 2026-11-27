@@ -73,7 +73,7 @@ const { quotes, label } = Astro.props;
 
         // A scroll the script did not make came from a hand: follow it.
         view.addEventListener('scroll', () => {
-            if (Math.abs(view.scrollLeft - pos) > 2) { touched(); wrap(); pos = view.scrollLeft; }
+            if (Math.abs(view.scrollLeft - Math.floor(pos)) > 2) { touched(); wrap(); pos = view.scrollLeft; }
         }, { passive: true });
         view.addEventListener('wheel', touched, { passive: true });
         view.addEventListener('touchstart', () => { held = true; touched(); }, { passive: true });
@@ -107,9 +107,14 @@ const { quotes, label } = Astro.props;
             if (!paused && !hover && !focus && !held && !dragging && now > restUntil && loop > 0) {
                 pos += SPEED * dt;
                 if (pos >= loop) pos -= loop;
-                view.scrollLeft = pos;
+                // Scroll positions snap to whole pixels, which judders at this
+                // speed: scroll the whole pixels, slide the track for the rest.
+                const whole = Math.floor(pos);
+                view.scrollLeft = whole;
+                track.style.transform = `translate3d(${(whole - pos).toFixed(3)}px, 0, 0)`;
             } else {
                 pos = view.scrollLeft;
+                track.style.transform = '';
             }
             requestAnimationFrame(tick);
         };

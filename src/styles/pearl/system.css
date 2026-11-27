@@ -20,7 +20,10 @@
   /* Surfaces */
   --pearl: #F1F2F6; --peri: #C4D0F4; --lilac: #E8D4EC; --sage: #E2EACE;
   --sand: #F3EFE7;
-  --surface: rgba(255, 255, 255, .59); --surface-hi: rgba(255, 255, 255, .78); --white: #FFFFFF;
+  --surface: rgba(255, 255, 255, .59); --surface-hi: rgba(255, 255, 255, .78);
+  /* The same two surfaces as solid colours over the pearl ground: for things that move
+     with the scroll, where a backdrop blur would be redrawn every frame and stutter. */
+  --surface-solid: #F9FAFB; --surface-hi-solid: #FCFCFD; --white: #FFFFFF;
   /* Ink */
   --ink: #12141C; --ink-2: #5C6070; --ink-3: #848896; --ink-hover: #2A2E3C;
   --line: rgba(18, 20, 28, .16); --stroke: rgba(18, 20, 28, .086); --grid: rgba(18, 20, 28, .078); --track: rgba(18, 20, 28, .063);
@@ -173,9 +176,8 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 
 /* ---------- Cards --------------------------------------------------------- */
 .card {
-  background: var(--surface); border: 1px solid var(--stroke); border-radius: var(--r-card);
+  background: var(--surface-solid); border: 1px solid var(--stroke); border-radius: var(--r-card);
   padding: var(--sp-5); box-shadow: var(--sh-card);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
 .card--flat { box-shadow: none; }
 .card--big { padding: clamp(24px, 3vw, 40px); border-radius: var(--r-sheet); }
