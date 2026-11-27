@@ -30,7 +30,7 @@
   /* Accent */
   --navy: #42528C; --navy-deep: #1A3660; --navy-08: rgba(66, 82, 140, .08); --navy-10: rgba(66, 82, 140, .10); --navy-18: rgba(66, 82, 140, .18);
   /* Brand marks, small only */
-  --rose: #FF1F6D; --cyan: #17E9FC; --lime-on-light: #708F00; --evollve: #4FB3E8;
+  --rose: #FF1F6D; --cyan: #17E9FC; --lime: #F0FF1E; --lime-on-light: #708F00; --evollve: #4FB3E8;
   --err: #B4233C;
   /* Type */
   --f-display: "Instrument Serif", Georgia, "Times New Roman", serif;
@@ -170,7 +170,8 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; display: inline-block; background: var(--ink-3); }
 .dot--ncaa, .dot--live { background: var(--rose); }
 .dot--mlv { background: var(--cyan); box-shadow: inset 0 0 0 1px rgba(18, 20, 28, .12); }
-.dot--lovb { background: var(--lime-on-light); }
+/* LOVB is the brand lime, never darkened; the ring keeps it visible on a light ground. */
+.dot--lovb { background: var(--lime); box-shadow: inset 0 0 0 1px rgba(18, 20, 28, .16); }
 .dot--evollve { background: var(--evollve); }
 .dot--live { animation: none; box-shadow: 0 0 0 3px rgba(255, 31, 109, .16); }
 

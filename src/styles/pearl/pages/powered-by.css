@@ -15,7 +15,7 @@
 .pb-corners__bar { position: absolute; inset: 0 0 auto; display: flex; align-items: center; gap: 1.6%; height: 11%; padding-left: var(--pad); border-bottom: 1px solid var(--stroke); background: rgba(255, 255, 255, .5); }
 .pb-corners__bar i { width: 2.2%; aspect-ratio: 1; border-radius: 50%; background: var(--rose); }
 .pb-corners__bar i:nth-child(2) { background: var(--cyan); box-shadow: inset 0 0 0 1px rgba(18, 20, 28, .12); }
-.pb-corners__bar i:nth-child(3) { background: var(--lime-on-light); }
+.pb-corners__bar i:nth-child(3) { background: var(--lime); box-shadow: inset 0 0 0 1px rgba(18, 20, 28, .16); }
 .pb-corners__lines { position: absolute; left: 22%; right: 22%; top: 36%; display: grid; row-gap: 9%; height: 30%; }
 .pb-corners__lines i { display: block; height: 100%; border-radius: var(--r-pill); background: var(--track); }
 .pb-corners__lines i:nth-child(1) { background: var(--grid); width: 72%; }
