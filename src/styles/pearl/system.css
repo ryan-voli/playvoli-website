@@ -256,7 +256,7 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
 .logo img { width: 26px; height: auto; }
 .logo__word { font: 400 21px/1 "Designer", var(--f-body); letter-spacing: .02em; transform: translateY(.08em); }
 /* Designer has no trademark glyph: the mark is set in the body face. */
-.logo__tm { font: 600 9px/1 var(--f-body); letter-spacing: 0; vertical-align: baseline; margin-left: -3px; }
+.logo__tm { font: 600 9px/1 var(--f-body); letter-spacing: 0; vertical-align: baseline; margin-left: 1px; position: relative; top: .42em; }
 .menu__main { display: flex; gap: var(--sp-5); }
 .menu__main a { color: var(--ink-2); font-weight: 500; font-size: 15px; padding: 6px 0; }
 .menu__main a:hover { color: var(--ink); text-decoration: none; }
