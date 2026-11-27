@@ -136,16 +136,14 @@ export const FOOTER_GROUPS: FooterGroup[] = [
 ];
 
 export interface SocialLink {
-  name: 'Instagram' | 'TikTok' | 'YouTube' | 'Facebook' | 'Reddit';
+  name: 'Instagram' | 'Facebook' | 'X';
   href: string;
 }
 
 export const SOCIAL_LINKS: SocialLink[] = [
   { name: 'Instagram', href: 'https://instagram.com/playvoli' },
-  { name: 'TikTok', href: 'https://tiktok.com/@playvoli' },
-  { name: 'YouTube', href: 'https://youtube.com/@watchvoli' },
-  { name: 'Facebook', href: 'https://www.facebook.com/thevolleyballhub' },
-  { name: 'Reddit', href: 'https://reddit.com/r/playvoli' },
+  { name: 'Facebook', href: 'https://www.facebook.com/playvoliapp' },
+  { name: 'X', href: 'https://x.com/playvoli' },
 ];
 
 /** Said wherever the leagues are named prominently, and in every footer. */
