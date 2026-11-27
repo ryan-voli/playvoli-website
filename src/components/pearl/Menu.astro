@@ -26,7 +26,7 @@ const cur = (p: (typeof MAIN_PAGES)[number]) => (p.section === section ? (p.href
         <div class="wrap menu__top">
             <a class="logo" href="/" aria-label="VOLI home" aria-current={section === 'home' && here === '/' ? 'page' : undefined}>
                 <img src="/images/pearl/voli-mark-ink.webp" alt="" width="256" height="243">
-                <span class="logo__word" aria-hidden="true">VOLI</span>
+                <span class="logo__word" aria-hidden="true">VOLI<span class="logo__tm">&trade;</span></span>
             </a>
             {!focus && (
                 <nav class="menu__main" aria-label="Main">
