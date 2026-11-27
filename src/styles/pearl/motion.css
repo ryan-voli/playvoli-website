@@ -61,7 +61,10 @@
 
     /* The hero's phones part as you scroll away from them: the side phones
        slower than the centre, for depth. */
-    .hero .stage > * { animation: pm-rise 1000ms var(--ease-glide) both, pm-drift linear both; animation-timeline: auto, scroll(root); animation-range: normal, 0 90vh; }
+    /* Each phone's own view() timeline, not scroll(root) over 90vh: on an
+       iPhone the vh moves as Safari's toolbar shrinks, and the root-scroll
+       drift re-measured mid-scroll and stuttered. */
+    .hero .stage > * { animation: pm-rise 1000ms var(--ease-glide) both, pm-drift linear both; animation-timeline: auto, view(); animation-range: normal, exit 0% exit 100%; }
     .hero .stage > :nth-child(1) { --drift: -36px; --drift-x: -14px; }
     .hero .stage > :nth-child(2) { --drift: -36px; --drift-x: 14px; }
     .hero .stage > :nth-child(3) { --drift: -84px; --drift-x: 0px; }
