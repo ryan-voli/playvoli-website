@@ -2,9 +2,10 @@
 // Fan quotes moving slowly right to left. The quotes are in the HTML once,
 // as plain text, so search engines and AI assistants read each one once; the
 // script adds a hidden copy only to make the loop seamless.
-// It stops on hover, on keyboard focus, on a tap (touch screens), and with the
-// Pause button (WCAG 2.2.2). With reduced motion, or without the script, it is
-// a row you scroll by hand.
+// It stops on hover, on keyboard focus and with the Pause button (WCAG 2.2.2),
+// and a swipe, trackpad or mouse drag moves it faster or back at any time; it
+// carries on by itself a moment later. With reduced motion, or without the
+// script, it is a row you scroll by hand.
 import type { FanQuote } from '../../lib/voli-facts';
 interface Props {
   quotes: FanQuote[];
@@ -38,33 +39,89 @@ const { quotes, label } = Astro.props;
 
 <script>
     const SPEED = 38; // px per second: slow enough to read along
+    const REST = 1600; // ms after a swipe, scroll or drag before it moves on its own again
     for (const root of document.querySelectorAll<HTMLElement>('[data-strip]')) {
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+        const view = root.querySelector<HTMLElement>('.strip__view')!;
         const track = root.querySelector<HTMLElement>('.strip__track')!;
         const list = root.querySelector<HTMLElement>('.strip__list')!;
         const btn = root.querySelector<HTMLButtonElement>('.strip__toggle')!;
         const label = root.querySelector<HTMLElement>('.strip__label')!;
 
+        // A hidden second copy makes the loop seamless: one list's width on,
+        // the row looks exactly as it did at the start.
         const copy = list.cloneNode(true) as HTMLElement;
         copy.setAttribute('aria-hidden', 'true');
         copy.setAttribute('inert', '');
         track.append(copy);
-
-        const time = () => root.style.setProperty('--strip-dur', `${Math.round(list.offsetWidth / SPEED)}s`);
-        time();
-        new ResizeObserver(time).observe(list);
         root.classList.add('is-moving');
 
+        let loop = list.offsetWidth;
+        new ResizeObserver(() => { loop = list.offsetWidth; }).observe(list);
+
+        let pos = 0;          // where the script last put the row (kept fractional)
+        let paused = false;   // the button
+        let hover = false, focus = false, held = false;
+        let restUntil = 0;    // a hand moved it: wait a moment, then carry on
+        let dragFrom = 0;
+        const wrap = () => {
+            if (loop <= 0) return;
+            const d = view.scrollLeft >= loop ? -loop : view.scrollLeft <= 0 ? loop : 0;
+            if (d) { view.scrollLeft += d; dragFrom += d; }
+        };
+        const touched = () => { restUntil = performance.now() + REST; };
+
+        // A scroll the script did not make came from a hand: follow it.
+        view.addEventListener('scroll', () => {
+            if (Math.abs(view.scrollLeft - pos) > 2) { touched(); wrap(); pos = view.scrollLeft; }
+        }, { passive: true });
+        view.addEventListener('wheel', touched, { passive: true });
+        view.addEventListener('touchstart', () => { held = true; touched(); }, { passive: true });
+        view.addEventListener('touchend', () => { held = false; touched(); }, { passive: true });
+        view.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hover = true; });
+        view.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hover = false; });
+        view.addEventListener('focusin', () => { focus = true; });
+        view.addEventListener('focusout', () => { focus = false; });
+
+        // A mouse can drag the row like a finger.
+        let dragX = 0, dragging = false;
+        view.addEventListener('pointerdown', (e) => {
+            if (e.pointerType !== 'mouse' || e.button !== 0) return;
+            dragging = true; dragX = e.clientX; dragFrom = view.scrollLeft;
+            view.setPointerCapture(e.pointerId);
+            root.classList.add('is-dragging');
+        });
+        view.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            view.scrollLeft = dragFrom - (e.clientX - dragX);
+            touched();
+        });
+        const endDrag = () => { dragging = false; root.classList.remove('is-dragging'); };
+        view.addEventListener('pointerup', endDrag);
+        view.addEventListener('pointercancel', endDrag);
+
+        let last = performance.now();
+        const tick = (now: number) => {
+            const dt = Math.min(now - last, 100) / 1000;
+            last = now;
+            if (!paused && !hover && !focus && !held && !dragging && now > restUntil && loop > 0) {
+                pos += SPEED * dt;
+                if (pos >= loop) pos -= loop;
+                view.scrollLeft = pos;
+            } else {
+                pos = view.scrollLeft;
+            }
+            requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+
         const setPaused = (p: boolean) => {
+            paused = p;
             root.classList.toggle('is-paused', p);
             btn.setAttribute('aria-pressed', String(p));
             label.textContent = p ? 'Play' : 'Pause';
         };
         btn.hidden = false;
-        btn.addEventListener('click', () => setPaused(!root.classList.contains('is-paused')));
-        // Touch screens have no hover: a tap on the quotes stops or restarts them.
-        track.addEventListener('pointerup', (e) => {
-            if (e.pointerType !== 'mouse') setPaused(!root.classList.contains('is-paused'));
-        });
+        btn.addEventListener('click', () => setPaused(!paused));
     }
 </script>

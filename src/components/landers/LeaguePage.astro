@@ -39,6 +39,7 @@ import Help from './Help.astro';
 import { DOWNLOADS, FACTS_AS_OF, PODCASTS } from '../../lib/voli-facts';
 import { SITE_URL } from '../../lib/site';
 import { SCREENS } from '../../lib/screens';
+import { BRACKET, bracketPhase, promoIsLive } from '../../lib/bracket-facts';
 import type { Lander } from './lander';
 
 interface Props {
@@ -48,6 +49,10 @@ const { lander: p } = Astro.props;
 const url = `${SITE_URL}/${p.slug}`;
 const shortUrl = `playvoli.com/${p.slug}`;
 const joins = !!p.league;
+// The show's Bracket Challenge pool leads the page until picks lock.
+const pool = p.pool && promoIsLive(bracketPhase()) ? p.pool : undefined;
+const poolLink = pool ? `voli://bracket?g=${pool.code}` : undefined;
+const hero = pool ?? { label: p.label, lines: p.lines, lede: p.lede, em: p.em, title: p.title, description: p.description };
 
 // The show's episode count, as VOLI's podcast list has it.
 const show = p.show ? PODCASTS.find((s) => s.name === p.show) : undefined;
@@ -63,17 +68,23 @@ const fantasyColor = c1;
 const podcastColor = c2;
 const getColor = podcastBand ? p.color : c2;
 
-const heroId = joins ? 'join' : 'listen';
+const heroId = joins || pool ? 'join' : 'listen';
 const subnav = {
-  label: joins ? `${p.name} league` : p.name,
+  label: pool ? `${p.name} pool` : joins ? `${p.name} league` : p.name,
   items: [
-    joins ? { href: '#join', label: 'Join' } : { href: '#listen', label: 'Listen' },
+    joins || pool ? { href: '#join', label: 'Join' } : { href: '#listen', label: 'Listen' },
     { href: '#how', label: 'How it works', short: 'How' },
-    { href: '/fantasy', label: 'Fantasy' },
+    pool ? { href: BRACKET.path, label: 'Bracket' } : { href: '/fantasy', label: 'Fantasy' },
   ],
 };
 
-const steps = joins
+const steps = pool
+  ? [
+      { title: 'Get VOLI', text: 'Download VOLI, free on iPhone and Android.' },
+      { title: 'Tap join', text: `On your phone, tap Join the pool on this page. VOLI opens the ${p.name} pool for you to join.` },
+      { title: 'Fill out your bracket', text: `Pick every match before brackets lock. Your bracket counts in the ${p.name} pool and in the whole ${BRACKET.name}.` },
+    ]
+  : joins
   ? [
       { title: 'Get VOLI', text: 'Download VOLI, free on iPhone and Android.' },
       { title: 'Tap join', text: `On your phone, tap Join the league on this page. VOLI opens the ${p.name} league for you to join.` },
@@ -86,6 +97,7 @@ const steps = joins
     ];
 
 const joinTrack = `league_join:${p.track}_league`;
+const poolTrack = `bracket_pool_join:${p.track}_pool`;
 const listenTrack = `podcast_listen:${p.track}_podcast`;
 
 const schema = [
@@ -94,8 +106,8 @@ const schema = [
     '@type': 'WebPage',
     '@id': `${url}#webpage`,
     url,
-    name: joins ? `${p.name} fantasy volleyball league` : `${p.show ?? p.name} on VOLI`,
-    description: p.description,
+    name: pool ? `${p.name} pool in the ${BRACKET.name}` : joins ? `${p.name} fantasy volleyball league` : `${p.show ?? p.name} on VOLI`,
+    description: hero.description,
     inLanguage: 'en-US',
     isPartOf: { '@id': `${SITE_URL}/#website` },
     publisher: { '@id': `${SITE_URL}/#organization` },
@@ -107,23 +119,29 @@ const schema = [
     '@id': `${url}#breadcrumb`,
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'VOLI', item: `${SITE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: 'Fantasy volleyball', item: `${SITE_URL}/fantasy` },
-      { '@type': 'ListItem', position: 3, name: joins ? `${p.name} league` : p.name, item: url },
+      pool
+        ? { '@type': 'ListItem', position: 2, name: BRACKET.name, item: `${SITE_URL}${BRACKET.path}` }
+        : { '@type': 'ListItem', position: 2, name: 'Fantasy volleyball', item: `${SITE_URL}/fantasy` },
+      { '@type': 'ListItem', position: 3, name: pool ? `${p.name} pool` : joins ? `${p.name} league` : p.name, item: url },
     ],
   },
 ];
 
 // The first screen's main picture.
-const heroPicture = joins ? SCREENS.fantasy.src : p.art?.src;
+const heroPicture = pool ? SCREENS.bracket.src : joins ? SCREENS.fantasy.src : p.art?.src;
 const heroPictureType = heroPicture?.endsWith('.webp') ? 'image/webp' : heroPicture?.endsWith('.svg') ? 'image/svg+xml' : 'image/jpeg';
 ---
 
-<Pearl title={p.title} description={p.description} section="fantasy" subnav={subnav} schema={schema}>
+<Pearl title={hero.title} description={hero.description} section={pool ? 'bracket' : 'fantasy'} subnav={subnav} schema={schema}>
     {heroPicture && <link rel="preload" as="image" href={heroPicture} type={heroPictureType} fetchpriority="high" slot="head" />}
 
-    <PageHero color={p.color} id={heroId} label={p.label} lines={p.lines} em={p.em} fit="same">
-        <p class="lede">{p.lede}</p>
-        {joins ? (
+    <PageHero color={p.color} id={heroId} label={hero.label} lines={hero.lines} em={hero.em} fit="same">
+        <p class="lede">{hero.lede}</p>
+        {pool ? (
+            <div class="btns">
+                <Btn href={poolLink} id="join-pool-btn" variant="primary" track={poolTrack} data-ln-deep data-ln-help="ln-help-pool" data-ln-get="#ln-stores">Join the pool</Btn>
+            </div>
+        ) : joins ? (
             <div class="btns">
                 <Btn href={p.league} id="join-league-btn" variant="primary" track={joinTrack} data-ln-deep data-ln-help="ln-help-join" data-ln-get="#ln-stores">Join the league</Btn>
             </div>
@@ -132,7 +150,14 @@ const heroPictureType = heroPicture?.endsWith('.webp') ? 'image/webp' : heroPict
                 <Btn href={p.podcast} variant="primary" track={listenTrack} data-ln-deep data-ln-help="ln-help-listen" data-ln-get="#ln-stores">Listen on VOLI</Btn>
             </div>
         )}
-        {joins ? (
+        {pool ? (
+            <Help
+              id="ln-help-pool"
+              phone="VOLI did not open on this phone. Get it free below, then tap Join the pool again."
+              qr="The pool opens in VOLI on your phone. Scan the code below with your phone's camera, then tap Join the pool."
+              desk={`The pool opens in VOLI on your phone. Open ${shortUrl} there and tap Join the pool.`}
+            />
+        ) : joins ? (
             <Help
               id="ln-help-join"
               phone="VOLI did not open on this phone. Get it free below, then tap Join the league again."
@@ -151,11 +176,18 @@ const heroPictureType = heroPicture?.endsWith('.webp') ? 'image/webp' : heroPict
             <p class="label">No app yet? VOLI is free</p>
             <Stores />
         </div>
-        <Qr id="ln-qr" url={url} text={joins ? `Scan with your phone to join the ${p.name} league.` : `Scan with your phone to listen to ${p.name} in VOLI.`} />
+        <Qr id="ln-qr" url={url} text={pool ? `Scan with your phone to join the ${p.name} pool.` : joins ? `Scan with your phone to join the ${p.name} league.` : `Scan with your phone to listen to ${p.name} in VOLI.`} />
 
         {/* The fantasy phone on the right, the show's cover in front of it on
             the left, the downloads chip over the phone's foot. Nothing tilts. */}
-        {joins && p.art && (
+        {pool && p.art && (
+            <Stack slot="art" ratioPhone="100/112">
+                <Phone screen="bracket" x={45} xm={46} y={2} ym={0} w={44} wm={50} priority />
+                <Sticker src={p.art.src} width={p.art.width} height={p.art.height} alt={p.art.alt} x={3} xm={0} y={30} ym={20} w={50} wm={52} z={2} eager />
+                <Badge value={DOWNLOADS} label="downloads" x={58} y={80} xm={48} ym={76} z={3} />
+            </Stack>
+        )}
+        {!pool && joins && p.art && (
             <Stack slot="art" ratioPhone="100/112">
                 <Phone screen="fantasy" x={45} xm={46} y={2} ym={0} w={44} wm={50} priority />
                 <Sticker src={p.art.src} width={p.art.width} height={p.art.height} alt={p.art.alt} x={3} xm={0} y={30} ym={20} w={50} wm={52} z={2} eager />

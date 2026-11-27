@@ -32,6 +32,20 @@ export interface Lander {
   em?: string;
   /** voli://league/<id>/<join code>: opens this league in the app. */
   league?: string;
+  /** The show's official Bracket Challenge pool. Until picks lock, the page
+   *  leads with it (Join the pool, voli://bracket?g=CODE) instead of the league;
+   *  after that the league comes back on the next build. */
+  pool?: {
+    /** bracket.groups code: "VLYTLK". */
+    code: string;
+    /** The hero while the pool leads: label, headline lines, first paragraph, title, description. */
+    label: string[];
+    lines: (LineText | { text: LineText; hollow?: boolean })[];
+    lede: string;
+    em?: string;
+    title: string;
+    description: string;
+  };
   /** voli://podcast/<id>: opens this podcast in the app. */
   podcast?: string;
   /** The label part of the click events: "volleytalk" sends league_join:volleytalk_league. */
