@@ -9,7 +9,7 @@ const phase = bracketPhase();
         <div class="wrap promo__in">
             <a class="promo__link" href={BRACKET.path} data-track="bracket_promo:strip">
                 <span class="promo__status"><span class="dot" aria-hidden="true"></span><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></span>
-                <strong class="promo__name">{BRACKET.name}</strong>
+                <strong class="promo__name"><img class="promo__icon" src="/images/bracket/bracket-icon.png" width="18" height="18" alt="" aria-hidden="true">{BRACKET.name}</strong>
                 <span class="promo__sub">{BRACKET.prize} cash to the top eligible bracket</span>
                 <span class="promo__go">Play free</span>
             </a>

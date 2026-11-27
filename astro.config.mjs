@@ -12,6 +12,7 @@ export default defineConfig({
     '/contact': '/about#contact',
     '/whats-next': '/about#whats-next',
     '/partners': '/about#partners',
+    '/creatorscourt': '/partner',
   },
   // satori loads harfbuzz's wasm from node_modules at RUNTIME, and Vercel's
   // function bundle only carries what it can see statically — so the route

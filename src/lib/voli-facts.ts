@@ -8,7 +8,7 @@
 //
 // Numbers counted from the VOLI database on 15 Oct 2026:
 //   18,788 completed college + pro matches since 2023
-//   496,321 NCAA player box-score lines; 18,300 of 18,343 completed D1 matches
+//   540,016 D1 player box-score lines since 2023 (DB, 27 Nov 2026); 18,300 of 18,343 completed D1 matches
 //     since 2023 have a box score (99.8%)
 //   445 of 445 MLV + LOVB matches have play-by-play
 //
@@ -28,7 +28,7 @@ export const DOWNLOADS_AS_OF = 'November 2026';
 
 export const FACTS = [
   { value: '18,700+', label: 'college and pro matches since 2023' },
-  { value: '~500,000', label: 'NCAA player box-score lines' },
+  { value: '500k+', label: 'NCAA player box-score lines' },
   { value: '99.8%', label: 'of Division I matches since 2023 with a box score' },
   { value: '18,000+', label: 'honors in the Volleyball Encyclopedia, back to 1979' },
   { value: '13 & 20', label: 'podcasts, and news outlets in one feed' },
@@ -64,7 +64,7 @@ export const FAQS: Faq[] = [
   {
     id: 'box-scores',
     q: 'Where can I find NCAA volleyball box scores and player stats?',
-    a: "In the VOLI app. It has box scores for 99.8% of completed Division I women's matches since 2023 (nearly 500,000 player lines), and set-by-set player stats for every MLV and LOVB match. Leaderboards sort by season, conference, position and class, in totals or per set.",
+    a: "In the VOLI app. It has box scores for 99.8% of completed Division I women's matches since 2023 (more than 500,000 player lines), and set-by-set player stats for every MLV and LOVB match. Leaderboards sort by season, conference, position and class, in totals or per set.",
   },
   {
     id: 'play-by-play',
@@ -130,7 +130,7 @@ export const APP_SCHEMA = {
     "Fantasy volleyball leagues for NCAA Division I women's volleyball and MLV (LOVB joins in January 2027), with a salary cap and multi-round contracts; public leagues run by volleyball podcasts, and private leagues",
     "The College Volleyball Bracket Challenge: a free bracket game for the NCAA Division I women's volleyball tournament, with a live leaderboard and friend groups",
     'Live scores and box scores for college and pro matches with a lead chart for each set, and play-by-play with the rotation on court for MLV and LOVB matches; Live Activities on iPhone',
-    "Box scores for 99.8% of completed Division I women's matches since 2023, nearly 500,000 NCAA player lines, and set-by-set stats for all 445 MLV and LOVB matches",
+    "Box scores for 99.8% of completed Division I women's matches since 2023, more than 500,000 NCAA player lines, and set-by-set stats for all 445 MLV and LOVB matches",
     "The VOLI Top 100, VOLI's own Division I ranking from match results and strength of schedule, published each Monday, plus each college match's chance to win before first serve and after every set",
     'The Volleyball Encyclopedia: 18,000+ honors back to 1979, including 3,000+ AVCA All-America selections, the AVCA Coaches Poll since 1982 and all 45 NCAA champions',
     'Volleyball news from 20 outlets and 13 volleyball podcasts with 900+ episodes in one feed',

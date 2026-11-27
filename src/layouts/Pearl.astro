@@ -198,6 +198,24 @@ const allSchema = [...siteSchema, ...schema];
             }, { passive: true });
         }
     </script>
+    {/* Reveals finish a third of the way up the screen (motion.css); items
+        too close to the page's end to get that far finish on entry instead. */}
+    <script is:inline>
+        (function () {
+            if (!window.CSS || !CSS.supports('animation-timeline: view()') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            var sel = '.sec .head, .sec .copy > *, .sec .card, .sec .stats > li, .faq .qa, .plate, .strip, .rows li, .chips li';
+            function tag() {
+                var end = document.documentElement.scrollHeight, vh = innerHeight, y = scrollY;
+                document.querySelectorAll(sel).forEach(function (el) {
+                    var r = el.getBoundingClientRect();
+                    el.classList.toggle('pm-end', end - (r.top + y) < 0.38 * (vh + r.height) + 40);
+                });
+            }
+            var t; function later() { clearTimeout(t); t = setTimeout(tag, 150); }
+            addEventListener('load', tag); addEventListener('resize', later);
+            if (document.readyState === 'complete') tag();
+        })();
+    </script>
     <slot name="scripts" />
 </body>
 </html>

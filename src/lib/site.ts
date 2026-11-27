@@ -110,7 +110,6 @@ export const FOOTER_GROUPS: FooterGroup[] = [
     title: 'Products',
     links: [
       { href: '/discordbot', label: 'Discord Bot' },
-      { href: '/creatorscourt', label: 'Creators Court' },
       { href: '/dailygrid', label: 'Daily Grid', hidden: true },
       { href: '/redditdailygrid', label: 'Reddit Daily Grid', hidden: true },
     ],
@@ -119,6 +118,7 @@ export const FOOTER_GROUPS: FooterGroup[] = [
     title: 'Partners',
     titleHref: '/about#partners',
     links: [
+      { href: '/partner', label: 'Partner with VOLI' },
       { href: '/volleytalk', label: 'Volley Talk' },
       { href: '/mlm', label: 'Major League Minute' },
       { href: '/evollve', label: 'EVOLLVE' },

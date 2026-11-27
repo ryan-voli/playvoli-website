@@ -1,0 +1,183 @@
+---
+// Partner with VOLI: what VOLI builds for volleyball creators, media, leagues
+// and tournaments. Replaces Creators Court (on hold); /creatorscourt redirects
+// here (astro.config.mjs). Every claim on this page is something VOLI runs today
+// for a partner (the College Volleyball Transfers desk, the podcast leagues and
+// pools), except the league and tournament band, which is offered as custom work.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/partner.css';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Card from '../components/pearl/kit/Card.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Phone from '../components/pearl/kit/Phone.astro';
+import Badge from '../components/pearl/kit/Badge.astro';
+import Stack from '../components/pearl/kit/Stack.astro';
+import Steps from '../components/pearl/kit/Steps.astro';
+import { pageSchema } from '../components/products/schema';
+
+const EMAIL = 'support@playvoli.com';
+const MAIL = `mailto:${EMAIL}?subject=${encodeURIComponent('Partnership')}`;
+
+const title = 'Partner with VOLI: Automation, Social Content and Software for Volleyball | VOLI';
+const description =
+  'VOLI builds software for volleyball creators, media, leagues and tournaments: Instagram automation through Meta, post-ready graphics, intake forms and dashboards, and fans in the VOLI app.';
+
+const subnav = {
+  label: 'Partner with VOLI',
+  items: [
+    { href: '#social', label: 'Social content', short: 'Social' },
+    { href: '#time', label: 'Save time', short: 'Time' },
+    { href: '#cvt', label: 'Case study', short: 'CVT' },
+    { href: '#leagues', label: 'Leagues and tournaments', short: 'Leagues' },
+    { href: '#contact', label: 'Contact' },
+  ],
+};
+
+const schema = pageSchema({
+  path: '/partner',
+  name: 'Partner with VOLI',
+  description,
+  crumbs: [
+    { name: 'VOLI', path: '/' },
+    { name: 'About VOLI', path: '/about' },
+    { name: 'Partner with VOLI', path: '/partner' },
+  ],
+});
+---
+
+<Pearl title={title} description={description} section="about" subnav={subnav} schema={schema}>
+    <PageHero
+      color="blue"
+      label={['Partner with VOLI', 'For creators, media, leagues and tournaments']}
+      lines={['Partner with', { text: 'VOLI', hollow: true }]}
+    >
+        <p class="lede">VOLI builds software for volleyball. We automate the work that eats your week, make the social content you post every day, and build tools for leagues and tournaments, the same way we already do for our partners.</p>
+        <div class="btns">
+            <Btn href="#contact" variant="primary" track="partner:hero_contact">Start a conversation</Btn>
+            <Btn href="#cvt" track="partner:hero_case">See what we built for CVT</Btn>
+        </div>
+        <Stack slot="art" ratio="100/104">
+            <Phone screen="shareCard" x={4} y={0} w={44} xm={2} wm={46} z={2} priority />
+            <Phone screen="fantasy" x={52} y={10} w={44} xm={52} wm={46} eager />
+            <Badge value="4" label="partners in VOLI" x={26} y={78} xm={18} ym={78} z={3} />
+        </Stack>
+    </PageHero>
+
+    <Band color="blue" id="social" pb={4} ptPhone={6} title="Social content" sub="that makes itself" em="Social">
+        <Cols max="38rem">
+            <p class="lede">VOLI connects to Instagram through Meta's official API, so the posts you make by hand every day can be built, scheduled and answered for you.</p>
+        </Cols>
+        <Cols ratio="1:1:1" class="pt-cards">
+            <Card name="Post-ready graphics" kicker="From your data">
+                <p>A graphic in your own template for every result, signing or announcement, with the caption already written. Change a detail and it redraws.</p>
+            </Card>
+            <Card name="Scheduled posting" kicker="Instagram">
+                <p>Posts wait in a queue and go out at the times you pick, tagging the right account when Instagram allows it.</p>
+            </Card>
+            <Card name="Replies in the DMs" kicker="Instagram messages">
+                <p>Automatic replies to the messages you answer the same way every time, so a routine question never waits on a person.</p>
+            </Card>
+        </Cols>
+    </Band>
+
+    <Band color="lime" id="time" pb={4} title="Hours back" sub="every week" em="Hours">
+        <Cols max="38rem">
+            <p class="lede">Most volleyball accounts, shows and events run on DMs, spreadsheets and late nights. We replace the busywork with forms, checks and dashboards built around how you already work.</p>
+        </Cols>
+        <Cols ratio="1:1:1:1" class="pt-cards">
+            <Card name="Intake forms" kicker="On your own site">
+                <p>Collect exactly what you need, photos included, and check it before it ever reaches you.</p>
+            </Card>
+            <Card name="Verification" kicker="Is it really them?">
+                <p>Confirm a submission came from the person it names, for example with a code they send from their own Instagram.</p>
+            </Card>
+            <Card name="One dashboard" kicker="Review and approve">
+                <p>Review, approve, search and schedule in one place, with a log of everything that happened.</p>
+            </Card>
+            <Card name="Duplicate checks" kicker="One item, one post">
+                <p>The same submission sent twice is caught before it turns into the same post twice.</p>
+            </Card>
+        </Cols>
+    </Band>
+
+    <Band color="ink" id="cvt" pb={4} title="Built for" sub="College Volleyball Transfers" tone="lime" em="Built for">
+        <Cols ratio="50:42" drop={[0, 2]}>
+            <Copy>
+                <p class="lede">College Volleyball Transfers covers the women's college volleyball transfer portal on Instagram. Players used to report their moves by DM, one message at a time.</p>
+                <p class="body">VOLI built the desk a complete system: a report form on its own site, verification through Instagram, a dashboard to confirm each move, and posts that go out on a schedule with the graphic and caption already made. Every verified move also lands in the <a class="link" href="/cvt">Transfer Portal in VOLI</a>.</p>
+                <div class="btns">
+                    <Btn href="/cvt" track="partner:cvt_page">The CVT partnership</Btn>
+                </div>
+            </Copy>
+            <div class="pt-pair" role="img" aria-label="VOLI and College Volleyball Transfers">
+                <span class="pt-pair__m"><img src="/images/appicon_opt.webp" width="280" height="280" alt="" decoding="async" loading="lazy"></span>
+                <span class="pt-pair__x" aria-hidden="true">&times;</span>
+                <span class="pt-pair__m pt-tile"><img src="/images/partners/cvt-mark-light.svg" width="254" height="260" alt="" decoding="async" loading="lazy"></span>
+            </div>
+        </Cols>
+        <Steps items={[
+          { title: 'Report', text: 'A player reports a move on the desk’s site, photo included.' },
+          { title: 'Verify', text: 'They send a code from their own Instagram, and the desk hears about it automatically.' },
+          { title: 'Confirm', text: 'The desk checks the move in its dashboard, with duplicates already caught.' },
+          { title: 'Post', text: 'The graphic and caption are made and posted to Instagram at the next open time.' },
+        ]} />
+    </Band>
+
+    <Band color="rose" id="leagues" pb={4} title="Leagues" sub="and tournaments" em="Leagues">
+        <Cols max="38rem">
+            <p class="lede">We also build software for volleyball leagues, clubs and tournaments. If it runs on paper, email or a spreadsheet today, we can make it faster.</p>
+        </Cols>
+        <Cols ratio="1:1:1:1" class="pt-cards">
+            <Card name="Sign-up and check-in" kicker="Before the first serve">
+                <p>Team and player registration, rosters and forms collected online, with check-in on the day.</p>
+            </Card>
+            <Card name="Schedules and brackets" kicker="Pools to finals">
+                <p>Pools, brackets and court schedules that update as results come in, shared with every team by link.</p>
+            </Card>
+            <Card name="Live scores" kicker="Courtside">
+                <p>Scores entered courtside and shown live on your own site, with results and standings kept for you.</p>
+            </Card>
+            <Card name="Results on social" kicker="After the match">
+                <p>Result graphics and recaps made from the scores and posted to your accounts.</p>
+            </Card>
+        </Cols>
+    </Band>
+
+    <Band color="blue" id="fans" pb={4} title="Reach" sub="volleyball fans" em="Reach">
+        <Cols max="38rem">
+            <p class="lede">Partners also reach the fans who open VOLI for scores, stats, fantasy and the Bracket Challenge.</p>
+        </Cols>
+        <Cols ratio="1:1:1" class="pt-cards">
+            <Card name="Your own fantasy league" kicker="Fantasy">
+                <p>A public league for your audience, like <a class="link" href="/volleytalk">Volley Talk’s</a> and <a class="link" href="/mlm">Major League Minute’s</a>. Here is how <a class="link" href="/fantasy">fantasy volleyball on VOLI</a> works.</p>
+            </Card>
+            <Card name="Bracket Challenge pools" kicker="Bracket">
+                <p>An official pool for your fans in the <a class="link" href="/bracket">Bracket Challenge</a>, so they play against each other and against you.</p>
+            </Card>
+            <Card name="Your show in the app" kicker="Podcasts">
+                <p>Your episodes in VOLI next to the scores and stats your show talks about, with comments from listeners.</p>
+            </Card>
+        </Cols>
+    </Band>
+
+    <Band color="ink" id="contact" title="Start" sub="a conversation" tone="lime" em="Start">
+        <Cols ratio="52:40" drop={[0, 2]}>
+            <Copy>
+                <p class="lede">Tell us what you run and where the time goes. Email <a class="link" href={MAIL}>{EMAIL}</a> with a line about your show, account, league or event.</p>
+                <p class="body">We read every message, and we will tell you plainly whether we can help.</p>
+                <div class="btns">
+                    <Btn href={MAIL} variant="primary" track="partner:contact_email">Email the VOLI team</Btn>
+                </div>
+            </Copy>
+            <ul class="pt-partners" aria-label="VOLI's partners">
+                <li><a href="/volleytalk">Volley Talk</a></li>
+                <li><a href="/mlm">Major League Minute</a></li>
+                <li><a href="/evollve">EVOLLVE</a></li>
+                <li><a href="/cvt">College Volleyball Transfers</a></li>
+            </ul>
+        </Cols>
+    </Band>
+</Pearl>

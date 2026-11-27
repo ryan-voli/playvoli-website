@@ -82,17 +82,20 @@
     /* Reveals: content settles into place as it enters. Only off-screen
        content is ever hidden, and only until it scrolls in. */
     .sec .head, .sec .copy > *, .sec .card, .sec .stats > li, .faq .qa, .plate, .strip, .rows li, .chips li {
-      animation: pm-in linear both; animation-timeline: view(); animation-range: entry 0% entry 70%;
+      animation: pm-in linear both; animation-timeline: view(); animation-range: entry 5% cover 32%;
     }
     @keyframes pm-in { from { opacity: 0; translate: 0 26px; } }
     /* Siblings arrive one after another. */
-    .sec .stats > li:nth-child(2), .sec .copy > :nth-child(2), .faq .qa:nth-child(2n) { animation-range: entry 8% entry 78%; }
-    .sec .stats > li:nth-child(3), .sec .copy > :nth-child(3) { animation-range: entry 16% entry 86%; }
-    .sec .stats > li:nth-child(4), .sec .copy > :nth-child(n+4) { animation-range: entry 24% entry 94%; }
-    .chips li:nth-child(odd) { animation-range: entry 6% entry 76%; }
+    .sec .stats > li:nth-child(2), .sec .copy > :nth-child(2), .faq .qa:nth-child(2n) { animation-range: entry 10% cover 35%; }
+    .sec .stats > li:nth-child(3), .sec .copy > :nth-child(3) { animation-range: entry 15% cover 38%; }
+    .sec .stats > li:nth-child(4), .sec .copy > :nth-child(n+4) { animation-range: entry 20% cover 41%; }
+    .chips li:nth-child(odd) { animation-range: entry 8% cover 34%; }
+    /* Near the page's end there may not be enough scroll left to reach
+       cover 32%, so those items (tagged pm-end by Pearl.astro) finish on entry. */
+    .pm-end { animation-range: entry 0% entry 70% !important; }
 
     /* The italic word of each section title lands just after the title. */
-    .sec .h2 em { display: inline-block; animation: pm-word linear both; animation-timeline: view(); animation-range: entry 20% entry 90%; }
+    .sec .h2 em { display: inline-block; animation: pm-word linear both; animation-timeline: view(); animation-range: entry 25% cover 40%; }
     @keyframes pm-word { from { opacity: 0; translate: .35em 0; } }
 
   }

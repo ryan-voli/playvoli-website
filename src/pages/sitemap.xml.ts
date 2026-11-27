@@ -23,7 +23,7 @@ const PAGES: { path: string; priority: string; changefreq: string }[] = [
   { path: '/lshotvb', priority: '0.4', changefreq: 'monthly' },
   { path: '/courtcaptains', priority: '0.4', changefreq: 'monthly' },
   { path: '/discordbot', priority: '0.5', changefreq: 'monthly' },
-  { path: '/creatorscourt', priority: '0.4', changefreq: 'monthly' },
+  { path: '/partner', priority: '0.5', changefreq: 'monthly' },
   { path: '/privacy', priority: '0.2', changefreq: 'yearly' },
   { path: '/terms', priority: '0.2', changefreq: 'yearly' },
 ];
