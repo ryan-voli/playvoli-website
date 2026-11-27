@@ -1,0 +1,11 @@
+---
+// A short label or heading whose hyphenated words (play-by-play, box-score)
+// are not broken across two lines. The last word stays plain text, so
+// balanced wrapping keeps it whole by itself.
+interface Props {
+  text: string;
+}
+const words = Astro.props.text.split(' ');
+const last = words.length - 1;
+---
+{words.map((w, i) => <Fragment>{i > 0 && ' '}{w.includes('-') && i < last ? <span class="nbw">{w}</span> : w}</Fragment>)}

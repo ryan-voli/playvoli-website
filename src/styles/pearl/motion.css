@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Pearl motion. CSS only, driven by scrolling where the browser supports it.
+   - Every word is in the HTML in its final state: search engines and AI
+     assistants read the same page with or without motion.
+   - Transforms and opacity only, so nothing moves the layout (no CLS).
+   - Nothing in the hero fades: the main phone is the page's largest paint.
+   - With reduced motion, or in a browser without scroll timelines, the page
+     simply sits still.
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* Section links glide to their section instead of jumping (the menu's
+     height is already allowed for by scroll-padding-top in system.css). */
+  html { scroll-behavior: smooth; }
+
+  /* The hero's phones rise into place once, the centre one first. */
+  .hero .stage > * { animation: pm-rise 1000ms var(--ease-glide) both; }
+  .hero .stage > :nth-child(3) { animation-delay: 60ms; }
+  .hero .stage > :nth-child(1) { animation-delay: 200ms; }
+  .hero .stage > :nth-child(2) { animation-delay: 280ms; }
+  @keyframes pm-rise { from { translate: 0 48px; } }
+
+  /* A live dot breathes. */
+  .dot--live { animation: pm-live 1.8s ease-out infinite; }
+  @keyframes pm-live {
+    0% { box-shadow: 0 0 0 0 rgba(255, 31, 109, .45); }
+    100% { box-shadow: 0 0 0 9px rgba(255, 31, 109, 0); }
+  }
+
+  /* Hover: cards lift a little, and the glass catches the light where the
+     pointer is (the script in Pearl.astro sets --mx / --my). */
+  @media (hover: hover) and (pointer: fine) {
+    .card { transition: transform 260ms var(--ease-glide), box-shadow 260ms var(--ease-glide); }
+    a.card:hover, .card--big:hover { transform: translateY(-3px); box-shadow: 0 22px 54px rgba(30, 36, 72, .14); }
+    .card:hover {
+      background-image: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .62), rgba(255, 255, 255, 0) 62%);
+    }
+    .stage .phone, .stage .pop { transition: transform 320ms var(--ease-glide); }
+  }
+
+  @supports (animation-timeline: view()) {
+
+    /* The ground's light pools drift slowly as the page scrolls. */
+    html { background: var(--pearl); }
+    body::before {
+      content: ""; position: fixed; inset: -12% -8%; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(52% 50% at 82% 22%, rgba(196, 208, 244, .80), rgba(196, 208, 244, 0) 100%),
+        radial-gradient(48% 46% at 12% 90%, rgba(232, 212, 236, .60), rgba(232, 212, 236, 0) 100%);
+      animation: pm-pools linear both; animation-timeline: scroll(root);
+    }
+    @keyframes pm-pools { to { transform: translate3d(-7%, -6%, 0); } }
+
+    /* Reading progress: a navy line under the section menu. */
+    .sub { position: relative; }
+    .sub::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--navy);
+      transform-origin: 0 50%; animation: pm-progress linear both; animation-timeline: scroll(root);
+    }
+    @keyframes pm-progress { from { transform: scaleX(0); } }
+
+    /* The hero's phones part as you scroll away from them: the side phones
+       slower than the centre, for depth. */
+    .hero .stage > * { animation: pm-rise 1000ms var(--ease-glide) both, pm-drift linear both; animation-timeline: auto, scroll(root); animation-range: normal, 0 90vh; }
+    .hero .stage > :nth-child(1) { --drift: -36px; --drift-x: -14px; }
+    .hero .stage > :nth-child(2) { --drift: -36px; --drift-x: 14px; }
+    .hero .stage > :nth-child(3) { --drift: -84px; --drift-x: 0px; }
+    @keyframes pm-drift { to { transform: translate(var(--drift-x, 0), var(--drift, -40px)); } }
+
+    /* Feature stages: depth. Phones drift a little; the card lifted out of a
+       screen drifts more, so it floats in front of them. */
+    .sec .stage > .phone { --depth: 22px; }
+    .sec .stage > .phone:nth-child(2) { --depth: 38px; }
+    .sec .stage > .pop, .card__pop { --depth: 64px; }
+    .sec .stage > *, .card__pop { animation: pm-depth linear both; animation-timeline: view(); animation-range: cover; }
+    .hero .stage > * { --depth: 0px; }
+    @keyframes pm-depth {
+      from { transform: translateY(var(--depth, 24px)); }
+      to { transform: translateY(calc(var(--depth, 24px) * -1)); }
+    }
+
+    /* Reveals: content settles into place as it enters. Only off-screen
+       content is ever hidden, and only until it scrolls in. */
+    .sec .head, .sec .copy > *, .sec .card, .sec .stats > li, .faq .qa, .plate, .strip, .rows li, .chips li {
+      animation: pm-in linear both; animation-timeline: view(); animation-range: entry 0% entry 70%;
+    }
+    @keyframes pm-in { from { opacity: 0; translate: 0 26px; } }
+    /* Siblings arrive one after another. */
+    .sec .stats > li:nth-child(2), .sec .copy > :nth-child(2), .faq .qa:nth-child(2n) { animation-range: entry 8% entry 78%; }
+    .sec .stats > li:nth-child(3), .sec .copy > :nth-child(3) { animation-range: entry 16% entry 86%; }
+    .sec .stats > li:nth-child(4), .sec .copy > :nth-child(n+4) { animation-range: entry 24% entry 94%; }
+    .chips li:nth-child(odd) { animation-range: entry 6% entry 76%; }
+
+    /* The italic word of each section title lands just after the title. */
+    .sec .h2 em { display: inline-block; animation: pm-word linear both; animation-timeline: view(); animation-range: entry 20% entry 90%; }
+    @keyframes pm-word { from { opacity: 0; translate: .35em 0; } }
+
+  }
+}

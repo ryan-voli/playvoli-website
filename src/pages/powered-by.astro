@@ -1,30 +1,142 @@
 ---
-// Powered by VOLI — the badge for sites that use VOLI data (owner, 24 Nov 2026:
-// "an easy one line plugin … it will just auto be in the correct position …
-// any of the 4 corners … the distance we use from the edges … floating and
-// stay on the page, it cannot be scrolled away"). The asset itself is
-// public/embed/powered-by-voli.js (the portal site's "by VOLI" pill, reading
-// Powered by, linking to playvoli.com/app); public/images/powered-by-voli.svg
-// is the no-script fallback. Same v-stub card as the partner landers. Not in
-// the sitemap or the nav: partners get this link from us.
-import SiteLayout from '../layouts/SiteLayout.astro';
+// Powered by VOLI: the badge for sites that use VOLI data. One line of code
+// (public/embed/powered-by-voli.js) floats a "Powered by VOLI" pill in a
+// corner of every page, 16px from the edges, linking to playvoli.com;
+// public/images/powered-by-voli.svg is the no-script version. The badge is
+// live on this page too. Kept out of search and the menus: partners get the
+// link from VOLI.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/powered-by.css';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import DataTable from '../components/pearl/kit/DataTable.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import { pageSchema } from '../components/products/schema';
+
+// The three lines partners copy. Printed exactly as they are.
 const SNIPPET = '<script src="https://playvoli.com/embed/powered-by-voli.js" async></script>';
 const SNIPPET_CORNER = '<script src="https://playvoli.com/embed/powered-by-voli.js" data-position="top-right" async></script>';
-const SNIPPET_IMG = '<a href="https://playvoli.com/app"><img src="https://playvoli.com/images/powered-by-voli.svg" alt="Powered by VOLI" width="141" height="28"></a>';
+const SNIPPET_IMG = '<a href="https://playvoli.com/"><img src="https://playvoli.com/images/powered-by-voli.svg" alt="Powered by VOLI" width="141" height="28"></a>';
+
+const title = 'Powered by VOLI Badge: Add It With One Line of Code | VOLI';
+const description =
+  'The Powered by VOLI badge for sites using VOLI data: one line of code adds a floating pill to any corner, linking to playvoli.com and the free VOLI app.';
+
+const subnav = {
+  label: 'Powered by VOLI',
+  items: [
+    { href: '#install', label: 'Install' },
+    { href: '#options', label: 'Options' },
+  ],
+};
+
+const schema = pageSchema({
+  path: '/powered-by',
+  name: 'The Powered by VOLI badge',
+  description,
+  crumbs: [
+    { name: 'VOLI', path: '/' },
+    { name: 'About VOLI', path: '/about' },
+    { name: 'Powered by VOLI', path: '/powered-by' },
+  ],
+});
+
+const CORNERS = [
+  { name: 'Top left', value: 'top-left' },
+  { name: 'Top right', value: 'top-right' },
+  { name: 'Bottom left', value: 'bottom-left' },
+  { name: 'Bottom right', value: 'bottom-right' },
+];
 ---
 
-<SiteLayout
-  title="Powered by VOLI - VOLI"
-  description="The Powered by VOLI badge for sites that use VOLI data: one line of code, a floating pill in any corner, linking to the VOLI app."
-  ogUrl="https://playvoli.com/powered-by"
-  skipSupabase
-  skipNavAuth
-  bodyClass="landing-card-page"
->
-    <meta name="robots" content="noindex, follow" slot="head" />
-    <script is:inline slot="scripts">
-        gtag('event', 'page_view', { 'source': 'powered-by' });
+<Pearl title={title} description={description} section="about" subnav={subnav} schema={schema} noindex="follow">
 
+    <PageHero
+      color="lime"
+      label={['Powered by VOLI', 'for sites that use VOLI data']}
+      lines={[{ text: 'One line.', hollow: true }, 'Any corner.']}
+    >
+        <p class="lede">The Powered by VOLI badge is for sites that show VOLI data. One line of code puts it in a corner of every page, 16 pixels from the edges, where it floats as the page scrolls and links to playvoli.com.</p>
+        <p class="body">It is the one on this page, bottom right.</p>
+        <div class="btns">
+            <Btn href="#install" variant="primary">Get the code</Btn>
+        </div>
+        <p class="small">The badge links to playvoli.com, the home of VOLI: The Volleyball Hub, free on iPhone and Android.</p>
+        <Stores />
+        <figure slot="art" class="pb-corners" role="img" aria-label="A page with the badge in its bottom right corner. The other three corners are marked as places it can go.">
+            <div class="pb-corners__page">
+                <span class="pb-corners__bar" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="pb-corners__lines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                {CORNERS.slice(0, 3).map((c) => <Fragment><span class={`pb-corners__spot pb-corners__spot--${c.value}`} aria-hidden="true">{c.name}</span>{' '}</Fragment>)}
+                <img class="pb-corners__pill" src="/images/powered-by-voli.svg" width="141" height="28" alt="" decoding="async">
+            </div>
+        </figure>
+    </PageHero>
+
+    <Band color="ink" id="install" title={['Add it in', 'one line']} tone="lime" em="one line">
+        <Cols max="46rem">
+            <Copy>
+                <p class="lede">Put this line anywhere in the page, on every page that uses VOLI data. The badge sits bottom right.</p>
+                <div class="pb-code">
+                    <pre class="codebox"><code>{SNIPPET}</code></pre>
+                    <Btn type="button" arrow={false} class="pb-copy" onclick="copySnippet(this)" track="powered_by:copy">Copy</Btn>
+                </div>
+            </Copy>
+        </Cols>
+    </Band>
+
+    <Band color="blue" id="options" title={['Pick a', 'corner']}>
+        <Cols ratio="56:36">
+            <Copy>
+                <p class="lede">For another corner, add <code class="pb-attr">data-position</code> with <code class="pb-attr">bottom-left</code>, <code class="pb-attr">top-right</code> or <code class="pb-attr">top-left</code>:</p>
+                <div class="pb-code">
+                    <pre class="codebox"><code>{SNIPPET_CORNER}</code></pre>
+                    <Btn type="button" arrow={false} class="pb-copy" onclick="copySnippet(this)" track="powered_by:copy">Copy</Btn>
+                </div>
+            </Copy>
+            <DataTable
+              caption="Where the badge goes"
+              cols={['Corner', { label: 'data-position', class: 'l pb-mono' }]}
+              rows={CORNERS.map((c) => [c.value === 'bottom-right' ? `${c.name}, the default` : c.name, c.value])}
+            />
+        </Cols>
+    </Band>
+
+    <Band color="rose" id="rules" title="The rules">
+        <Cols ratio="46:46">
+            <div class="pb-rules">
+                <ul>
+                    <li>It appears on every page that shows VOLI data.</li>
+                    <li>It sits in one of the four corners, exactly as the script places it.</li>
+                    <li>Nothing covers it, and it is never resized, recoloured, restyled or hidden.</li>
+                    <li>It links to playvoli.com, and stays on screen while the page scrolls.</li>
+                </ul>
+                <p class="body">Questions about data access or the badge: <a class="link" href="/about#contact">contact us</a>. What VOLI covers is on <a class="link" href="/">the VOLI home page</a>.</p>
+            </div>
+            <Copy>
+                <h3 class="h3">No scripts allowed?</h3>
+                <p class="body">Use the image instead, fixed in a corner 16 pixels from the edges, linking to playvoli.com:</p>
+                <div class="pb-code">
+                    <pre class="codebox"><code>{SNIPPET_IMG}</code></pre>
+                    <Btn type="button" arrow={false} class="pb-copy" onclick="copySnippet(this)" track="powered_by:copy">Copy</Btn>
+                </div>
+            </Copy>
+        </Cols>
+    </Band>
+
+    <GetApp links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/about', label: 'About VOLI' },
+      { href: '/about#contact', label: 'Contact VOLI' },
+    ]} />
+
+    {/* Copy a snippet to the clipboard, with a fallback for browsers without the
+        Clipboard API. The button says "Copied" for a moment. */}
+    <script is:inline slot="scripts">
         function copySnippet(button) {
             const code = button.closest('.pb-code').querySelector('code').textContent;
             const done = () => {
@@ -36,7 +148,6 @@ const SNIPPET_IMG = '<a href="https://playvoli.com/app"><img src="https://playvo
             } else {
                 fallbackCopy(code, done);
             }
-            plausible('Powered By Copy');
         }
 
         function fallbackCopy(text, done) {
@@ -51,129 +162,6 @@ const SNIPPET_IMG = '<a href="https://playvoli.com/app"><img src="https://playvo
             document.body.removeChild(ta);
         }
     </script>
-    <!-- The badge itself, live on this page: the same one line partners add. -->
+    {/* The badge itself, live on this page: the same one line partners add. */}
     <script is:inline slot="scripts" src="/embed/powered-by-voli.js" async></script>
-
-    <main class="v-page v-page--center">
-        <div class="v-stub pb-stub">
-            <h1 class="v-stub__heading">Powered by VOLI</h1>
-            <p class="v-body v-stub__sub">The badge for sites that show VOLI data. One line of code puts it in a corner of every page, 16 pixels from the edges, where it floats as the page scrolls and links to the VOLI app. It is the one on this page, bottom right.</p>
-
-            <div class="v-rule-label v-stub__divider">
-                <span>Add it</span>
-            </div>
-
-            <div class="pb-code">
-                <code>{SNIPPET}</code>
-                <button type="button" class="v-pill pb-copy" onclick="copySnippet(this)">Copy</button>
-            </div>
-            <p class="v-body pb-note">Put it anywhere in the page, on every page that uses the data. It defaults to the bottom right. For another corner, add <span class="pb-attr">data-position</span> with <span class="pb-attr">bottom-left</span>, <span class="pb-attr">top-right</span> or <span class="pb-attr">top-left</span>:</p>
-            <div class="pb-code">
-                <code>{SNIPPET_CORNER}</code>
-                <button type="button" class="v-pill pb-copy" onclick="copySnippet(this)">Copy</button>
-            </div>
-
-            <div class="v-rule-label v-stub__divider">
-                <span>The rules</span>
-            </div>
-
-            <ul class="pb-rules v-body">
-                <li>It appears on every page that shows VOLI data.</li>
-                <li>It sits in one of the four corners, exactly as the script places it.</li>
-                <li>Nothing covers it, and it is never resized, recoloured, restyled or hidden.</li>
-                <li>It links to playvoli.com/app, and stays on screen while the page scrolls.</li>
-            </ul>
-
-            <div class="v-rule-label v-stub__divider">
-                <span>No scripts allowed?</span>
-            </div>
-
-            <p class="v-body pb-note">Use the image instead, fixed in a corner 16 pixels from the edges, linking to the app:</p>
-            <div class="pb-code">
-                <code>{SNIPPET_IMG}</code>
-                <button type="button" class="v-pill pb-copy" onclick="copySnippet(this)">Copy</button>
-            </div>
-
-            <p class="v-body pb-foot">Questions about data access or the badge: <a href="/contact">contact us</a>.</p>
-        </div>
-    </main>
-</SiteLayout>
-
-<style is:global>
-    /* Powered by VOLI: the lander card, widened a touch for the code lines. */
-    body.landing-card-page .pb-stub {
-        max-width: 520px;
-    }
-
-    body.landing-card-page .pb-code {
-        position: relative;
-        margin: 0 0 12px;
-        padding: 14px 84px 14px 16px;
-        border-radius: 14px;
-        background: rgba(0, 0, 0, 0.35);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
-        text-align: left;
-    }
-
-    body.landing-card-page .pb-code code {
-        display: block;
-        font: 500 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        color: #fff;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        user-select: all;
-        -webkit-user-select: all;
-    }
-
-    body.landing-card-page .pb-copy {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        height: 32px;
-        padding: 0 14px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    body.landing-card-page .pb-note,
-    body.landing-card-page .pb-foot {
-        margin: 0 0 12px;
-        font-size: 14px;
-        text-align: left;
-    }
-
-    body.landing-card-page .pb-foot {
-        margin: 24px 0 0;
-        text-align: center;
-    }
-
-    body.landing-card-page .pb-foot a {
-        color: #fff;
-        text-decoration: underline;
-    }
-
-    body.landing-card-page .pb-attr {
-        font: 500 13px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        padding: 2px 6px;
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.12);
-        white-space: nowrap;
-    }
-
-    body.landing-card-page .pb-rules {
-        margin: 0;
-        padding: 0 0 0 20px;
-        text-align: left;
-        font-size: 14px;
-    }
-
-    body.landing-card-page .pb-rules li {
-        margin: 0 0 8px;
-    }
-
-    /* The last card line clears the live badge in the corner. */
-    body.landing-card-page .pb-stub {
-        padding-bottom: 52px;
-    }
-</style>
+</Pearl>

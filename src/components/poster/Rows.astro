@@ -1,0 +1,18 @@
+---
+// Ruled rows: a name, a line about it, and an optional tag. For a level block.
+//
+//   <Rows items={PODCASTS.map((p) => ({ title: p.name, meta: `${p.by} · ${p.episodes} episodes`, tag: p.partner && 'Partner' }))} />
+interface Props {
+  items: { title: string; meta?: string; tag?: string | false; href?: string }[];
+  class?: string;
+}
+const { items, class: cls } = Astro.props;
+---
+<ul class:list={['rows', cls]}>
+    {items.map((i) => (
+        <li>
+            <span class="rows__t">{i.href ? <a href={i.href}>{i.title}</a> : i.title}</span>
+            {(i.meta || i.tag) && <span class="rows__m">{i.meta}{i.tag && <Fragment>{' '}<span class="tag">{i.tag}</span></Fragment>}</span>}
+        </li>
+    ))}
+</ul>

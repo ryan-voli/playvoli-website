@@ -1,0 +1,13 @@
+---
+// The App Store and Google Play buttons: pearl/Stores. `shadow` is the
+// Poster's and is ignored.
+import PearlStores from '../Stores.astro';
+import type { Tint } from './util';
+interface Props {
+  shadow?: Tint;
+  class?: string;
+  [attr: string]: any;
+}
+const { shadow: _shadow, ...rest } = Astro.props;
+---
+<PearlStores {...rest} />

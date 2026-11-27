@@ -1,0 +1,51 @@
+/* The VOLI Discord bot (Pearl): what only this page needs. Everything
+   shared is in pearl/system.css and pearl/kit.css. Every class carries the
+   "dc-" prefix. */
+
+/* Buttons that carry the Discord glyph instead of a word alone. */
+.dc-follow .btn svg { width: 1.2em; height: 1.2em; flex: none; }
+
+/* The hero's command groups: the tiles name a slash command, so the figure
+   is set in the mono face, not the display face. */
+.dc-groups { max-width: 34rem; margin-left: auto; }
+.dc-groups .stat__n { font: 500 clamp(19px, 1.8vw, 24px)/1.1 var(--f-mono); letter-spacing: -.01em; color: var(--navy); overflow-wrap: anywhere; }
+@media (max-width: 900px) { .dc-groups { margin-left: 0; } }
+@media (max-width: 420px) { .dc-groups .stat__n { font-size: 17px; } }
+
+/* Commands: a definition list on the reading sheet. The command in the mono
+   face, what it needs in navy, what it can do without in the soft ink. */
+.prose .dc-cmds { display: grid; margin: .6em 0 1.6em; border-top: 1px solid var(--line); }
+.dc-cmd { padding: 14px 0 15px; border-bottom: 1px solid var(--line); }
+.prose .dc-cmd__n { display: block; color: var(--ink); font: 500 15px/1.5 var(--f-mono); overflow-wrap: anywhere; }
+.dc-req, .dc-opt { white-space: nowrap; font-family: var(--f-mono); font-weight: 500; }
+.dc-req { color: var(--navy); }
+.dc-opt { color: var(--ink-3); }
+.dc-cmds dd { margin-top: 4px; color: var(--ink-2); }
+.prose .dc-cmds dd > p { margin: 0; }
+.prose .dc-params { display: grid; row-gap: 4px; margin: 10px 0 0; padding-left: 0; list-style: none; font-size: 14px; }
+.prose .dc-params li + li { margin-top: 0; }
+.prose .dc-params code { color: var(--navy); font-size: 13px; }
+.prose .fine .dc-req, .prose .fine .dc-opt { font-size: .95em; }
+
+/* VOLI and Discord: two marks side by side on a glass plate. */
+.dc-pair-col { display: flex; justify-content: center; align-items: flex-start; }
+.dc-pair {
+  --size: clamp(72px, 8vw, 112px);
+  display: inline-flex; align-items: center; gap: calc(var(--size) * .26);
+  padding: calc(var(--size) * .34) calc(var(--size) * .4);
+  border-radius: var(--r-plate); border: 1px solid var(--stroke);
+  background: radial-gradient(70% 90% at 92% 8%, rgba(196, 208, 244, .9), transparent), radial-gradient(60% 80% at 0% 100%, rgba(232, 212, 236, .8), transparent), rgba(255, 255, 255, .78);
+  box-shadow: var(--sh-card);
+}
+.dc-pair__m { display: block; flex: none; width: var(--size); height: var(--size); }
+.dc-icon { width: 100%; height: 100%; border-radius: 22.5%; box-shadow: var(--sh-sm); }
+.dc-pair__tile { display: grid; place-items: center; border-radius: 22.5%; background: var(--ink); box-shadow: var(--sh-sm); }
+.dc-discord { width: 58%; height: auto; color: #fff; }
+.dc-pair__x { font: 300 calc(var(--size) * .4)/1 var(--f-body); color: var(--ink-3); }
+@media (max-width: 900px) { .dc-pair-col { justify-content: flex-start; } }
+
+/* Feature and post cards: a tight grid of equal-height cards. */
+.dc-cards { column-gap: var(--sp-4); --rg: var(--sp-4); align-items: stretch; }
+
+/* Add it: the steps, then the call to add it, a band's width apart. */
+.steps + .cols { margin-top: clamp(40px, 5vw, 64px); }

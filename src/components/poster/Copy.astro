@@ -1,0 +1,17 @@
+---
+// A column of running text: paragraphs keep to a readable measure and are
+// spaced; a button row, a stack or a list may follow them.
+//
+//   <Copy>
+//     <p class="lede">...</p>
+//     <p class="body">...</p>
+//     <Btn href="/fantasy">Fantasy on VOLI</Btn>
+//   </Copy>
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+<div class:list={['copy', cls]}>
+    <slot />
+</div>

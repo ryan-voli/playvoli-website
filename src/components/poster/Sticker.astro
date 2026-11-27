@@ -1,0 +1,34 @@
+---
+// A sticker: a picture stuck on the poster with the hard offset. Use `cut`
+// for one of the cut-out cards in /images/splash/ (its size, corner and alt
+// text are on file), or give src, width, height and alt for any other image.
+//
+//   <Sticker cut="card-game" x={0} y={4} w={90} r={3.75} shadow="lime" />
+//   <Sticker src="/images/x.webp" width={800} height={500} alt="..." rad="5% / 8%" />
+import { CUTOUTS, type CutoutKey } from './cutouts';
+import { placeVars, tint, vars, type Place, type Tint } from './util';
+
+interface Props extends Place {
+  cut?: CutoutKey;
+  src?: string;
+  width?: number;
+  height?: number;
+  /** What the picture shows. Required unless `cut` supplies it. */
+  alt?: string;
+  /** The picture's own rounded corner, as a share of width / height ("4.8% / 5.7%"), trimmed off so the offset follows it. */
+  rad?: string;
+  /** The colour of the hard offset. Default: the field's. */
+  shadow?: Tint;
+  /** For a picture in the first screen. */
+  eager?: boolean;
+  class?: string;
+}
+
+const { cut, src, width, height, alt, rad, shadow, eager, class: cls, ...place } = Astro.props;
+const c = cut ? CUTOUTS[cut] : undefined;
+if (cut && !c) throw new Error(`Sticker: there is no cut-out "${cut}". The keys are: ${Object.keys(CUTOUTS).join(', ')}`);
+const pic = { src: src ?? c?.src, width: width ?? c?.width, height: height ?? c?.height, alt: alt ?? c?.alt, rad: rad ?? c?.rad };
+if (!pic.src || !pic.width || !pic.height) throw new Error('Sticker: give it a cut, or src with width and height');
+if (pic.alt === undefined) throw new Error(`Sticker: ${pic.src} needs an alt text that says what the picture shows`);
+---
+<img class:list={['stk', cls]} style={vars({ ...placeVars(place, 'Sticker'), '--stk-sh': tint(shadow), '--rad': pic.rad })} src={pic.src} width={pic.width} height={pic.height} alt={pic.alt} loading={eager ? undefined : 'lazy'} decoding={eager ? undefined : 'async'}>

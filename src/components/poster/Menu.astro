@@ -1,0 +1,123 @@
+---
+// The two-row menu. Row 1 (ink): the mark, the main pages from lib/site.ts,
+// Download. Row 2 (lime): the current category's own menu, which pins to the
+// top while row 1 scrolls away, with the way to the app at its end.
+// The layout prints it: a page never does.
+import Arrow from './Arrow.astro';
+import { MAIN_PAGES, type Section, type Subnav } from '../../lib/site';
+
+interface Props {
+  section?: Section;
+  subnav: Subnav;
+  /** The page's own path, to tell a category's main page from its sub-pages. */
+  path: string;
+  /** An ad landing page: no main pages in the top row, only the mark and Download. */
+  focus?: boolean;
+}
+
+const { section, subnav, path, focus } = Astro.props;
+const here = path.replace(/\/+$/, '') || '/';
+const items = subnav?.items ?? [];
+if (items.length < 2 || items.length > 9) {
+  throw new Error(`The lime bar holds 2 to 9 items: this page's subnav has ${items.length}.`);
+}
+// A phone holds a handful of short names in one row, spread to fit (about 31
+// letters across six stops at 320px). Past that the row scrolls sideways at a
+// comfortable size instead of shrinking.
+const letters = items.reduce((n, i) => n + (i.short ?? i.label).length, 0);
+const fits = letters * 7.2 + items.length * 6 <= 262;
+---
+<header class:list={['nav', { 'nav--focus': focus }]}>
+    <a class="nav__logo" href="/" aria-label="VOLI home" aria-current={section === 'home' ? 'page' : undefined}>
+        <img src="/images/logo_dark_sm.webp" alt="" width="49" height="49">
+        <span class="nav__word">VOLI</span>
+    </a>
+    {!focus && (
+        <nav class="nav__links" aria-label="Main">
+            {MAIN_PAGES.map((p, i) => (
+                <Fragment>{i > 0 && ' '}<a href={p.href} aria-current={p.section === section ? (p.href === here ? 'page' : 'true') : undefined}>{p.label}</a></Fragment>
+            ))}
+        </nav>
+    )}
+    <a class="nav__get" href="#get" data-get data-track="download:nav">Download</a>
+</header>
+<nav class:list={['idx', fits ? 'idx--fit' : 'idx--roll']} aria-label={subnav.label}>
+    <ul class="idx__list">
+        {items.map((i) => (
+            <li><a href={i.href} aria-current={i.current ? 'page' : undefined} data-short={i.short} aria-label={i.short ? i.label : undefined}><span>{i.label}</span></a></li>
+        ))}
+    </ul>
+    <button class="idx__more" type="button" tabindex="-1" aria-hidden="true"><Arrow /></button>
+    <a class="idx__get" href="#get" data-get data-track="download:subnav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M12 4v10M7 10.5l5 5 5-5M5 20h14"/></svg>
+        <span class="idx__get-t">Get<span class="idx__the"> the</span><span class="idx__app"> app</span></span>
+    </a>
+</nav>
+{/* The lime bar's behaviour, none of it needed to use the menu: a cue while
+    the row holds more than it shows (the arrow, which also scrolls it), the
+    section being read marked as you scroll, and the current stop kept in view. */}
+<script is:inline>
+    (function () {
+        var bar = document.querySelector('.idx');
+        if (!bar) return;
+        var list = bar.querySelector('.idx__list'), more = bar.querySelector('.idx__more');
+        var links = [].slice.call(list.querySelectorAll('a'));
+        function cue() {
+            var over = list.scrollWidth > list.clientWidth + 1;
+            bar.classList.toggle('is-over', over);
+            bar.classList.toggle('is-end', over && list.scrollLeft + list.clientWidth >= list.scrollWidth - 2);
+        }
+        function show(a) {
+            var l = a.offsetLeft, r = l + a.offsetWidth;
+            if (l < list.scrollLeft + 8 || r > list.scrollLeft + list.clientWidth - 8) list.scrollLeft = Math.max(0, l - 20);
+        }
+        more.addEventListener('click', function () {
+            list.scrollLeft = bar.classList.contains('is-end') ? 0 : list.scrollLeft + list.clientWidth * .7;
+        });
+        list.addEventListener('scroll', cue, { passive: true });
+        addEventListener('resize', cue);
+        addEventListener('load', cue);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(cue);
+        cue();
+        var page = list.querySelector('[aria-current="page"]');
+        if (page) show(page);
+
+        // Which section is being read: every one that crosses a line just under
+        // the bar. The sections come after this script, so it waits for them.
+        function watch() {
+            var stops = links.map(function (a) {
+                var h = a.getAttribute('href');
+                return h.charAt(0) === '#' ? document.getElementById(decodeURIComponent(h.slice(1))) : null;
+            });
+            if (!stops.some(Boolean)) return;
+            var lit = null, due = false;
+            function spy() {
+                due = false;
+                // The line sits just under where a jump link lands a title, so the section jumped to is the one marked.
+                var line = bar.getBoundingClientRect().bottom + 100;
+                var sheet = document.querySelector('.oc-page').getBoundingClientRect();
+                var slope = sheet.width * .268, first = null;
+                links.forEach(function (a, i) {
+                    var el = stops[i];
+                    if (!el) return;
+                    // A section is read from where its title starts to where the next
+                    // one's does, at the page's left edge. A band's box is flat: its
+                    // stripe starts and ends a slope higher there. A cell is measured
+                    // sheared: its stripe meets the left edge that far above its lowest corner.
+                    var r = el.getBoundingClientRect();
+                    var lift = el.classList.contains('band') ? slope : 0;
+                    var foot = el.classList.contains('cell') ? (r.right - sheet.left) * .268 : lift;
+                    var on = r.top - lift <= line && r.bottom - foot > line;
+                    if (on) a.setAttribute('aria-current', 'location'); else if (a.getAttribute('aria-current') === 'location') a.removeAttribute('aria-current');
+                    if (on && !first) first = a;
+                });
+                if (first && first !== lit) show(first);
+                lit = first;
+            }
+            addEventListener('scroll', function () { if (!due) { due = true; requestAnimationFrame(spy); } }, { passive: true });
+            addEventListener('resize', spy);
+            spy();
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch); else watch();
+    })();
+</script>

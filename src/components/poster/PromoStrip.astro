@@ -1,0 +1,21 @@
+---
+// The rose Bracket Challenge strip, above the menu. It comes down by itself
+// once picks lock: a build after the lock leaves it out, and between deploys
+// the layout's BracketClock rewrites the status line and then hides the strip
+// (the data-bracket-* hooks). The legal line travels with the prize.
+import Arrow from './Arrow.astro';
+import { BRACKET, BRACKET_STATUS, bracketPhase, promoIsLive } from '../../lib/bracket-facts';
+
+const phase = bracketPhase();
+---
+{promoIsLive(phase) && (
+    <aside class="promo f-rose" aria-label={BRACKET.name} data-bracket-promo>
+        <a class="promo__link" href={BRACKET.path} data-track="bracket_promo:strip">
+            <span class="promo__status"><span class="ticks" aria-hidden="true"></span><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></span>{' '}
+            <strong class="promo__name">{BRACKET.name}</strong>{' '}
+            <span class="promo__sub"><b>{BRACKET.prize} cash</b> to the top eligible bracket. Free to play.</span>{' '}
+            <span class="promo__go">Play free <Arrow /></span>
+        </a>
+        <p class="promo__legal">No purchase necessary. 50 U.S. states &amp; D.C., 18+ (19+ AL/NE, 21+ MS). <a href={BRACKET.rulesPath}>Official Rules</a> apply.</p>
+    </aside>
+)}

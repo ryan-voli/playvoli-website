@@ -1,0 +1,17 @@
+/* /download (Pearl): what only this page needs. Everything shared is in
+   pearl/system.css and pearl/kit.css. Every class carries the "dl-" prefix. */
+
+/* The code to scan, large, on a white glass card. */
+.dl-scan {
+  display: grid; justify-items: center; row-gap: var(--sp-4); width: min(100%, 22rem); margin-left: auto;
+  padding: clamp(16px, 1.8vw, 24px) clamp(16px, 1.8vw, 24px) clamp(20px, 2vw, 28px);
+  border-radius: var(--r-sheet); border: 1px solid var(--stroke); background: rgba(255, 255, 255, .86); color: var(--ink);
+  box-shadow: var(--sh-card);
+}
+.dl-scan svg { width: 100%; height: auto; border-radius: var(--r-tile); }
+.dl-scan figcaption { display: grid; justify-items: center; row-gap: 6px; }
+.dl-scan__t { display: flex; align-items: center; gap: 10px; font: 400 clamp(24px, 2.2vw, 30px)/1.1 var(--f-display); letter-spacing: -.005em; text-align: center; text-wrap: balance; }
+.dl-scan__s { color: var(--ink-2); font-size: 14px; line-height: 1.4; text-align: center; text-wrap: balance; }
+@media (max-width: 900px) {
+  .dl-scan { width: min(78%, 18rem); margin: 0; }
+}

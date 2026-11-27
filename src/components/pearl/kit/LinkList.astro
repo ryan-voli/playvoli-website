@@ -1,0 +1,18 @@
+---
+// The "more" list: onward links, ruled, each with an arrow (Pearl's .next,
+// as in the closing block). For a column or a card.
+//
+//   <LinkList label="More about VOLI" items={[{ href: '/rankings', label: 'VOLI Top 100' }, ...]} />
+interface Props {
+  label: string;
+  items: { href: string; label: string }[];
+  class?: string;
+}
+const { label, items, class: cls } = Astro.props;
+---
+<nav class:list={['more', cls]} aria-label={label}>
+    <p class="kicker">{label}</p>
+    <ul class="next">
+        {items.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+    </ul>
+</nav>

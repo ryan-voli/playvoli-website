@@ -1,74 +1,179 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
+// A shared match, for someone who does not have the app yet.
+//
+// STATIC ROUTE, DYNAMIC PATH, like /league: only /game is emitted at build
+// time and the rewrite in vercel.json ({ "source": "/game/:path*",
+// "destination": "/game" }) serves this page for /game/<gameId>. The id is
+// read from location.pathname in the browser. The first script hands the
+// match to the app; the second names it (the teams, when, and the result)
+// from the database, in parallel and never in the way of the handoff.
+import Pearl from '../../layouts/Pearl.astro';
+import '../../styles/pearl/pages/share.css';
+import Btn from '../../components/pearl/kit/Btn.astro';
+import GetApp from '../../components/pearl/kit/GetApp.astro';
+import Phones from '../../components/pearl/kit/Phones.astro';
+import Qr from '../../components/pearl/kit/Qr.astro';
+import Stores from '../../components/pearl/kit/Stores.astro';
+import WhatIsVoli from '../../components/pearl/kit/WhatIsVoli.astro';
+import { SCREENS } from '../../lib/screens';
 
 export function getStaticPaths() {
   return [{ params: { slug: undefined } }];
 }
+
+const subnav = {
+  label: 'Shared match',
+  items: [
+    { href: '#open', label: 'Open in VOLI' },
+    { href: '#get', label: 'Get the app' },
+  ],
+};
 ---
 
-<SiteLayout
-  title="Game - VOLI"
-  description="View live scores, stats, and game chat on VOLI."
-  ogUrl="https://playvoli.com/game"
+<Pearl
+  title="Live Scores and Stats for This Volleyball Match | VOLI"
+  description="Follow this match in VOLI, the free volleyball app for iPhone and Android: live scores, box scores, team and player stats, and a chat room for every match."
+  canonical="https://playvoli.com/game"
+  subnav={subnav}
+  noindex="follow"
 >
-    <main class="v-page v-page--center">
-      <div class="v-stub">
-        <img src="/images/appicon.webp" alt="VOLI" class="v-stub__icon">
-        <h1 class="v-h1 v-stub__title">View This Game</h1>
-        <p class="v-body v-stub__sub">Open in the VOLI app for live scores, stats, and game chat.</p>
+    <link rel="preload" as="image" href={SCREENS.gameLive.src} type="image/webp" fetchpriority="high" slot="head" />
 
-        <a id="open-app-btn" href="#" class="v-pill v-pill--cta v-pill--action v-pill--block">Open in VOLI</a>
-
-        <div class="v-stores stub-stores">
-            <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982" class="v-store">
-                <svg viewBox="0 0 24 24" fill="white" width="22" height="22">
-                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-                <span>
-                    <span class="v-store__small">Download on the</span>
-                    <span class="v-store__big">App Store</span>
-                </span>
-            </a>
-            <a href="https://play.google.com/store/apps/details?id=com.playvoli.app" class="v-store">
-                <svg viewBox="0 0 24 24" fill="white" width="22" height="22">
-                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
-                </svg>
-                <span>
-                    <span class="v-store__small">Get it on</span>
-                    <span class="v-store__big">Google Play</span>
-                </span>
-            </a>
+    <section class="hero khero ut-share" id="open" aria-labelledby="game-h">
+        <div class="wrap hero__grid">
+            <div class="hero__copy">
+                <div class="ut-state">
+                    <h1 class="ut-head" id="game-h">
+                        <span class="kicker"><span>Volleyball match</span> <span>on VOLI</span></span>
+                        {' '}
+                        <span class="display" id="game-title" data-fit>View this <em>game</em></span>
+                    </h1>
+                    <div class="ut-copy">
+                        <p class="label ut-meta" id="game-when"></p>
+                        <p class="lede">Open it in the VOLI app for live scores, box scores, stats and the match chat.</p>
+                        <div class="btns"><Btn id="open-app-btn" href="#" variant="primary" arrow={false}>Open in VOLI</Btn></div>
+                        <div class="ut-get">
+                            <p class="label">Don't have the app?</p>
+                            <Stores />
+                        </div>
+                        <Qr />
+                    </div>
+                </div>
+            </div>
+            <div class="hero__art">
+                <Phones screens={['gameLive', 'gameBox']} step eager class="ut-phones" />
+            </div>
         </div>
+    </section>
 
-        <a href="/" class="v-path v-stub__back">Return Home</a>
-      </div>
-    </main>
-</SiteLayout>
+    <WhatIsVoli fantasy />
 
-<script>
-  const path = window.location.pathname;
-  const match = path.match(/^\/game\/(.+)/);
-  const gameId = match ? match[1] : null;
-  const btn = document.getElementById('open-app-btn');
+    <GetApp links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/about#faq', label: 'Questions about VOLI' },
+    ]} />
 
-  if (gameId && btn) {
-    const deepLink = `voli://game/${gameId}`;
-    btn.href = deepLink;
+    <Fragment slot="scripts">
+        {/* The Supabase browser SDK, for the match lookup below. Loaded on the
+            share pages only, before the scripts that use it. */}
+        <script is:inline src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script>
+          const path = window.location.pathname;
+          const match = path.match(/^\/game\/(.+)/);
+          const gameId = match ? match[1] : null;
+          const btn = document.getElementById('open-app-btn');
 
-    // Auto-attempt deep link on mobile
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.location.href = deepLink;
-    }
-  } else if (btn) {
-    btn.style.display = 'none';
-  }
-</script>
+          if (gameId && btn) {
+            const deepLink = `voli://game/${gameId}`;
+            btn.href = deepLink;
 
-<style>
-    /* game/podcast: stores sit two-up, and the CTA leaves room above them */
-    .stub-stores { display: grid; grid-template-columns: 1fr 1fr; margin-top: 16px; }
-    .stub-stores .v-store { justify-content: center; padding: 0 12px; }
-    .v-stub__back { text-decoration: none; }
-    @media (hover: hover) { .v-stub__back:hover { color: var(--ink-2); } }
-</style>
+            // Auto-attempt deep link on mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+              window.location.href = deepLink;
+            }
+          } else if (btn) {
+            btn.style.display = 'none';
+          }
+        </script>
+        <script>
+          import { keepFitted } from '../../components/pearl/kit/fit';
+          import { SUPABASE_ANON_KEY, SUPABASE_URL } from '../../lib/voli-rankings';
+
+          const title = document.getElementById('game-title');
+          if (title) keepFitted(title);
+
+          // The headline names the match: "Away at Home", and the line under it
+          // says when it is, or that it is live, or how it ended. Read-only,
+          // anon key; anything missing keeps the generic copy. Team names are
+          // data, so they only ever go in through textContent.
+          interface Team { name: string | null; location: string | null }
+          interface Game {
+            league: string | null;
+            date: string | null;
+            time_tbd: boolean | null;
+            game_status: string | null;
+            home_sets_won: number | null;
+            away_sets_won: number | null;
+            home_placeholder: string | null;
+            away_placeholder: string | null;
+            home: Team | null;
+            away: Team | null;
+          }
+
+          const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+          const id = (window.location.pathname.match(/^\/game\/([^/?#]+)/) || [])[1];
+          const sdk = (window as any).supabase;
+
+          // A pro team is its city and its name ("Dallas Pulse"); a name that
+          // already carries its city ("LOVB Austin") or a college stays as it is.
+          const teamName = (t: Team | null, placeholder: string | null) => {
+            const name = t?.name?.trim();
+            if (!name) return placeholder?.trim() || '';
+            const city = t?.location?.trim();
+            return city && !name.toLowerCase().includes(city.toLowerCase()) ? `${city} ${name}` : name;
+          };
+
+          const when = (g: Game) => {
+            const status = (g.game_status || '').toLowerCase();
+            const home = teamName(g.home, g.home_placeholder);
+            const away = teamName(g.away, g.away_placeholder);
+            if (status === 'live') return 'Live now';
+            if (status === 'final' && g.home_sets_won != null && g.away_sets_won != null && g.home_sets_won !== g.away_sets_won) {
+              const homeWon = g.home_sets_won > g.away_sets_won;
+              const [w, l] = homeWon ? [g.home_sets_won, g.away_sets_won] : [g.away_sets_won, g.home_sets_won];
+              return `Final: ${homeWon ? home : away} won ${w}–${l}`;
+            }
+            if (status === 'final') return 'Final';
+            if (!g.date) return '';
+            const d = new Date(g.date);
+            if (Number.isNaN(d.getTime())) return '';
+            return g.time_tbd
+              ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+              : d.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+          };
+
+          if (id && UUID.test(id) && sdk) {
+            try {
+              sdk.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+                .schema('vbdata')
+                .from('games')
+                .select('league, date, time_tbd, game_status, home_sets_won, away_sets_won, home_placeholder, away_placeholder, home:teams!games_home_uuid_fkey(name, location), away:teams!games_away_uuid_fkey(name, location)')
+                .eq('game_id', id)
+                .maybeSingle()
+                .then(({ data }: { data: Game | null }) => {
+                  if (!data) return;
+                  const home = teamName(data.home, data.home_placeholder);
+                  const away = teamName(data.away, data.away_placeholder);
+                  if (!home || !away) return;
+                  if (title) title.textContent = `${away} at ${home}`;
+                  const line = document.getElementById('game-when');
+                  if (line) line.textContent = [data.league, when(data)].filter(Boolean).join(' · ');
+                }, () => { /* keep the generic copy */ });
+            } catch (e) { /* keep the generic copy */ }
+          }
+        </script>
+    </Fragment>
+</Pearl>

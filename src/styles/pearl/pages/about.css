@@ -1,0 +1,44 @@
+/* About (Pearl): what only this page needs. Everything shared is in
+   pearl/system.css and pearl/kit.css. */
+
+/* Our story: the founders side by side (their photographs are 384px), then
+   two short points under them. */
+.abt-founders { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--sp-4); max-width: 50rem; margin-left: auto; }
+.abt-point { display: flex; flex-direction: column; gap: 10px; padding-top: 20px; border-top: 1px solid var(--line); }
+.abt-point .body { max-width: 36rem; color: var(--ink-2); }
+
+/* VOLI by the numbers: a figure in the display face over the sentence that
+   says it, each under a hairline, as the home page's figures. */
+.abt-figs { --rg: clamp(28px, 3.4vw, 44px); }
+.abt-figs > li { display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid var(--line); }
+.abt-fig { display: block; font: 400 clamp(44px, 4.6vw, 64px)/1 var(--f-display); letter-spacing: -.01em; color: var(--ink); white-space: nowrap; font-variant-numeric: lining-nums; }
+.abt-tilde { margin-right: .04em; }
+.abt-fact { max-width: 22rem; color: var(--ink-2); font-size: 15px; line-height: 1.5; text-wrap: pretty; }
+
+/* Partners: the cards, then where the public leagues are. */
+.abt-leagues { color: var(--ink-2); }
+
+/* What's next: the roadmap under its line; the Bracket Challenge card. */
+.abt-roadmap { margin-top: var(--sp-2); }
+.abt-tickets { margin-block: var(--sp-2); }
+.btns + .dates { margin-top: var(--sp-4); }
+
+/* Contact: the address set large in the display face. */
+.abt-mail { margin: 0 0 clamp(32px, 4vw, 48px); font: 400 clamp(38px, 6.4vw, 96px)/1 var(--f-display); letter-spacing: -.015em; overflow-wrap: anywhere; }
+.abt-mail a { color: var(--ink); text-decoration: none; transition: color var(--dur) var(--ease-out); }
+.abt-mail a:hover { color: var(--navy); }
+.abt-follow .label { margin-bottom: 12px; }
+.abt-social { border-top: 1px solid var(--line); }
+.abt-social a { display: flex; align-items: baseline; column-gap: 12px; padding: 15px 0; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.abt-social__n { font: 400 24px/1.1 var(--f-display); }
+.abt-social__h { flex: 1; min-width: 0; color: var(--ink-3); font: 500 12px/1.3 var(--f-mono); letter-spacing: .06em; overflow-wrap: anywhere; }
+.abt-social a .arrow { align-self: center; width: 18px; height: 18px; flex: none; color: var(--navy); transition: transform var(--dur) var(--ease-glide); }
+.abt-social a:hover .abt-social__n { color: var(--navy); }
+.abt-social a:hover .arrow { transform: translateX(3px); }
+
+@media (max-width: 760px) {
+  .abt-fact { max-width: none; }
+  .abt-mail span { display: block; }
+}
+/* The two pairs of partner cards read as one row of four. */
+.abt-partners { column-gap: var(--sp-4); }

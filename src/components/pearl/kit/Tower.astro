@@ -1,0 +1,21 @@
+---
+// Figures for a whole section: the home page's "What's in VOLI" row, a ruled
+// figure and the line that says what it counts.
+//
+//   <Tower items={FACTS} />                      items: { value, label }
+// `stagger` is the Poster's and is ignored.
+import Nb from './Nb.astro';
+import { fig } from './util';
+
+interface Props {
+  items: { value: string; label: string }[];
+  stagger?: boolean;
+  class?: string;
+}
+const { items, class: cls } = Astro.props;
+---
+<ul class:list={['stats', 'stats--plain', 'tower', cls]}>
+    {items.map((i) => (
+        <li class="stat"><strong class="stat__n" set:html={fig(i.value)} /><span class="stat__l"><Nb text={i.label} /></span></li>
+    ))}
+</ul>

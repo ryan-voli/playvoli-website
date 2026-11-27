@@ -1,0 +1,54 @@
+---
+// A card for a partner or a person: a logo or a photograph on an ink panel
+// with the hard offset, a name in the display face and a few lines. With an
+// href the whole card is one link (so put no other link inside it).
+//
+//   <Card name="Volley Talk" kicker="Podcast partner" href="/volleytalk" cta="Volley Talk on VOLI"
+//         img={{ src: '/images/partners/volleytalk-cover-sm.webp', width: 400, height: 400, alt: 'Volley Talk with Sarah Pavan cover art' }}>
+//     <p>...</p>
+//   </Card>
+//
+// Cards sit as the children of <Cols> in a band, or in <div class="cardgrid">
+// inside a level block.
+import Arrow from './Arrow.astro';
+import { emWidth } from '../../lib/designer-metrics';
+import { tint, vars, type Tint } from './util';
+
+interface Props {
+  name: string;
+  /** A small line over the name: a role, a kind of partner. */
+  kicker?: string;
+  img?: { src: string; width: number; height: number; alt: string };
+  /** The picture is a logo: shown whole with air round it, not cropped to fill. */
+  logo?: boolean;
+  /** The picture area's shape, width / height. Default "16 / 10". */
+  ratio?: string;
+  /** The picture area's ground, for a logo made for a light or a coloured field. */
+  ground?: Tint;
+  href?: string;
+  /** The words beside the arrow at the foot of a linked card. */
+  cta?: string;
+  /** The colour of the hard offset. Cards in a row take the field's accents in turn. */
+  shadow?: Tint;
+  /** The name's heading tag. Default h3. */
+  as?: 'h2' | 'h3' | 'h4';
+  /** "category:label" for the click tracker, on a linked card. */
+  track?: string;
+  class?: string;
+  /** Any other attribute goes on the card (target and rel on a link that leaves the site). */
+  [attr: string]: any;
+}
+
+const { name, kicker, img, logo, ratio, ground, href, cta, shadow, as: H = 'h3', track, class: cls, ...rest } = Astro.props;
+emWidth(name);
+const Tag = href ? 'a' : 'article';
+---
+<Tag class:list={['card', { 'card--logo': logo }, cls]} href={href} data-track={href ? track : undefined} style={vars({ '--card-sh': tint(shadow), '--pic': ratio, '--pic-bg': tint(ground) })} {...rest}>
+    {img && <div class="card__pic"><img src={img.src} width={img.width} height={img.height} alt={img.alt} loading="lazy" decoding="async"></div>}
+    <div class="card__body f-ink">
+        {kicker && <p class="card__k">{kicker}</p>}
+        <H class="card__n">{name}</H>
+        <slot />
+        {href && cta && <span class="card__go">{cta} <Arrow /></span>}
+    </div>
+</Tag>

@@ -1,0 +1,121 @@
+---
+// The reading sheet: for a long document (a policy, terms, rules, a method).
+// A flat colour field carries the title; the document itself is level, on an
+// ink panel, in running-text styles (.prose). Nothing in it is sheared. The
+// panel runs down under the band that follows (end the page with <GetApp>,
+// in a colour other than the sheet's).
+//
+//   <Sheet color="blue" label="Legal" title="Privacy policy" meta="Effective October 24, 2026" toc>
+//     <p class="lead">...</p>
+//     <h2 id="what-we-collect">What we collect</h2>
+//     <p>...</p>
+//   </Sheet>
+//
+// Write the document as plain HTML: h2 (with an id) for sections, h3 under
+// them, p, ul, ol, a, strong, blockquote, hr, and <DataTable> for a table.
+// Slots: default (the document), "lede" (a few lines under the title, on the
+// colour field).
+import { emWidth } from '../../lib/designer-metrics';
+import { r3, tint, vars, type Field, type Tint } from './util';
+import type { LineText } from './rider';
+
+interface Props {
+  /** The field the sheet lies on. */
+  color?: Field;
+  /** The label over the title, with the ticks. */
+  label?: string | string[];
+  /** The title: one fitted line, or several. A line of two parts is two lines on a phone. Leave it out when a hero above the sheet carries the page's heading: `label` then names the sheet for screen readers. */
+  title?: LineText | LineText[];
+  /** The heading tag: h1 when the sheet is the page. */
+  as?: 'h1' | 'h2';
+  /** A dated line under the title: "Effective October 24, 2026 · Version 1.4". Given as parts, each part stays whole and a narrow screen breaks between them: ['Effective October 24, 2026', 'Last updated November 2, 2026']. */
+  meta?: string | string[];
+  /** A table of contents. `true` builds it from the document's h2 headings that have an id (or sit first in a section with one). */
+  toc?: boolean | { href: string; label: string }[];
+  tocLabel?: string;
+  /** The most the title's letters may stand, in --u, on wide screens (default 9.5) and on phones (default 17). */
+  cap?: number;
+  capPhone?: number;
+  /** The colour of the panel's hard offset. */
+  shadow?: Tint;
+  id?: string;
+  class?: string;
+}
+
+const { color = 'blue', label, title, as: Tag = 'h1', meta, toc, tocLabel = 'On this page', cap, capPhone, shadow, id, class: cls } = Astro.props;
+const isPair = (t: unknown): t is [string, string] => Array.isArray(t) && t.length === 2 && t.every((p) => typeof p === 'string');
+const titles: LineText[] = !title ? [] : typeof title === 'string' || isPair(title) ? [title as LineText] : (title as LineText[]);
+const bare = titles.length === 0;
+if (bare && !label) throw new Error('Sheet: without a title, give it a label that names the document for screen readers');
+const set = titles.map((t) => {
+  const parts = (Array.isArray(t) ? t : [t]).map((p) => p.trim());
+  return { parts, em: emWidth(parts.join(' ')), emM: r3(Math.max(...parts.map((p) => emWidth(p)))) };
+});
+const labels = label ? (Array.isArray(label) ? label : [label]) : [];
+const metas = (Array.isArray(meta) ? meta : meta ? [meta] : []).filter(Boolean);
+const hid = `${id ?? 'sheet'}-h`;
+
+const html = await Astro.slots.render('default');
+let contents: { href: string; label: string }[] = [];
+if (Array.isArray(toc)) {
+  contents = toc;
+} else if (toc) {
+  // h2 id="..." , or the h2 that opens a <section id="...">. The label keeps its text and loses its tags.
+  const find = /<section\b[^>]*\bid="([^"]+)"[^>]*>\s*<h2\b[^>]*>([\s\S]*?)<\/h2>|<h2\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g;
+  for (const m of html.matchAll(find)) {
+    contents.push({ href: `#${m[1] ?? m[3]}`, label: (m[2] ?? m[4]).replace(/<[^>]+>/g, '').trim() });
+  }
+}
+const hasToc = contents.length > 1;
+---
+<section class:list={['sheet', `f-${color}`, { 'sheet--toc': hasToc, 'sheet--bare': bare }, cls]} id={id} aria-labelledby={bare ? undefined : hid} aria-label={bare ? labels.join(' ') : undefined} style={vars({ '--sheet-sh': tint(shadow) })}>
+    {!bare && (
+    <header class="sheet__head">
+        <Tag id={hid}>
+            {labels.length > 0 && (
+                <span class="hero__label"><span class="ticks" aria-hidden="true"></span><span class="hero__label-t">{labels.map((t) => <Fragment><span>{t}</span>{' '}</Fragment>)}</span></span>
+            )}
+            {set.map((l) => (
+                <Fragment>
+                    <span class:list={['sheet__title', { 'sheet__title--wrap': l.parts.length === 2 }]} style={vars({ '--em': l.em, '--em-m': l.emM, '--cap': cap, '--cap-m': capPhone })}>{l.parts.length === 2 ? <Fragment><span>{l.parts[0]}</span>{' '}<span>{l.parts[1]}</span></Fragment> : l.parts[0]}</span>
+                    {' '}
+                </Fragment>
+            ))}
+        </Tag>
+        {metas.length > 0 && <p class="label sheet__meta">{metas.map((t, i) => <Fragment>{i > 0 && ' · '}<span>{t}</span></Fragment>)}</p>}
+        {Astro.slots.has('lede') && <div class="sheet__lede lede"><slot name="lede" /></div>}
+    </header>
+    )}
+    <div class="sheet__grid">
+        {hasToc && (
+            <Fragment>
+                <details class="toc" open>
+                    <summary><span class="label">{tocLabel}</span></summary>
+                    <nav aria-label={tocLabel}>
+                        <ol>
+                            {contents.map((c) => <li><a href={c.href} set:html={c.label} /></li>)}
+                        </ol>
+                    </nav>
+                </details>
+                {/* Open in the HTML. Above the sheet (a narrow screen) it is folded here and
+                    its label opens it; beside the sheet it stays open and the label is not a control. */}
+                <script is:inline>
+                    (function () {
+                        var t = document.currentScript.previousElementSibling, s = t.querySelector('summary');
+                        var narrow = matchMedia('(max-width: 999px)');
+                        function fit() {
+                            if (narrow.matches) { s.removeAttribute('tabindex'); } else { t.open = true; s.tabIndex = -1; }
+                        }
+                        if (narrow.matches) t.open = false;
+                        fit();
+                        narrow.addEventListener('change', fit);
+                        t.addEventListener('click', function (e) { if (e.target.closest('a') && narrow.matches) t.open = false; });
+                    })();
+                </script>
+            </Fragment>
+        )}
+        <article class="sheet__panel f-ink prose">
+            <Fragment set:html={html} />
+        </article>
+    </div>
+</section>

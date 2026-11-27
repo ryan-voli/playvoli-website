@@ -1,0 +1,34 @@
+---
+// A stack: a box of fixed shape that things are stuck on. Each child (Phone,
+// Sticker, Badge) is placed in percent of the box with x, y and w, tilted
+// with r and layered with z. A stack belongs in a level block: a column of
+// <Cols>, a <Cell>, or a hero's art slot.
+//
+//   <Stack ratio="100/96">
+//     <Phone screen="gameLive" x={3} y={2} w={42} r={-7.5} />
+//     <Phone screen="gameBox" x={53} y={10} w={42} r={3.75} />
+//     <Badge value="445" label="MLV and LOVB matches with play-by-play" x={58} y={92} />
+//   </Stack>
+//
+// The box does not grow to fit: choose a ratio tall enough for what is in it
+// (a phone is 2.1 times as tall as it is wide).
+import { tint, vars, type Tint } from './util';
+
+interface Props {
+  /** The box's shape, width/height: "100/96". */
+  ratio?: string;
+  /** Its shape in the one-column (phone) layout, where it differs. */
+  ratioPhone?: string;
+  /** The hard-offset colour for everything in the stack. */
+  shadow?: Tint;
+  class?: string;
+}
+const { ratio, ratioPhone, shadow, class: cls } = Astro.props;
+const shape = /^\s*\d+(\.\d+)?\s*\/\s*\d+(\.\d+)?\s*$/;
+for (const r of [ratio, ratioPhone]) {
+  if (r !== undefined && !shape.test(r)) throw new Error(`Stack: ratio "${r}" must be width/height, like "100/96"`);
+}
+---
+<div class:list={['stack', cls]} style={vars({ '--ar': ratio, '--arm': ratioPhone, '--shadow': tint(shadow) })}>
+    <slot />
+</div>

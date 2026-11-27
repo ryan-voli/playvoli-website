@@ -1,0 +1,65 @@
+/* College Volleyball Transfers (Pearl): what only this page needs.
+   Everything shared is in pearl/system.css and pearl/kit.css. Every class
+   carries the "cvt-" prefix. */
+
+/* The desk's mark is a blue ball with white letters, drawn for a dark
+   ground: it sits on an ink tile, the shape of the app icon beside it. */
+/* The light CVT mark (navy letters) sits on a white tile. */
+.cvt-tile { display: grid; place-items: center; border-radius: 22.5%; background: #fff; border: 1px solid var(--stroke); box-shadow: var(--sh-sm); }
+.cvt-tile img { width: 72%; height: auto; }
+
+/* The hero's art: VOLI and the desk, side by side on a glass plate. */
+.cvt-art { display: flex; justify-content: center; }
+.cvt-pair {
+  --size: clamp(84px, 10vw, 144px);
+  display: inline-flex; align-items: center; gap: calc(var(--size) * .24);
+  padding: calc(var(--size) * .34) calc(var(--size) * .38);
+  border-radius: var(--r-plate); border: 1px solid var(--stroke);
+  background: radial-gradient(70% 90% at 92% 8%, rgba(196, 208, 244, .9), transparent), radial-gradient(60% 80% at 0% 100%, rgba(232, 212, 236, .8), transparent), rgba(255, 255, 255, .78);
+  box-shadow: var(--sh-card);
+}
+.cvt-pair__m { display: block; flex: none; width: var(--size); height: var(--size); }
+.cvt-icon { width: 100%; height: 100%; border-radius: 22.5%; box-shadow: var(--sh-sm); }
+.cvt-pair__x { font: 300 calc(var(--size) * .36)/1 var(--f-body); color: var(--ink-3); }
+@media (max-width: 900px) { .cvt-art { justify-content: flex-start; } }
+@media (max-width: 420px) { .cvt-pair { --size: 76px; } }
+
+/* What each move shows: three ruled rows, the name in the display face
+   behind a navy dot, the line under it. */
+.cvt-moves { display: grid; border-top: 1px solid var(--line); max-width: 30rem; }
+.cvt-moves li {
+  display: grid; grid-template-columns: 7px minmax(0, 1fr); align-items: baseline; column-gap: 16px; row-gap: 2px;
+  padding: 18px 0 19px; border-bottom: 1px solid var(--line);
+}
+.cvt-moves li::before {
+  content: ""; grid-row: span 2; align-self: center; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--navy); box-shadow: 0 0 0 3px var(--navy-10);
+}
+.cvt-moves strong { font: 400 clamp(26px, 2.4vw, 34px)/1.05 var(--f-display); letter-spacing: -.005em; color: var(--ink); }
+.cvt-moves span { color: var(--ink-2); font-size: 15px; line-height: 1.4; }
+
+/* The portal band: the columns, then the steps a band's width under them. */
+.cols + .steps { margin-top: clamp(40px, 5vw, 64px); }
+
+/* The VOLI mark as decoration for a column with no picture. */
+.cvt-mark { width: min(100%, 20rem); margin-left: auto; }
+@media (max-width: 900px) { .cvt-mark { width: min(56%, 14rem); margin: 0; } }
+
+/* The desk's ball, large. */
+.cvt-logo { width: clamp(150px, 16vw, 220px); aspect-ratio: 1; justify-self: center; margin-inline: auto; }
+@media (max-width: 900px) { .cvt-logo { width: 140px; margin: 0; } }
+
+/* Buttons that carry an icon instead of a word alone. */
+.cvt-follow .btn svg { width: 1.2em; height: 1.2em; flex: none; }
+
+/* "Download VOLI": the dialog the portal button opens when the app does not. */
+.cvt-dlg {
+  position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px;
+  background: rgba(18, 20, 28, .42); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.cvt-dlg__box {
+  width: min(100%, 26rem); padding: 28px 28px 26px; border-radius: var(--r-sheet); border: 1px solid var(--stroke);
+  background: radial-gradient(70% 90% at 92% 8%, rgba(196, 208, 244, .7), transparent), #fff; color: var(--ink); box-shadow: var(--sh-pop);
+}
+.cvt-dlg__box h2 { margin: 0 0 10px; font: 400 32px/1.05 var(--f-display); letter-spacing: -.01em; text-wrap: balance; }
+.cvt-dlg__box p { margin: 0 0 22px; color: var(--ink-2); line-height: 1.5; text-wrap: pretty; }

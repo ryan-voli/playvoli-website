@@ -1,0 +1,79 @@
+---
+// Questions and answers in two level columns. It goes straight into a Band
+// (it levels its own columns).
+//
+// Folded (the default) it is an accordion: every answer is open in the HTML,
+// and a few lines of script fold all but the first before the page below is
+// laid out; a link to #faq-<id> opens that one. With fold={false} every
+// answer is shown in full.
+//
+// The same items feed the page's structured data:
+//   schema={[faqSchema(items, 'https://playvoli.com/page')]}
+// A question is marked up on one page of the site only.
+import { linkify, type Faq } from '../../lib/voli-facts';
+import Nb from './Nb.astro';
+
+interface Props {
+  items: Faq[];
+  /** An accordion (default), or every answer shown in full. */
+  fold?: boolean;
+  /** How many answers stay open when folded. Default 1. */
+  keep?: number;
+  /** The questions' heading tag: one level under the band's title. Default h3. */
+  as?: 'h3' | 'h4';
+  /** Each item's anchor is this, a dash, and the item's id. Default "faq". */
+  prefix?: string;
+  class?: string;
+}
+
+const { items, fold = true, keep = 1, as: Tag = 'h3', prefix = 'faq', class: cls } = Astro.props;
+if (!items?.length) throw new Error('Faq: no questions given');
+// Two columns of about the same length: by count when folded, by the amount
+// of text when every answer shows.
+let half = Math.ceil(items.length / 2);
+if (!fold && items.length > 1) {
+  const size = items.map((f) => f.q.length * 1.6 + f.a.length + 60);
+  const total = size.reduce((a, b) => a + b, 0);
+  let run = 0, best = Infinity;
+  size.forEach((s, i) => {
+    run += s;
+    const off = Math.abs(total - 2 * run);
+    if (i < items.length - 1 && off < best) { best = off; half = i + 1; }
+  });
+}
+const cols = items.length > 1 ? [items.slice(0, half), items.slice(half)] : [items];
+const hasMore = Astro.slots.has('more');
+const style = cols.length > 1 ? '--cols:minmax(0, 1fr) minmax(0, 1fr);--f1:.5;--f2:.5' : undefined;
+---
+<div class:list={['cols', fold ? 'faq' : 'qa', cls]} data-n={cols.length} style={style}>
+    {cols.map((col, c) => (
+        <div>
+            {col.map((f) => fold ? (
+                <details class="acc" id={`${prefix}-${f.id}`} open>
+                    <summary><Tag><Nb text={f.q} /></Tag></summary>
+                    <p class="body" set:html={linkify(f.a)} />
+                </details>
+            ) : (
+                <div class="qa__item" id={`${prefix}-${f.id}`}>
+                    <Tag><Nb text={f.q} /></Tag>
+                    <p class="body" set:html={linkify(f.a)} />
+                </div>
+            ))}
+            {hasMore && c === cols.length - 1 && <div class="faq__more"><slot name="more" /></div>}
+        </div>
+    ))}
+</div>
+{fold && (
+    <script is:inline define:vars={{ keep }}>
+        (function () {
+            var root = document.currentScript.previousElementSibling;
+            var qs = [].slice.call(root.querySelectorAll('.acc'));
+            function sync(first) {
+                var id = decodeURIComponent(location.hash.slice(1));
+                qs.forEach(function (d, i) { if (d.id === id) d.open = true; else if (first) d.open = i < keep; });
+            }
+            sync(true);
+            addEventListener('hashchange', function () { sync(false); });
+        })();
+    </script>
+)}

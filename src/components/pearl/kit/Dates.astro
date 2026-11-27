@@ -1,0 +1,25 @@
+---
+// Dates: when, what, and a line of detail, ruled. `tag` marks a row ("Done",
+// "On now", "Next"); `href` makes the row's name a link. `narrow` sets the
+// date over the words (for a half-width card).
+//
+//   <Dates items={BRACKET_DATES} />              items: { iso, when, what, detail?, tag?, href? }
+interface Props {
+  items: { iso: string; when: string; what: string; detail?: string; tag?: string; href?: string }[];
+  narrow?: boolean;
+  class?: string;
+}
+const { items, narrow, class: cls } = Astro.props;
+const tagClass = (t: string) => (/now|next|open|live/i.test(t) ? 'badge badge--navy' : 'badge');
+---
+<ol class:list={['dates', { 'dates--narrow': narrow }, cls]}>
+    {items.map((d) => (
+        <li>
+            <time datetime={d.iso}>{d.when}</time>
+            <div>
+                <strong>{d.href ? <a href={d.href}>{d.what}</a> : d.what}{d.tag && <Fragment>{' '}<span class={tagClass(d.tag)}>{/now/i.test(d.tag) && <span class="dot dot--live" aria-hidden="true"></span>}{d.tag}</span></Fragment>}</strong>
+                {d.detail && <span>{d.detail}</span>}
+            </div>
+        </li>
+    ))}
+</ol>

@@ -3,8 +3,30 @@
 // newest published week, so it is never stale and crawlers get the full list
 // in the HTML. A short CDN cache (60 s) keeps a traffic burst off the database;
 // a failed fetch is never cached.
-import SiteLayout from '../layouts/SiteLayout.astro';
-import { STORE } from '../lib/voli-facts';
+//
+// Live data only ever reaches the display face as digits (the week number and
+// the ranks): Designer is checked glyph by glyph when the page renders, and a
+// team name in a display line could stop the page.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/rankings.css';
+import Badge from '../components/pearl/kit/Badge.astro';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import DataTable from '../components/pearl/kit/DataTable.astro';
+import Faq from '../components/pearl/kit/Faq.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import Note from '../components/pearl/kit/Note.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Phone from '../components/pearl/kit/Phone.astro';
+import Stack from '../components/pearl/kit/Stack.astro';
+import Steps from '../components/pearl/kit/Steps.astro';
+import Sticker from '../components/pearl/kit/Sticker.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import Tickets from '../components/pearl/kit/Tickets.astro';
+import { FAQS, faqSchema, type Faq as FaqItem } from '../lib/voli-facts';
+import { SITE_URL, sectionMenu, type SectionMenu } from '../lib/site';
 import { currentNcaaRanking, type PublishedRanking } from '../lib/voli-rankings';
 
 export const prerender = false;
@@ -55,150 +77,182 @@ const schema = ranking
 const description = ranking
   ? `The VOLI Top 100 for ${year} NCAA Division I women's volleyball, week ${ranking.week}: every team's rank, record and rating, published ${published}.`
   : "The VOLI Top 100: VOLI's weekly ranking of NCAA Division I women's volleyball teams.";
+
+// The lime bar: this page's sections, then the method behind them. /methods
+// writes the same menu, with these stops pointing back here.
+const MENU: SectionMenu = {
+  label: 'VOLI Top 100',
+  base: '/rankings',
+  sections: [
+    { id: 'top-100', label: 'Top 100' },
+    { id: 'how', label: 'How it works', short: 'How' },
+    { id: 'chances', label: 'Win chances', short: 'Chances' },
+    { id: 'faq', label: 'FAQ' },
+  ],
+  pages: [{ href: '/methods', label: 'Methods' }],
+};
+
+// The questions this page answers. "rankings" is the site's own answer (it is
+// marked up here and nowhere else); the other three are answered by /methods.
+const questions: FaqItem[] = [
+  FAQS.find((f) => f.id === 'rankings')!,
+  {
+    id: 'updates',
+    q: 'How often is the VOLI Top 100 updated?',
+    a: "Once a week. VOLI's team ratings are recomputed nightly from all completed matches, and the VOLI Top 100 is set each Monday from the latest ratings. It doesn't change afterwards, and it has been published each Monday since September 2026.",
+  },
+  {
+    id: 'rating',
+    q: "What does a team's rating in the VOLI Top 100 mean?",
+    a: "The rating, AMR (Adjusted Margin Rating), is the number of points per set a team would beat an average Division I team by. A rating of +4.2 means the team beats an average Division I team by about 4 points a set. It starts from each set's point margin and adjusts it for the opponent.",
+  },
+  {
+    id: 'every-team',
+    q: 'Does VOLI rate teams outside the Top 100?',
+    a: "Yes. VOLI computes a rating for every Division I team, so the list stops at 100 only for display. The ratings, the VOLI Top 100 and each match's chance to win are in the VOLI app, free on iPhone and Android.",
+  },
+];
+
+// What the VOLI Top 100 is, answer first, under the h1.
+const LEDE = "The VOLI Top 100 is VOLI's own ranking of NCAA <span class=\"nb\">Division I</span> women's volleyball teams. VOLI rates every <span class=\"nb\">Division I</span> team from match results and strength of schedule, and publishes the top 100 each Monday.";
+
+// This week's leaders for the hero, and the longest rating for the bars in the table.
+const leaders = ranking ? ranking.teams.slice(0, 4) : [];
+const best = ranking ? Math.max(0, ...ranking.teams.map((t) => t.rating ?? 0)) : 0;
+const bar = (v: number | null) => (v !== null && v > 0 && best > 0 ? Math.round((v / best) * 1000) / 1000 : null);
+const CUTS = [25, 50, 75];
 ---
 
-<SiteLayout
+<Pearl
   title={ranking ? `VOLI Top 100: NCAA Volleyball Rankings, Week ${ranking.week}` : 'VOLI Top 100: NCAA Volleyball Rankings'}
   description={description}
-  activePage="rankings"
-  ogUrl="https://playvoli.com/rankings"
-  schema={schema ?? undefined}
+  section="rankings"
+  subnav={sectionMenu(MENU, '/rankings')}
+  schema={[...(schema ? [schema] : []), faqSchema(questions, `${SITE_URL}/rankings`)]}
 >
-    <main class="v-page">
-        <div class="v-wrap r-wrap">
-            <p class="v-label v-label--sans r-eyebrow">VOLI Rankings</p>
-            <h1 class="v-title-plain r-title">VOLI Top 100</h1>
+    {/* Without this week's list the hero has no art, and is drawn as a hero without art. */}
+    <PageHero color="rose" label="NCAA volleyball rankings" lines={[['VOLI', 'Top 100']]} em="Top 100">
+        <p class="lede" set:html={LEDE} />
+        {ranking && <p class="rk-when"><span class="tag">{year} · Week {ranking.week}</span> <span>Published {published}</span></p>}
+        <Stores />
+        {ranking && (
+            <Tickets slot="art" class="rk-lead" label="This week's top four" items={leaders.map((t) => ({
+              value: `#${t.rank}`,
+              label: `${t.name}, ${record(t.wins, t.losses)}, ${rating(t.rating)}`,
+            }))} />
+        )}
+    </PageHero>
 
-            {ranking ? (
-                <>
-                    <p class="r-when v-meta">{year} NCAA Division I women's volleyball · Week {ranking.week} · Published {published}</p>
-                    <p class="v-lede r-lede">VOLI's own ranking of Division I teams from match results and strength of schedule, published each Monday. Rating is points per set against an average Division I team. <a href="/methods#top-100" class="v-link">How it's computed</a></p>
-
-                    <div class="r-table-wrap v-card v-card--plate">
-                        <table class="r-table">
+    <Band
+      color="ink"
+      id="top-100"
+      tone="lime"
+      lines={[{ text: ranking ? `Week ${ranking.week} rankings` : 'The rankings', size: 'sm' }]}
+      stamp={ranking ? `Published ${published}` : undefined}
+      pb={6}
+    >
+        {ranking ? (
+            <Cols wide>
+                <div>
+                    <p class="body rk-key"><strong>Rating</strong> is the number of points per set a team would beat an average <span class="nb">Division I</span> team by. <strong>Move</strong> is the change since last week; <strong>New</strong> means the team was not in last week's Top 100. <a class="link" href="/methods#top-100">How the rating is computed</a></p>
+                    <DataTable label={`VOLI Top 100, week ${ranking.week}`}>
+                        <table class="tbl tbl--tight rk-tbl">
+                            <caption>VOLI Top 100, {year} NCAA <span class="nb">Division I</span> women's volleyball, week {ranking.week}</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col" class="c-rank">#</th>
-                                    <th scope="col" class="c-team">Team</th>
-                                    <th scope="col" class="c-rec">Record</th>
-                                    <th scope="col" class="c-rat">Rating</th>
-                                    <th scope="col" class="c-move"><span class="sr-only">Change from last week</span><span aria-hidden="true">Move</span></th>
+                                    <th scope="col" class="rk-h-rank"><span aria-hidden="true">#</span> <span class="vh">Rank</span></th>
+                                    <th scope="col" class="rk-h-move"><span class="vh">Change from last week</span> <span aria-hidden="true">Move</span></th>
+                                    <th scope="col" class="l">Team</th>
+                                    <th scope="col" class="rk-h-rec">Record</th>
+                                    <th scope="col" class="rk-h-rat">Rating</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {ranking.teams.map((t) => {
                                     const m = move(t.rank, t.prevRank);
+                                    const v = bar(t.rating);
                                     return (
-                                        <tr class={t.rank === 25 ? 'is-cut' : undefined}>
-                                            <td class="c-rank">{t.rank}</td>
-                                            <td class="c-team">
-                                                <span class="t-name">{t.name}</span>
-                                                {t.conference && <span class="t-conf">{t.conference}</span>}
-                                            </td>
-                                            <td class="c-rec">{record(t.wins, t.losses)}</td>
-                                            <td class="c-rat">{rating(t.rating)}</td>
-                                            <td class={`c-move ${m.cls}`}>{m.text}</td>
+                                        <tr class={CUTS.includes(t.rank) ? 'cut' : undefined}>
+                                            <td class="rank">{t.rank}</td>
+                                            <td class={`rk-move ${m.cls}`}>{m.text}</td>
+                                            <th scope="row" class="l rk-team"><span class="rk-name">{t.name}</span>{t.conference && <Fragment>{' '}<span class="rk-conf">{t.conference}</span></Fragment>}</th>
+                                            <td class="rk-rec">{record(t.wins, t.losses)}</td>
+                                            <td class="rk-rat">{v !== null && <span class="rk-bar" style={`--v:${v}`} aria-hidden="true"></span>}{rating(t.rating)}</td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
+                    </DataTable>
+                </div>
+            </Cols>
+        ) : (
+            <Cols max="40rem">
+                <Copy>
+                    <Note bad>The rankings couldn't load right now. Try again in a minute, or see them in the VOLI app.</Note>
+                    <div class="btns">
+                        <Btn href="/rankings">Try again</Btn>
+                        <Btn href="#get">Get the app</Btn>
                     </div>
-                </>
-            ) : (
-                <div class="v-card v-card--plate r-down">
-                    <p class="v-body">The rankings couldn't load right now. Try again in a minute, or see them in the VOLI app.</p>
-                </div>
-            )}
+                </Copy>
+            </Cols>
+        )}
+    </Band>
 
-            <div class="r-cta">
-                <p class="v-body">Every team's rating, each match's chance to win, and the AVCA Coaches Poll and EVOLLVE ratings beside it, in VOLI. Free on iPhone and Android.</p>
-                <div class="v-stores">
-                    <a href={STORE.ios} class="v-store">
-                        <svg viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true">
-                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                        </svg>
-                        <div>
-                            <span class="v-store__small">Download on the</span>
-                            <span class="v-store__big">App Store</span>
-                        </div>
-                    </a>
-                    <a href={STORE.android} class="v-store">
-                        <svg viewBox="0 0 24 24" fill="white" width="22" height="22" aria-hidden="true">
-                            <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
-                        </svg>
-                        <div>
-                            <span class="v-store__small">Get it on</span>
-                            <span class="v-store__big">Google Play</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
+    <Band color="lime" id="how" kicker="How the VOLI" title="Top 100" sub="is computed">
+        <Cols max="40rem">
+            <Copy>
+                <p class="lede">The VOLI Top 100 is computed from match results and strength of schedule.</p>
+                <p class="body">Each team's rating, <strong>AMR (Adjusted Margin Rating)</strong>, is the number of points per set it would beat an average <span class="nb">Division I</span> team by. A rating of +4.2 means the team beats an average <span class="nb">Division I</span> team by about 4 points a set.</p>
+            </Copy>
+        </Cols>
+        <Steps items={[
+          { title: "Every set's margin", text: "The rating starts from the point margin of each set a team plays." },
+          { title: 'Adjusted for the opponent', text: 'A close set against a strong team can say more than a lopsided one against a weak team.' },
+          { title: 'A preseason start', text: "Early in the season a starting point carries some of the weight: the team's rating last season and how many of its players return. It fades as real results come in." },
+          { title: 'Set each Monday', text: "Ratings are recomputed nightly from all completed matches. The Top 100 is set each Monday from the latest ratings, and it doesn't change afterwards." },
+        ]} />
+        <Cols max="40rem">
+            <Copy>
+                <p class="body">Ratings are computed for every <span class="nb">Division I</span> team, so the list stops at 100 only for display.</p>
+                <Btn href="/methods">How VOLI's numbers work</Btn>
+            </Copy>
+        </Cols>
+    </Band>
 
-            <p class="r-related v-meta">
-                <a href="/methods" class="v-link">How VOLI's numbers work</a> ·
-                <a href="/faq" class="v-link">FAQ</a> ·
-                <a href="/app" class="v-link">Everything in VOLI</a>
-            </p>
-        </div>
-    </main>
-</SiteLayout>
+    <Band color="blue" id="chances" kicker="Each match's" title={['chance', 'to win']}>
+        <Cols ratio="42:50" drop={[0, 3]}>
+            <Copy>
+                <p class="lede">Before first serve, each upcoming college match in the VOLI app shows each team's chance to win and the most likely set score.</p>
+                <p class="body">Both come from the gap between the two teams' ratings: the bigger the gap, the more likely the higher-rated team wins. During the match, the chance to win updates after every set.</p>
+                <p class="body">The app also shows the AVCA Coaches Poll and <a class="link" href="/evollve">EVOLLVE's team ratings</a> next to VOLI's own.</p>
+                <Btn href="/methods#chance-to-win">How win chances work</Btn>
+                <Stack ratio="100/40" class="rk-fig">
+                    <Sticker cut="card-game" x={1} y={8} w={92} r={-3.75} shadow="rose" />
+                </Stack>
+            </Copy>
+            <Stack ratio="100/104">
+                <Phone screen="gameLive" x={2} y={0} w={44} wm={46} r={-7.5} />
+                <Phone screen="rankings" x={54} xm={52} y={9} w={44} wm={46} r={3.75} />
+                <Badge value="6" label="possible final scores weighed for each match" x={30} xm={22} y={72} ym={70} z={3} shadow="lime" />
+            </Stack>
+        </Cols>
+    </Band>
 
-<style>
-    .r-wrap { max-width: 760px; }
-    .r-eyebrow { padding: 0; margin: 0 0 10px; }
-    .r-title { margin: 0 0 8px; text-align: center; }
-    .r-when { margin: 0 0 14px; text-align: center; }
-    .r-lede { margin: 0 auto 28px; max-width: 62ch; text-align: center; }
+    <Band color="ink" id="faq" title="Questions" sub="about the Top 100" tone="lime" em="Top 100">
+        <Faq items={questions} fold={false}>
+            <Btn slot="more" href="/about#faq">All questions and answers</Btn>
+        </Faq>
+    </Band>
 
-    .r-table-wrap { padding: 8px 4px; overflow-x: auto; }
-    .r-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-    .r-table th {
-        padding: 10px 12px;
-        font: 600 11px/1.2 var(--font-body);
-        letter-spacing: .1em;
-        text-transform: uppercase;
-        color: var(--ink-2);
-        text-align: left;
-        border-bottom: 1px solid var(--line);
-    }
-    .r-table td {
-        padding: 10px 12px;
-        border-bottom: 1px solid var(--line);
-        font: 400 15px/1.3 var(--font-body);
-        color: var(--ink-body);
-        vertical-align: middle;
-    }
-    .r-table tbody tr:last-child td { border-bottom: 0; }
-    /* The line under #25: the top 25 most fans look for. */
-    .r-table tr.is-cut td { border-bottom: 1px solid var(--outline); box-shadow: 0 1px 0 var(--outline); }
-
-    /* Column widths and alignment apply to the header too; looks only to the body cells. */
-    .c-rank { width: 44px; text-align: right; }
-    .c-rec, .c-rat, .c-move { text-align: right; white-space: nowrap; }
-    .c-move { width: 64px; }
-    .r-table th.c-rank, .r-table th.c-rec, .r-table th.c-rat, .r-table th.c-move { text-align: right; }
-    .r-table td.c-rank { color: var(--ink); font-weight: 700; }
-    .r-table td.c-rat { color: var(--ink); }
-    .r-table td.c-move { font-size: 13px; font-weight: 600; }
-    .t-name { display: block; font-weight: 600; color: var(--ink); }
-    .t-conf { display: block; margin-top: 2px; font-size: 12px; color: var(--ink-2); }
-    .r-table td.is-up { color: var(--lemon-lime); }
-    .r-table td.is-down { color: var(--rose); }
-    .r-table td.is-same { color: var(--ink-3); }
-    .r-table td.is-new { color: var(--electric-blue); }
-
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-
-    .r-down p { margin: 0; text-align: center; }
-    .r-cta { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 40px; text-align: center; }
-    .r-cta p { margin: 0; max-width: 56ch; }
-    .r-related { margin: 28px 0 0; text-align: center; }
-
-    @media (max-width: 520px) {
-        .r-table th, .r-table td { padding: 9px 8px; }
-        .r-table td { font-size: 14px; }
-        .c-rank { width: 32px; }
-        .c-move { width: 48px; }
-    }
-</style>
+    <GetApp
+      lede="VOLI's ratings, each match's chance to win, and the AVCA Coaches Poll and EVOLLVE's ratings beside them, in the free VOLI app."
+      links={[
+        { href: '/methods', label: "How VOLI's numbers work" },
+        { href: '/evollve', label: 'EVOLLVE on VOLI' },
+        { href: '/bracket', label: 'Bracket Challenge' },
+        { href: '/', label: 'Everything in VOLI' },
+        { href: '/about#faq', label: 'Questions about VOLI' },
+      ]}
+    />
+</Pearl>

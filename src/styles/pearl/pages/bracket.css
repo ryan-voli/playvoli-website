@@ -1,0 +1,143 @@
+/* The Bracket Challenge (/bracket) and its Official Rules (/bracket/rules),
+   in Pearl: what only these two pages need. Everything shared is in
+   pearl/system.css and pearl/kit.css. */
+
+/* ==========================================================================
+   /bracket: the hero, written by hand because its headline is swapped by
+   script (BracketClock once picks lock, the invite script for ?g=CODE).
+   ========================================================================== */
+.bk-head { display: flex; flex-direction: column; gap: var(--sp-4); }
+/* Once picks lock the offer is one plain line instead: printed that way by a
+   build after the lock, or swapped in on the day by BracketClock, which drops
+   the attribute as it does. */
+.bk-head:not([data-bracket-after]) { max-width: 14em; font: 400 clamp(36px, 4.6vw, 66px)/1.02 var(--f-display); letter-spacing: -.01em; text-wrap: balance; }
+.bk-inv-sub { text-wrap: balance; }
+
+/* The art: the bracket artwork (made for dark grounds) on an ink panel, and
+   the four facts on glass under it. */
+.bk-art { display: grid; gap: var(--sp-4); }
+.bk-logo {
+  position: relative; overflow: hidden; padding: clamp(22px, 3vw, 40px) clamp(24px, 3.4vw, 44px);
+  border-radius: var(--r-sheet); background: var(--ink); box-shadow: var(--sh-pop);
+}
+.bk-logo::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(70% 90% at 88% 0%, rgba(66, 82, 140, .55), transparent 70%), radial-gradient(60% 80% at 0% 100%, rgba(66, 82, 140, .28), transparent 70%);
+}
+.bk-logo img { position: relative; width: 100%; }
+
+/* On a wide screen the way in comes straight after the lede, so it is in the
+   first screen; the status line follows it. A phone keeps the written order. */
+@media (min-width: 761px) {
+  .bk-hero .hero__copy > .bk-actions { order: 1; }
+  .bk-hero .hero__copy > .bk-status { order: 2; }
+  .bk-hero .hero__copy > .fine { order: 3; }
+}
+.bk-hero .fine { max-width: 34rem; }
+
+/* A friend-group invite (?g=CODE): shown by the script, never by default. */
+.bk-group {
+  display: grid; justify-items: start; gap: 6px; width: fit-content; max-width: 100%; padding: 16px 20px 18px;
+  border-radius: var(--r-card); border: 1px solid var(--stroke); background: var(--surface-hi); box-shadow: var(--sh-card);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.bk-group[hidden] { display: none; }
+.bk-group__label { font: 500 var(--fs-micro)/1.2 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+.bk-group__value { max-width: 100%; overflow-wrap: anywhere; color: var(--navy); font: 400 44px/1 var(--f-display); letter-spacing: .06em; }
+.bk-group__hint { max-width: 30em; color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+
+/* The way in. A phone opens the app; a computer has no app to open, so its
+   button goes to the QR code at the end of the page. */
+.bk-actions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-4); }
+.bk-actions .btn svg { width: 20px; height: 20px; flex: none; }
+.bk-actions .bk-get { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .bk-actions .bk-open { display: none; }
+  .bk-actions .bk-get { display: inline-flex; }
+}
+@media (max-width: 760px) {
+  .bk-actions { align-items: stretch; }
+  .bk-actions .btn { width: 100%; }
+  .bk-art { margin-top: var(--sp-2); }
+}
+
+/* The dialog for a phone without the app (built by the page's script). */
+.dlg {
+  position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px;
+  background: rgba(18, 20, 28, .38); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.dlg__box {
+  width: 100%; max-width: 26rem; padding: 28px 26px 26px; border-radius: var(--r-sheet);
+  border: 1px solid var(--stroke); background: #fff; color: var(--ink); box-shadow: var(--sh-pop);
+}
+.dlg__box h2 { margin: 0 0 10px; font: 400 32px/1.05 var(--f-display); letter-spacing: -.01em; text-wrap: balance; }
+.dlg__box p { margin: 0 0 22px; color: var(--ink-2); line-height: 1.5; text-wrap: pretty; }
+.dlg__box strong { color: var(--navy); font: 500 .95em var(--f-mono); letter-spacing: .08em; }
+.dlg__box .btn { background: var(--ink); color: #fff; }
+.dlg__box .btn:hover { background: var(--ink-hover); }
+
+/* ==========================================================================
+   /bracket: the bands
+   ========================================================================== */
+/* Friends: the mark on its glass plate beside the copy. */
+.bk-mark { max-width: 22rem; margin-left: auto; }
+@media (max-width: 900px) {
+  .bk-mark { width: 56%; max-width: 16rem; }
+}
+
+/* Scoring: the table's column heads may wrap, so it fits a phone without scrolling. */
+.cell .tblwrap { margin-block: var(--sp-2); }
+.tbl.bk-score thead th { white-space: normal; vertical-align: bottom; }
+.tbl.bk-score thead th:last-child { max-width: 9em; }
+@media (max-width: 560px) {
+  .tbl.bk-score th, .tbl.bk-score td { padding-inline: 12px; }
+  .tbl.bk-score caption { padding-inline: 12px; }
+  .tbl.bk-score tfoot td:last-child { white-space: nowrap; }
+}
+
+/* The prize: what it is, who can win, and the app's Bracket tab beside it. */
+.bk-prize > * + * { margin-top: var(--sp-5); }
+.bk-prize .lede { max-width: 40rem; color: var(--ink); }
+.bk-terms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-5) clamp(24px, 3vw, 40px); margin-top: var(--sp-6); }
+.bk-terms li { padding-top: 16px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 15px; line-height: 1.55; text-wrap: pretty; }
+.bk-terms strong { display: block; margin-bottom: 8px; color: var(--ink); font: 400 22px/1.15 var(--f-display); }
+.bk-prize__rules { font-weight: 500; }
+.bk-prize__art { max-width: 24rem; margin-left: auto; }
+.bk-prize__art .fine { max-width: 21rem; margin-top: var(--sp-5); }
+@media (max-width: 980px) {
+  .bk-terms { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  .bk-prize__art { max-width: 26rem; margin: var(--sp-2) auto 0; }
+  .bk-prize__art .fine { max-width: none; }
+}
+
+/* More volleyball: two cut-out cards from the app under the rankings line. */
+.copy > .bk-fig { max-width: 32rem; margin-top: var(--sp-4); }
+
+/* The contest terms: small print in two columns on a wide screen. */
+.bk-terms-band .bk-legal { columns: 2; column-gap: clamp(24px, 4vw, 56px); color: var(--ink-3); font-size: 13px; line-height: 1.65; text-wrap: pretty; }
+.bk-legal a { color: var(--ink-2); font-weight: 500; text-decoration: underline; text-decoration-color: rgba(18, 20, 28, .3); }
+@media (max-width: 760px) {
+  .bk-terms-band .bk-legal { columns: 1; }
+}
+
+/* ==========================================================================
+   /bracket/rules: a short hero over the reading sheet
+   ========================================================================== */
+.bkr-back a { color: inherit; }
+.bkr-back a:hover { color: var(--ink); }
+/* The reading sheet follows straight on: its own space above is enough. */
+.bkr-hero { padding-bottom: 0; }
+/* The contest's name under "Official Rules", in the same heading. */
+.bkr-name { display: block; max-width: 22em; font: 400 clamp(24px, 2.6vw, 36px)/1.12 var(--f-display); color: var(--ink-2); text-wrap: balance; }
+.bkr-hero .hero__copy > .label { color: var(--navy); }
+/* The contest's artwork beside the copy, on a wide screen only. */
+.bkr-art .bk-logo { max-width: 28rem; margin-left: auto; }
+@media (max-width: 900px) {
+  .bkr-art { display: none; }
+}
+
+/* The questions fold: an open answer's "+" turns 45 degrees, and its turned
+   box would stand past the column's edge on a phone. Room for it. */
+#faq details.qa > summary { padding-right: 6px; }

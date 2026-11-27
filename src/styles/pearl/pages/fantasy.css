@@ -1,0 +1,53 @@
+/* Fantasy (Pearl): what only this page needs. Everything shared is in
+   pearl/system.css and pearl/kit.css. */
+
+/* Scoring: the five steps, each numbered in mono in a navy ring. */
+.fan-rules { display: grid; row-gap: 14px; counter-reset: fan-rule; }
+.fan-rules li { position: relative; padding-left: 46px; counter-increment: fan-rule; color: var(--ink-2); line-height: 1.55; text-wrap: pretty; }
+.fan-rules li::before {
+  content: counter(fan-rule, decimal-leading-zero); position: absolute; left: 0; top: -2px;
+  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--navy-10); color: var(--navy); font: 500 11px/1 var(--f-mono); letter-spacing: .04em;
+}
+.fan-rules strong { color: var(--ink); }
+
+/* The right-hand column: the table, the figures and their notes. */
+.fan-score { display: flex; flex-direction: column; }
+.fan-score .tblwrap { max-width: 36rem; }
+.fan-note { max-width: 36rem; margin-top: 14px; }
+.fan-sub { margin-top: 36px; }
+.fan-score .minis { max-width: 36rem; margin-top: 18px; gap: var(--sp-4) var(--sp-5); }
+.fan-score .minis .stat { padding-top: 14px; border-top: 1px solid var(--line); gap: 8px; }
+
+/* A cut-out card under a card's or a column's copy. */
+.fan-fig { max-width: 30rem; margin-top: var(--sp-2); }
+.fan-rows { margin-top: var(--sp-2); }
+
+/* Leagues: the public leagues as onward links. */
+.fan-pods .fan-note { margin-top: 18px; }
+
+/* Season: the week as two groups of day chips; the signing days are the gap. */
+.fan-week { display: grid; grid-template-columns: 2fr 5fr; column-gap: 12px; max-width: 36rem; margin-top: var(--sp-2); }
+.fan-week__part { display: grid; row-gap: 10px; align-content: start; }
+.fan-week__days { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 6px; }
+.fan-week__days span {
+  display: grid; place-items: center; height: 48px; border-radius: var(--r-chip);
+  background: var(--surface-hi); border: 1px solid var(--stroke); box-shadow: var(--sh-sm);
+  font: 500 11px/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
+}
+.fan-week__part--sign .fan-week__days span { background: var(--navy-08); border: 1px dashed rgba(66, 82, 140, .45); box-shadow: none; color: var(--navy); }
+.fan-week__what { font: 500 var(--fs-micro)/1.35 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.fan-where { display: flex; flex-direction: column; }
+.fan-where .dates { margin-top: 18px; }
+
+.fan-phones { max-width: 34rem; }
+
+@media (max-width: 900px) {
+  .fan-sub { margin-top: 28px; }
+}
+@media (max-width: 560px) {
+  .fan-week { column-gap: 8px; }
+  .fan-week__days { column-gap: 4px; }
+  .fan-week__days span { height: 40px; font-size: 10px; letter-spacing: .04em; }
+}
+.fan-score .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -1,0 +1,19 @@
+---
+// The Bracket Challenge strip above the menu. It takes itself down once picks
+// lock (BracketClock removes [data-bracket-promo]).
+import { BRACKET, BRACKET_STATUS, bracketPhase, promoIsLive } from '../../lib/bracket-facts';
+const phase = bracketPhase();
+---
+{promoIsLive(phase) && (
+    <aside class="promo" aria-label={BRACKET.name} data-bracket-promo>
+        <div class="wrap promo__in">
+            <a class="promo__link" href={BRACKET.path} data-track="bracket_promo:strip">
+                <span class="promo__status"><span class="dot" aria-hidden="true"></span><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></span>
+                <strong class="promo__name">{BRACKET.name}</strong>
+                <span class="promo__sub">{BRACKET.prize} cash to the top eligible bracket</span>
+                <span class="promo__go">Play free</span>
+            </a>
+            <p class="promo__legal">No purchase necessary. 50 U.S. states &amp; D.C., 18+ (19+ AL/NE, 21+ MS). <a href={BRACKET.rulesPath}>Official Rules</a> apply.</p>
+        </div>
+    </aside>
+)}

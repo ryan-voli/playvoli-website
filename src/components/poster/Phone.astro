@@ -1,0 +1,54 @@
+---
+// A phone: a raw screen capture (no bezel in the picture) framed in a device
+// drawn with CSS. Give it a key from src/lib/screens.ts; the picture, its
+// size and its alt text come from there, so a new capture needs no designer.
+//
+// In a <Stack> it is placed with x, y, w, r, z (and xm, ym, wm for the phone
+// layout). On its own it fills the width it is given.
+import { SCREENS, type ScreenKey } from '../../lib/screens';
+import { placeVars, r3, tint, vars, type Place, type Tint } from './util';
+
+interface Props extends Place {
+  screen: ScreenKey;
+  /** Another alt text, when the manifest's does not suit the page. */
+  alt?: string;
+  /** For a picture in the first screen: loaded at once, not lazily. */
+  eager?: boolean;
+  /** The one main picture of the first screen: loaded at once and at high priority. */
+  priority?: boolean;
+  /** The colour of the hard offset. Default: the field's. */
+  shadow?: Tint;
+  /** No island over the status bar (a capture from a phone without one). */
+  plain?: boolean;
+  class?: string;
+}
+
+const { screen, alt, eager, priority, shadow, plain, class: cls, ...place } = Astro.props;
+const now = eager || priority;
+const s = SCREENS[screen];
+if (!s) throw new Error(`Phone: there is no screen "${screen}" in src/lib/screens.ts. The keys are: ${Object.keys(SCREENS).join(', ')}`);
+
+// The device, in percent of its own width: rim, bezel, corner. The stylesheet
+// holds these for a 780 x 1695 capture; any other shape is worked out here.
+const RIM = 1.1, BEZEL = 2.2, CORNER = 16.2;
+const inset = RIM + BEZEL;
+const sw = 100 - 2 * inset;
+const sh = (sw * s.height) / s.width;
+const dh = sh + 2 * inset;
+const standard = Math.abs(s.height / s.width - 1695 / 780) < 0.002;
+const shape = standard
+  ? {}
+  : {
+      '--pa': `100 / ${r3(dh)}`,
+      '--pr': `${r3((CORNER / dh) * 100)}%`,
+      '--pby': `${r3((RIM / dh) * 100)}%`,
+      '--pbr': `${r3(((CORNER - RIM) / (dh - 2 * RIM)) * 100)}%`,
+      '--piy': `${r3((inset / dh) * 100)}%`,
+      '--pir': `${r3(((CORNER - inset) / sh) * 100)}%`,
+      '--pny': `${r3(((inset + sw * 0.0318) / dh) * 100)}%`,
+      '--pnh': `${r3(((sw * 0.0841) / dh) * 100)}%`,
+    };
+---
+<div class:list={['phone', 'stk', { 'phone--plain': plain }, cls]} style={vars({ ...placeVars(place, `Phone "${screen}"`), '--stk-sh': tint(shadow), ...shape })}>
+    <img src={s.src} width={s.width} height={s.height} alt={alt ?? s.alt} loading={now ? undefined : 'lazy'} decoding={now ? undefined : 'async'} fetchpriority={priority ? 'high' : undefined}>
+</div>

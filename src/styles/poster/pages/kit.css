@@ -1,0 +1,10 @@
+/* The kit page: captions that say which part is which. Nothing here is part of the system. */
+.oc .kit-cap { display: block; width: fit-content; max-width: 100%; margin-bottom: 14px; padding: 7px 11px 8px; background: var(--fg); color: var(--bg); border-radius: 0 10px 0 10px; font: 600 .78rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.kit-cap b { font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 2px; }
+.kit-swatches { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; max-width: 34rem; }
+.kit-swatches li { display: grid; align-content: end; aspect-ratio: 1 / 1.1; padding: 8px; border: 3px solid var(--ink); border-radius: 0 12px 0 12px; font: 800 .625rem/1.25 var(--body); letter-spacing: .08em; text-transform: uppercase; }
+.kit-gap { margin-top: clamp(22px, calc(var(--u) * 2.4), 40px); }
+@media (max-width: 420px) {
+  .kit-swatches { gap: 6px; }
+  .kit-swatches li { padding: 5px; font-size: .5rem; letter-spacing: .02em; }
+}

@@ -1,0 +1,9 @@
+/* The league and podcast pages (/volleytalk, /mlm, /canaan, /lshotvb,
+   /courtcaptains): what only they need.
+   Everything shared is in system.css. */
+
+/* The store buttons under the join button, with their line. */
+.ln-get .label { margin-bottom: 14px; }
+
+/* A deep-link button's note: shown by the page's script when the app cannot open. */
+.ln-help { max-width: 34rem; }

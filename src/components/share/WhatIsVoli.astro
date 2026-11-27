@@ -1,0 +1,60 @@
+---
+// What VOLI is, for a visitor who arrived from a shared link (or a mistyped
+// address) and has never heard of it: one sentence, three things it does with
+// fantasy first, and the way on. Every claim is from lib/voli-facts and the
+// home page; the cut-out cards are pieces of real app screens.
+import Band from '../poster/Band.astro';
+import Btn from '../poster/Btn.astro';
+import Cols from '../poster/Cols.astro';
+import Copy from '../poster/Copy.astro';
+import Stack from '../poster/Stack.astro';
+import Sticker from '../poster/Sticker.astro';
+import type { Field } from '../poster/util';
+
+interface Props {
+  /** The band's colour: it must differ from the bands above and below. */
+  color?: Field;
+  /** Also link to the fantasy page (the league invite). */
+  fantasy?: boolean;
+}
+
+const { color = 'ink', fantasy = false } = Astro.props;
+const ITEMS = [
+  {
+    title: 'Fantasy volleyball',
+    text: 'Build a team from real college and pro players and play the season against your friends, in a public or private league.',
+  },
+  {
+    title: 'Live scores and stats',
+    text: 'Scores and box scores for college and pro matches as they happen, and any team or player to look up.',
+  },
+  {
+    title: 'News, podcasts and chat',
+    text: 'Volleyball news from 20 outlets, 13 volleyball podcasts and a chat room for every match.',
+  },
+];
+---
+<Band color={color} id="what" kicker="VOLI is" title={['the', 'volleyball hub']} tone={color === 'ink' ? 'lime' : undefined} pb={7}>
+    <Cols ratio="50:40" drop={[0, 4]}>
+        <Copy>
+            <p class="lede">VOLI: The Volleyball Hub is a free app for iPhone and Android that covers NCAA <span class="nb">Division I</span> women's volleyball, MLV and LOVB.</p>
+            <ul class="ut-what">
+                {ITEMS.map((item) => (
+                    <li>
+                        <h3 class="h3">{item.title}</h3>
+                        <p class="body">{item.text}</p>
+                    </li>
+                ))}
+            </ul>
+            <div class="btns">
+                {fantasy && <Btn href="/fantasy">Fantasy volleyball on VOLI</Btn>}
+                <Btn href="/">Everything in VOLI</Btn>
+            </div>
+        </Copy>
+        <Stack ratio="100/100">
+            <Sticker cut="card-fantasy" x={6} y={0} w={74} r={-3.75} shadow="rose" />
+            <Sticker cut="card-game" x={14} xm={10} y={57} w={82} wm={84} r={3.75} shadow="blue" />
+            <Sticker cut="float-chat" x={2} y={86} w={86} r={-3.75} shadow="lime" />
+        </Stack>
+    </Cols>
+</Band>

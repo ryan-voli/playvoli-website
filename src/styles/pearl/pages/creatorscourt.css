@@ -1,0 +1,12 @@
+/* Creators Court (Pearl): what only this page needs. Everything shared is
+   in pearl/system.css and pearl/kit.css. Every class carries the "cc-"
+   prefix. */
+
+/* Feature cards: a tight grid of equal-height glass cards. */
+.cc-cards { column-gap: var(--sp-4); --rg: var(--sp-4); align-items: stretch; }
+
+/* Publishing: two cards one over the other. */
+.cc-stack2 { display: grid; row-gap: var(--sp-4); max-width: 34rem; }
+
+/* Who it's for: the cards, then the invitation a band's width under them. */
+.cc-cards + .cols { margin-top: clamp(40px, 5vw, 64px); }

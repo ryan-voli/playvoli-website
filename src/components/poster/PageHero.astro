@@ -1,0 +1,92 @@
+---
+// A hero: flat top, bottom cut on the slant. A label with the ticks (the
+// page's search words), headline lines fitted edge to edge, then copy on the
+// left and art on the right. The label and the lines are one heading.
+//
+//   <PageHero color="blue" label="Fantasy volleyball on VOLI" lines={['Fantasy', 'volleyball']}>
+//     <p class="lede">...</p>
+//     <Stores />
+//     <Phones slot="art" screens={['fantasy', 'fantasyCard']} eager />
+//   </PageHero>
+//
+// Slots: default (copy: a lede, buttons, small print), "art" (a Stack, Phones
+// or Tickets on the right), "sub" (a smaller display line inside the heading).
+// The copy stops a slope above the bottom, which belongs to the next band.
+// Art that renders nothing ({ranking && <Tickets slot="art" ... />} with no
+// ranking) is no art: the hero is then drawn as one without.
+import { emWidth } from '../../lib/designer-metrics';
+import { r3, vars, type Field } from './util';
+import type { LineText } from './rider';
+
+interface HeroLine {
+  text: LineText;
+  hollow?: boolean;
+}
+
+interface Props {
+  color: Field;
+  /** The label over the headline. Parts are kept whole when the label wraps. */
+  label: string | string[];
+  /** The headline. A line of two parts is one line on a wide screen and two on a phone. */
+  lines: (LineText | HeroLine)[];
+  /** 'each': every line runs edge to edge (default). 'same': one size, set by the widest line. */
+  fit?: 'each' | 'same';
+  /** The same choice for phones. Default 'same'. */
+  fitPhone?: 'each' | 'same';
+  /** The most a letter may stand, in --u (1% of the page width). On wide screens the default is 22 for one line, 13.5 for two and 10 for more, so the copy stays in the first screen; on phones it is 30. */
+  cap?: number;
+  capPhone?: number;
+  /** The heading's tag: h1 when the hero opens the page. */
+  as?: 'h1' | 'h2';
+  id?: string;
+  class?: string;
+}
+
+const { color, label, lines, fit = 'each', fitPhone = 'same', cap, capPhone, as: Tag = 'h1', id = 'hero', class: cls } = Astro.props;
+if (!lines?.length) throw new Error('PageHero: give it at least one headline line');
+const labels = Array.isArray(label) ? label : [label];
+const set = lines.map((l) => {
+  const o: HeroLine = typeof l === 'string' || Array.isArray(l) ? { text: l } : l;
+  const parts = (Array.isArray(o.text) ? o.text : [o.text]).map((p) => p.trim());
+  return { parts, hollow: !!o.hollow, em: emWidth(parts.join(' ')), ems: parts.map((p) => emWidth(p)) };
+});
+const widest = Math.max(...set.map((l) => l.em));
+const capWide = cap ?? (set.length === 1 ? undefined : set.length === 2 ? 13.5 : 10);
+const widestPart = Math.max(...set.flatMap((l) => l.ems));
+const hid = `${id}-h`;
+// The art is rendered here, so an empty slot can be told from a full one.
+const art = Astro.slots.has('art') ? (await Astro.slots.render('art')).trim() : '';
+const solo = !art;
+---
+<section class:list={['hero', `f-${color}`, { 'hero--solo': solo }, cls]} id={id === 'hero' ? undefined : id} aria-labelledby={hid}>
+    <div class="hero__in">
+        <Tag id={hid}>
+            <span class="hero__label"><span class="ticks" aria-hidden="true"></span><span class="hero__label-t">{labels.map((t) => <Fragment><span>{t}</span>{' '}</Fragment>)}</span></span>
+            {set.map((l) => (
+                <Fragment>
+                    <span
+                        class:list={['hero__line', { 'hero__line--wrap': l.parts.length === 2, hollow: l.hollow }]}
+                        style={vars({
+                          '--em': fit === 'same' ? widest : l.em,
+                          '--em-m': fitPhone === 'same' ? widestPart : r3(Math.max(...l.ems)),
+                          '--cap': capWide,
+                          '--cap-m': capPhone,
+                        })}
+                    >{l.parts.length === 2 ? <Fragment><span>{l.parts[0]}</span>{' '}<span>{l.parts[1]}</span></Fragment> : l.parts[0]}</span>
+                    {' '}
+                </Fragment>
+            ))}
+            <slot name="sub" />
+        </Tag>
+        <div class="hero__row">
+            <div class="hero__copy">
+                <slot />
+            </div>
+            {!solo && (
+                <div class="hero__art">
+                    <Fragment set:html={art} />
+                </div>
+            )}
+        </div>
+    </div>
+</section>

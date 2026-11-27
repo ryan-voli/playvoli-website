@@ -1,0 +1,57 @@
+/* About: what only this page needs. Everything shared is in system.css. */
+
+/* Our story: the founders two by two, filling their column up to two
+   cards of 24rem, the width their 384px photographs hold; then two short
+   points under them. */
+.abt-founders { --abt-gap: clamp(18px, calc(var(--u) * 2.2), 32px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--abt-gap); max-width: calc(48rem + var(--abt-gap)); margin-left: auto; }
+.abt-point .h3 + .body { margin-top: .6em; }
+.abt-point .body { max-width: 36rem; }
+
+/* VOLI by the numbers: a figure in the display face, then the sentence that
+   says it. --em is the widest figure, so every figure is set at one size and
+   the widest fills its column. On ink the figures take the palette in turn. */
+.abt-figs { --rg: calc(var(--u) * 3.4); }
+.abt-figs > li { padding-top: calc(var(--u) * 1.2); border-top: 3px solid var(--c, var(--fg)); }
+.abt-figs > li:nth-child(4n + 1) { --c: var(--t1); }
+.abt-figs > li:nth-child(4n + 2) { --c: var(--t2); }
+.abt-figs > li:nth-child(4n + 3) { --c: var(--t3); }
+.abt-figs > li:nth-child(4n + 4) { --c: var(--t4); }
+.abt-fig { display: block; color: var(--c, var(--fg)); font: 400 min(calc((var(--cw) - var(--u) * 9) / 3 / var(--em, 5.5) * .97), calc(var(--u) * 6.2))/.8 var(--display); text-transform: uppercase; white-space: nowrap; }
+.abt-tilde { margin-right: .05em; font: 800 .6em/1 var(--body); }
+.abt-fact { max-width: 22rem; margin-top: calc(var(--u) * 1.1 + 6px); font: 600 clamp(.95rem, calc(.84rem + var(--u) * .28), 1.1875rem)/1.4 var(--body); text-wrap: pretty; }
+
+/* Partners: the cards, then where the public leagues are. */
+.abt-leagues { font-weight: 500; }
+
+/* What's next: the roadmap under its line, and the Bracket Challenge's dates under its button. */
+.abt-roadmap { margin-top: calc(var(--u) * 1.6 + 12px); }
+.abt-tickets { margin-top: calc(var(--u) * 2.4 + 8px); padding-bottom: calc(var(--u) * 2.4); }
+.btns + .dates { margin-top: calc(var(--u) * 3 + 12px); }
+
+/* Contact: the address, fitted edge to edge, riding the slope like a title. */
+.abt-mail { margin-top: calc(var(--u) * 1.4 + 10px); font: 400 calc(var(--cw) / var(--em) * .99)/.84 var(--display); text-transform: uppercase; white-space: nowrap; }
+.abt-mail a { display: block; color: var(--pop); text-decoration: none; }
+@supports (-webkit-text-stroke: 1px #000) {
+  .abt-mail a:hover { color: transparent; -webkit-text-stroke: max(1.5px, .02em) var(--pop); }
+}
+.abt-follow .label { margin-bottom: 12px; }
+.abt-social { border-top: 3px solid var(--fg); }
+.abt-social a { display: flex; align-items: baseline; column-gap: 12px; padding: .8em 0; border-bottom: 3px solid var(--fg); text-decoration: none; }
+.abt-social__n { font: 400 clamp(1.05rem, calc(var(--u) * 1.9), 1.75rem)/1.05 var(--display); text-transform: uppercase; }
+.abt-social__h { flex: 1; min-width: 0; color: var(--soft); font: 600 .9375rem/1.3 var(--body); overflow-wrap: anywhere; }
+.abt-social a svg { align-self: center; width: 1.3rem; height: 1.3rem; flex: none; transition: transform .12s ease; }
+.abt-social a:hover .abt-social__n { color: var(--pop); }
+.abt-social a:hover svg { transform: translateX(6px); }
+
+@media (max-width: 760px) {
+  .abt-figs { --rg: clamp(26px, calc(var(--u) * 7), 48px); }
+  .abt-figs > li { padding-top: 14px; }
+  .abt-fig { font-size: min(calc(var(--cw) / var(--em, 5.5) * .97), calc(var(--u) * 15)); }
+  .abt-fact { max-width: none; }
+  .abt-mail { font-size: calc(var(--cw) / var(--em-m) * .99); }
+  .abt-mail span { display: block; }
+  .abt-mail span + span { margin-top: .12em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .abt-social a svg { transition: none; }
+}

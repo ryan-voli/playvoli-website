@@ -1,0 +1,244 @@
+/* ==========================================================================
+   The account pages in Pearl: /auth, /auth/reset-password, /confirmation,
+   /profile, and the Daily Grid's shell. Loaded by SiteLayout.
+
+   SiteLayout still wraps the frozen Layout.astro, so Layout's old global.css
+   is on these pages too (a dark html ground, white body text, a * reset).
+   It loads AFTER the Pearl sheets, so where the two meet, the rules here
+   carry html:root / body.pearl (or a class) and win.
+   ========================================================================== */
+
+/* ---------- Ground and body ------------------------------------------------ */
+html:root {
+  background:
+    radial-gradient(60% 55% at 84% 20%, rgba(196, 208, 244, .80), rgba(196, 208, 244, 0) 100%),
+    radial-gradient(55% 50% at 10% 94%, rgba(232, 212, 236, .60), rgba(232, 212, 236, 0) 100%),
+    var(--pearl);
+  background-attachment: fixed;
+  min-height: 0;
+}
+body.pearl {
+  color: var(--ink); background: transparent;
+  font: 400 var(--fs-body)/1.45 var(--f-body);
+  max-width: none; overflow-x: clip;
+}
+/* global.css's bare "a { color: inherit }" loads after Pearl's "a"; the
+   Pearl components all colour their own links, so only these pages' plain
+   links need their navy back. */
+.acct a:not(.btn), .acct-modal a:not(.btn) { color: var(--navy); }
+
+/* The frozen Nav renders inside Layout for oauth-callback's sake; the Pearl
+   menu replaces it here. Its #nav-auth stays in the page, out of sight. */
+body.pearl .nav-container,
+body.pearl .mobile-menu { display: none !important; }
+
+/* Script-toggled helpers the pages rely on. */
+body.pearl .hidden { display: none !important; }
+
+.acct-main { display: block; }
+
+/* ---------- Page frame: one column, the card in the middle ----------------- */
+.acct {
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; max-width: var(--maxw); margin: 0 auto;
+  padding: clamp(40px, 6vw, 88px) var(--gutter) clamp(32px, 5vw, 64px);
+}
+.acct-spin-wrap { display: flex; justify-content: center; padding: 64px 0; }
+
+/* The card: Pearl glass, a little higher than the ground. */
+.acct-card {
+  width: 100%; max-width: 448px;
+  padding: clamp(24px, 4vw, 40px);
+  background: var(--surface-hi); border: 1px solid var(--stroke); border-radius: var(--r-sheet);
+  box-shadow: var(--sh-card);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--ink);
+}
+.acct-card--wide { max-width: 520px; }
+.acct-card--center { text-align: center; }
+
+.acct-title { font: 400 clamp(36px, 4vw, 48px)/1 var(--f-display); letter-spacing: -.01em; text-wrap: balance; margin: 0 0 10px; color: var(--ink); }
+.acct-title em { font-style: italic; color: var(--navy); }
+.acct-sub { color: var(--ink-2); font-size: 16px; line-height: 1.45; margin: 0 0 24px; text-wrap: pretty; }
+.acct-sub strong { color: var(--ink); font-weight: 600; }
+.acct-meta { color: var(--ink-3); font-size: 14px; }
+
+/* ---------- Buttons ---------------------------------------------------------- */
+.acct-wide { width: 100%; height: 48px; }
+.btn.acct-wide { display: flex; }
+.btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; transform: none; }
+.acct-danger { background: transparent; color: var(--err); border-color: rgba(180, 35, 60, .38); }
+.acct-danger:hover { background: rgba(180, 35, 60, .06); border-color: var(--err); }
+.acct-danger:disabled:hover { background: transparent; border-color: rgba(180, 35, 60, .38); }
+.acct-back {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 0 20px; padding: 0;
+  border: 0; background: none; cursor: pointer;
+  font: 500 14px/1.2 var(--f-body); color: var(--navy);
+}
+.acct-back:hover { text-decoration: underline; text-underline-offset: 3px; }
+.acct-textlink { color: var(--navy); font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(66, 82, 140, .35); text-underline-offset: 3px; }
+.acct-textlink:hover { text-decoration-color: var(--navy); }
+
+/* ---------- Two-way switch (Log In / Sign Up, Grid / Season) ---------------- */
+.acct-tabs {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px;
+  padding: 4px; border-radius: var(--r-pill);
+  background: var(--track); border: 1px solid var(--stroke);
+}
+.acct-tabs__tab {
+  height: 38px; padding: 0 14px; border: 0; border-radius: var(--r-pill); background: transparent;
+  font: 500 14px/1 var(--f-body); color: var(--ink-2); cursor: pointer;
+  transition: background var(--dur) var(--ease-out), color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.acct-tabs__tab:hover { color: var(--ink); }
+.acct-tabs__tab.active { background: #fff; color: var(--ink); box-shadow: var(--sh-sm); }
+
+/* ---------- Forms ------------------------------------------------------------ */
+.acct-form { display: flex; flex-direction: column; gap: 12px; }
+.acct-form .btn--primary { margin-top: 6px; }
+.acct-form .field__c, .acct-card .field__c, .acct-modal .field__c { height: 48px; }
+
+/* Messages: written by the page scripts as "message error|success visible". */
+body.pearl .message {
+  display: none; margin: 0 0 14px; padding: 11px 14px 11px 34px; position: relative;
+  border-radius: var(--r-tile); font-size: 14px; font-weight: 500; line-height: 1.45; text-align: left;
+}
+body.pearl .message.visible { display: block; }
+body.pearl .message::before { content: ""; position: absolute; left: 14px; top: 17px; width: 7px; height: 7px; border-radius: 50%; }
+body.pearl .message.error { color: var(--err); background: rgba(180, 35, 60, .06); border: 1px solid rgba(180, 35, 60, .32); }
+body.pearl .message.error::before { background: var(--err); box-shadow: 0 0 0 3px rgba(180, 35, 60, .14); }
+body.pearl .message.success { color: var(--navy-deep); background: var(--navy-08); border: 1px solid var(--navy-18); }
+body.pearl .message.success::before { background: var(--navy); box-shadow: 0 0 0 3px var(--navy-10); }
+body.pearl .message .inline-btn {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px;
+}
+
+/* A spinner, for the network-bound loads only. */
+.acct-spinner {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--navy-18); border-top-color: var(--navy);
+  animation: acct-spin 800ms linear infinite;
+}
+@keyframes acct-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .acct-spinner { animation-duration: 2400ms; } }
+
+/* ---------- /auth ------------------------------------------------------------ */
+.auth-view { display: none; }
+.auth-view.active { display: block; }
+.auth-card .acct-tabs { margin-bottom: 20px; }
+
+.forgot-link { text-align: right; margin-top: -2px; }
+.resend-link { text-align: center; margin-top: 14px; }
+
+.auth-or { display: flex; align-items: center; gap: 12px; margin: 22px 0; font: 500 var(--fs-micro)/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+.auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.oauth-buttons { display: flex; flex-direction: column; gap: 10px; }
+.btn-oauth { gap: 10px; }
+.btn-oauth svg { width: 20px; height: 20px; flex: none; }
+.btn-oauth svg path[fill="white"] { fill: var(--ink); }
+
+.code-inputs { display: flex; gap: 8px; justify-content: center; margin: 18px 0 20px; }
+.code-inputs input {
+  width: 46px; height: 56px; min-width: 0; padding: 0; text-align: center;
+  font: 600 22px/1 var(--f-body); font-variant-numeric: tabular-nums; color: var(--ink);
+  background: rgba(255, 255, 255, .72); border: 1px solid var(--line); border-radius: var(--r-tile);
+  transition: border-color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+}
+.code-inputs input:hover { border-color: rgba(18, 20, 28, .28); }
+.code-inputs input:focus { outline: none; border-color: var(--navy); background: #fff; box-shadow: 0 0 0 3px var(--navy-18); }
+
+.password-rules { display: flex; flex-direction: column; gap: 4px; padding: 2px 2px 0; font-size: 13.5px; color: var(--ink-3); }
+.password-rules span { display: flex; align-items: center; gap: 8px; transition: color var(--dur); }
+.password-rules span::before { content: ""; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--line); transition: background var(--dur); }
+.password-rules span.valid { color: var(--ink); }
+.password-rules span.valid::before { background: var(--lime-on-light); box-shadow: 0 0 0 3px rgba(112, 143, 0, .16); }
+
+.acct-badge-icon {
+  display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 18px;
+  border-radius: 50%; background: var(--navy-10); color: var(--navy);
+}
+.acct-badge-icon svg { width: 28px; height: 28px; stroke: var(--navy); }
+.auth-card .acct-badge-icon + .acct-title,
+.auth-card .acct-badge-icon ~ .acct-sub { text-align: center; }
+
+@media (max-width: 420px) {
+  .code-inputs { gap: 6px; }
+  .code-inputs input { width: 42px; height: 52px; }
+}
+
+/* ---------- /auth/reset-password and /confirmation -------------------------- */
+.acct-stub .acct-spin-wrap { padding: 0 0 22px; }
+.acct-stub .manual-link { color: var(--ink-2); font-size: 14px; }
+.acct-actions { display: flex; flex-direction: column; gap: 10px; }
+.fallback { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.fallback-title { font-weight: 600; color: var(--ink); margin: 0 0 4px; }
+.fallback-text { margin: 0 0 14px; }
+.store-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.store-links .btn { width: 100%; }
+
+/* ---------- /profile --------------------------------------------------------- */
+.avatar-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 28px; }
+.avatar-wrap { position: relative; width: 96px; height: 96px; }
+.profile-avatar, .profile-avatar-fallback {
+  width: 96px; height: 96px; border-radius: 50%;
+  border: 1px solid var(--stroke); box-shadow: var(--sh-sm);
+}
+.profile-avatar { object-fit: cover; display: block; }
+.profile-avatar-fallback { display: flex; align-items: center; justify-content: center; background: #fff; }
+.profile-avatar-fallback svg { stroke: var(--navy); }
+.avatar-upload-btn {
+  position: absolute; right: -2px; bottom: -2px; width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center; border-radius: 50%;
+  background: var(--ink); color: #fff; border: 2px solid #fff; cursor: pointer;
+  transition: background var(--dur) var(--ease-out);
+}
+.avatar-upload-btn:hover { background: var(--ink-hover); }
+.avatar-upload-btn svg { width: 15px; height: 15px; }
+.profile-email { margin-top: 12px; font: 500 var(--fs-micro)/1.3 var(--f-mono); letter-spacing: .08em; color: var(--ink-2); overflow-wrap: anywhere; text-align: center; }
+
+.field-group { display: grid; gap: 7px; min-width: 0; margin-bottom: 18px; }
+.field-group > label { font-size: 14px; font-weight: 500; color: var(--ink); }
+.field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 420px) { .field-row { grid-template-columns: minmax(0, 1fr); gap: 0; } }
+
+/* Team avatars sit on ink tiles, as in the app, so every team colour reads. */
+.team-selector { display: flex; flex-wrap: wrap; gap: 8px; }
+.team-btn {
+  width: 52px; height: 52px; padding: 7px; display: flex; align-items: center; justify-content: center;
+  border: 0; border-radius: var(--r-tile); background: var(--ink); cursor: pointer;
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow var(--dur) var(--ease-out), transform var(--dur) var(--ease-glide);
+}
+.team-btn img { width: 100%; height: 100%; object-fit: contain; }
+.team-btn:hover { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--line); }
+.team-btn:active { transform: translateY(1px); }
+.team-btn.selected { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--navy); }
+/* The one dark avatar (San Diego's navy) would vanish on ink: white tile. */
+.team-btn[data-league="MLV"][data-abbr="SDM"] { background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.team-btn[data-league="MLV"][data-abbr="SDM"]:hover { box-shadow: inset 0 0 0 1px var(--line), 0 0 0 2px #fff, 0 0 0 4px var(--line); }
+.team-btn[data-league="MLV"][data-abbr="SDM"].selected { box-shadow: inset 0 0 0 1px var(--line), 0 0 0 2px #fff, 0 0 0 4px var(--navy); }
+
+#save-btn { margin-top: 6px; }
+.danger-zone {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line);
+}
+.danger-zone > .btn { flex: 1 1 0; min-width: 0; }
+
+/* The delete dialog (the page script sets its display). */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+  background: rgba(18, 20, 28, .32);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.acct-modal {
+  width: min(100%, 400px); padding: 28px 24px 24px; text-align: left;
+  background: #fff; border: 1px solid var(--stroke); border-radius: var(--r-sheet); box-shadow: var(--sh-pop);
+}
+.acct-modal__t { font: 400 30px/1.05 var(--f-display); letter-spacing: -.005em; color: var(--ink); margin: 0 0 10px; }
+.modal-text { margin: 0 0 16px; color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+.modal-text strong { color: var(--ink); font: 500 14px/1.4 var(--f-mono); overflow-wrap: anywhere; }
+.acct-modal .field__c { margin-bottom: 12px; }
+.modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }

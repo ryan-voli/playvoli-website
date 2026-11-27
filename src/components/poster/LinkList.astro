@@ -1,0 +1,23 @@
+---
+// The "more" list: onward links in the display face, ruled, each with an
+// arrow. For a level block.
+//
+//   <LinkList label="More about VOLI" items={[{ href: '/rankings', label: 'VOLI Top 100' }, ...]} />
+import Arrow from './Arrow.astro';
+import { emWidth } from '../../lib/designer-metrics';
+
+interface Props {
+  /** Names the list, on the page and for screen readers. */
+  label: string;
+  items: { href: string; label: string }[];
+  class?: string;
+}
+const { label, items, class: cls } = Astro.props;
+items.forEach((i) => emWidth(i.label));
+---
+<nav class:list={['more', cls]} aria-label={label}>
+    <p class="label">{label}</p>
+    <ul>
+        {items.map((i) => <li><a href={i.href}>{i.label} <Arrow /></a></li>)}
+    </ul>
+</nav>

@@ -1,0 +1,8 @@
+/* The legal pages in Pearl (/privacy, /terms): what only they need.
+   Everything shared is in pearl/system.css and pearl/kit.css. */
+
+/* The few lines under the title: a paragraph apart from the next, and the
+   store buttons a little further down. */
+.sheet__lede { display: flex; flex-direction: column; gap: var(--sp-3); max-width: 40rem; }
+.sheet__lede .body { font-size: var(--fs-body); color: var(--ink-2); }
+.sheet__lede .stores { margin-top: var(--sp-2); }

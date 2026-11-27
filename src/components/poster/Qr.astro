@@ -1,0 +1,30 @@
+---
+// "Scan to get the app": shown where there is a mouse and no phone in hand.
+// The code is drawn at build time (lib/qr.ts) and is plain SVG in the page:
+// no script, no outside service. /download sends each phone to its own store.
+//
+//   <Qr />
+//   <Qr url="https://playvoli.com/volleytalk" text="Scan with your phone to join the Volley Talk league." id="page-qr" />
+import { qrPath } from '../../lib/qr';
+
+interface Props {
+  /** The address the code opens: 42 characters at most. Default: /download. */
+  url?: string;
+  /** The line in the display face. */
+  title?: string;
+  /** What scanning does, in a sentence. */
+  text?: string;
+  class?: string;
+  /** Any other attribute goes on the card (an id a script looks for). */
+  [attr: string]: any;
+}
+const { url = 'https://playvoli.com/download', title = 'On a computer?', text = 'Scan to get VOLI on your phone.', class: cls, ...rest } = Astro.props;
+const { d, size } = qrPath(url);
+---
+<div class:list={['qr', cls]} {...rest}>
+    <svg viewBox={`0 0 ${size} ${size}`} width="104" height="104" role="img" aria-label={`QR code that opens ${url.replace('https://', '')}`} shape-rendering="crispEdges">
+        <rect width={size} height={size} fill="#fff" />
+        <path d={d} fill="#0F1314" />
+    </svg>
+    <p class="qr__t"><strong>{title}</strong> {text}</p>
+</div>

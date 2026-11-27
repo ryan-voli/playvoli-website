@@ -1,0 +1,43 @@
+---
+// A card for a partner or a person: a logo or a photograph, a mono kicker,
+// the name (roman: card titles never take the italic) and a few lines, on
+// glass. With an href the whole card is one link (put no other link in it).
+//
+//   <Card name="Volley Talk" kicker="Podcast partner" href="/volleytalk" cta="Volley Talk on VOLI"
+//         logo img={{ src: '/images/partners/volleytalk-cover-sm.webp', width: 160, height: 160, alt: '...' }}>
+//     <p>...</p>
+//   </Card>
+//
+// Cards sit in <Cols> or in <div class="cardgrid">. `shadow` is the Poster's
+// and is ignored; `ground="white"` gives a logo a white tile.
+import type { Tint } from './util';
+
+interface Props {
+  name: string;
+  kicker?: string;
+  img?: { src: string; width: number; height: number; alt: string };
+  logo?: boolean;
+  ratio?: string;
+  ground?: Tint;
+  href?: string;
+  cta?: string;
+  shadow?: Tint;
+  as?: 'h2' | 'h3' | 'h4';
+  track?: string;
+  class?: string;
+  [attr: string]: any;
+}
+
+const { name, kicker, img, logo, ratio, ground, href, cta, shadow: _s, as: H = 'h3', track, class: cls, ...rest } = Astro.props;
+const Tag = href ? 'a' : 'article';
+const style = [ratio && `--pic:${ratio}`, ground === 'white' && '--pic-bg:#fff'].filter(Boolean).join(';') || undefined;
+---
+<Tag class:list={['card', 'kcard', { 'kcard--logo': logo, 'kcard--link': href }, cls]} href={href} data-track={href ? track : undefined} style={style} {...rest}>
+    {img && <div class="kcard__pic"><img src={img.src} width={img.width} height={img.height} alt={img.alt} loading="lazy" decoding="async"></div>}
+    <div class="kcard__body">
+        {kicker && <p class="kicker">{kicker}</p>}
+        <H class="h3 kcard__n">{name}</H>
+        <div class="kcard__text"><slot /></div>
+        {href && cta && <span class="go kcard__go">{cta}</span>}
+    </div>
+</Tag>

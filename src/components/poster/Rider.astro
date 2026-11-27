@@ -1,0 +1,47 @@
+---
+// The title that rides the cut: display lines fitted edge to edge.
+// It measures its own lines in Designer (emWidth), so nobody types a width.
+//
+//   <Rider title="Fantasy" sub="leagues" />
+//   <Rider kicker="The Volleyball" title="Encyclopedia" tone="lime" />
+//   <Rider title={['News and', 'podcasts']} />            one line wide, two on a phone
+//   <Rider lines={['Free on iPhone', { text: 'and Android', hollow: true }]} />
+//
+// A Band or a Cell prints its own Rider from the same props: use this on its
+// own only where a title is needed outside one.
+import { riderLines, type TitleProps } from './rider';
+import { r3, vars } from './util';
+
+interface Props extends TitleProps {
+  /** The heading tag. How big the title looks never decides this. */
+  as?: 'h1' | 'h2' | 'h3' | 'p' | 'div';
+  id?: string;
+  /** A colour for the title on an ink band. Leave out for the field's own. */
+  tone?: 'lime' | 'blue' | 'rose' | 'white';
+  /** A few words in small caps under the lines, part of the heading's text. */
+  note?: string;
+  class?: string;
+}
+
+const { as: Tag = 'h2', id, tone, note, class: cls, ...title } = Astro.props;
+const lines = riderLines(title);
+if (!lines.length) throw new Error('Rider: give it a title, a kicker, a sub or lines');
+---
+<Tag class:list={['rider', tone && `rider--${tone}`, cls]} id={id}>
+    {lines.map((l) => (
+        <Fragment>
+            {l.size === 'sm' ? (
+                <span class:list={['rider__sm', { hollow: l.hollow }]} style={vars({ '--em': l.em })}>{l.parts[0]}</span>
+            ) : l.parts.length === 2 ? (
+                <span
+                    class:list={['rider__big', 'rider__big--wrap', { 'rider__big--fit': l.fit, hollow: l.hollow }]}
+                    style={vars({ '--em-d': l.em, '--em-m': r3(Math.max(...l.ems)), '--cap': l.cap, '--cap-m': l.capPhone })}
+                ><span style={l.fit ? vars({ '--em-s': l.ems[0] }) : undefined}>{l.parts[0]}</span>{' '}<span style={l.fit ? vars({ '--em-s': l.ems[1] }) : undefined}>{l.parts[1]}</span></span>
+            ) : (
+                <span class:list={['rider__big', { hollow: l.hollow }]} style={vars({ '--em': l.em, '--cap': l.cap, '--cap-m': l.capPhone })}>{l.parts[0]}</span>
+            )}
+            {' '}
+        </Fragment>
+    ))}
+    {note && <span class="rider__note">{note}</span>}
+</Tag>

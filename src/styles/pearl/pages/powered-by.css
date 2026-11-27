@@ -1,0 +1,54 @@
+/* Powered by VOLI (Pearl): what only this page needs. Everything shared is
+   in pearl/system.css and pearl/kit.css. Every class carries the "pb-"
+   prefix. */
+
+/* The corners: a page drawn as a glass window, the badge bottom right, the
+   other three corners marked as places it can go. */
+.pb-corners { display: flex; justify-content: flex-end; margin: 0; }
+.pb-corners__page {
+  --pad: 4.5%;
+  position: relative; width: min(100%, 36rem); aspect-ratio: 16 / 11; overflow: hidden;
+  border-radius: var(--r-sheet); border: 1px solid var(--stroke);
+  background: radial-gradient(70% 90% at 92% 8%, rgba(196, 208, 244, .75), transparent), radial-gradient(60% 80% at 0% 100%, rgba(232, 212, 236, .7), transparent), rgba(255, 255, 255, .8);
+  box-shadow: var(--sh-card);
+}
+.pb-corners__bar { position: absolute; inset: 0 0 auto; display: flex; align-items: center; gap: 1.6%; height: 11%; padding-left: var(--pad); border-bottom: 1px solid var(--stroke); background: rgba(255, 255, 255, .5); }
+.pb-corners__bar i { width: 2.2%; aspect-ratio: 1; border-radius: 50%; background: var(--rose); }
+.pb-corners__bar i:nth-child(2) { background: var(--cyan); box-shadow: inset 0 0 0 1px rgba(18, 20, 28, .12); }
+.pb-corners__bar i:nth-child(3) { background: var(--lime-on-light); }
+.pb-corners__lines { position: absolute; left: 22%; right: 22%; top: 36%; display: grid; row-gap: 9%; height: 30%; }
+.pb-corners__lines i { display: block; height: 100%; border-radius: var(--r-pill); background: var(--track); }
+.pb-corners__lines i:nth-child(1) { background: var(--grid); width: 72%; }
+.pb-corners__lines i:nth-child(2) { width: 86%; }
+.pb-corners__lines i:nth-child(4) { width: 64%; }
+.pb-corners__spot, .pb-corners__pill { position: absolute; width: 30%; aspect-ratio: 141 / 28; }
+.pb-corners__spot {
+  display: flex; align-items: center; justify-content: center; border: 1px dashed rgba(66, 82, 140, .45); border-radius: var(--r-pill);
+  background: var(--navy-08); color: var(--navy); font: 500 clamp(8px, .7vw, 10.5px)/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+}
+.pb-corners__spot--top-left { top: calc(11% + var(--pad)); left: var(--pad); }
+.pb-corners__spot--top-right { top: calc(11% + var(--pad)); right: var(--pad); }
+.pb-corners__spot--bottom-left { bottom: var(--pad); left: var(--pad); }
+.pb-corners__pill { right: var(--pad); bottom: var(--pad); height: auto; border-radius: var(--r-pill); box-shadow: 0 0 0 1px var(--stroke), var(--sh-sm); }
+@media (max-width: 900px) {
+  .pb-corners { justify-content: flex-start; }
+}
+@media (max-width: 560px) {
+  .pb-corners__spot { font-size: 7.5px; letter-spacing: .06em; }
+}
+
+/* Code to copy: the snippet in its own scrolling box, the button under it. */
+.pb-code { display: grid; justify-items: start; row-gap: var(--sp-3); min-width: 0; }
+.pb-code > .codebox { width: 100%; }
+.pb-attr { padding: .1em .4em; border-radius: var(--r-badge); background: var(--navy-08); color: var(--navy); font: 500 .82em/1.3 var(--f-mono); white-space: nowrap; }
+.tbl td.pb-mono { font: 500 14px/1.3 var(--f-mono); color: var(--navy); }
+
+/* The rules: ruled lines, each behind a navy dot. */
+.pb-rules > ul { display: grid; border-top: 1px solid var(--line); }
+.pb-rules li { position: relative; max-width: 34rem; padding: 14px 0 15px 24px; border-bottom: 1px solid var(--line); font-weight: 500; line-height: 1.5; text-wrap: pretty; }
+.pb-rules li::before { content: ""; position: absolute; left: 2px; top: calc(14px + .75em - 3.5px); width: 7px; height: 7px; border-radius: 50%; background: var(--navy); box-shadow: 0 0 0 3px var(--navy-10); }
+.pb-rules > p { max-width: 34rem; margin-top: var(--sp-5); }
+
+/* Where the live badge floats (only this page loads it), the end of the
+   page leaves room under the footer's last line so the badge never sits on it. */
+body:has(> #voli-powered-by) { padding-bottom: 64px; }

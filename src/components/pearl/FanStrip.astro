@@ -1,0 +1,70 @@
+---
+// Fan quotes moving slowly right to left. The quotes are in the HTML once,
+// as plain text, so search engines and AI assistants read each one once; the
+// script adds a hidden copy only to make the loop seamless.
+// It stops on hover, on keyboard focus, on a tap (touch screens), and with the
+// Pause button (WCAG 2.2.2). With reduced motion, or without the script, it is
+// a row you scroll by hand.
+import type { FanQuote } from '../../lib/voli-facts';
+interface Props {
+  quotes: FanQuote[];
+  label: string;
+}
+const { quotes, label } = Astro.props;
+---
+<div class="strip" data-strip>
+    <div class="strip__view" role="region" aria-label={label} tabindex="0">
+        <div class="strip__track">
+            <ul class="strip__list">
+                {quotes.map((q) => (
+                    <li>
+                        <figure class="card quote">
+                            <blockquote>{q.text}</blockquote>
+                            <figcaption>{q.from === 'appstore' ? (q.name ? `${q.name} · App Store review` : 'App Store review') : q.from === 'play' ? 'Google Play review' : 'VOLI user · in the app'}</figcaption>
+                        </figure>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </div>
+    <div class="wrap strip__bar">
+        <button type="button" class="btn btn--ghost btn--sm strip__toggle" aria-pressed="false" hidden>
+            <svg class="i-pause" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="3" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="8" y="2" width="3" height="10" rx="1" fill="currentColor"/></svg>
+            <svg class="i-play" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2.2v9.6c0 .5.5.8 1 .5l7.4-4.8a.6.6 0 0 0 0-1L5 1.7c-.5-.3-1 0-1 .5Z" fill="currentColor"/></svg>
+            <span class="strip__label">Pause</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    const SPEED = 38; // px per second: slow enough to read along
+    for (const root of document.querySelectorAll<HTMLElement>('[data-strip]')) {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+        const track = root.querySelector<HTMLElement>('.strip__track')!;
+        const list = root.querySelector<HTMLElement>('.strip__list')!;
+        const btn = root.querySelector<HTMLButtonElement>('.strip__toggle')!;
+        const label = root.querySelector<HTMLElement>('.strip__label')!;
+
+        const copy = list.cloneNode(true) as HTMLElement;
+        copy.setAttribute('aria-hidden', 'true');
+        copy.setAttribute('inert', '');
+        track.append(copy);
+
+        const time = () => root.style.setProperty('--strip-dur', `${Math.round(list.offsetWidth / SPEED)}s`);
+        time();
+        new ResizeObserver(time).observe(list);
+        root.classList.add('is-moving');
+
+        const setPaused = (p: boolean) => {
+            root.classList.toggle('is-paused', p);
+            btn.setAttribute('aria-pressed', String(p));
+            label.textContent = p ? 'Play' : 'Pause';
+        };
+        btn.hidden = false;
+        btn.addEventListener('click', () => setPaused(!root.classList.contains('is-paused')));
+        // Touch screens have no hover: a tap on the quotes stops or restarts them.
+        track.addEventListener('pointerup', (e) => {
+            if (e.pointerType !== 'mouse') setPaused(!root.classList.contains('is-paused'));
+        });
+    }
+</script>

@@ -1,0 +1,1125 @@
+/* ==========================================================================
+   VOLI "POSTER": the design system
+   --------------------------------------------------------------------------
+   The page is a stack of the logo's stripes. Every section is a flat colour
+   band cut on the mark's own 15 degree slant. Display type rides that slant;
+   anything you read as a sentence stays level.
+
+   PALETTE   ink #0F1314 · lemon lime #F0FF1E · electric blue #17E9FC ·
+             rose #FF1F6D · white for type on ink. Solid fields only, and
+             the only shadow anywhere is a hard offset.
+   TYPE      Designer: display, always caps, tight (line-height .8 to .84),
+             fitted edge to edge from its measured width. Inter: everything
+             you read, at 16 to 22px on a measure of about 36rem.
+   SHAPE     One corner rule, from the mark: sharp, round, sharp, round
+             (border-radius: 0 r 0 r). One angle: 15 degrees and its halves
+             (7.5, 3.75) for anything stuck on the poster.
+   GEOMETRY  --u is 1% of the page width. A band is a box sheared by
+             skewY(15deg) from its top right corner (.band__in). Inside it the
+             space is sheared: --lv is the transform that sets a block level
+             again, and --sk is 1. A levelled block resets both for what it
+             holds, so nothing is ever levelled twice.
+   CONTRAST  ink on lime 16.9 · ink on blue 12.5 · ink on rose 5.05 · white on
+             ink 18.7 · lime on ink 16.9 · rose on ink 5.05. White on rose is
+             3.7, so reading text on rose is always ink.
+
+   CONTENTS  1 fonts · 2 base · 3 type · 4 buttons · 5 menu · 6 promo strip ·
+             7 bands, columns, titles · 8 stickers · 9 hero · 10 parts ·
+             11 closing band · 12 reading · 13 tables · 14 forms · 15 cards ·
+             16 footer · 17 dialog · 18 motion
+   ========================================================================== */
+
+/* ---------- 1. Fonts ------------------------------------------------------ */
+@font-face {
+  font-family: 'Designer';
+  src: url('/fonts/Designer.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  /* Designer ships hhea 752/-200 but usWin 1026/273, so Windows would set every
+     line a tenth of an em lower. Pin the hhea numbers for everyone. */
+  ascent-override: 75.2%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- 2. Base ------------------------------------------------------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: clip; scroll-behavior: smooth; }
+body.oc {
+  --ink: #0F1314;
+  --lime: #F0FF1E;
+  --blue: #17E9FC;
+  --rose: #FF1F6D;
+  --display: 'Designer', 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
+  --body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --lv: none;                                        /* level space: nothing to undo */
+  --sk: 0;
+  margin: 0;
+  background: var(--ink);
+  color: #fff;
+  font: 400 1.0625rem/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+:where(.oc) *, :where(.oc) *::before, :where(.oc) *::after { box-sizing: border-box; }
+:where(.oc) img, :where(.oc) svg { display: block; }
+:where(.oc) img { max-width: 100%; height: auto; }
+:where(.oc) a { color: inherit; }
+:where(.oc) :is(p, h1, h2, h3, h4, ul, ol, dl, dd, figure, blockquote, table) { margin: 0; }
+:where(.oc) :is(h1, h2, h3, h4) { font-size: inherit; font-weight: inherit; }
+:where(.oc) :is(ul, ol) { padding: 0; list-style: none; }
+.oc [hidden] { display: none !important; }
+.nb { white-space: nowrap; }                         /* two words that stay on one line */
+.nbw { display: inline-block; }                      /* a hyphenated word kept whole (the Nb component): a box, so no rule on a parent can let it break */
+/* In the text for a screen reader or a crawler, out of the picture. */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.oc :focus-visible { outline: 3px solid var(--focus, #fff); outline-offset: 3px; }
+
+/* The page: full-bleed up to 1920, then a centred canvas on ink. Everything
+   that tilts is clipped here, so nothing can scroll sideways. */
+.oc-page { position: relative; max-width: 1920px; margin: 0 auto; overflow: clip; }
+@supports not (overflow: clip) { html, body.oc { overflow-x: hidden; } }
+.oc-page > * {
+  --u: min(1vw, 19.2px);                             /* 1% of the page width */
+  --g: clamp(16px, calc(var(--u) * 4.2), 64px);      /* the side gutter */
+  --cw: calc(var(--u) * 100 - var(--g) * 2);         /* the width type is fitted to */
+  --h: calc(var(--u) * 26.795);                      /* tan(15deg) x the page width: one slope */
+  --sh: clamp(5px, calc(var(--u) * .62), 11px);      /* the hard offset */
+  --sm: clamp(1.15rem, calc(var(--u) * 4.2), 4.75rem);   /* a title's small line */
+  --air: clamp(10px, calc(var(--u) * 1.1), 22px);    /* the least room between a slanted edge and a level block */
+  --bar: 46px;                                       /* the pinned lime bar */
+}
+/* Container units leave the scrollbar out of the sum; vw is the fallback.
+   Nothing inside the page may be a container of its own: --u would change. */
+@supports (width: 1cqw) {
+  .oc-page { container-type: inline-size; }
+  .oc-page > * { --u: 1cqw; }
+}
+@media (max-width: 760px) { .oc-page > * { --bar: 44px; } }
+
+.skip { position: absolute; left: 8px; top: -60px; z-index: 200; padding: 10px 14px; background: var(--lime); color: var(--ink); font: 700 .9rem/1 var(--body); text-decoration: none; }
+.skip:focus { top: 8px; }
+
+/* Fields. --fg is the reading colour, --pop the display accent on that field,
+   --shadow the default hard offset for anything stuck on it, and --a1 --a2 --a3
+   three accents that show on it (the offsets of ink cards take turns with
+   them). Buttons, store buttons, form controls and the parts below take
+   their colours from the field they are on, always through these variables
+   and never through a selector like ".f-ink .part": a rose cell inside an ink
+   band must get rose's values. */
+.f-ink {
+  --bg: var(--ink); --fg: #fff; --pop: var(--lime); --soft: rgba(255, 255, 255, .78); --focus: var(--lime); --shadow: var(--lime);
+  --btn-bg: var(--lime); --btn-fg: var(--ink); --btn-sh: var(--rose);
+  --store-bg: #fff; --store-fg: var(--ink); --store-sh: var(--rose);
+  --in-bg: var(--ink); --in-fg: #fff; --in-bd: #fff; --in-sh: var(--lime); --bad: var(--rose);
+  --a1: var(--lime); --a2: var(--blue); --a3: var(--rose);
+  --t1: var(--lime); --t2: #fff; --t3: var(--blue); --t4: var(--rose);
+  --edge: inset 0 0 0 3px; --rim: 3px; --chip-bg: var(--lime); --chip-fg: var(--ink); --chip-pop: var(--ink);
+}
+.f-lime {
+  --bg: var(--lime); --fg: var(--ink); --pop: var(--ink); --soft: rgba(15, 19, 20, .84); --focus: var(--ink); --shadow: var(--ink);
+  --btn-bg: var(--ink); --btn-fg: #fff; --btn-sh: var(--rose);
+  --store-bg: var(--ink); --store-fg: #fff; --store-sh: var(--rose);
+  --in-bg: #fff; --in-fg: var(--ink); --in-bd: var(--ink); --in-sh: var(--ink); --bad: var(--rose);
+  --a1: var(--rose); --a2: var(--blue); --a3: #fff;
+  --t1: var(--ink); --t2: var(--ink); --t3: var(--ink); --t4: var(--ink);
+  --edge: 0 0 0 0; --rim: 0px; --chip-bg: var(--ink); --chip-fg: #fff; --chip-pop: var(--lime);
+}
+.f-blue {
+  --bg: var(--blue); --fg: var(--ink); --pop: var(--ink); --soft: rgba(15, 19, 20, .86); --focus: var(--ink); --shadow: var(--ink);
+  --btn-bg: var(--ink); --btn-fg: #fff; --btn-sh: #fff;
+  --store-bg: var(--ink); --store-fg: #fff; --store-sh: #fff;
+  --in-bg: #fff; --in-fg: var(--ink); --in-bd: var(--ink); --in-sh: var(--ink); --bad: var(--rose);
+  --a1: var(--lime); --a2: var(--rose); --a3: #fff;
+  --t1: var(--ink); --t2: var(--ink); --t3: var(--ink); --t4: var(--ink);
+  --edge: 0 0 0 0; --rim: 0px; --chip-bg: var(--ink); --chip-fg: #fff; --chip-pop: var(--lime);
+}
+.f-rose {
+  --bg: var(--rose); --fg: var(--ink); --pop: var(--ink); --soft: var(--ink); --focus: var(--ink); --shadow: var(--ink);
+  --btn-bg: var(--ink); --btn-fg: #fff; --btn-sh: #fff;
+  --store-bg: var(--ink); --store-fg: #fff; --store-sh: #fff;
+  --in-bg: #fff; --in-fg: var(--ink); --in-bd: var(--ink); --in-sh: var(--ink); --bad: var(--ink);
+  --a1: var(--lime); --a2: var(--blue); --a3: #fff;
+  --t1: var(--ink); --t2: var(--ink); --t3: var(--ink); --t4: var(--ink);
+  --edge: 0 0 0 0; --rim: 0px; --chip-bg: var(--ink); --chip-fg: #fff; --chip-pop: var(--lime);
+}
+/* An ink panel stuck on a colour field is a field of its own. */
+.panel { background: var(--bg); color: var(--fg); }
+
+/* ---------- 3. Type ------------------------------------------------------- */
+/* Outlined type. A browser that cannot draw the outline keeps the solid letters. */
+@supports (-webkit-text-stroke: 1px #000) {
+  .hollow { color: transparent; -webkit-text-stroke: max(1.5px, .02em) var(--stroke, var(--fg)); }
+}
+@media (forced-colors: active) { .hollow { color: CanvasText; -webkit-text-stroke: 0; } }
+.lede { font-size: clamp(1.0625rem, calc(.9rem + var(--u) * .5), 1.5rem); line-height: 1.5; font-weight: 500; text-wrap: pretty; }
+.body { font-size: clamp(1rem, calc(.92rem + var(--u) * .22), 1.1875rem); line-height: 1.6; text-wrap: pretty; }
+.small { font-size: .9375rem; line-height: 1.55; text-wrap: pretty; }
+.fine { font: 500 .8125rem/1.5 var(--body); }
+.fine a { font-weight: 700; text-underline-offset: 2px; }
+.label { font: 800 clamp(.7rem, calc(.62rem + var(--u) * .3), .9rem)/1.2 var(--body); letter-spacing: .16em; text-transform: uppercase; }
+.h3 { font: 800 clamp(1.05rem, calc(.9rem + var(--u) * .45), 1.4rem)/1.2 var(--body); letter-spacing: -.01em; text-wrap: balance; }
+/* A sub-heading in the display face, for a card, a step or a list. */
+.h3d { font: 400 clamp(1.15rem, calc(var(--u) * 1.75), 1.75rem)/1 var(--display); text-transform: uppercase; }
+.oc .v-link, .link { color: inherit; font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.oc .v-link:hover, .link:hover { text-decoration-thickness: 4px; }
+/* A level text column: paragraphs keep to a readable measure, everything else may run wider. */
+.copy > * + * { margin-top: 1em; }
+.copy > :is(p, h3, ul, ol) { max-width: 36rem; }
+.copy > .btns, .copy > .stores, .copy > .btn { margin-top: 1.6em; }
+.copy > .stack { margin-top: calc(var(--u) * 2.2); }
+.copy strong { font-weight: 800; }
+
+/* Three leaning ticks: the mark, small. */
+.ticks { position: relative; display: inline-block; flex: none; width: 1.55em; height: .86em; }
+.ticks::before { content: ""; position: absolute; left: .12em; top: 0; width: .3em; height: 100%; background: currentColor; box-shadow: .48em 0 0 currentColor, .96em 0 0 currentColor; transform: skewX(-15deg); }
+/* A highlighted chip inside a display line. A line that ends in one takes no full stop. */
+.hl { display: inline-block; margin: 0 .02em; padding: .1em .24em .06em; background: var(--ink); color: var(--lime); border-radius: 0 .3em 0 .3em; white-space: nowrap; }
+.tag { display: inline-flex; align-items: center; height: 19px; padding: 0 7px; background: var(--chip-bg, var(--ink)); color: var(--chip-pop, var(--lime)); border-radius: 0 6px 0 6px; font: 800 .625rem/1 var(--body); letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---------- 4. Buttons and store buttons ----------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .6em;
+  min-height: 52px; padding: .8em 1.5em;
+  border: 0; border-radius: 0 16px 0 16px;
+  background: var(--btn-bg, var(--ink)); color: var(--btn-fg, #fff);
+  box-shadow: var(--sh) var(--sh) 0 var(--btn-sh, var(--shadow));
+  /* One line where it fits; a long label wraps inside its column rather than run over its neighbour. */
+  max-width: 100%;
+  font: 400 1.05rem/1.12 var(--display); letter-spacing: .02em; text-transform: uppercase; text-decoration: none; text-wrap: balance;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn svg { width: 1.1em; height: 1.1em; flex: none; }
+.btn:hover { transform: translate(calc(var(--sh) * .5), calc(var(--sh) * .5)); box-shadow: calc(var(--sh) * .5) calc(var(--sh) * .5) 0 var(--btn-sh, var(--shadow)); }
+.btn:active { transform: translate(var(--sh), var(--sh)); box-shadow: 0 0 0 var(--btn-sh, var(--shadow)); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: .55; cursor: default; transform: none; box-shadow: var(--sh) var(--sh) 0 var(--btn-sh, var(--shadow)); }
+.btns { display: flex; flex-wrap: wrap; gap: 14px 18px; }
+
+.stores { display: flex; flex-wrap: wrap; gap: 14px 16px; }
+.store {
+  display: inline-flex; align-items: center; gap: 12px;
+  min-height: 58px; padding: 10px 22px 10px 18px;
+  border-radius: 0 16px 0 16px;
+  background: var(--store-bg, var(--ink)); color: var(--store-fg, #fff);
+  box-shadow: var(--sh) var(--sh) 0 var(--store-sh, var(--rose));
+  text-decoration: none; white-space: nowrap;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.store:hover { transform: translate(calc(var(--sh) * .5), calc(var(--sh) * .5)); box-shadow: calc(var(--sh) * .5) calc(var(--sh) * .5) 0 var(--store-sh, var(--rose)); }
+.store__t { display: flex; flex-direction: column; gap: 3px; }
+.store__s { font: 500 .6875rem/1 var(--body); letter-spacing: .04em; }
+.store__b { font: 700 1.1875rem/1 var(--body); letter-spacing: -.01em; }
+
+@media (max-width: 760px) {
+  .stores { gap: 12px; }
+  .store { min-height: 54px; padding: 8px 14px 8px 12px; gap: 9px; }
+  .store svg { width: 22px; height: 22px; }
+  .store__b { font-size: 1.0625rem; }
+}
+@media (max-width: 520px) {
+  .btn { padding: .8em 1.15em; font-size: clamp(.78rem, calc(var(--u) * 3.6), .95rem); }
+}
+@media (max-width: 359px) {
+  .btn { padding: .8em .9em; letter-spacing: .01em; }
+}
+@media (max-width: 359px) {
+  .store { padding: 8px 10px 8px 9px; gap: 7px; }
+  .store__b { font-size: .95rem; }
+  .store__s { font-size: .625rem; }
+}
+
+/* ---------- 5. The menu: two rows, no button to open ------------------------ */
+/* Row 1, ink: the mark (home), the main pages, Download. It scrolls away.
+   The current main page stands on a lime stripe that runs into row 2. */
+.nav {
+  position: relative; z-index: 100;
+  display: flex; align-items: stretch; gap: clamp(14px, calc(var(--u) * 2.6), 36px);
+  height: 60px; padding: 0 var(--g);
+  background: var(--ink); color: #fff;
+  --focus: var(--lime);
+}
+.nav__logo { position: relative; display: inline-flex; align-items: center; gap: 10px; margin-right: auto; text-decoration: none; }
+.nav__logo img { width: 30px; height: 30px; }
+.nav__word { font: 400 1.5rem/1 var(--display); letter-spacing: .03em; }
+.nav__links { display: flex; align-items: stretch; gap: clamp(14px, calc(var(--u) * 2.6), 36px); }
+.nav__links a { position: relative; z-index: 0; display: flex; align-items: center; font: 600 .9375rem/1 var(--body); text-decoration: none; white-space: nowrap; }
+.nav__links a:hover { color: var(--lime); }
+.nav__links a[aria-current] { color: var(--ink); font-weight: 800; --focus: #fff; }
+.nav__links a[aria-current]::before { content: ""; position: absolute; z-index: -1; inset: 0 -14px; background: var(--lime); transform: skewX(-15deg); }
+.nav__links a:focus-visible { outline-offset: -6px; }
+/* Home is the mark: on the home page a lime tab under it runs into row 2. */
+.nav__logo[aria-current]::after { content: ""; position: absolute; left: 3px; bottom: 0; width: 26px; height: 6px; background: var(--lime); transform: skewX(-15deg); }
+.nav__get {
+  align-self: center;
+  display: inline-flex; align-items: center; height: 38px; padding: 0 18px;
+  border-radius: 0 12px 0 12px; background: var(--lime); color: var(--ink);
+  box-shadow: 4px 4px 0 var(--rose);
+  font: 400 .9rem/1 var(--display); letter-spacing: .03em; text-transform: uppercase; text-decoration: none; white-space: nowrap;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.nav__get:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--rose); }
+@media (max-width: 600px) {
+  .nav { height: 54px; gap: 16px; }
+  .nav__word { display: none; }
+  .nav__logo img { width: 28px; height: 28px; }
+  .nav__logo[aria-current]::after { left: 2px; width: 24px; }
+  .nav__links { gap: 22px; }
+  .nav__links a { font-size: .875rem; }
+  .nav__links a[aria-current]::before { inset: 0 -11px; }
+  .nav__get { height: 34px; padding: 0 12px; font-size: .78rem; box-shadow: 3px 3px 0 var(--rose); }
+}
+/* An ad landing page (focus): no main pages, so Download stays at every width. */
+.nav--focus .nav__get { display: inline-flex; }
+/* Four links and the mark is what a phone holds. Row 2 carries the way to the app. */
+@media (max-width: 480px) {
+  .nav:not(.nav--focus) .nav__get { display: none; }
+  .nav__links { flex: 1; justify-content: space-between; gap: 8px; margin-left: clamp(10px, calc(var(--u) * 5), 30px); padding-right: 8px; }
+  .nav__links a { font-size: clamp(.78rem, calc(var(--u) * 3.7), .875rem); }
+  .nav__links a[aria-current]::before { inset: 0 -9px; }
+}
+@media (max-width: 359px) {
+  .nav__links a[aria-current]::before { inset: 0 -7px; }
+}
+
+/* Row 2, lime: the current category's menu. It pins to the top. Its items are
+   sections of the page or its sub-pages; the chip at its end goes to the app. */
+.idx { position: sticky; top: 0; z-index: 90; display: flex; align-items: stretch; height: var(--bar); padding-left: var(--g); background: var(--lime); color: var(--ink); border-bottom: 3px solid var(--ink); --focus: var(--ink); }
+.idx__list { position: relative; display: flex; align-items: stretch; flex: 1; min-width: 0; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+.idx__list::-webkit-scrollbar { display: none; }
+.idx li { display: flex; flex: none; }
+.idx li a { --ip: clamp(10px, calc(var(--u) * 1.3), 20px); position: relative; display: flex; align-items: center; padding: 0 var(--ip); font: 800 .78rem/1 var(--body); letter-spacing: .12em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+.idx li:first-child a { padding-left: 0; }
+.idx li a:hover { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 5px; }
+.idx li a:focus-visible { outline-offset: -4px; }
+/* Where you are: the bar's own rule rises under that item. */
+.idx li a[aria-current]::before { content: ""; position: absolute; left: var(--ip); right: var(--ip); bottom: 0; height: 5px; background: var(--ink); transform: skewX(-15deg); transform-origin: 0 100%; }
+.idx li:first-child a[aria-current]::before { left: 0; }
+.idx li a[aria-current]:hover { text-decoration: none; }
+/* More items than the bar holds: it scrolls sideways, and this says so. It is
+   shown by the menu's script only while the list overflows; at the end it
+   points back. */
+.idx__more { display: none; flex: none; align-items: center; justify-content: center; width: 34px; padding: 0; border: 0; border-left: 3px solid var(--ink); background: var(--lime); color: var(--ink); cursor: pointer; }
+.idx__more svg { width: 16px; height: 16px; transition: transform .15s ease; }
+.idx.is-over .idx__more { display: flex; }
+.idx.is-end .idx__more svg { transform: scaleX(-1); }
+/* The chip runs down over the bar's own rule, so no hairline of lime shows under it. */
+.idx__get { display: flex; align-items: center; gap: .55em; flex: none; margin-bottom: -3px; padding: 0 var(--g) 3px 30px; background: var(--ink); color: var(--lime); clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%); font: 400 .82rem/1 var(--display); letter-spacing: .04em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+.idx__get svg { flex: none; width: 1.1em; height: 1.1em; }
+.idx__get:hover { color: #fff; }
+.idx__get:focus-visible { outline-color: var(--lime); outline-offset: -5px; }
+@media (max-width: 1200px) {
+  .idx li a { --ip: clamp(9px, calc(var(--u) * 1.05), 20px); font-size: .74rem; letter-spacing: .07em; }
+}
+@media (max-width: 760px) {
+  .idx { padding-left: 0; }
+  .idx__list { padding: 0 3px 0 calc(var(--g) - 4px); }
+  /* Few stops: short names, spread to fit in one row. */
+  .idx--fit .idx__list { justify-content: space-between; }
+  .idx--fit li a, .idx--fit li:first-child a { --ip: 4px; padding: 0 4px; font-size: clamp(.625rem, calc(var(--u) * 2.8), .72rem); letter-spacing: .04em; }
+  /* Many stops: a comfortable size, and the row scrolls. */
+  .idx--roll li a, .idx--roll li:first-child a { --ip: 9px; padding: 0 9px; font-size: .72rem; letter-spacing: .08em; }
+  .idx--roll li:first-child a { --ip: 4px; padding-left: 4px; }
+  .idx li:first-child a[aria-current]::before { left: var(--ip); }
+  /* The short name is drawn from the attribute; the whole name stays in the text. */
+  .idx a[data-short] > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .idx a[data-short]::after { content: attr(data-short); }
+  .idx__the { display: none; }                         /* "Get app" */
+  .idx__get { gap: .4em; padding: 0 11px 3px 21px; font-size: clamp(.64rem, calc(var(--u) * 2.9), .74rem); clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%); }
+  .idx__more { width: 30px; }
+}
+/* Narrower still, the chip says less and keeps its whole name for screen readers:
+   "Get" on a phone, the arrow alone on the smallest ones. */
+@media (max-width: 479px) {
+  .idx__the, .idx__app { display: inline; position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+@media (max-width: 359px) {
+  .idx--fit li a, .idx--fit li:first-child a { --ip: 3px; padding: 0 3px; }
+  .idx__get { padding: 0 12px 3px 23px; }
+  .idx__get-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }   /* as .vh */
+}
+
+/* ---------- 6. The Bracket Challenge strip, above the menu ------------------ */
+.promo { background: var(--bg); color: var(--fg); padding: clamp(10px, calc(var(--u) * 1), 15px) var(--g) clamp(9px, calc(var(--u) * .8), 12px); }
+.promo__link { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "status name go" "status sub go"; align-items: center; column-gap: clamp(12px, calc(var(--u) * 1.8), 28px); row-gap: 3px; text-decoration: none; }
+.promo__status { grid-area: status; display: inline-flex; align-items: center; gap: .6em; height: 30px; padding: 0 12px; background: var(--ink); color: var(--lime); border-radius: 0 10px 0 10px; font: 800 .72rem/1 var(--body); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.promo__name { grid-area: name; align-self: end; font: 400 clamp(1.1rem, calc(var(--u) * 2.1), 1.9rem)/.9 var(--display); text-transform: uppercase; }
+.promo__sub { grid-area: sub; align-self: start; font: 500 clamp(.875rem, calc(.8rem + var(--u) * .2), 1rem)/1.3 var(--body); text-wrap: balance; }
+.promo__sub b { font-weight: 800; }
+.promo__go { grid-area: go; display: inline-flex; align-items: center; gap: .5em; height: 42px; padding: 0 18px; background: var(--ink); color: #fff; border-radius: 0 12px 0 12px; box-shadow: 4px 4px 0 var(--lime); font: 400 .9rem/1 var(--display); letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; transition: transform .12s ease, box-shadow .12s ease; }
+.promo__go svg { width: 1.1em; height: 1.1em; }
+.promo__link:hover .promo__go { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--lime); }
+.promo__legal { margin-top: 7px; font: 500 .75rem/1.35 var(--body); text-wrap: pretty; }
+.promo__legal a { font-weight: 700; text-underline-offset: 2px; }
+@media (max-width: 760px) {
+  .promo__link { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "status go" "name name" "sub sub"; row-gap: 7px; }
+  .promo__status { justify-self: start; height: 28px; font-size: .68rem; }
+  .promo__go { height: 36px; padding: 0 13px; font-size: .8rem; box-shadow: 3px 3px 0 var(--lime); }
+  .promo__name { max-width: 16em; font-size: clamp(1.05rem, calc(var(--u) * 5.1), 1.6rem); }
+  .promo__legal { margin-top: 6px; font-size: .7rem; }
+}
+@media (max-width: 379px) {
+  .promo__link { column-gap: 8px; }
+  .promo__status { padding: 0 8px; font-size: .58rem; letter-spacing: .06em; }
+  .promo__go { padding: 0 9px; font-size: .68rem; }
+}
+
+/* ---------- 7. Bands, columns and the title that rides the cut -------------- */
+/* The section keeps its flat layout box (and takes no clicks, since the next
+   band's title rides up into its lower left corner); .band__in is the stripe.
+   Inside the stripe the space is sheared. */
+.band { position: relative; pointer-events: none; }
+.band__in {
+  position: relative; pointer-events: auto;
+  background: var(--bg); color: var(--fg);
+  transform: skewY(15deg); transform-origin: 100% 0;
+  padding: var(--pt, calc(var(--u) * 2.6)) var(--g) var(--pb, clamp(18px, calc(var(--u) * 2.2), 40px));
+  box-shadow: 0 3px 0 var(--bg);                     /* closes the hairline between two bands */
+  --lv: skewY(-15deg); --sk: 1;
+  --t-w: var(--cw); --t-h: 0px;                      /* the title's last line: its width and height */
+}
+/* A band whose stickers hang over the cut below it. */
+.band--lift { z-index: 2; }
+
+/* Level again. In a band this undoes the shear about the block's own centre, so
+   the block sits level and still steps down the slope with its neighbours.
+   Outside a band it does nothing. Whatever a level block holds is in level
+   space: it is never levelled a second time. */
+.up, .cols > *, .cell__body { transform: var(--lv); }
+.up > *, .cols > * > *, .cell__body > * { --lv: none; --sk: 0; }
+
+/* A band's layout box starts where its cut meets the right edge; its title
+   starts a whole slope higher on the left. Jump links leave room for it and
+   for the pinned bar. */
+.band[id] { scroll-margin-top: calc(var(--h) + var(--bar) + 18px); }
+/* A cell is inside the sheared stripe, so its own box already starts at its title. */
+.cell[id] { scroll-margin-top: calc(var(--bar) + 30px); }
+
+/* Two bands side by side on wide screens, one over the other on narrow ones. */
+.band--split > .band__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 0; }
+.cell {
+  --cw: calc(var(--u) * 46.6 - var(--g));
+  --sm: min(calc(var(--u) * 4.2), calc(var(--cw) / 11.2));
+  --t-w: var(--cw); --t-h: 0px;
+  background: var(--bg); color: var(--fg);
+  padding: var(--pt, calc(var(--u) * 2.6)) calc(var(--u) * 3.4) var(--pb, clamp(18px, calc(var(--u) * 2.2), 40px)) var(--g);
+}
+.cell + .cell { padding-left: calc(var(--u) * 3.4); padding-right: var(--g); }
+
+/* ----- The clearance rule, in one place.
+   A level block of width w under a slanted edge rises w x tan(15deg) / 2 above
+   its own box at its right end (13.4% of its width) and drops as far below it
+   at its left end. So a level block is pushed down by what it needs and no
+   more: --c1 keeps it off the title's last line (--tw wide, where that line
+   is above it), --c2 off the lines above that one (--th is the last line's
+   height). A block that is not under a title takes the whole 13.4%. */
+.cols, .cell__body { --tw: var(--cw); --th: 0px; }
+.rider + .cols, .rider + .cell__body { --tw: var(--t-w); --th: var(--t-h); }
+/* A stamp under the title counts as one more line of it, as wide as the title's
+   last line (a stamp is shorter): its height is the stamp's margin and line. */
+.rider__stamp + .cols { --tw: var(--t-w); --th: calc(var(--t-h) + max(var(--st-fs) * .9, var(--u) * 1.5) + var(--st-fs) * 1.2); --st-fs: clamp(.7rem, calc(.62rem + var(--u) * .3), .9rem); }
+.cols > *, .cell__body {
+  --half: calc(var(--w) * .134);
+  --c1: calc((min(var(--tw) - var(--x0), var(--w)) - var(--w) / 2) * .268);
+  --c2: calc(var(--half) - var(--th));
+  --clear: calc(max(0px, var(--c1), var(--c2)) + var(--air));
+}
+
+/* The body of a cell: one level column. */
+.cell__body { --w: min(36rem, var(--cw)); --x0: 0px; max-width: 36rem; margin-top: var(--clear) !important; margin-bottom: var(--half) !important; }
+.cell__body--wide { --w: var(--cw); max-width: none; }
+.cell__body > * + * { margin-top: 1em; }
+.cell__body > .btns { margin-top: 1.6em; }
+.cell__body > .stack { margin-top: calc(var(--u) * 2.4); }
+.cell__body strong { font-weight: 800; }
+
+/* Columns. Each child is one level column; the columns step down the slope.
+   --cols is the track list, --f1 to --f4 each column's share of the width
+   (for the clearance sum), --drop pushes one column further down, in --u. */
+.cols { display: grid; align-items: start; grid-template-columns: minmax(0, 1fr); column-gap: var(--cg); row-gap: var(--rg); --cg: calc(var(--u) * 4.5); --rg: calc(var(--u) * 3); }
+.cols > * {
+  min-width: 0;
+  --first: 0; --last: 0; --w: var(--cw); --x0: 0px;
+  /* The clearance is the geometry: a page's own classes cannot undo it. --drop (in --u) lowers a column. */
+  margin-top: calc(var(--sk) * var(--first) * var(--clear) + var(--u) * var(--drop, 0) + var(--nudge, 0px)) !important;
+  margin-bottom: calc(var(--sk) * var(--last) * (var(--half) + var(--off, 0px))) !important;
+}
+/* A card's hard offset is part of the card: the last row keeps it off the cut too. */
+.cols > :is(.card, .quote) { --off: var(--sh); }
+.cols + .cols { margin-top: calc(var(--u) * 1.2); }
+.cols > :nth-child(1) { --drop: var(--d1, 0); }
+.cols > :nth-child(2) { --drop: var(--d2, 0); }
+.cols > :nth-child(3) { --drop: var(--d3, 0); }
+.cols > :nth-child(4) { --drop: var(--d4, 0); }
+/* One column: a level block that keeps to a measure. */
+.cols[data-n="1"] { --w1: min(var(--cw), var(--max, 40rem)); grid-template-columns: minmax(0, var(--w1)); }
+.cols[data-n="1"] > * { --w: var(--w1); }
+.cols[data-n="1"] > :first-child { --first: 1; }
+.cols[data-n="1"] > :last-child { --last: 1; }
+@media (min-width: 761px) {
+  .cols[data-n="2"], .cols[data-n="3"] { grid-template-columns: var(--cols); }
+  .cols[data-n="2"] { --av: calc(var(--cw) - var(--cg)); --w1: calc(var(--av) * var(--f1)); --w2: calc(var(--av) * var(--f2)); }
+  .cols[data-n="2"] > :nth-child(2n+1) { --w: var(--w1); }
+  .cols[data-n="2"] > :nth-child(2n) { --w: var(--w2); --x0: calc(var(--w1) + var(--cg)); }
+  .cols[data-n="2"] > :nth-child(-n+2) { --first: 1; }
+  .cols[data-n="2"] > :nth-child(2n+1):nth-last-child(-n+2), .cols[data-n="2"] > :nth-child(2n+1):nth-last-child(-n+2) ~ * { --last: 1; }
+  /* Flipped: the first child is drawn on the right. */
+  .cols--flip[data-n="2"] > :first-child { order: 2; --x0: calc(var(--w2) + var(--cg)); }
+  .cols--flip[data-n="2"] > :nth-child(2) { --x0: 0px; }
+  .cols[data-n="3"] { --av: calc(var(--cw) - var(--cg) * 2); --w1: calc(var(--av) * var(--f1)); --w2: calc(var(--av) * var(--f2)); --w3: calc(var(--av) * var(--f3)); }
+  .cols[data-n="3"] > :nth-child(3n+1) { --w: var(--w1); }
+  .cols[data-n="3"] > :nth-child(3n+2) { --w: var(--w2); --x0: calc(var(--w1) + var(--cg)); }
+  .cols[data-n="3"] > :nth-child(3n) { --w: var(--w3); --x0: calc(var(--w1) + var(--w2) + var(--cg) * 2); }
+  .cols[data-n="3"] > :nth-child(-n+3) { --first: 1; }
+  .cols[data-n="3"] > :nth-child(3n+1):nth-last-child(-n+3), .cols[data-n="3"] > :nth-child(3n+1):nth-last-child(-n+3) ~ * { --last: 1; }
+}
+@media (min-width: 981px) {
+  .cols[data-n="4"] { grid-template-columns: var(--cols); --av: calc(var(--cw) - var(--cg) * 3); --w1: calc(var(--av) * var(--f1)); --w2: calc(var(--av) * var(--f2)); --w3: calc(var(--av) * var(--f3)); --w4: calc(var(--av) * var(--f4)); }
+  .cols[data-n="4"] > :nth-child(4n+1) { --w: var(--w1); }
+  .cols[data-n="4"] > :nth-child(4n+2) { --w: var(--w2); --x0: calc(var(--w1) + var(--cg)); }
+  .cols[data-n="4"] > :nth-child(4n+3) { --w: var(--w3); --x0: calc(var(--w1) + var(--w2) + var(--cg) * 2); }
+  .cols[data-n="4"] > :nth-child(4n) { --w: var(--w4); --x0: calc(var(--w1) + var(--w2) + var(--w3) + var(--cg) * 3); }
+  .cols[data-n="4"] > :nth-child(-n+4) { --first: 1; }
+  .cols[data-n="4"] > :nth-child(4n+1):nth-last-child(-n+4), .cols[data-n="4"] > :nth-child(4n+1):nth-last-child(-n+4) ~ * { --last: 1; }
+}
+/* Four become two on a tablet... */
+@media (min-width: 561px) and (max-width: 980px) {
+  .cols[data-n="4"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); --w1: calc((var(--cw) - var(--cg)) / 2); --rg: calc(var(--u) * 5); }
+  .cols[data-n="4"] > * { --w: var(--w1); }
+  .cols[data-n="4"] > :nth-child(2n) { --x0: calc(var(--w1) + var(--cg)); }
+  .cols[data-n="4"] > :nth-child(-n+2) { --first: 1; }
+  .cols[data-n="4"] > :nth-child(2n+1):nth-last-child(-n+2), .cols[data-n="4"] > :nth-child(2n+1):nth-last-child(-n+2) ~ * { --last: 1; }
+}
+/* ...and everything is one column on a phone: full-width level blocks, one under the other. */
+@media (max-width: 760px) {
+  .cols { --rg: clamp(26px, calc(var(--u) * 8), 56px); }
+  .cols[data-n="2"] > :first-child, .cols[data-n="3"] > :first-child { --first: 1; }
+  .cols[data-n="2"] > :last-child, .cols[data-n="3"] > :last-child { --last: 1; }
+}
+@media (max-width: 560px) {
+  .cols[data-n="4"] > :first-child { --first: 1; }
+  .cols[data-n="4"] > :last-child { --last: 1; }
+}
+
+/* The title that rides the cut. --em is the line's width in ems, measured in
+   Designer, so the line runs edge to edge; --cap stops a short word short. */
+.rider { font-family: var(--display); font-weight: 400; text-transform: uppercase; line-height: .8; }
+.rider__big { display: block; white-space: nowrap; font-size: min(calc(var(--cw) / var(--em, 6) * .99), calc(var(--u) * var(--cap, 20))); }
+.rider__big--wrap { --em: var(--em-d); }           /* one line wide, two lines narrow */
+.rider__sm { display: block; white-space: nowrap; font-size: min(var(--sm), calc(var(--cw) / var(--em, 1) * .99)); line-height: .86; }
+.rider__big + .rider__sm { margin-top: .24em; }
+.rider__sm + .rider__big { margin-top: .135em; }   /* Designer's capitals stand .78em tall: this is what keeps the small line off them */
+.rider__big + .rider__big { margin-top: .14em; }   /* two full lines: the second clears the first's feet */
+.rider__sm + .rider__big--fit { margin-top: .2em; }    /* a "$" stands taller than a capital */
+.rider__sm + .rider__sm { margin-top: .2em; }          /* two small lines: the second clears the first's feet */
+.rider__note { display: block; max-width: 24em; margin-top: 1em; font: 800 clamp(.72rem, calc(.6rem + var(--u) * .34), .95rem)/1.3 var(--body); letter-spacing: .14em; text-transform: uppercase; white-space: normal; }
+/* The stamp keeps clear of the line above it, which leans down to meet it at its right end. */
+.rider__stamp { display: block; margin-top: max(.9em, calc(var(--u) * 1.5)); color: var(--pop); text-wrap: balance; }   /* on a small phone it breaks evenly, never one word alone */
+.rider--lime { color: var(--lime); --stroke: var(--lime); }
+.rider--blue { color: var(--blue); --stroke: var(--blue); }
+.rider--rose { color: var(--rose); --stroke: var(--rose); }
+.rider--white { color: #fff; --stroke: #fff; }
+
+/* What a level column may tuck under: the title's last line, as the Band and
+   the Cell print it (data-t says what kind of line, --te its width in ems,
+   --tf the width its size was fitted to, --tc its cap; the -m twins are the
+   phone's, where a pair of words is two lines). */
+.band__in[data-t="sm"], .cell[data-t="sm"] { --t-fs: min(var(--sm), calc(var(--cw) / var(--te) * .99)); --t-w: calc(var(--t-fs) * var(--te)); --t-h: calc(var(--t-fs) * 1.1); }
+.band__in[data-t="big"], .cell[data-t="big"] { --t-fs: min(calc(var(--cw) / var(--tf) * .99), calc(var(--u) * var(--tc, 20))); --t-w: calc(var(--t-fs) * var(--te)); --t-h: calc(var(--t-fs) * .8); }
+
+@media (max-width: 760px) {
+  /* A band's own padding for this layout (Band's ptPhone and pbPhone): after a
+     hero whose art hangs over the cut, the band starts lower. */
+  .band__in { padding-top: var(--pt-m, var(--pt, calc(var(--u) * 2.6))); padding-bottom: var(--pb-m, var(--pb, clamp(18px, calc(var(--u) * 2.2), 40px))); }
+  .band--split > .band__in { grid-template-columns: minmax(0, 1fr); }
+  .cell, .cell + .cell { --cw: calc(var(--u) * 100 - var(--g) * 2); --sm: clamp(1.15rem, calc(var(--u) * 4.2), 4.75rem); padding-left: var(--g); padding-right: var(--g); }
+  .rider__big { font-size: min(calc(var(--cw) / var(--em, 6) * .99), calc(var(--u) * var(--cap-m, 20))); }
+  .rider__big--wrap { --em: var(--em-m); }
+  .rider__big--wrap > span { display: block; }
+  .rider__big--wrap > span + span { margin-top: .13em; }           /* the lines lean: they need air between them */
+  /* A figure over its words: each line is fitted edge to edge on its own (--em-s is its width in ems). */
+  .rider__big--fit > span { font-size: calc(var(--cw) / var(--em-s) * .99); }
+  .rider__sm + .rider__big--fit { margin-top: .34em; }
+  /* A small outlined line under a big one: a finer outline, and room to stand clear. */
+  .rider__sm.hollow { -webkit-text-stroke-width: 1.2px; }
+  .rider__big + .rider__sm { margin-top: .5em; }
+  .rider__sm + .rider__big { margin-top: .25em; }
+  .band__in[data-t="sm"], .cell[data-t="sm"] { --t-h: calc(var(--t-fs) * 1.36); }
+  .band__in[data-t="big"], .cell[data-t="big"] { --t-fs: min(calc(var(--cw) / var(--tfm) * .99), calc(var(--u) * var(--tcm, 20))); --t-w: calc(var(--t-fs) * var(--tem)); }
+}
+
+/* ---------- 8. Stuck on the poster: phones, cards, badges -------------------- */
+/* A stack is a box of fixed shape; each thing in it is placed in percent with
+   --x --y --w, tilted with --r (degrees) and layered with --z. A stack belongs
+   in a level block. */
+.stack { position: relative; aspect-ratio: var(--ar, 100 / 96); }
+/* A sticker: a picture with the hard offset. The card pictures are rounded
+   cards on a black ground: --rad (their own corner, as a share of width /
+   height) trims the ground off, so the sticker and its offset keep the card's
+   shape. */
+.stk { display: block; width: 100%; height: auto; max-width: none; border-radius: var(--rad, 0); filter: drop-shadow(var(--sh) var(--sh) 0 var(--stk-sh, var(--shadow))); transform: rotate(calc(var(--r, 0) * 1deg)); }
+.stack > .stk { position: absolute; left: calc(var(--x, 0) * 1%); top: calc(var(--y, 0) * 1%); width: calc(var(--w, 44) * 1%); z-index: var(--z, 1); }
+/* A sticker lifts a little under the pointer. */
+@media (hover: hover) {
+  .stack > .stk { transition: transform .18s ease; }
+  .stack > .stk:hover { transform: rotate(calc((var(--r, 0) - 2) * 1deg)) scale(1.025); }
+}
+
+/* A raw screen capture in a drawn phone. Every measure is a share of the
+   phone's own width, so the device holds its proportions at any size: a
+   1.1% rim, a 2.2% bezel, the screen, and the island over the status bar. The
+   defaults are for a 780 x 1695 capture; Phone prints the others when a
+   capture has another shape. */
+.phone { position: relative; margin: 0; aspect-ratio: var(--pa, 100 / 209.57); background: var(--rim, #DDE1E3); --rad: 16.2% / var(--pr, 7.73%); }
+.phone::before { content: ""; position: absolute; inset: var(--pby, .525%) 1.1%; background: #000; border-radius: 15.44% / var(--pbr, 7.28%); }
+.phone img { position: absolute; left: 3.3%; top: var(--piy, 1.575%); width: 93.4%; height: auto; border-radius: 13.81% / var(--pir, 6.36%); }
+.phone::after { content: ""; position: absolute; left: 36.65%; top: var(--pny, 2.99%); width: 26.7%; height: var(--pnh, 3.75%); background: #000; border-radius: 99px; }
+.phone--plain::after { display: none; }
+
+/* An ink fact badge: a figure in the display face, and what it counts. */
+.badge { position: relative; z-index: 5; display: inline-flex; flex-direction: column; align-items: flex-start; gap: .3em; padding: .7em 1em .75em; background: var(--ink); color: #fff; border-radius: 0 1.1em 0 1.1em; box-shadow: var(--sh) var(--sh) 0 var(--badge-sh, var(--rose)); font-size: clamp(.6rem, calc(var(--u) * .9), .95rem); transform: rotate(calc(var(--r, -7.5) * 1deg)); }
+.badge strong { font: 400 3.3em/.8 var(--display); text-transform: uppercase; color: var(--lime); white-space: nowrap; }
+.badge span { max-width: 15em; font: 800 1em/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; text-wrap: balance; }
+.stack > .badge { position: absolute; left: calc(var(--x, 0) * 1%); top: calc(var(--y, 0) * 1%); }
+@media (max-width: 760px) {
+  /* --xm, --ym and --wm, where given, place a thing differently in the one-column layout. */
+  .stack > .stk, .stack > .badge { left: calc(var(--xm, var(--x, 0)) * 1%); top: calc(var(--ym, var(--y, 0)) * 1%); }
+  .stack > .stk { width: calc(var(--wm, var(--w, 44)) * 1%); }
+  .stack { aspect-ratio: var(--arm, var(--ar, 100 / 96)); }
+  /* One column on a wide phone or a small tablet: the stickers keep a phone's scale, on the low side of the slope. */
+  .cols > .stack, .hero__art > .stack { width: 100%; max-width: 30rem; margin-left: auto; }
+}
+
+/* The mark's three stripes, drawn large. */
+.mark { width: 100%; height: auto; overflow: visible; filter: drop-shadow(var(--sh) var(--sh) 0 var(--mark-sh, var(--ink))); }
+
+/* ---------- 9. Hero: flat top, bottom cut on the slant ----------------------- */
+/* The hero sits above the band that rises under its lower left corner (its
+   stickers hang over the cut), so its empty box takes no clicks: its contents do. */
+.hero { position: relative; z-index: 2; pointer-events: none; color: var(--fg); }
+.hero::before { content: ""; position: absolute; inset: 0; background: var(--bg); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - var(--h))); }
+.hero__in { position: relative; padding: clamp(18px, calc(var(--u) * 2.2), 40px) var(--g) 0; }
+.hero h1, .hero__copy > *, .hero__art > * { pointer-events: auto; }
+/* The field is painted by the cut shape above. The type names its ground too,
+   so nothing has to guess what it sits on. */
+.hero h1, .hero__copy > :is(.lede, .body, .small, .fine) { background-color: var(--bg); }
+.hero__label { display: flex; align-items: flex-start; gap: .7em; margin-bottom: clamp(8px, calc(var(--u) * 1), 16px); font: 800 clamp(.72rem, calc(.6rem + var(--u) * .36), 1rem)/1.12 var(--body); letter-spacing: .18em; text-transform: uppercase; }
+.hero__label .ticks { margin-top: .13em; }
+/* The name, then what it is: one row where there is room, two whole lines where there is not. */
+.hero__label-t { display: flex; flex-wrap: wrap; column-gap: .6em; row-gap: .28em; }
+/* Each part stays whole while it fits a line; a part longer than the line (a long label on a small phone) wraps evenly. */
+.hero__label-t > span { text-wrap: balance; }
+/* A headline line, fitted edge to edge from its width in ems (--em); --cap stops a short line short. */
+.hero__line { display: block; font-family: var(--display); font-weight: 400; text-transform: uppercase; line-height: .84; white-space: nowrap; font-size: min(calc(var(--cw) / var(--em, 7) * .992), calc(var(--u) * var(--cap, 22))); }
+.hero__sub { display: block; max-width: 17.5em; margin-top: .42em; font: 400 calc(var(--u) * 3.5)/1 var(--display); text-transform: uppercase; }
+.hero__row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: calc(var(--u) * 4); margin-top: clamp(20px, calc(var(--u) * 2.6), 46px); }
+/* The copy stops a slope short of the bottom: that corner belongs to the next band. */
+.hero__copy { max-width: 35rem; padding-bottom: calc(var(--h) * .97 + 30px); }
+.hero__copy > * + * { margin-top: clamp(18px, calc(var(--u) * 1.8), 28px); }
+.hero__copy > .fine { margin-top: 20px; }
+/* A line that leads into the store buttons ("No app yet? VOLI is free") sits close to them. */
+.hero__copy > :is(.label, .small) + .stores { margin-top: 14px; }
+.hero__art { min-width: 0; }
+.hero__art > .stack { --ar: 100 / 100; margin-bottom: calc(var(--u) * -2); }
+.hero--solo .hero__row { grid-template-columns: minmax(0, 1fr); }
+.hero--solo .hero__copy { max-width: 40rem; }
+@media (max-width: 760px) {
+  .hero__row { grid-template-columns: minmax(0, 1fr); }
+  .hero__copy { max-width: 34rem; padding-bottom: 0; }
+  .hero__sub { max-width: none; font-size: calc(var(--u) * 6.7); }
+  /* The art follows the copy, on the low side of the slope. What is left of it
+     must end a slope above the bottom: place it with --ym so it steps down. */
+  .hero__art { margin-top: calc(var(--u) * 7); padding-bottom: calc(var(--u) * 7); }
+  .hero__art > .stack { --ar: 100 / 104; margin-bottom: 0; }
+  .hero--solo .hero__copy { padding-bottom: calc(var(--h) * .97 + 24px); }
+}
+@media (max-width: 640px) {
+  /* A line given as two parts is two lines here, set at the phone's size (--em-m). */
+  .hero__line--wrap > span { display: block; }
+  .hero__line { font-size: min(calc(var(--cw) / var(--em-m, var(--em, 7)) * .992), calc(var(--u) * var(--cap-m, 30))); }
+}
+/* A display line whose words arrive in the browser (a league's name, a matchup,
+   a show's title). components/poster/fit.ts breaks them into balanced lines
+   and sets --em from the widest; until it runs, --em is the line the page was
+   built with. --cap and --cap-m stop a short name short. */
+.fit { display: block; margin-top: .08em; font-family: var(--display); font-weight: 400; text-transform: uppercase; line-height: .86; font-size: min(calc(var(--cw) / var(--em, 11) * .99), calc(var(--u) * var(--cap, 12))); }
+.fit__l { display: block; white-space: nowrap; }
+.fit__l + .fit__l { margin-top: .06em; }
+/* A mark the display face cannot set (a parenthesis, an accent, an emoji), in the text face. */
+.fit__alt { font-family: var(--body); font-weight: 900; }
+@media (max-width: 640px) {
+  .fit { font-size: min(calc(var(--cw) / var(--em, 8) * .99), calc(var(--u) * var(--cap-m, 24))); }
+}
+
+/* ---------- 10. Parts --------------------------------------------------------- */
+/* Figures that ride the slope: a number set big, then what it counts. The
+   size is fitted to the widest figure (--em). On ink the figures take the
+   palette in turn. */
+.tower { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: repeat(var(--rows, 3), auto); grid-auto-flow: column; column-gap: calc(var(--u) * 3); row-gap: calc(var(--u) * 2.6); margin-top: calc(var(--u) * 2.8); margin-bottom: calc(var(--u) * 5.4); }
+.tower__n { display: block; font: 400 min(calc(var(--u) * 8.1), calc((var(--cw) - var(--u) * 3) / 2 / var(--em, 5.2) * .97))/.8 var(--display); text-transform: uppercase; white-space: nowrap; color: var(--c, var(--fg)); }
+.tower__n .tilde { margin-right: .05em; font: 800 .6em/1 var(--body); }   /* Designer has no tilde */
+.tower__l { display: block; margin-top: calc(var(--u) * .9); font: 700 clamp(.74rem, calc(.56rem + var(--u) * .46), 1.0625rem)/1.3 var(--body); letter-spacing: .1em; text-transform: uppercase; text-wrap: balance; }
+.tower li:nth-child(5n + 1), .tower li:nth-child(5n + 5) { --c: var(--t1); }
+.tower li:nth-child(5n + 2) { --c: var(--t2); }
+.tower li:nth-child(5n + 3) { --c: var(--t3); }
+.tower li:nth-child(5n + 4) { --c: var(--t4); }
+@media (max-width: 760px) {
+  .tower { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; row-gap: calc(var(--u) * 5); margin-top: calc(var(--u) * 6.5); margin-bottom: calc(var(--u) * 13); }
+  .tower li { grid-row: auto !important; }
+  .tower__n { font-size: min(calc(var(--u) * 15.6), calc(var(--cw) / var(--em, 5.2) * .97)); }
+  .tower__l { margin-top: calc(var(--u) * 1.8); }
+}
+
+/* Small figures set big: a number, then what it counts. --em is the widest figure. */
+.minis { --fig: clamp(1.9rem, calc(var(--u) * 3.9), 4.2rem); display: grid; margin-top: 1.6em; border-top: 3px solid var(--pop); }
+.minis li { display: grid; grid-template-columns: calc(var(--fig) * var(--em, 5.1)) minmax(0, 1fr); align-items: center; column-gap: calc(var(--u) * 1.6 + 8px); padding: .85em 0 .8em; border-bottom: 3px solid var(--pop); }
+.minis strong { font: 400 var(--fig)/.8 var(--display); text-transform: uppercase; color: var(--pop); white-space: nowrap; }
+.minis span { font: 600 clamp(.875rem, calc(.8rem + var(--u) * .2), 1.0625rem)/1.35 var(--body); text-wrap: balance; }
+
+/* Outlined chips: a list of short names. */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips li { padding: 6px 11px; border: 2px solid var(--fg); border-radius: 0 9px 0 9px; font: 700 .8125rem/1.2 var(--body); }
+.chips a { text-decoration: none; }
+.chips a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 2px; }
+
+/* Ruled rows: a name, and a line about it. */
+.rows { display: grid; row-gap: 10px; }
+.rows li { display: grid; row-gap: 2px; padding-bottom: 10px; border-bottom: 2px solid var(--fg); }
+.rows li:last-child { padding-bottom: 0; border-bottom: 0; }
+.rows__t { font: 700 1rem/1.25 var(--body); }
+.rows__t a { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.rows__t a:hover { text-decoration-thickness: 4px; }
+.rows__m { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; font: 500 .8125rem/1.35 var(--body); }
+
+/* Quotes: ink cards stepping down the slope. */
+.quotes { --cg: calc(var(--u) * 2); }
+.quote { padding: 1.3em 1.3em 1.4em; background: var(--ink); color: #fff; border-radius: 0 22px 0 22px; box-shadow: var(--edge, 0 0 0 0) var(--q-sh, var(--a1)), var(--sh) var(--sh) 0 var(--q-sh, var(--a1)); }   /* --edge: on ink an ink card needs an edge */
+.quote:nth-child(4n + 2) { --q-sh: var(--a2); }
+.quote:nth-child(4n + 3) { --q-sh: var(--a3); }
+.quote .ticks { display: block; margin-bottom: .7em; color: var(--lime); font-size: 1.1rem; }
+.quote p { font: 600 clamp(.95rem, calc(.86rem + var(--u) * .22), 1.125rem)/1.45 var(--body); text-wrap: pretty; }
+.quote footer { margin-top: 1em; color: var(--lime); font: 800 .6875rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+@media (min-width: 561px) and (max-width: 980px) { .quotes { --cg: calc(var(--u) * 3); --rg: calc(var(--u) * 3); } }
+@media (max-width: 560px) {
+  /* Left, right, left, right. A card set 12% further right also sits that much
+     further down the slope (--step), so the margins take it back out and the
+     gaps come out even. */
+  .quotes { --step: calc(var(--cw) * .0322); --rg: 22px; }
+  .quotes > .quote { width: 88%; }
+  .quotes > .quote:nth-child(even) { justify-self: end; --nudge: calc(var(--step) * -1); }
+  .quotes > .quote:nth-child(odd):not(:first-child) { --nudge: var(--step); }
+}
+
+/* Tickets: tilted ink fact cards, two by two. */
+.tickets { display: grid; grid-template-columns: auto auto; justify-content: start; gap: calc(var(--u) * 2.4) calc(var(--u) * 2.6); }
+.ticket { display: flex; flex-direction: column; gap: .6rem; padding: calc(var(--u) * 1.4) calc(var(--u) * 1.6) calc(var(--u) * 1.5); background: var(--ink); color: #fff; border-radius: 0 calc(var(--u) * 2) 0 calc(var(--u) * 2); box-shadow: var(--edge, 0 0 0 0) var(--c), var(--sh) var(--sh) 0 var(--c); }
+.ticket strong { color: var(--c); font: 400 calc(var(--u) * var(--tk, 4.6))/.8 var(--display); text-transform: uppercase; white-space: nowrap; }
+.ticket span { max-width: 13em; font: 600 clamp(.82rem, calc(.72rem + var(--u) * .28), 1.0625rem)/1.35 var(--body); text-wrap: balance; }
+.ticket:nth-child(4n + 1) { --c: var(--a1); transform: rotate(-3.75deg); }
+.ticket:nth-child(4n + 2) { --c: var(--a3); transform: rotate(3.75deg) translateY(calc(var(--u) * 2.4)); }
+.ticket:nth-child(4n + 3) { --c: var(--a2); transform: rotate(3.75deg); }
+.ticket:nth-child(4n) { --c: var(--a1); transform: rotate(-3.75deg) translateY(calc(var(--u) * 2.4)); }
+.hero__art > .tickets { justify-content: end; margin-top: calc(var(--u) * 10); padding-bottom: calc(var(--u) * 6); }
+@media (max-width: 760px) {
+  /* Leaning left, right, left, right: the gap is what keeps two corners that lean together apart. */
+  .tickets { grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: calc(var(--u) * 8.2); }
+  .ticket { flex-direction: row; align-items: center; gap: calc(var(--u) * 4); width: 88%; padding: calc(var(--u) * 3.6) calc(var(--u) * 4.4); border-radius: 0 calc(var(--u) * 5) 0 calc(var(--u) * 5); }
+  .ticket strong { font-size: calc(var(--u) * var(--tk-m, 10.4)); }
+  .ticket span { max-width: none; }
+  .ticket:nth-child(4n + 1) { transform: rotate(-3.75deg); }
+  .ticket:nth-child(4n + 2) { justify-self: end; transform: rotate(3.75deg); }
+  .ticket:nth-child(4n + 3) { transform: rotate(-3.75deg); }
+  .ticket:nth-child(4n) { justify-self: end; width: 96%; transform: rotate(3.75deg); }
+  /* A set with a long figure (a word, a command): the figure over its line, so the line always has room. */
+  .tickets--over .ticket { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .tickets--over .ticket:nth-child(4n) { width: 88%; }
+  .hero__art > .tickets { margin-top: calc(var(--u) * 3); padding-bottom: calc(var(--u) * 23); }
+}
+
+/* Steps: numbered, stepping down the slope. */
+.steps { --cg: calc(var(--u) * 2.6); }
+.steps__n { display: block; font: 400 calc(var(--u) * 9)/.8 var(--display); }
+@supports (-webkit-text-stroke: 1px #000) {
+  .steps__n { color: transparent; -webkit-text-stroke: max(1.5px, .022em) var(--fg); }
+}
+.steps__t { margin-top: .7em; font: 400 clamp(1.15rem, calc(var(--u) * 1.75), 1.75rem)/1 var(--display); text-transform: uppercase; text-wrap: balance; }
+.steps p { margin-top: .7em; font-size: clamp(.9375rem, calc(.86rem + var(--u) * .2), 1.0625rem); line-height: 1.55; }
+@media (min-width: 561px) and (max-width: 980px) { .steps[data-n="4"] { --cg: calc(var(--u) * 5); --rg: calc(var(--u) * 4.5); } }
+@media (max-width: 760px) {
+  .steps { --rg: 26px; }
+  .steps[data-n="2"] > li, .steps[data-n="3"] > li { display: grid; grid-template-columns: calc(var(--u) * 17) minmax(0, 1fr); column-gap: calc(var(--u) * 2); }
+  .steps[data-n="2"] .steps__n, .steps[data-n="3"] .steps__n { grid-row: 1 / span 2; font-size: calc(var(--u) * 19); }
+  .steps[data-n="2"] .steps__t, .steps[data-n="3"] .steps__t { margin-top: .1em; }
+  .steps[data-n="2"] p, .steps[data-n="3"] p { margin-top: .55em; }
+}
+@media (max-width: 560px) {
+  .steps[data-n="4"] > li { display: grid; grid-template-columns: calc(var(--u) * 17) minmax(0, 1fr); column-gap: calc(var(--u) * 2); }
+  .steps[data-n="4"] .steps__n { grid-row: 1 / span 2; font-size: calc(var(--u) * 19); }
+  .steps[data-n="4"] .steps__t { margin-top: .1em; }
+  .steps[data-n="4"] p { margin-top: .55em; }
+}
+
+/* Dates, set like tour dates. */
+.dates { border-top: 3px solid var(--fg); }
+.dates li { display: grid; grid-template-columns: minmax(0, var(--dw, 13.2em)) minmax(0, 1fr); column-gap: calc(var(--u) * 1.6); align-items: baseline; padding: 15px 0 16px; border-bottom: 3px solid var(--fg); }
+.dates time { font: 400 clamp(1rem, calc(var(--u) * 1.3), 1.25rem)/1.05 var(--display); text-transform: uppercase; }
+.dates div { display: grid; row-gap: 3px; }
+.dates strong { font: 800 1.0625rem/1.3 var(--body); text-wrap: balance; }
+.dates strong a { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.dates .tag { margin-left: 5px; vertical-align: 2px; font: 800 .625rem/1 var(--body); }
+.dates div > span { font: 500 .9375rem/1.45 var(--body); text-wrap: pretty; }
+/* In a half-width cell the dates take less room, so the words beside them read wider. */
+.dates--narrow { --dw: 8.6em; }
+@media (max-width: 980px) {
+  .dates li { grid-template-columns: minmax(0, 1fr); row-gap: 6px; }
+}
+
+/* Questions. Folded: an accordion, open in the HTML and folded by its script.
+   Open: every answer in full. */
+.faq { --cg: calc(var(--u) * 5); }
+.acc { border-top: 3px solid var(--pop); scroll-margin-top: calc(var(--bar) + 24px); }
+.faq > div > .acc:last-child { border-bottom: 3px solid var(--pop); }
+.acc summary { display: flex; align-items: flex-start; justify-content: space-between; column-gap: 18px; padding: 17px 0 16px; cursor: pointer; list-style: none; }
+.acc summary::-webkit-details-marker { display: none; }
+.acc summary::after { content: ""; flex: none; width: 15px; height: 15px; margin-top: 4px; border-right: 4px solid var(--pop); border-bottom: 4px solid var(--pop); transform: rotate(45deg) translate(-3px, -3px); transition: transform .15s ease; }
+.acc[open] summary::after { transform: rotate(-135deg) translate(-3px, -3px); }
+.acc :is(h2, h3, h4) { font: 800 clamp(1.0625rem, calc(.95rem + var(--u) * .34), 1.3125rem)/1.25 var(--body); letter-spacing: -.01em; text-wrap: balance; }
+.acc summary:hover :is(h2, h3, h4) { color: var(--pop); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 4px; }
+.acc p { max-width: 40rem; padding: 0 30px 20px 0; color: var(--soft); }
+.acc p a { color: var(--fg); }
+.qa { --cg: calc(var(--u) * 6); }
+.qa__item { scroll-margin-top: calc(var(--bar) + 24px); }
+.qa__item + .qa__item { margin-top: calc(var(--u) * 2.4); }
+.qa__item :is(h2, h3, h4) { color: var(--pop); font: 800 clamp(1.1rem, calc(.95rem + var(--u) * .5), 1.5rem)/1.2 var(--body); letter-spacing: -.01em; text-wrap: balance; }
+.qa__item p { max-width: 40rem; margin-top: .6em; color: var(--soft); }
+.qa__item p a { color: var(--fg); }
+.faq__more { margin-top: calc(var(--u) * 2.8); }
+@media (max-width: 760px) {
+  .faq.cols, .qa.cols { --rg: 0px; }
+  .faq > div:first-child > .acc:last-child { border-bottom: 0; }
+  .qa > div + div { --nudge: 28px; }
+  .qa__item + .qa__item { margin-top: 28px; }
+  .faq__more { margin-top: 32px; }
+}
+
+/* The "more" list: onward links in the display face, each with an arrow. */
+.more ul { display: grid; margin-top: 12px; border-top: 3px solid var(--fg); }
+.more a { display: flex; align-items: center; justify-content: space-between; column-gap: 16px; padding: .78em 0; border-bottom: 3px solid var(--fg); font: 400 clamp(1.05rem, calc(var(--u) * 1.9), 1.75rem)/1.05 var(--display); text-transform: uppercase; text-decoration: none; text-wrap: balance; }
+.more a svg { width: 1em; height: 1em; flex: none; transition: transform .12s ease; }
+.more a:hover svg { transform: translateX(6px); }
+
+/* A notice: an ink slab with the mark's tick, as long as what it says. */
+.note { display: flex; align-items: flex-start; gap: 12px; width: fit-content; max-width: 100%; padding: 14px 18px 15px; background: var(--ink); color: #fff; border-radius: 0 16px 0 16px; font: 600 1rem/1.45 var(--body); }
+.note::before { content: ""; flex: none; width: 11px; height: 11px; margin-top: .42em; background: var(--mk, var(--lime)); transform: skewX(-15deg); }
+.note a { color: #fff; }
+.note--bad { --mk: var(--rose); }
+.note { box-shadow: var(--edge, 0 0 0 0) var(--mk, var(--lime)); }      /* an ink slab on ink needs an edge: --edge is the field's */
+
+/* ---------- 11. The closing band: get the app ----------------------------------- */
+/* The app as a store listing shows it: icon, name, line, count. It is in the
+   flow at every width, so it can never sit on a button. */
+.lockup { --lk-gap: clamp(14px, calc(var(--u) * 2), 30px); --lk-icon: clamp(68px, calc(var(--u) * 9.6), 148px); --lk-room: calc((var(--cw) - var(--u) * 4.5) / 2); display: flex; align-items: center; column-gap: var(--lk-gap); margin-bottom: clamp(22px, calc(var(--u) * 2.4), 38px); }
+.lockup__icon { flex: none; width: var(--lk-icon); border-radius: 22.5%; transform: rotate(-7.5deg); filter: drop-shadow(var(--sh) var(--sh) 0 var(--store-sh, var(--rose))); pointer-events: none; }
+.lockup__t { display: grid; justify-items: start; row-gap: .5em; min-width: 0; }
+/* "THE VOLLEYBALL HUB" is 13.3 ems wide: its size never asks for more room than the lockup has beside the icon. */
+.lockup__name { display: grid; row-gap: .16em; font: 400 min(clamp(1.05rem, calc(var(--u) * 1.9), 1.9rem), calc((var(--lk-room) - var(--lk-icon) - var(--lk-gap)) / 13.5))/.84 var(--display); text-transform: uppercase; white-space: nowrap; }
+.lockup__name > span:first-child { font-size: 1.9em; }           /* VOLI, then its line */
+.lockup__tag { font: 600 clamp(1rem, calc(.9rem + var(--u) * .34), 1.3125rem)/1.25 var(--body); }
+.lockup__dl { display: inline-flex; align-items: baseline; gap: .55em; margin-top: .25em; padding: .5em .8em .45em; background: var(--chip-bg, var(--ink)); color: var(--chip-fg, #fff); border-radius: 0 .9em 0 .9em; font: 800 clamp(.68rem, calc(.6rem + var(--u) * .22), .8125rem)/1 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.lockup__dl b { color: var(--chip-pop, var(--lime)); font: 400 1.9em/.8 var(--display); letter-spacing: 0; }
+.get__copy .lede { margin-bottom: 1.1em; text-wrap: balance; }
+/* Scan to get the app: for a visitor with a mouse and no phone in hand. The
+   code is drawn at build time, dark on white so any camera reads it. */
+.qr { display: none; align-items: center; gap: 16px; width: fit-content; max-width: 100%; margin-top: clamp(24px, calc(var(--u) * 2.4), 38px); padding: 12px 20px 12px 12px; background: var(--ink); color: #fff; border-radius: 0 16px 0 16px; box-shadow: var(--sh) var(--sh) 0 var(--store-sh, var(--rose)); }
+.qr svg { flex: none; width: 104px; height: 104px; }
+.qr { scroll-margin-top: calc(var(--bar) + 24px); }
+.qr__t { max-width: 13.5em; font: 600 .9375rem/1.4 var(--body); text-wrap: balance; }
+.qr__t strong { display: block; margin-bottom: .4em; color: var(--lime); font: 400 1.05rem/1 var(--display); text-transform: uppercase; }
+@media (hover: hover) and (pointer: fine) and (min-width: 761px) { .qr { display: flex; } }
+/* In a hero's copy the column is narrow on a small window: the code is smaller there. */
+@media (max-width: 1000px) {
+  .hero__copy .qr { gap: 12px; padding: 10px 14px 10px 10px; }
+  .hero__copy .qr svg { width: 84px; height: 84px; }
+  .hero__copy .qr__t, .hero__copy .qr__t strong { font-size: .875rem; }
+}
+@media (max-width: 760px) {
+  .lockup { --lk-room: var(--cw); }
+}
+@media (max-width: 359px) {
+  .lockup__tag { font-size: .9375rem; }
+}
+
+/* ---------- 12. Reading: a level sheet for long documents ------------------------ */
+/* Long text never sits in a sheared box. A sheet is a flat colour field with
+   the document on a level ink panel; the panel runs down under the band that
+   follows, which cuts it on the slant. Opening a page it starts flat; after a
+   band or a hero its field is cut to fit under theirs. */
+.sheet { position: relative; isolation: isolate; color: var(--fg); padding: clamp(18px, calc(var(--u) * 2.2), 40px) var(--g) 0; scroll-margin-top: calc(var(--bar) + 16px); }
+.sheet::before { content: ""; position: absolute; z-index: -1; inset: 0; background: var(--bg); }
+/* The panel is an ink field of its own, so its offset is named out here, on the sheet's field. */
+.sheet { --sheet-sh: var(--a3); }
+:is(.band, .hero) + .sheet { margin-top: calc(var(--h) * -1); padding-top: calc(var(--h) + clamp(18px, calc(var(--u) * 2.2), 40px)); pointer-events: none; }
+/* Its field starts a hair above the cut, under what is above it, so no line of the page shows between the two. */
+:is(.band, .hero) + .sheet::before { clip-path: polygon(0 -3px, 100% calc(var(--h) - 3px), 100% 100%, 0 100%); }
+:is(.band, .hero) + .sheet > * { pointer-events: auto; }
+.sheet__head { max-width: 100%; }
+.sheet__head h1, .sheet__head h2 { background-color: var(--bg); }
+.sheet__title { display: block; font: 400 min(calc(var(--cw) / var(--em, 8) * .99), calc(var(--u) * var(--cap, 9.5)))/.84 var(--display); text-transform: uppercase; white-space: nowrap; }
+.sheet__title + .sheet__title { margin-top: .1em; }
+.sheet__meta { margin-top: 1.2em; }
+.sheet__meta > span { display: inline-block; max-width: 100%; }   /* each part stays whole while it fits the line */
+.sheet__lede { max-width: 40rem; margin-top: .9em; }
+.sheet__lede > * + * { margin-top: .8em; }
+.sheet__grid { display: grid; grid-template-columns: minmax(0, 50rem); align-items: start; margin-top: clamp(24px, calc(var(--u) * 3), 52px); }
+.sheet__panel {
+  --pad: clamp(18px, calc(var(--u) * 3.6), 60px);
+  position: relative;
+  padding: clamp(24px, calc(var(--u) * 3.4), 56px) var(--pad) calc(var(--h) - var(--g) * .268 + 34px);
+  background: var(--ink); color: #fff;
+  border-radius: 0 clamp(18px, calc(var(--u) * 2.4), 40px) 0 0;
+  box-shadow: var(--sh) var(--sh) 0 var(--sheet-sh);
+}
+/* A sheet with no title of its own: a hero above it carries the heading. */
+.sheet--bare .sheet__grid { margin-top: 0; }
+/* Under a hero of its own colour that has no art, the two are one field: the
+   document starts right under the hero's copy, over the corner the hero
+   keeps free. */
+.hero--solo.f-ink + .sheet--bare.f-ink, .hero--solo.f-lime + .sheet--bare.f-lime,
+.hero--solo.f-blue + .sheet--bare.f-blue, .hero--solo.f-rose + .sheet--bare.f-rose { z-index: 3; padding-top: clamp(8px, calc(var(--u) * 1), 20px); }
+.hero--solo.f-ink + .sheet--bare.f-ink::before, .hero--solo.f-lime + .sheet--bare.f-lime::before,
+.hero--solo.f-blue + .sheet--bare.f-blue::before, .hero--solo.f-rose + .sheet--bare.f-rose::before { clip-path: none; }   /* one field: no seam to show */
+/* That sheet is drawn over its hero, so the band that ends it is drawn over the
+   sheet: it cuts the panel's foot on the slant, and its title stays in view. */
+.hero--solo + .sheet--bare + .band { z-index: 4; }
+@media (max-width: 640px) {
+  /* A title given as two parts is two lines here, set at the phone's size (--em-m). */
+  .sheet__title--wrap > span { display: block; }
+  .sheet__title--wrap > span + span { margin-top: .1em; }
+  .sheet__title { font-size: min(calc(var(--cw) / var(--em-m, var(--em, 8)) * .99), calc(var(--u) * var(--cap-m, 17))); }
+}
+/* The contents: a list beside the sheet on a wide screen, folded above it on a narrow one. */
+.toc { margin-bottom: clamp(18px, calc(var(--u) * 4), 30px); }
+.toc summary { display: flex; align-items: center; justify-content: space-between; column-gap: 14px; padding: 13px 0 12px; border-top: 3px solid var(--fg); border-bottom: 3px solid var(--fg); cursor: pointer; list-style: none; }
+.toc summary::-webkit-details-marker { display: none; }
+.toc summary::after { content: ""; flex: none; width: 11px; height: 11px; margin-right: 3px; border-right: 3px solid var(--fg); border-bottom: 3px solid var(--fg); transform: rotate(45deg) translate(-2px, -2px); transition: transform .15s ease; }
+.toc[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
+.toc ol { display: grid; }
+.toc li a { display: block; padding: .62em 0 .6em; border-bottom: 2px solid var(--fg); font: 700 .9375rem/1.3 var(--body); text-decoration: none; }
+.toc li a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+@media (min-width: 1000px) {
+  .sheet--toc .sheet__grid { grid-template-columns: minmax(0, 15rem) minmax(0, 50rem); column-gap: calc(var(--u) * 4); }
+  .sheet--toc .sheet__panel { padding-bottom: calc(var(--h) - (var(--g) + 15rem + var(--u) * 4) * .268 + 34px); }
+  /* It follows the reader down the page, and lets go a slope before the end. */
+  .toc { position: sticky; top: calc(var(--bar) + 22px); max-height: calc(100vh - var(--bar) - 44px); margin-bottom: var(--h); overflow-y: auto; scrollbar-width: thin; }
+  .toc summary { border-bottom: 0; padding-bottom: 10px; cursor: default; pointer-events: none; }
+  .toc summary::after { display: none; }
+  .toc ol { border-top: 3px solid var(--fg); }
+}
+
+/* Running text: headings, paragraphs, lists, links, quotes, rules. It takes
+   its colours from the field it is on, so it reads on the ink sheet and on a
+   colour band alike. */
+.prose { font-size: clamp(1rem, calc(.95rem + var(--u) * .14), 1.125rem); line-height: 1.7; }
+.prose > *, .prose > section > * { max-width: 44rem; }
+.prose > section, .prose > :is(.tblwrap, .wide, figure, hr) { max-width: none; }
+.prose > * + *, .prose > section > * + * { margin-top: 1.05em; }
+.prose :is(h2, h3, h4) { color: var(--fg); text-wrap: balance; }
+.prose h2 { margin-top: 2.5em; padding-top: 1em; border-top: 3px solid var(--pop); color: var(--pop); font: 800 clamp(1.3rem, calc(1.12rem + var(--u) * .56), 1.85rem)/1.2 var(--body); letter-spacing: -.015em; }
+.prose > h2:first-child, .prose > section:first-child > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.prose > section + section { margin-top: 2.5em; padding-top: 1em; border-top: 3px solid var(--pop); }
+.prose > section > h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.prose h3 { margin-top: 1.9em; font: 800 clamp(1.0625rem, calc(1rem + var(--u) * .2), 1.25rem)/1.3 var(--body); letter-spacing: -.01em; }
+.prose h4 { margin-top: 1.7em; font: 800 .8125rem/1.3 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.prose :is(h2, h3, h4) + * { margin-top: .65em; }
+.prose :is(h2, h3, h4, section)[id] { scroll-margin-top: calc(var(--bar) + 24px); }
+.prose :is(p, li, dd, td) { color: var(--soft); }
+.prose strong, .prose b { color: var(--fg); font-weight: 700; }
+.prose a { color: var(--fg); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.prose a:hover { text-decoration-thickness: 4px; }
+.prose :is(ul, ol) { display: grid; row-gap: .5em; padding-left: 1.6em; }
+.prose li { position: relative; }
+.prose li > :is(ul, ol) { margin-top: .5em; }
+/* The bullet is the mark's tick; a number is set in the field's accent. */
+.prose ul > li::before { content: ""; position: absolute; left: -1.3em; top: .6em; width: .5em; height: .5em; background: var(--pop); transform: skewX(-15deg); }
+.prose ol > li::before { content: counter(list-item) "."; position: absolute; right: calc(100% + .5em); top: 0; color: var(--pop); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.prose ol[type="a"] > li::before { content: counter(list-item, lower-alpha) "."; }
+.prose ol[type="A"] > li::before { content: counter(list-item, upper-alpha) "."; }
+.prose ol[type="i"] > li::before { content: counter(list-item, lower-roman) "."; }
+.prose ol[type="I"] > li::before { content: counter(list-item, upper-roman) "."; }
+.prose blockquote { padding: .2em 0 .2em 1.1em; border-left: 5px solid var(--pop); font-weight: 600; }
+.prose blockquote p { color: var(--fg); }
+.prose hr { height: 3px; margin: 2.2em 0; border: 0; background: var(--pop); }
+.prose dt { margin-top: 1.1em; color: var(--fg); font-weight: 800; }
+.prose dd { margin-top: .25em; }
+.prose code { padding: .1em .35em; border: 2px solid currentColor; border-radius: 0 6px 0 6px; font: 600 .9em/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+/* Code to copy: it scrolls inside its own box. */
+.codebox, .prose pre { max-width: 100%; margin: 0; padding: 16px 18px; overflow-x: auto; background: var(--ink); color: #fff; border-radius: 0 14px 0 14px; box-shadow: var(--edge, 0 0 0 0) #fff; font: 500 .875rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; tab-size: 2; -webkit-overflow-scrolling: touch; }
+.codebox code, .prose pre code { padding: 0; border: 0; font: inherit; }
+/* A lead paragraph, and the small print. */
+.prose .lead { color: var(--fg); font-size: 1.12em; font-weight: 500; line-height: 1.55; }
+.prose .fine, .prose small { font-size: .8125rem; line-height: 1.6; }
+
+/* ---------- 13. Tables ------------------------------------------------------------ */
+/* Data in rows: a caption, small-caps column heads, hairlines, figures set
+   right. On a phone the table scrolls sideways inside its own box (.tblwrap),
+   never the page. */
+.tblwrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--pop) transparent; }
+.tblwrap:focus-visible { outline-offset: 4px; }
+/* The same rules dress a table written straight into running text. Either way
+   the selector weighs one class and one tag (:where adds nothing), so a
+   modifier below, or a page's own class on the table, can change a cell. */
+:is(.tbl, :where(.prose) table) { width: 100%; min-width: var(--min, 0); border-collapse: collapse; font-variant-numeric: tabular-nums; }
+:is(.tbl, :where(.prose) table) caption { caption-side: top; padding-bottom: 10px; color: var(--pop); font: 800 .72rem/1.3 var(--body); letter-spacing: .14em; text-align: left; text-transform: uppercase; }
+:is(.tbl, :where(.prose) table) :is(th, td) { padding: 11px 0 11px 14px; color: var(--fg); font: 500 1rem/1.3 var(--body); text-align: right; vertical-align: baseline; }
+:is(.tbl, :where(.prose) table) :is(th, td):first-child { padding-left: 0; text-align: left; }
+:is(.tbl, :where(.prose) table) :is(th, td).l { text-align: left; }
+:is(.tbl, :where(.prose) table) :is(th, td).r { text-align: right; }
+:is(.tbl, :where(.prose) table) thead th { padding-top: 0; border-bottom: 3px solid var(--fg); color: var(--soft); font: 800 .6875rem/1.3 var(--body); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+:is(.tbl, :where(.prose) table) tbody tr { border-bottom: 1px solid var(--line, rgba(255, 255, 255, .3)); }
+:is(.tbl, :where(.prose) table) tbody th { font-weight: 600; }
+:is(.tbl, :where(.prose) table) tfoot tr { border-top: 3px solid var(--fg); }
+:is(.tbl, :where(.prose) table) tfoot :is(th, td) { font-weight: 800; }
+/* A heavy rule after a row that ends a group (the top 25 of a hundred). */
+.tbl tbody tr.cut { border-bottom: 3px solid var(--fg); }
+:is(.tbl, :where(.prose) table) tbody tr:last-child { border-bottom: 0; }
+:is(.tbl, :where(.prose) table):not(:has(tfoot)) tbody tr:last-child { border-bottom: 3px solid var(--fg); }
+/* A table of words, not figures: every column is set left, and its words wrap so it always fits. */
+.prose table:not(.tbl) :is(th, td) { text-align: left; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; }
+/* A figure worth reading first: set in the display face, in the accent. */
+.tbl .fig { color: var(--pop); font: 400 1.7rem/.8 var(--display); }
+.tbl .rank { width: 1%; padding-right: 6px; color: var(--pop); font: 400 1.25rem/.9 var(--display); white-space: nowrap; }
+.tbl .pop { color: var(--pop); }
+:is(.tbl, :where(.prose) table) a { color: inherit; font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+:is(.f-lime, .f-blue, .f-rose) { --line: rgba(15, 19, 20, .34); }
+.f-ink { --line: rgba(255, 255, 255, .3); }
+/* The first column stays put while the rest scrolls under it. */
+.tbl--pin :is(th, td):first-child { position: sticky; left: 0; z-index: 1; background: var(--bg); padding-right: 12px; }
+/* A long list: tighter rows. */
+.tbl--tight :is(th, td) { padding-top: 8px; padding-bottom: 8px; font-size: .9375rem; }
+.tbl--tight .rank { font-size: 1.1rem; }
+.tbl--tight .fig { font-size: 1.3rem; }
+@media (max-width: 760px) {
+  .tbl .nophone { display: none; }                    /* a column a phone can do without */
+  :is(.tbl, :where(.prose) table) :is(th, td) { padding-left: 10px; font-size: .9375rem; }
+  .tbl .fig { font-size: 1.45rem; }
+}
+
+/* ---------- 14. Forms ------------------------------------------------------------- */
+/* A control is a hard-edged box in the field's own ink: white on a colour
+   field, ink on ink. Focus puts the hard offset under it. An error is said in
+   words beside a tick, never by colour alone. */
+.form { display: grid; row-gap: 18px; max-width: 34rem; }
+.form__row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; row-gap: 18px; }
+.field { display: grid; align-content: start; row-gap: 7px; min-width: 0; }
+.field__l { font: 800 .75rem/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.field__l i { font-style: normal; font-weight: 600; letter-spacing: .04em; text-transform: none; opacity: .8; }
+.field__c {
+  display: block; width: 100%; min-height: 52px; margin: 0; padding: 13px 14px;
+  border: 3px solid var(--in-bd, var(--ink)); border-radius: 0 12px 0 12px;
+  background: var(--in-bg, #fff); color: var(--in-fg, var(--ink));
+  font: 500 1rem/1.4 var(--body);
+  transition: box-shadow .12s ease;
+  -webkit-appearance: none; appearance: none;
+}
+.field__c::placeholder { color: var(--in-fg, var(--ink)); opacity: .55; }
+textarea.field__c { min-height: 9.5em; resize: vertical; }
+select.field__c { padding-right: 46px; cursor: pointer; }
+/* A select's own arrow is drawn by its wrapper, in the control's ink. */
+.field__sel { position: relative; display: block; }
+.field__sel::after { content: ""; position: absolute; right: 19px; top: 50%; width: 10px; height: 10px; border-right: 3px solid var(--in-fg, var(--ink)); border-bottom: 3px solid var(--in-fg, var(--ink)); transform: translateY(-72%) rotate(45deg); pointer-events: none; }
+/* The ring stays, unseen, for a forced-colours mode, where a shadow is not drawn. */
+.field__c:focus { outline-color: transparent; box-shadow: var(--sh) var(--sh) 0 var(--in-sh, var(--ink)); }
+.field__h { font: 500 .8125rem/1.45 var(--body); }
+.field__e { display: none; align-items: flex-start; gap: 8px; font: 700 .875rem/1.4 var(--body); }
+.field__e::before { content: ""; flex: none; width: 10px; height: 10px; margin-top: .32em; background: var(--bad, var(--rose)); transform: skewX(-15deg); }
+.field--bad .field__e { display: flex; }
+.field--bad .field__c, .field__c[aria-invalid="true"] { box-shadow: var(--sh) var(--sh) 0 var(--bad, var(--rose)); }
+/* In focus, a control in error keeps its own offset and gains the focus one beyond it. */
+.field--bad .field__c:focus, .field__c[aria-invalid="true"]:focus { box-shadow: var(--sh) var(--sh) 0 var(--bad, var(--rose)), calc(var(--sh) * 2) calc(var(--sh) * 2) 0 var(--in-sh, var(--ink)); }
+.field--bad .field__h { display: none; }
+.form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 6px; }
+.form .note { margin: 0; }
+@media (max-width: 520px) { .form__row { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- 15. Cards: a partner or a person on an ink panel ------------------------ */
+.card { position: relative; display: flex; flex-direction: column; background: var(--ink); color: #fff; border-radius: 0 22px 0 22px; box-shadow: var(--sh) var(--sh) 0 var(--card-sh, var(--a1)); text-decoration: none; overflow: hidden; }
+/* On an ink field an ink card needs an edge: a rule in its offset's colour (--rim is the field's, and nothing on a colour). */
+.card::after { content: ""; position: absolute; inset: 0; border: var(--rim, 0px) solid var(--card-sh, var(--a1)); border-radius: inherit; pointer-events: none; }
+a.card { transition: transform .12s ease, box-shadow .12s ease; }
+a.card:hover { transform: translate(calc(var(--sh) * .5), calc(var(--sh) * .5)); box-shadow: calc(var(--sh) * .5) calc(var(--sh) * .5) 0 var(--card-sh, var(--a1)); }
+.cols > .card:nth-child(3n + 2), .cardgrid > .card:nth-child(3n + 2) { --card-sh: var(--a2); }
+.cols > .card:nth-child(3n), .cardgrid > .card:nth-child(3n) { --card-sh: var(--a3); }
+.card__pic { position: relative; display: grid; place-items: center; aspect-ratio: var(--pic, 16 / 10); background: var(--pic-bg, #1B2224); overflow: hidden; }
+.card__pic img { width: 100%; height: 100%; object-fit: cover; }
+/* A logo is shown whole, with air round it; a photograph fills the frame. */
+.card--logo .card__pic img { width: auto; height: auto; max-width: 62%; max-height: 62%; object-fit: contain; }
+.card__body { display: flex; flex-direction: column; flex: 1; padding: 1.15em 1.25em 1.3em; }
+.card .card__k { margin: 0; color: var(--lime); font: 800 .6875rem/1.2 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.card__n { margin-top: .45em; font: 400 clamp(1.15rem, calc(var(--u) * 1.75), 1.75rem)/1 var(--display); text-transform: uppercase; text-wrap: balance; }
+.card__body p { margin-top: .7em; color: rgba(255, 255, 255, .82); font-size: .9375rem; line-height: 1.5; }
+.cardgrid > .card { height: 100%; }
+.card__go { display: inline-flex; align-items: center; gap: .5em; margin-top: auto; padding-top: 1em; color: var(--lime); font: 400 .9rem/1 var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.card__go svg { width: 1.1em; height: 1.1em; transition: transform .12s ease; }
+a.card:hover .card__go svg { transform: translateX(5px); }
+/* A plain grid of cards for a level block: as many columns as fit. */
+.cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: clamp(18px, calc(var(--u) * 2.2), 32px); }
+
+/* ---------- 16. Footer: the last band --------------------------------------------- */
+/* Its content is sheared up and left, so the lower part of its box is empty:
+   pull the end of the page up over it. */
+.foot { margin-bottom: calc(var(--h) * -.5 + 20px); }
+.foot > .band__in { --pb: calc(var(--u) * 1); }
+.foot__mark { --stroke: var(--lime); }
+.foot__cols { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; column-gap: calc(var(--u) * 4); align-items: start; margin-top: calc(var(--u) * 2.4); }
+.foot__t { margin-bottom: 14px; color: var(--lime); font: 800 .75rem/1 var(--body); letter-spacing: .16em; text-transform: uppercase; }
+.foot__t a { text-decoration: none; }
+.foot__col ul { display: grid; row-gap: 10px; }
+.foot__col li { text-wrap: balance; }
+.foot__col li a { font: 500 .9375rem/1.3 var(--body); text-decoration: none; }
+.foot__col a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.foot__base { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 28px; margin-top: calc(var(--u) * 5); padding-top: 20px; border-top: 2px solid rgba(255, 255, 255, .28); }
+.foot__social { display: flex; gap: 8px; }
+.foot__social a { display: grid; place-items: center; width: 44px; height: 44px; margin-left: -11px; }
+.foot__social a:hover { color: var(--lime); }
+.foot__copy { justify-self: end; color: var(--soft); font: 500 .8125rem/1.4 var(--body); text-align: right; }
+.foot__ind { grid-column: 1 / -1; max-width: 46rem; color: var(--soft); font: 500 .8125rem/1.5 var(--body); text-wrap: pretty; }
+@media (max-width: 760px) {
+  .foot__cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 32px; margin-top: calc(var(--u) * 10); }
+  .foot__base { grid-template-columns: minmax(0, 1fr); margin-top: calc(var(--u) * 14); }
+  .foot__copy { justify-self: start; text-align: left; }
+}
+
+/* ---------- 17. Dialog: a notice over the page ------------------------------------ */
+/* What a page's script puts up when the app did not open: a lime slab over a
+   dimmed page, with one button. The script adds it to the end of the body,
+   outside the poster (a fixed box inside the page would be placed against the
+   page, not the screen), so it names the measures it needs.
+
+     <div class="dlg"><div class="dlg__box" role="dialog" aria-modal="true" aria-labelledby="...">
+       <h2 id="...">Get VOLI to play</h2> <p>...</p> <button type="button" class="btn">Got it</button>
+     </div></div> */
+.dlg { --u: min(1vw, 19.2px); --sh: 7px; position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15, 19, 20, .82); }
+.dlg__box {
+  width: min(100%, 380px); padding: 26px 24px 24px;
+  background: var(--lime); color: var(--ink);
+  border-radius: 0 22px 0 22px; box-shadow: var(--sh) var(--sh) 0 var(--rose);
+  --btn-bg: var(--ink); --btn-fg: #fff; --btn-sh: var(--rose); --focus: var(--ink);
+}
+.dlg__box h2 { margin: 0 0 12px; font: 400 1.6rem/.95 var(--display); text-transform: uppercase; text-wrap: balance; }
+.dlg__box p { margin: 0 0 22px; font: 500 1rem/1.5 var(--body); text-wrap: pretty; }
+.dlg__box strong { font-weight: 800; letter-spacing: .08em; }
+.dlg__box .btn { min-height: 46px; }
+
+/* ---------- 18. Motion: there is almost none. What there is, stops on request. ----- */
+@media (prefers-reduced-motion: reduce) {
+  html, .idx__list { scroll-behavior: auto; }
+  .oc *, .oc *::before, .oc *::after { transition: none !important; animation: none !important; }
+}

@@ -1,0 +1,23 @@
+---
+// An ink fact badge: a figure in the display face and what it counts. In a
+// <Stack> it is placed with x and y; on its own it sits in the text flow.
+//
+//   <Badge value="3.7k+" label="downloads" x={72} y={68} xm={50} ym={84} />
+import Nb from './Nb.astro';
+import { emWidth } from '../../lib/designer-metrics';
+import { placeVars, tint, vars, type Place, type Tint } from './util';
+
+interface Props extends Omit<Place, 'w' | 'wm' | 'z'> {
+  /** The figure: short, and only glyphs the display face has. */
+  value: string;
+  /** What it counts, in a few words. */
+  label: string;
+  /** The colour of the hard offset. Default rose. */
+  shadow?: Tint;
+  class?: string;
+}
+
+const { value, label, shadow, class: cls, ...place } = Astro.props;
+emWidth(value); // throws on a glyph Designer cannot set
+---
+<p class:list={['badge', cls]} style={vars({ ...placeVars(place, 'Badge'), '--badge-sh': tint(shadow) })}><strong>{value}</strong> <span><Nb text={label} /></span></p>

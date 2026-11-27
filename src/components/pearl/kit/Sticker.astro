@@ -1,0 +1,39 @@
+---
+// A card cut from a real app screen, lifted with the navy shadow and never
+// tilted (pearl/Pop). Use `cut` for a cut-out on file, or src, width, height
+// and alt for any other image. `r` and `shadow` are the Poster's and are ignored.
+//
+//   <Sticker cut="card-game" x={0} y={4} w={90} />
+import Pop from '../Pop.astro';
+import { CUTOUTS, type CutoutKey } from '../../poster/cutouts';
+import { placeVars } from '../util';
+import { level, vars, type Place, type Tint } from './util';
+
+interface Props extends Place {
+  cut?: CutoutKey;
+  src?: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+  rad?: string;
+  shadow?: Tint;
+  eager?: boolean;
+  class?: string;
+}
+
+const { cut, src, width, height, alt, rad, shadow: _s, eager, class: cls, ...place } = Astro.props;
+const c = cut ? CUTOUTS[cut] : undefined;
+if (cut && !c) throw new Error(`Sticker: there is no cut-out "${cut}". The keys are: ${Object.keys(CUTOUTS).join(', ')}`);
+const pic = { src: src ?? c?.src, width: width ?? c?.width, height: height ?? c?.height, alt: alt ?? c?.alt, rad: rad ?? c?.rad };
+if (!pic.src || !pic.width || !pic.height) throw new Error('Sticker: give it a cut, or src with width and height');
+if (pic.alt === undefined) throw new Error(`Sticker: ${pic.src} needs an alt text that says what the picture shows`);
+const plain = cut && !src && !eager;
+const p = level(place);
+---
+{plain ? (
+    <Pop cut={cut!} class={cls} {...p} />
+) : (
+    <div class:list={['pop', cls]} style={`${placeVars(p)};${vars({ '--pop-r': pic.rad })}`}>
+        <img src={pic.src} width={pic.width} height={pic.height} alt={pic.alt} loading={eager ? undefined : 'lazy'} decoding={eager ? undefined : 'async'}>
+    </div>
+)}

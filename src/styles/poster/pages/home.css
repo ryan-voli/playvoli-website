@@ -1,0 +1,40 @@
+/* Home: what only this page needs. Everything shared is in system.css. */
+
+/* A feature band's cut-out card, under its copy. */
+.home-fig { max-width: 34rem; }
+@media (max-width: 760px) {
+  .home-fig { margin-top: calc(var(--u) * 6); }
+}
+
+/* News: where the stories come from, under the copy. */
+.home-src { margin-top: calc(var(--u) * 2.6); }
+.home-src .chips { margin-top: 16px; }
+.home-src .small { max-width: 36rem; margin-top: 16px; }
+.home-src + .stack { max-width: 30rem; }
+.home-pods .rows { margin-top: 16px; }
+@media (max-width: 760px) {
+  .home-src { margin-top: calc(var(--u) * 9); }
+  .home-src + .stack { margin-top: calc(var(--u) * 8); }
+}
+
+/* Community: the chat strip, then the rooms as tickets. */
+.home-rooms { margin-top: calc(var(--u) * 3.4); padding-bottom: calc(var(--u) * 2.4); }
+@media (max-width: 760px) {
+  .home-rooms { margin-top: calc(var(--u) * 9); padding-bottom: 0; }
+}
+
+/* Leagues: three names in the display face, riding the slope. */
+.home-leagues { display: flex; justify-content: space-between; align-items: flex-start; column-gap: calc(var(--u) * 2); margin-top: calc(var(--u) * 1.6); }
+.home-leagues a { display: block; text-decoration: none; }
+.home-leagues strong { display: block; font: 400 calc(var(--cw) / 10.3)/.8 var(--display); text-transform: uppercase; white-space: nowrap; }
+.home-leagues span { display: block; margin-top: calc(var(--u) * .9); font: 700 clamp(.66rem, calc(.5rem + var(--u) * .5), 1.0625rem)/1.25 var(--body); letter-spacing: .1em; text-transform: uppercase; }
+@supports (-webkit-text-stroke: 1px #000) {
+  .home-leagues a:hover strong { color: transparent; -webkit-text-stroke: max(1.5px, .02em) var(--fg); }
+}
+.home-leagues__note { font-weight: 600; }
+@media (max-width: 760px) {
+  .home-leagues { flex-direction: column; row-gap: calc(var(--u) * 3.4); margin-top: calc(var(--u) * 4); }
+  .home-leagues a { display: flex; align-items: flex-end; column-gap: calc(var(--u) * 3); }
+  .home-leagues strong { font-size: calc(var(--u) * 17); }
+  .home-leagues span { max-width: 9em; margin: 0 0 .25em; }
+}

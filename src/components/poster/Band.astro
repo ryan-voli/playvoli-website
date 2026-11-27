@@ -1,0 +1,62 @@
+---
+// A band: one flat colour stripe of the poster, cut on the slant, with the
+// title that rides its top edge. Inside a band the space is sheared: put
+// what you read in <Cols> (level columns), and nothing else straight into it
+// except parts made to ride the slope (Tower).
+//
+//   <Band color="blue" id="fantasy" title="Fantasy" sub="leagues">
+//     <Cols ratio="42:50"> ... </Cols>
+//   </Band>
+//
+// Two bands that touch never share a colour.
+import Rider from './Rider.astro';
+import { riderLines, riderText, titleMetrics, type TitleProps } from './rider';
+import { slug, vars, type Field } from './util';
+
+interface Props extends TitleProps {
+  color: Field;
+  /** The section's id: what the lime bar and other pages link to. */
+  id?: string;
+  /** The title's heading tag. Default h2. */
+  as?: 'h1' | 'h2' | 'h3';
+  /** A colour for the title, on ink. */
+  tone?: 'lime' | 'blue' | 'rose' | 'white';
+  /** Small caps under the title, inside the heading. */
+  note?: string;
+  /** A dated or sourced line under the title, outside the heading: "As of October 2026". A column tucks under the title and the stamp together, so keep the stamp shorter than the title's last line. */
+  stamp?: string;
+  /** Names the section for screen readers when it has no title. */
+  label?: string;
+  /** Padding above the title and under the content, in units of --u (1% of the page width). */
+  pt?: number;
+  pb?: number;
+  /** The same for the one-column (phone) layout, where it differs. After a hero whose art hangs over the cut, ptPhone starts the band lower there. */
+  ptPhone?: number;
+  pbPhone?: number;
+  /** Stickers in this band hang over the cut into the next one. */
+  lift?: boolean;
+  class?: string;
+}
+
+const { color, id, as = 'h2', tone, note, stamp, label, pt, pb, ptPhone, pbPhone, lift, class: cls, ...title } = Astro.props;
+const lines = riderLines(title);
+const hasTitle = lines.length > 0;
+const hid = hasTitle ? `${id ?? slug(riderText(lines))}-h` : undefined;
+const m = titleMetrics(lines, !!note);
+const style = vars({
+  ...m.vars,
+  '--pt': pt !== undefined && `calc(var(--u) * ${pt})`,
+  '--pb': pb !== undefined && `calc(var(--u) * ${pb})`,
+  '--pt-m': ptPhone !== undefined && `calc(var(--u) * ${ptPhone})`,
+  '--pb-m': pbPhone !== undefined && `calc(var(--u) * ${pbPhone})`,
+});
+---
+<section class:list={['band', `f-${color}`, { 'band--lift': lift }, cls]} id={id} aria-labelledby={hid} aria-label={hasTitle ? undefined : label}>
+    <div class="band__in" data-t={m.t} style={style}>
+        <slot name="title">
+            {hasTitle && <Rider as={as} id={hid} tone={tone} note={note} {...title} />}
+        </slot>
+        {stamp && <p class="label rider__stamp">{stamp}</p>}
+        <slot />
+    </div>
+</section>

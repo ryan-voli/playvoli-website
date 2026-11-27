@@ -1,0 +1,33 @@
+---
+// One half of a <Split>: a colour, a title that rides the cut, and a level
+// body. Everything in the slot is ordinary, level layout.
+import Rider from './Rider.astro';
+import { riderLines, riderText, titleMetrics, type TitleProps } from './rider';
+import { slug, vars, type Field } from './util';
+
+interface Props extends TitleProps {
+  color: Field;
+  id?: string;
+  as?: 'h2' | 'h3';
+  tone?: 'lime' | 'blue' | 'rose' | 'white';
+  /** Small caps under the title, inside the heading. */
+  note?: string;
+  /** Names the section for screen readers when it has no title. */
+  label?: string;
+  /** Let the body run the cell's whole width instead of keeping to a reading measure. */
+  wide?: boolean;
+  class?: string;
+}
+
+const { color, id, as = 'h2', tone, note, label, wide, class: cls, ...title } = Astro.props;
+const lines = riderLines(title);
+const hasTitle = lines.length > 0;
+const hid = hasTitle ? `${id ?? slug(riderText(lines))}-h` : undefined;
+const m = titleMetrics(lines, !!note);
+---
+<section class:list={['cell', `f-${color}`, cls]} id={id} aria-labelledby={hid} aria-label={hasTitle ? undefined : label} data-t={m.t} style={vars(m.vars)}>
+    {hasTitle && <Rider as={as} id={hid} tone={tone} note={note} {...title} />}
+    <div class:list={['cell__body', { 'cell__body--wide': wide }]}>
+        <slot />
+    </div>
+</section>

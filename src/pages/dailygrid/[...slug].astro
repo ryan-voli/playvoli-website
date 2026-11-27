@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import '../../styles/pearl/pages/dailygrid.css';
 
 export function getStaticPaths() {
   return [{ params: { slug: undefined } }];
@@ -8,7 +9,7 @@ export function getStaticPaths() {
 
 <SiteLayout
   title="Daily Grid - VOLI"
-  description="Play the Voli Daily Grid — fill a 3x3 grid with volleyball players matching row and column categories."
+  description="Play the VOLI Daily Grid — fill a 3x3 grid with volleyball players matching row and column categories."
   ogUrl="https://playvoli.com/dailygrid"
   activePage="dailygrid"
   skipNavAuth
@@ -17,24 +18,24 @@ export function getStaticPaths() {
   <!-- Hidden for now (owner, 4 Oct 2026): unlinked site-wide, kept out of search. -->
   <meta slot="head" name="robots" content="noindex" />
 
-<main class="v-page dg-page">
+<main class="acct dg-page">
 <!-- Loading -->
 <div id="dg-loading"><div class="dg-spinner"></div></div>
 
 <!-- Sign-in Prompt -->
 <div id="dg-signin" class="dg-center" style="display:none">
-    <h1 class="dg-page-title v-h1">DAILY GRID</h1>
-    <p class="dg-page-sub v-body">Sign in to play today's grid</p>
-    <a href="/auth?redirect=/dailygrid" class="v-pill v-pill--cta v-pill--action">Sign In</a>
+    <h1 class="dg-page-title">DAILY <em>GRID</em></h1>
+    <p class="dg-page-sub">Sign in to play today's grid</p>
+    <a href="/auth?redirect=/dailygrid" class="btn btn--primary btn--lg">Sign In</a>
 </div>
 
 <!-- Game -->
 <div id="dg-game" style="display:none">
 
     <div class="dg-title-row">
-        <button class="dg-title-btn v-icon-btn" id="dg-leaderboard-btn"><img src="/images/icons/leaderboard.png" alt="Leaderboard"></button>
-        <h1 class="dg-page-title">DAILY GRID</h1>
-        <button class="dg-title-btn v-icon-btn" id="dg-info-btn"><img src="/images/icons/info.png" alt="Info"></button>
+        <button class="dg-title-btn" id="dg-leaderboard-btn"><img src="/images/icons/leaderboard.png" alt="Leaderboard"></button>
+        <h1 class="dg-page-title">DAILY <em>GRID</em></h1>
+        <button class="dg-title-btn" id="dg-info-btn"><img src="/images/icons/info.png" alt="Info"></button>
     </div>
 
     <!-- Status Bar -->
@@ -75,7 +76,7 @@ export function getStaticPaths() {
 
     <!-- Results Card -->
     <div id="dg-results" style="display:none">
-        <div class="dg-results-card glass-card">
+        <div class="dg-results-card">
             <div class="dg-results-top">
                 <div class="dg-results-left">
                     <div class="dg-results-score" id="dg-results-score">0/9</div>
@@ -83,16 +84,16 @@ export function getStaticPaths() {
                 </div>
                 <div class="dg-mini-grid" id="dg-mini-grid"></div>
             </div>
-            <button class="v-pill v-pill--action v-pill--block" id="dg-share-btn">Share Results</button>
+            <button class="btn btn--primary acct-wide" id="dg-share-btn">Share Results</button>
             <div id="dg-share-msg" class="dg-share-msg"></div>
         </div>
     </div>
 
     <!-- Countdown -->
-    <div class="dg-countdown v-path v-num" id="dg-countdown"></div>
+    <div class="dg-countdown" id="dg-countdown"></div>
 
     <!-- Historical grids CTA -->
-    <p class="dg-historical">Play historical grids on the <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">Voli app</a></p>
+    <p class="dg-historical">Play historical grids on the <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982">VOLI app</a></p>
 </div>
 </main>
 
@@ -100,8 +101,8 @@ export function getStaticPaths() {
 <div id="dg-search" style="display:none">
     <div class="dg-search-backdrop"></div>
     <div class="dg-search-sheet">
-        <div class="dg-drag-handle v-handle"></div>
-        <input type="text" id="dg-search-input" class="form-input v-input" placeholder="Search players..." autocomplete="off">
+        <div class="dg-drag-handle"></div>
+        <input type="text" id="dg-search-input" class="field__c" placeholder="Search players..." autocomplete="off">
         <div id="dg-search-results" class="dg-search-results"></div>
     </div>
 </div>
@@ -110,11 +111,11 @@ export function getStaticPaths() {
 <div id="dg-info" style="display:none">
     <div class="dg-info-backdrop"></div>
     <div class="dg-info-sheet">
-        <div class="dg-drag-handle v-handle"></div>
+        <div class="dg-drag-handle"></div>
         <div class="dg-info-header">
             <img src="/images/icons/info.png" class="dg-info-icon" alt="">
             <span class="dg-info-title">How To Play</span>
-            <button class="dg-info-close v-icon-btn" id="dg-info-close">&times;</button>
+            <button class="dg-info-close" id="dg-info-close">&times;</button>
         </div>
         <div class="dg-info-scroll">
 
@@ -188,9 +189,9 @@ export function getStaticPaths() {
 
             <h3 class="dg-info-heading">After Completing</h3>
             <p class="dg-info-text">Once you've used all 9 guesses, share your results with friends and compare scores!</p>
-            <p class="dg-info-text">Your past grids are saved in the Voli app. Tap any to review your answers or finish an incomplete grid.</p>
+            <p class="dg-info-text">Your past grids are saved in the VOLI app. Tap any to review your answers or finish an incomplete grid.</p>
 
-            <button class="dg-info-got-it v-pill v-pill--action" id="dg-info-gotit">Got it!</button>
+            <button class="dg-info-got-it btn btn--primary" id="dg-info-gotit">Got it!</button>
         </div>
     </div>
 </div>
@@ -199,21 +200,20 @@ export function getStaticPaths() {
 <div id="dg-lb" style="display:none">
     <div class="dg-lb-backdrop"></div>
     <div class="dg-lb-sheet">
-        <div class="dg-drag-handle v-handle"></div>
+        <div class="dg-drag-handle"></div>
         <div class="dg-lb-header">
             <img src="/images/icons/leaderboard.png" class="dg-lb-icon" alt="">
             <span class="dg-lb-title">Leaderboard</span>
-            <button class="dg-info-close v-icon-btn" id="dg-lb-close">&times;</button>
+            <button class="dg-info-close" id="dg-lb-close">&times;</button>
         </div>
 
-        <div class="dg-lb-tabs v-tabs">
-            <span class="v-tabs__hole" aria-hidden="true"></span>
-            <button class="dg-lb-tab v-tabs__tab active" data-period="daily">Grid</button>
-            <button class="dg-lb-tab v-tabs__tab" data-period="season">Season</button>
+        <div class="dg-lb-tabs acct-tabs">
+            <button class="dg-lb-tab acct-tabs__tab active" data-period="daily">Grid</button>
+            <button class="dg-lb-tab acct-tabs__tab" data-period="season">Season</button>
         </div>
 
         <div class="dg-lb-search-row">
-            <input type="text" id="dg-lb-search" class="form-input v-input v-input--card" placeholder="Search username..." autocomplete="off">
+            <input type="text" id="dg-lb-search" class="field__c" placeholder="Search username..." autocomplete="off">
         </div>
 
         <div id="dg-lb-myrank" style="display:none"></div>
@@ -229,10 +229,10 @@ export function getStaticPaths() {
 <div id="dg-valid" style="display:none">
     <div class="dg-valid-backdrop"></div>
     <div class="dg-valid-sheet">
-        <div class="dg-drag-handle v-handle"></div>
+        <div class="dg-drag-handle"></div>
         <div class="dg-valid-header">
             <span class="dg-valid-title" id="dg-valid-title"></span>
-            <button class="dg-info-close v-icon-btn" id="dg-valid-close">&times;</button>
+            <button class="dg-info-close" id="dg-valid-close">&times;</button>
         </div>
         <div class="dg-valid-count" id="dg-valid-count"></div>
         <div class="dg-valid-list" id="dg-valid-list"></div>
@@ -817,7 +817,7 @@ export function getStaticPaths() {
 
     // ── Share ──
     $shareBtn.addEventListener('click', function() {
-        var lines = ['Voli Grid #' + String(gridData.grid_number).padStart(4, '0'), '', score + '/9', ''];
+        var lines = ['VOLI Grid #' + String(gridData.grid_number).padStart(4, '0'), '', score + '/9', ''];
         for (var r = 0; r < 3; r++) {
             var row = '';
             for (var c = 0; c < 3; c++) {
@@ -1049,1183 +1049,3 @@ export function getStaticPaths() {
 </script>
 
 </SiteLayout>
-
-<style is:global>
-
-    /* v-page clears the nav; the column centres the sign-in prompt like before */
-    .dg-page {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100svh;
-    }
-
-    .dg-center {
-        text-align: center;
-        margin: auto;
-    }
-
-    .dg-title-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-        width: 100%;
-        max-width: 380px;
-    }
-
-    .dg-page-title {
-        font-family: var(--font-display);
-        font-size: 32px;
-        line-height: 1;
-        text-transform: uppercase;
-        margin: 0;
-    }
-
-    .dg-title-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 0;
-        background: var(--glass-10);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-        transition: background-color 150ms, opacity 100ms;
-    }
-
-
-    .dg-title-btn img {
-        width: 18px;
-        height: 18px;
-        object-fit: contain;
-    }
-
-    .dg-page-sub {
-        margin: 12px 0 24px;
-    }
-
-    /* Spinner */
-    .dg-spinner {
-        width: 28px;
-        height: 28px;
-        border: 2px solid rgba(255,255,255,0.15);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: dg-spin 800ms linear infinite;
-        margin: 64px auto;
-    }
-    @keyframes dg-spin { to { transform: rotate(360deg); } }
-
-    /* Game */
-    #dg-game {
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Status Bar */
-    .dg-status {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-        margin: 12px 0 16px;
-    }
-
-    .dg-stat {
-        height: 36px;
-        padding: 0 14px;
-        border-radius: 18px;
-        background: var(--glass-10);
-        border: 0;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font: 700 15px/1 var(--font-body);
-        font-variant-numeric: tabular-nums;
-        color: #fff;
-    }
-
-    .dg-stat-icon {
-        width: 14px;
-        height: 14px;
-        object-fit: contain;
-        display: block;
-    }
-
-    .dg-correct { color: var(--lemon-lime); }
-    .dg-wrong { color: var(--rose); }
-    .dg-remaining { color: var(--electric-blue); }
-
-    /* Grid */
-    .dg-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-        width: 100%;
-        max-width: 380px;
-    }
-
-    /* Headers */
-    .dg-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 4px;
-        overflow: hidden;
-    }
-
-    .dg-header img {
-        width: 70px;
-        height: 70px;
-        max-width: 70px;
-        max-height: 70px;
-        object-fit: contain;
-        display: block;
-    }
-
-
-    .dg-h-threshold {
-        font-family: 'Designer', sans-serif;
-        font-size: 16px;
-        color: #17E9FC;
-        line-height: 1.2;
-    }
-
-    .dg-h-stat {
-        font-family: 'Designer', sans-serif;
-        font-size: 12px;
-        color: #fff;
-        text-transform: uppercase;
-        line-height: 1.2;
-    }
-
-    .dg-h-scope {
-        font-size: 10px;
-        color: var(--ink-2);
-        line-height: 1.2;
-    }
-
-    .dg-header-text {
-        font-family: 'Designer', sans-serif;
-        font-size: 12px;
-        color: #fff;
-        text-transform: uppercase;
-    }
-
-    /* Cells */
-    .dg-cell {
-        aspect-ratio: 1;
-        border-radius: 14px;
-        background: var(--glass-10);
-        border: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        transition: background-color 150ms, box-shadow 150ms;
-        cursor: default;
-        overflow: hidden;
-        min-width: 0;
-    }
-
-    .dg-cell.dg-empty {
-        cursor: pointer;
-    }
-
-    .dg-cell.dg-empty:hover {
-        background: var(--glass-15);
-    }
-
-    .dg-plus {
-        font-size: 24px;
-        color: var(--ink-2);
-        font-weight: 300;
-    }
-
-    .dg-correct-cell {
-        box-shadow: inset 0 0 0 1.5px var(--lemon-lime);
-    }
-
-    .dg-wrong-cell {
-        box-shadow: inset 0 0 0 1.5px var(--rose);
-    }
-
-    .dg-initials {
-        font: 600 11px/1.15 var(--font-body);
-        color: #fff;
-        text-align: center;
-        padding: 0 4px;
-        word-break: normal;
-        max-width: 100%;
-        overflow: hidden;
-    }
-
-    .dg-x {
-        position: absolute;
-        font-family: 'Designer', sans-serif;
-        font-size: 1.5rem;
-        color: #FF1F6D;
-        opacity: 0.7;
-    }
-
-    /* Cell Animations */
-    .dg-anim-correct {
-        animation: dg-bounce 0.3s ease;
-    }
-
-    .dg-anim-wrong {
-        animation: dg-shake 0.3s ease;
-    }
-
-    @keyframes dg-bounce {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.08); }
-        100% { transform: scale(1); }
-    }
-
-    @keyframes dg-shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-4px); }
-        75% { transform: translateX(4px); }
-    }
-
-    /* Creator attribution */
-    .dg-creator {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        margin-top: 8px;
-    }
-
-    .dg-creator-by {
-        color: var(--ink-2);
-        font-size: 12px;
-    }
-
-    .dg-creator-avatar {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .dg-creator-avatar-fb {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .dg-creator-name {
-        color: #fff;
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    /* Results */
-
-    body.site .dg-results-card.glass-card {
-        margin-top: 24px;
-        padding: 20px 20px 16px;
-        background: var(--glass-d60);
-        -webkit-backdrop-filter: var(--blur);
-        backdrop-filter: var(--blur);
-        box-shadow: var(--shadow-card);
-        border: 0;
-        border-radius: var(--r-plate);
-        overflow: visible;
-    }
-    body.site .dg-results-card.glass-card::before { display: none; }
-
-    .dg-results-top {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 1.5rem;
-        margin-bottom: 0.75rem;
-    }
-
-
-    .dg-results-left {
-        text-align: left;
-    }
-
-    .dg-results-score {
-        font: 700 44px/1 var(--font-body);
-        font-variant-numeric: tabular-nums;
-        margin-bottom: 4px;
-    }
-
-    .dg-score-great { color: #F0FF1E; }
-    .dg-score-ok { color: #17E9FC; }
-    .dg-score-low { color: #FF1F6D; }
-
-    .dg-results-msg {
-        color: var(--ink-body);
-        font-size: 15px;
-    }
-
-    .dg-mini-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-        width: 90px;
-        flex-shrink: 0;
-    }
-
-    .dg-mini-cell {
-        aspect-ratio: 1;
-        border-radius: 6px;
-    }
-
-    .dg-mini-correct { background: #F0FF1E; }
-    .dg-mini-wrong { background: #FF1F6D; }
-    .dg-mini-empty { background: rgba(255,255,255,0.1); }
-
-    .dg-share-msg {
-        color: var(--lemon-lime);
-        font-size: 13px;
-        margin-top: 8px;
-        min-height: 0;
-        text-align: center;
-    }
-
-    /* Countdown */
-    .dg-countdown {
-        margin-top: 24px;
-        text-align: center;
-    }
-
-    .dg-historical {
-        color: var(--ink-path);
-        font-size: 13px;
-        margin-top: 12px;
-        margin-bottom: 0;
-        text-align: center;
-    }
-
-    .dg-historical a {
-        color: var(--electric-blue);
-        text-decoration: none;
-    }
-
-    /* Search Modal */
-    #dg-search {
-        position: fixed;
-        inset: 0;
-        z-index: 500;
-    }
-
-    .dg-search-backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        opacity: 0;
-        transition: opacity 0.25s;
-    }
-
-    #dg-search.open .dg-search-backdrop {
-        opacity: 1;
-    }
-
-    .dg-search-sheet {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%) translateY(100%);
-        width: 100%;
-        max-width: 500px;
-        max-height: 80vh;
-        background: var(--glass-d80);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 0;
-        border-radius: 24px 24px 0 0;
-        box-shadow: var(--shadow-float);
-        padding: 0.75rem 1rem 1rem;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.25s ease;
-    }
-
-    #dg-search.open .dg-search-sheet {
-        transform: translateX(-50%) translateY(0);
-    }
-
-    #dg-search-input {
-        height: 44px;
-        border-radius: 22px;
-    }
-
-    .dg-drag-handle {
-        width: 36px;
-        height: 4px;
-        border-radius: 2px;
-        background: var(--lemon-lime);
-        margin: 0 auto 12px;
-    }
-
-    /* the search fields: v-input look (global.css loads later, hence body.site) */
-    body.site.dg-body .form-input {
-        padding: 0 18px;
-        border: 0;
-        background: var(--glass-10);
-        color: #fff;
-        font: 400 15px/1 var(--font-body);
-        transition: none;
-    }
-    body.site.dg-body .form-input::placeholder { color: var(--ink-3); }
-    body.site.dg-body .form-input:focus { background: var(--glass-10); border-color: transparent; }
-    body.site.dg-body .form-input:focus-visible { outline: 1.5px solid var(--electric-blue); outline-offset: 0; }
-
-    .dg-search-results {
-        overflow-y: auto;
-        flex: 1;
-        margin-top: 0.75rem;
-    }
-
-    .dg-player-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        width: 100%;
-        padding: 8px 12px;
-        background: var(--glass-10);
-        border: 0;
-        border-radius: 18px;
-        cursor: pointer;
-        transition: background-color 150ms, opacity 100ms;
-        margin-bottom: 6px;
-        text-align: left;
-        color: inherit;
-        font-family: inherit;
-    }
-
-    .dg-player-card:hover {
-        background: var(--glass-15);
-    }
-
-    .dg-player-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        background: var(--glass-10);
-        gap: 1px;
-    }
-
-    .dg-avatar-initials {
-        font: 700 12px/1 var(--font-body);
-        color: #fff;
-    }
-
-    .dg-avatar-number {
-        font-size: 9px;
-        color: var(--ink-2);
-        line-height: 1;
-    }
-
-    .dg-player-name {
-        font-size: 15px;
-        font-weight: 600;
-        color: #fff;
-    }
-
-    .dg-player-meta {
-        font-size: 13px;
-        color: var(--ink-2);
-    }
-
-    /* Info Drawer */
-    #dg-info {
-        position: fixed;
-        inset: 0;
-        z-index: 500;
-    }
-
-    .dg-info-backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        opacity: 0;
-        transition: opacity 0.25s;
-    }
-
-    #dg-info.open .dg-info-backdrop {
-        opacity: 1;
-    }
-
-    .dg-info-sheet {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%) translateY(100%);
-        width: 100%;
-        max-width: 500px;
-        max-height: 85vh;
-        background: var(--glass-d80);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 0;
-        border-radius: 24px 24px 0 0;
-        box-shadow: var(--shadow-float);
-        padding: 0.75rem 1rem 1rem;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.25s ease;
-    }
-
-    #dg-info.open .dg-info-sheet {
-        transform: translateX(-50%) translateY(0);
-    }
-
-    .dg-info-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .dg-info-icon {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-    }
-
-    .dg-info-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #fff;
-        flex: 1;
-    }
-
-    .dg-info-close {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 0;
-        background: var(--glass-10);
-        color: #fff;
-        font-size: 20px;
-        line-height: 1;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 0 2px 0;
-    }
-
-    .dg-info-scroll {
-        overflow-y: auto;
-        flex: 1;
-        padding-bottom: 1rem;
-    }
-
-    .dg-info-welcome {
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .dg-welcome-sub {
-        display: block;
-        font-family: var(--font-display);
-        font-size: 18px;
-        color: var(--ink-2);
-        letter-spacing: 4px;
-    }
-
-    .dg-welcome-main {
-        display: block;
-        font-family: 'Designer', sans-serif;
-        font-size: 2rem;
-        color: #17E9FC;
-        letter-spacing: 6px;
-    }
-
-    .dg-info-heading {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #17E9FC;
-        margin: 1.25rem 0 0.5rem;
-    }
-
-    .dg-info-text {
-        font-size: 14px;
-        color: var(--ink-body);
-        line-height: 1.5;
-        margin-bottom: 8px;
-    }
-
-    .dg-step-card {
-        display: flex;
-        gap: 12px;
-        padding: 12px;
-        background: var(--glass-10);
-        border: 0;
-        border-radius: 14px;
-        margin-bottom: 8px;
-    }
-
-    .dg-step-num {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: rgba(23,233,252,0.2);
-        color: #17E9FC;
-        font-size: 0.85rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .dg-step-title {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #fff;
-        margin-bottom: 0.25rem;
-    }
-
-    .dg-step-desc {
-        font-size: 13px;
-        color: var(--ink-2);
-        line-height: 1.4;
-    }
-
-    .dg-info-card {
-        padding: 12px;
-        background: var(--glass-10);
-        border: 0;
-        border-radius: 14px;
-        margin-bottom: 8px;
-    }
-
-    .dg-info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 6px 0;
-        font-size: 14px;
-        color: var(--ink-body);
-    }
-
-    .dg-val-blue { font-weight: 700; color: var(--electric-blue); font-variant-numeric: tabular-nums; }
-    .dg-val-lemon { font-weight: 700; color: var(--lemon-lime); font-variant-numeric: tabular-nums; }
-
-    .dg-info-note {
-        font-size: 13px;
-        color: var(--ink-2);
-        line-height: 1.4;
-        margin-top: 8px;
-        margin-bottom: 0;
-    }
-
-    /* the category list reads as a stat table */
-    .dg-info-card.dg-cat-table {
-        padding: 0;
-        background: var(--surface-table);
-        border-radius: 18px;
-        overflow: hidden;
-    }
-    .dg-cat-table .dg-cat-row { padding: 10px 14px; border-bottom: 1px solid var(--line-table); }
-    .dg-cat-table .dg-cat-row:last-child { border-bottom: none; }
-
-    .dg-cat-row {
-        padding: 0.4rem 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .dg-cat-row:last-child {
-        border-bottom: none;
-    }
-
-    .dg-cat-label {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #fff;
-    }
-
-    .dg-cat-desc {
-        display: block;
-        font-size: 13px;
-        color: var(--ink-2);
-        line-height: 1.3;
-    }
-
-    .dg-league-examples {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .dg-league-ex {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .dg-league-ex-logo {
-        width: 40px;
-        height: 40px;
-        object-fit: contain;
-    }
-
-    .dg-league-ex-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .dg-league-ex-name {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: #fff;
-    }
-
-    .dg-league-ex-desc {
-        font-size: 12px;
-        color: var(--ink-2);
-    }
-
-    .dg-info-scroll .dg-info-got-it {
-        display: flex;
-        width: fit-content;
-        margin: 24px auto 0;
-        padding: 0 28px;
-    }
-
-
-    /* ── Valid Players Drawer ── */
-    #dg-valid {
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-    }
-
-    .dg-valid-backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        opacity: 0;
-        transition: opacity 0.25s;
-    }
-
-    #dg-valid.open .dg-valid-backdrop {
-        opacity: 1;
-    }
-
-    .dg-valid-sheet {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%) translateY(100%);
-        width: 100%;
-        max-width: 500px;
-        max-height: 70vh;
-        background: var(--glass-d80);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 0;
-        border-radius: 24px 24px 0 0;
-        box-shadow: var(--shadow-float);
-        padding: 0.75rem 1rem 1rem;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.25s ease;
-    }
-
-    #dg-valid.open .dg-valid-sheet {
-        transform: translateX(-50%) translateY(0);
-    }
-
-    .dg-valid-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .dg-valid-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #17E9FC;
-        flex: 1;
-    }
-
-    .dg-valid-count {
-        font-size: 13px;
-        color: var(--ink-2);
-        margin-bottom: 12px;
-    }
-
-    .dg-valid-list {
-        overflow-y: auto;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding-bottom: 2rem;
-    }
-
-    .dg-valid-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 8px 12px;
-        background: var(--glass-10);
-        border-radius: 14px;
-    }
-
-    .dg-valid-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--glass-10);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .dg-valid-initials {
-        font-size: 12px;
-        font-weight: 700;
-        color: rgba(255,255,255,0.7);
-        line-height: 1;
-    }
-
-    .dg-valid-num {
-        font-size: 9px;
-        font-weight: 600;
-        color: var(--ink-2);
-        line-height: 1;
-        margin-top: 2px;
-    }
-
-    .dg-valid-info {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .dg-valid-name {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #fff;
-    }
-
-    .dg-valid-pos {
-        font-size: 12px;
-        color: var(--ink-2);
-    }
-
-    .dg-valid-jersey {
-        font-size: 16px;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        color: var(--ink-3);
-    }
-
-    /* ── Leaderboard Drawer ── */
-    #dg-lb {
-        position: fixed;
-        inset: 0;
-        z-index: 200;
-    }
-
-    .dg-lb-backdrop {
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        opacity: 0;
-        transition: opacity 0.25s;
-    }
-
-    #dg-lb.open .dg-lb-backdrop {
-        opacity: 1;
-    }
-
-    .dg-lb-sheet {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%) translateY(100%);
-        width: 100%;
-        max-width: 500px;
-        max-height: 85vh;
-        background: var(--glass-d80);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 0;
-        border-radius: 24px 24px 0 0;
-        box-shadow: var(--shadow-float);
-        padding: 0.75rem 1rem 0;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.25s ease;
-    }
-
-    #dg-lb.open .dg-lb-sheet {
-        transform: translateX(-50%) translateY(0);
-    }
-
-    .dg-lb-header {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .dg-lb-icon {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-    }
-
-    .dg-lb-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #fff;
-        flex: 1;
-    }
-
-    .dg-lb-tabs {
-        margin-bottom: 12px;
-        flex-shrink: 0;
-    }
-
-
-
-    .dg-lb-search-row {
-        margin-bottom: 12px;
-    }
-
-    .dg-lb-search-row .form-input {
-        height: 36px;
-        border-radius: 18px;
-        font-size: 14px;
-    }
-
-    /* My rank card */
-    .dg-lb-myrank-card {
-        background: var(--glass-10);
-        border: 0;
-        border-radius: 18px;
-        padding: 12px 14px;
-        margin-bottom: 12px;
-    }
-
-    .dg-lb-myrank-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-    }
-
-    .dg-lb-myrank-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--ink-2);
-    }
-
-    .dg-lb-myrank-rank {
-        font-size: 16px;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        color: var(--electric-blue);
-    }
-
-    .dg-lb-myrank-row {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
-    .dg-lb-myrank-stat {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        flex: 1;
-        min-width: 50px;
-    }
-
-    .dg-lb-myrank-val {
-        font-size: 16px;
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        color: #fff;
-    }
-
-    .dg-lb-myrank-lbl {
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: .06em;
-        text-transform: uppercase;
-        color: var(--ink-2);
-        margin-top: 4px;
-    }
-
-    .dg-lb-myrank-dots {
-        display: flex;
-        justify-content: center;
-        margin-top: 0.5rem;
-    }
-
-    /* Entry list */
-    .dg-lb-list {
-        overflow-y: auto;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        padding-bottom: 2rem;
-        min-height: 0;
-    }
-
-    .dg-lb-entry {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-height: 56px;
-        padding: 8px 14px;
-        background: var(--glass-10);
-        border-radius: 18px;
-        flex-shrink: 0;
-    }
-
-    .dg-lb-entry-me {
-        box-shadow: 0 0 0 1.5px var(--electric-blue);
-    }
-
-    .dg-lb-rank {
-        font: 600 14px/1 var(--font-body);
-        font-variant-numeric: tabular-nums;
-        color: #fff;
-        min-width: 32px;
-        text-align: center;
-    }
-
-    .dg-lb-avatar-wrap {
-        flex-shrink: 0;
-    }
-
-    .dg-lb-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .dg-lb-avatar-fb {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: var(--glass-10);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .dg-lb-info {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .dg-lb-name {
-        font: 700 14px/1.25 var(--font-body);
-        color: #fff;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .dg-lb-name-own {
-        color: var(--electric-blue);
-    }
-
-    .dg-lb-stats {
-        font-size: 12px;
-        color: var(--ink-body);
-    }
-
-    .dg-lb-score {
-        font: 700 16px/1 var(--font-body);
-        font-variant-numeric: tabular-nums;
-        color: var(--lemon-lime);
-        min-width: 28px;
-        text-align: center;
-    }
-
-    /* Mini dots */
-    .dg-lb-dots {
-        display: grid;
-        grid-template-columns: repeat(3, 8px);
-        grid-template-rows: repeat(3, 8px);
-        gap: 3px;
-        flex-shrink: 0;
-    }
-
-    .dg-lb-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-    }
-
-    .dg-dot-correct { background: #F0FF1E; }
-    .dg-dot-wrong { background: #FF1F6D; }
-    .dg-dot-empty { background: rgba(255,255,255,0.15); }
-
-    .dg-lb-loading {
-        display: flex;
-        justify-content: center;
-        padding: 2rem;
-    }
-
-    .dg-lb-empty {
-        text-align: center;
-        color: var(--ink-2);
-        font-size: 14px;
-        padding: 32px 16px;
-    }
-
-    @media (hover: hover) { .dg-title-btn:hover, .dg-info-close:hover { background: var(--glass-15); } }
-    .dg-title-btn:active, .dg-info-close:active, .dg-player-card:active { opacity: .72; }
-
-    @media (prefers-reduced-motion: reduce) {
-        .dg-cell, .dg-player-card, .dg-title-btn { transition: none; }
-        .dg-anim-correct, .dg-anim-wrong { animation: none; }
-    }
-
-    @media (max-width: 400px) {
-        .dg-grid {
-            gap: 4px;
-        }
-
-        .dg-header img { width: 50px !important; height: 50px !important; max-width: 50px !important; max-height: 50px !important; }
-        .dg-h-threshold { font-size: 14px; }
-        .dg-h-stat { font-size: 10px; }
-        .dg-h-scope { font-size: 9px; }
-    }
-</style>

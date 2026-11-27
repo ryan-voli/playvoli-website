@@ -1,0 +1,54 @@
+---
+// The closing band every page ends with, id="get": the app as its store
+// listing shows it, the store buttons, a QR code for visitors on a computer,
+// and a list of onward links. The menu's Download and "Get the app" jump here.
+//
+//   <GetApp links={[{ href: '/rankings', label: 'VOLI Top 100' }, { href: '/about', label: 'About VOLI' }]} />
+//
+// Its colour must differ from the band above it.
+import Band from './Band.astro';
+import Cols from './Cols.astro';
+import LinkList from './LinkList.astro';
+import Qr from './Qr.astro';
+import Stores from './Stores.astro';
+import { DOWNLOADS } from '../../lib/voli-facts';
+import type { Field } from './util';
+import type { LineText, RiderLine } from './rider';
+
+interface Props {
+  color?: Field;
+  /** The title, when "Free on iPhone and Android" is not what the page should end on. */
+  lines?: (LineText | RiderLine)[];
+  /** The sentence over the store buttons. */
+  lede?: string;
+  /** Where to go next: two to five links. */
+  links?: { href: string; label: string }[];
+  linksLabel?: string;
+}
+
+const {
+  color = 'lime',
+  lines = ['Free on iPhone', { text: 'and Android', hollow: true }],
+  lede,
+  links,
+  linksLabel = 'More about VOLI',
+} = Astro.props;
+---
+<Band color={color} id="get" lines={lines}>
+    <Cols ratio="1:1" drop={links?.length ? [0, 3.6] : undefined}>
+        <div class="get__copy">
+            <div class="lockup">
+                <img class="lockup__icon" src="/images/appicon.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="The VOLI app icon">
+                <p class="lockup__t">
+                    <strong class="lockup__name"><span>VOLI<span class="vh">:</span></span> <span>The Volleyball Hub</span></strong>
+                    <span class="lockup__tag">Fantasy. Stats. Community.</span>
+                    <span class="lockup__dl"><b>{DOWNLOADS}</b> downloads</span>
+                </p>
+            </div>
+            <p class="lede">{lede ?? <Fragment>Get VOLI from the <span class="nb">App Store</span> or <span class="nb">Google Play</span>.</Fragment>}</p>
+            <Stores />
+            {!!links?.length && <Qr />}
+        </div>
+        {links?.length ? <LinkList label={linksLabel} items={links} /> : <div><Qr /></div>}
+    </Cols>
+</Band>

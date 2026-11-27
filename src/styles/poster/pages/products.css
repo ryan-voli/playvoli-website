@@ -1,0 +1,170 @@
+/* ==========================================================================
+   Product and partner pages: /evollve, /cvt, /creatorscourt, /discordbot,
+   /powered-by, /redditdailygrid. Level space only (columns, cells, hero
+   slots, sheets). Every class carries the "pr-" prefix.
+   ========================================================================== */
+
+/* ---------- Pair: two marks on one ink slab ------------------------------- */
+.pr-pair {
+  --pr-size: clamp(64px, calc(var(--u) * 8.4), 132px);
+  display: inline-flex; align-items: center; gap: calc(var(--pr-size) * .26);
+  padding: calc(var(--pr-size) * .3) calc(var(--pr-size) * .36);
+  background: var(--ink); color: #fff;
+  border-radius: 0 calc(var(--pr-size) * .3) 0 calc(var(--pr-size) * .3);
+  box-shadow: var(--sh) var(--sh) 0 var(--pr-sh, var(--a1));
+  transform: rotate(var(--pr-r, -3.75deg));
+}
+.pr-pair__m { display: block; flex: none; }
+.pr-pair__m > :is(img, svg) { display: block; width: auto; height: var(--pr-size); }
+.pr-pair__x { font: 400 calc(var(--pr-size) * .42)/1 var(--body); color: rgba(255, 255, 255, .7); }
+
+/* ---------- A logo on an ink slab ----------------------------------------- */
+.pr-logo {
+  display: inline-block; padding: clamp(18px, calc(var(--u) * 2.4), 40px) clamp(22px, calc(var(--u) * 3), 48px);
+  background: var(--ink); border-radius: 0 22px 0 22px;
+  box-shadow: var(--sh) var(--sh) 0 var(--a3);
+  transform: rotate(-3.75deg);
+}
+.pr-logo img { display: block; width: clamp(180px, calc(var(--u) * 26), 420px); height: auto; }
+
+/* ---------- /evollve ------------------------------------------------------- */
+/* Where it shows up: four places, each a heading and a line, ruled. */
+.pr-places > * + * { margin-top: 1em; }
+.pr-places > ul { display: grid; margin-top: 1.4em; border-top: 3px solid var(--pop); }
+.pr-places li { padding: 16px 0 17px; border-bottom: 3px solid var(--pop); }
+.pr-places li h3 { color: var(--pop); }
+.pr-places li p { max-width: 36rem; margin-top: .35em; color: var(--soft); }
+.pr-places > .btns { margin-top: 1.8em; }
+.pr-places > .lede { max-width: 36rem; }
+
+.pr-evollve-art { display: grid; justify-items: start; row-gap: calc(var(--u) * 3); padding-top: calc(var(--u) * 1); }
+.pr-evollve-art > .stack { width: 100%; }
+@media (max-width: 760px) {
+  .pr-evollve-art { justify-items: end; row-gap: calc(var(--u) * 7); padding-top: 0; }
+  .pr-evollve-art > .stack { max-width: 30rem; }
+}
+
+/* ---------- /cvt ------------------------------------------------------------ */
+/* The app icon is a square picture: it takes the icon's own corner. */
+.pr-icon { border-radius: 22.5%; }
+.pr-cvt-art { display: flex; justify-content: center; align-items: flex-start; padding-top: calc(var(--u) * 3); }
+@media (max-width: 760px) {
+  .pr-cvt-art { justify-content: flex-end; padding-top: 0; padding-bottom: calc(var(--u) * 24); }
+}
+
+/* What each move shows: three tags in the field's accents, leaning in turn. */
+.pr-moves { display: grid; justify-items: start; row-gap: clamp(16px, calc(var(--u) * 1.8), 28px); padding-top: calc(var(--u) * 1); }
+.pr-moves li {
+  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .7em; row-gap: .2em;
+  padding: .7em 1.1em .75em; background: var(--c, var(--a1)); color: var(--ink);
+  border-radius: 0 18px 0 18px; transform: rotate(-3.75deg);
+}
+.pr-moves li:nth-child(2) { --c: var(--a2); margin-left: calc(var(--u) * 5); transform: rotate(3.75deg); }
+.pr-moves li:nth-child(3) { --c: var(--a3); margin-left: calc(var(--u) * 2); }
+.pr-moves strong { font: 400 clamp(1.6rem, calc(var(--u) * 3.2), 3rem)/.9 var(--display); text-transform: uppercase; white-space: nowrap; }
+.pr-moves span { font: 700 clamp(.9rem, calc(.8rem + var(--u) * .25), 1.1rem)/1.3 var(--body); }
+
+/* The mark's stripes as decoration for a column with no picture. */
+.pr-mark { width: min(100%, 22rem); margin-left: auto; padding-right: calc(var(--u) * 3); }
+@media (max-width: 760px) { .pr-mark { width: 46%; padding-right: 0; } }
+
+.pr-logo--ball { justify-self: center; align-self: start; }
+.pr-logo--ball img { width: clamp(110px, calc(var(--u) * 12), 200px); }
+@media (max-width: 760px) { .pr-logo--ball { justify-self: end; margin-right: calc(var(--u) * 4); } }
+
+/* Buttons that carry an icon instead of the arrow. */
+.pr-follow .btn svg { width: 1.25em; height: 1.25em; }
+
+/* ---------- /creatorscourt -------------------------------------------------- */
+/* Two cards one over the other, the second set in a step. */
+.pr-stack2 { display: grid; row-gap: clamp(22px, calc(var(--u) * 2.4), 36px); }
+.pr-stack2 > .card:nth-child(2) { margin-left: calc(var(--u) * 4); }
+@media (max-width: 760px) { .pr-stack2 > .card:nth-child(2) { margin-left: calc(var(--u) * 6); } }
+
+/* ---------- /discordbot ----------------------------------------------------- */
+/* Commands: a definition list on the reading sheet. The command in a code
+   face, what it needs in blue, what it can do without in the soft ink. */
+.pr-cmds { display: grid; margin-top: .8em; border-top: 2px solid var(--line); }
+.pr-cmd { padding: .85em 0 .9em; border-bottom: 2px solid var(--line); }
+.pr-cmds .pr-cmd__n { display: block; padding: 0; border: 0; color: #fff; font: 700 clamp(.9375rem, calc(.86rem + var(--u) * .16), 1.0625rem)/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.pr-req, .pr-opt { white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 600; }
+.pr-req { color: var(--blue); }
+.pr-opt { color: rgba(255, 255, 255, .62); }
+.pr-cmds dd { margin-top: .3em; }
+.pr-cmds dd > p { margin: 0; }
+.pr-cmds .pr-params { display: grid; row-gap: .2em; margin-top: .55em; padding-left: 0; font-size: .9em; }
+.pr-cmds .pr-params li::before { display: none; }
+.pr-cmds .pr-params code { border-width: 1.5px; color: #fff; }
+.prose .fine .pr-req, .prose .fine .pr-opt { font-size: .95em; }
+
+.pr-pair-col { display: flex; justify-content: center; align-items: flex-start; padding-top: calc(var(--u) * 2); }
+@media (max-width: 760px) { .pr-pair-col { justify-content: flex-end; padding: 0 0 calc(var(--u) * 9); } }
+.pr-pair .pr-discord { color: #fff; }
+
+/* ---------- /powered-by ----------------------------------------------------- */
+/* Code to copy: the snippet in its own scrolling box, the button under it. */
+.pr-code { display: grid; justify-items: start; row-gap: 14px; }
+.pr-code > .codebox { width: 100%; }
+.pr-attr { padding: .08em .34em; border: 2px solid currentColor; border-radius: 0 6px 0 6px; font: 600 .82em/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: nowrap; }
+.tbl td.pr-mono { font: 600 .9375rem/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* The rules: a list with the mark's tick. */
+.pr-rules > ul { display: grid; row-gap: .8em; }
+.pr-rules li { position: relative; max-width: 34rem; padding-left: 1.5em; font: 600 clamp(1rem, calc(.92rem + var(--u) * .3), 1.25rem)/1.45 var(--body); }
+.pr-rules li::before { content: ""; position: absolute; left: .1em; top: .5em; width: .55em; height: .55em; background: var(--ink); transform: skewX(-15deg); }
+.pr-rules > p { max-width: 34rem; margin-top: 1.6em; }
+
+/* The corners: a page drawn in ink, the badge bottom right, the other three
+   corners marked as places it can go. */
+.pr-corners { display: flex; justify-content: center; margin: calc(var(--u) * 3) 0 0; padding-bottom: calc(var(--u) * 4); }
+.pr-corners__page {
+  --pad: 4.5%;
+  position: relative; width: min(100%, 36rem); aspect-ratio: 16 / 11;
+  background: var(--ink); border-radius: 0 24px 0 24px;
+  box-shadow: var(--sh) var(--sh) 0 var(--rose); transform: rotate(-3.75deg);
+}
+.pr-corners__bar { position: absolute; inset: 0 0 auto; display: flex; align-items: center; gap: 1.6%; height: 11%; padding-left: var(--pad); border-bottom: 3px solid rgba(255, 255, 255, .16); }
+.pr-corners__bar i { width: 2.4%; aspect-ratio: 1; border-radius: 50%; background: var(--lime); }
+.pr-corners__bar i:nth-child(2) { background: var(--blue); }
+.pr-corners__bar i:nth-child(3) { background: var(--rose); }
+.pr-corners__lines { position: absolute; left: 22%; right: 22%; top: 36%; display: grid; row-gap: 9%; height: 30%; }
+.pr-corners__lines i { display: block; height: 100%; border-radius: 0 6px 0 6px; background: rgba(255, 255, 255, .14); }
+.pr-corners__lines i:nth-child(2) { width: 86%; }
+.pr-corners__lines i:nth-child(4) { width: 64%; }
+.pr-corners__spot, .pr-corners__pill { position: absolute; width: 30%; aspect-ratio: 141 / 28; }
+.pr-corners__spot { display: flex; align-items: center; justify-content: center; border: 2px dashed rgba(255, 255, 255, .5); border-radius: 999px; color: rgba(255, 255, 255, .72); font: 800 clamp(.5rem, calc(var(--u) * .62), .7rem)/1 var(--body); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.pr-corners__spot--top-left { top: calc(11% + var(--pad)); left: var(--pad); }
+.pr-corners__spot--top-right { top: calc(11% + var(--pad)); right: var(--pad); }
+.pr-corners__spot--bottom-left { bottom: var(--pad); left: var(--pad); }
+.pr-corners__pill { right: var(--pad); bottom: var(--pad); height: auto; filter: drop-shadow(3px 3px 0 var(--lime)); }
+@media (max-width: 760px) {
+  .pr-corners { justify-content: flex-end; margin-top: 0; padding-bottom: calc(var(--u) * 20); }
+  .pr-corners__page { width: 94%; }
+  .pr-corners__spot { font-size: clamp(.45rem, calc(var(--u) * 1.9), .6rem); letter-spacing: .08em; }
+}
+
+/* ---------- /redditdailygrid ------------------------------------------------ */
+/* The grid, drawn: nine ink tiles, right answers in lime, a wrong one in rose. */
+.pr-grid9 {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(8px, calc(var(--u) * 1.1), 18px);
+  width: min(100%, 30rem); margin: calc(var(--u) * 2) auto calc(var(--u) * 4);
+  transform: rotate(-3.75deg);
+}
+.pr-grid9__cell {
+  display: grid; place-items: center; aspect-ratio: 1;
+  background: var(--ink); border-radius: 0 18% 0 18%;
+  box-shadow: var(--sh) var(--sh) 0 #fff;
+  font: 400 clamp(2rem, calc(var(--u) * 4.6), 4.6rem)/1 var(--display); color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, .55);
+}
+.pr-grid9__cell--hit { background: var(--lime); box-shadow: var(--sh) var(--sh) 0 var(--ink); }
+.pr-grid9__cell--miss { background: var(--rose); box-shadow: var(--sh) var(--sh) 0 var(--ink); }
+@media (max-width: 760px) {
+  .pr-grid9 { width: 76%; margin: 0 0 calc(var(--u) * 27) auto; }
+}
+
+.pr-feats > .rows { margin-top: 14px; }
+
+/* Where the live badge floats (only /powered-by loads it), the end of the
+   page leaves room under the footer's last line so the badge never sits on it. */
+body:has(> #voli-powered-by) { padding-bottom: 64px; }

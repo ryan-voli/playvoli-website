@@ -1,0 +1,26 @@
+---
+// Dates, set like tour dates: when, what, and a line of detail. For a level
+// block (a column, a cell, a sheet).
+//
+//   <Dates items={BRACKET_DATES} />              items: { iso, when, what, detail?, tag?, href? }
+//
+// `tag` marks a row ("Done", "On now", "Next"); `href` makes the row's name a link.
+interface Props {
+  items: { iso: string; when: string; what: string; detail?: string; tag?: string; href?: string }[];
+  /** A narrower date column, for a list in a half-width cell: the date wraps onto two lines and the words beside it read wider. */
+  narrow?: boolean;
+  class?: string;
+}
+const { items, narrow, class: cls } = Astro.props;
+---
+<ol class:list={['dates', { 'dates--narrow': narrow }, cls]}>
+    {items.map((d) => (
+        <li>
+            <time datetime={d.iso}>{d.when}</time>
+            <div>
+                <strong>{d.href ? <a href={d.href}>{d.what}</a> : d.what}{d.tag && <Fragment>{' '}<span class="tag">{d.tag}</span></Fragment>}</strong>
+                {d.detail && <span>{d.detail}</span>}
+            </div>
+        </li>
+    ))}
+</ol>

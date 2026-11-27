@@ -1,29 +1,29 @@
-// sitemap.xml (owner, 15 Oct 2026): the pages search engines and AI crawlers
-// should find, the same set the splash and footer link to. Built with the
-// static site; robots.txt points here. Daily Grid pages are noindex and stay
-// out, as do sign-in, profile and share-card routes.
+// sitemap.xml: the pages search engines and AI crawlers should find, the same
+// set the menus and the footer link to. Built with the static site; robots.txt
+// points here. Pages that redirect, sign-in and profile pages, share-link
+// pages and the noindex pages (Daily Grid, the badge page, the ad landing
+// page) stay out.
 import type { APIRoute } from 'astro';
 
 const SITE = 'https://playvoli.com';
 
 const PAGES: { path: string; priority: string; changefreq: string }[] = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
-  { path: '/app', priority: '0.9', changefreq: 'weekly' },
+  { path: '/fantasy', priority: '0.9', changefreq: 'weekly' },
   { path: '/bracket', priority: '0.9', changefreq: 'daily' },
   { path: '/bracket/rules', priority: '0.3', changefreq: 'monthly' },
   { path: '/rankings', priority: '0.8', changefreq: 'weekly' },
-  { path: '/faq', priority: '0.8', changefreq: 'monthly' },
-  { path: '/methods', priority: '0.7', changefreq: 'monthly' },
+  { path: '/methods', priority: '0.6', changefreq: 'monthly' },
   { path: '/about', priority: '0.7', changefreq: 'monthly' },
   { path: '/evollve', priority: '0.6', changefreq: 'monthly' },
-  { path: '/partners', priority: '0.6', changefreq: 'monthly' },
-  { path: '/volleytalk', priority: '0.5', changefreq: 'monthly' },
   { path: '/cvt', priority: '0.5', changefreq: 'monthly' },
+  { path: '/volleytalk', priority: '0.5', changefreq: 'monthly' },
   { path: '/mlm', priority: '0.5', changefreq: 'monthly' },
+  { path: '/canaan', priority: '0.4', changefreq: 'monthly' },
+  { path: '/lshotvb', priority: '0.4', changefreq: 'monthly' },
+  { path: '/courtcaptains', priority: '0.4', changefreq: 'monthly' },
   { path: '/discordbot', priority: '0.5', changefreq: 'monthly' },
   { path: '/creatorscourt', priority: '0.4', changefreq: 'monthly' },
-  { path: '/whats-next', priority: '0.5', changefreq: 'monthly' },
-  { path: '/contact', priority: '0.4', changefreq: 'yearly' },
   { path: '/privacy', priority: '0.2', changefreq: 'yearly' },
   { path: '/terms', priority: '0.2', changefreq: 'yearly' },
 ];

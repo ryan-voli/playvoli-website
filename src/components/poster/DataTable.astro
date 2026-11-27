@@ -1,0 +1,93 @@
+---
+// A data table in its own box: on a narrow screen the table scrolls sideways
+// inside the box, never the page.
+//
+// Give it the data and it writes the table:
+//
+//   <DataTable caption="Points for each round of the bracket" min="27rem"
+//     cols={['Round', 'Matches', { label: 'Points per correct pick', class: 'fig' }]}
+//     rows={BRACKET_ROUNDS.map((r) => [r.round, r.matches, r.points])}
+//     foot={['Whole bracket', 63, { text: '192 points at most', class: 'pop' }]} />
+//
+// The first column is set left and is each row's header (give another column
+// `head: true` when a rank or a mark comes first); the rest are set right. A
+// column or a cell can take a class: "l" / "r" to set it the other way, "fig"
+// for a figure in the display face, "rank" for a leading position number,
+// "pop" for the accent colour, "nophone" for a column a phone can do without.
+// A cell can be a link: { text, href }. `marks` draws a heavy rule after the
+// rows it names.
+//
+// For a table the data form cannot describe, put a whole <table class="tbl">
+// in the slot. Table parts (thead, tbody, tr, td) must always be written
+// inside a real <table> tag, never straight inside a component.
+type Cell = string | number | { text: string | number; href?: string; class?: string };
+interface Col {
+  label: string;
+  /** A class for every cell in the column. */
+  class?: string;
+  /** This column names each row (its cells are the row headers). Default: the first column. */
+  head?: boolean;
+}
+
+interface Props {
+  /** The table's caption, shown above it. */
+  caption?: string;
+  /** Names the table for screen readers when it has no caption. */
+  label?: string;
+  cols?: (string | Col)[];
+  rows?: Cell[][];
+  /** A closing row: totals, or a summary. */
+  foot?: Cell[];
+  /** Row numbers (from 1) after which a heavy rule is drawn: [25, 50] splits a hundred rows. */
+  marks?: number[];
+  /** The narrowest the table may get before it scrolls instead: "34rem". */
+  min?: string;
+  /** Keep the first column in place while the rest scrolls under it. */
+  pin?: boolean;
+  /** Tighter rows, for a long list. */
+  tight?: boolean;
+  class?: string;
+}
+
+const { caption, label, cols, rows, foot, marks = [], min, pin, tight, class: cls } = Astro.props;
+if (!caption && !label) throw new Error('DataTable: give it a caption, or a label for screen readers');
+const head = cols?.map((c) => (typeof c === 'string' ? { label: c } : c));
+if (rows && !head) throw new Error('DataTable: rows need cols (the column headings)');
+const headAt = Math.max(0, head?.findIndex((h) => h.head) ?? 0);
+const cell = (c: Cell) => (typeof c === 'object' ? c : { text: c });
+const classes = (i: number, c: Cell) => [head?.[i]?.class, typeof c === 'object' ? c.class : undefined].filter(Boolean).join(' ') || undefined;
+---
+<div class="tblwrap" role="region" aria-label={caption ?? label} tabindex="0">
+    {rows && head ? (
+        <table class:list={['tbl', { 'tbl--pin': pin, 'tbl--tight': tight }, cls]} style={min ? `--min:${min}` : undefined}>
+            {caption && <caption>{caption}</caption>}
+            <thead>
+                <tr>{head.map((h) => <th scope="col" class={h.class?.split(' ').filter((k) => k === 'l' || k === 'r' || k === 'nophone').join(' ') || undefined}>{h.label}</th>)}</tr>
+            </thead>
+            <tbody>
+                {rows.map((r, n) => (
+                    <tr class={marks.includes(n + 1) ? 'cut' : undefined}>
+                        {r.map((c, i) => {
+                          const v = cell(c);
+                          const inner = v.href ? <a href={v.href}>{v.text}</a> : v.text;
+                          return i === headAt ? <th scope="row" class={classes(i, c)}>{inner}</th> : <td class={classes(i, c)}>{inner}</td>;
+                        })}
+                    </tr>
+                ))}
+            </tbody>
+            {foot && (
+                <tfoot>
+                    <tr>
+                        {foot.map((c, i) => {
+                          const v = cell(c);
+                          const k = typeof c === 'object' ? c.class : undefined;
+                          return i === headAt ? <th scope="row" class={k}>{v.text}</th> : <td class={k}>{v.text}</td>;
+                        })}
+                    </tr>
+                </tfoot>
+            )}
+        </table>
+    ) : (
+        <slot />
+    )}
+</div>

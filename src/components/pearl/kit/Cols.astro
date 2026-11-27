@@ -1,0 +1,45 @@
+---
+// Columns inside a Band. Each direct child is one column; inside a column
+// the layout is ordinary.
+//
+//   <Cols ratio="42:50"> <Copy>...</Copy> <Stack>...</Stack> </Cols>
+//   <Cols>               one block that keeps to a reading measure
+//   <Cols ratio="1:1:1"> three equal columns (one column on a phone)
+//
+// Two and three columns become one below 901px; four become two, then one
+// below 561px. Kept: ratio, flip, rowGap, max, wide, as, style. Ignored:
+// drop and gap (the Poster's slope offsets). Pearl only: `align`
+// ("start" by default, "center" to centre a stage against its copy).
+interface Props {
+  ratio?: string;
+  flip?: boolean;
+  drop?: number[];
+  gap?: number;
+  rowGap?: string;
+  max?: string;
+  wide?: boolean;
+  as?: 'div' | 'ul' | 'ol';
+  align?: 'start' | 'center' | 'end';
+  class?: string;
+  style?: string;
+  [attr: string]: any;
+}
+
+const { ratio = '1', flip, drop: _d, gap: _g, rowGap, max, wide, as: Tag = 'div', align, class: cls, style: own, ...rest } = Astro.props;
+const parts = String(ratio).split(':').map((p) => Number(p.trim()));
+if (parts.length < 1 || parts.length > 4 || parts.some((p) => !(p > 0))) {
+  throw new Error(`Cols: ratio "${ratio}" must be one to four positive numbers, like "42:50"`);
+}
+if (flip && parts.length !== 2) throw new Error('Cols: flip is for two columns');
+const drawn = flip ? [...parts].reverse() : parts;
+const style = [
+  parts.length > 1 && `--cols:${drawn.map((p) => `minmax(0, ${p}fr)`).join(' ')}`,
+  rowGap && `--rg:${rowGap}`,
+  parts.length === 1 && !wide && max && `--max:${max}`,
+  align && `--al:${align}`,
+  own,
+].filter(Boolean).join(';') || undefined;
+---
+<Tag class:list={['cols', { 'cols--one': parts.length === 1, 'cols--wide': wide, 'cols--flip': flip }, cls]} data-n={parts.length} style={style} {...rest}>
+    <slot />
+</Tag>

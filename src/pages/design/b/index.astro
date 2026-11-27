@@ -1,0 +1,366 @@
+---
+// DESIGN OPTION B, "DAYLIGHT": the home page. It replaces today's two steps
+// (the splash gate at / and the overview at /app) with one page: the overview
+// IS the home page. Every number and sentence comes from lib/voli-facts and
+// lib/bracket-facts, so nothing here can drift from /faq, /methods or /bracket.
+import OptionB from '../../../layouts/design/OptionB.astro';
+import Stores from '../../../components/design/b/Stores.astro';
+import BracketLive from '../../../components/design/b/BracketLive.astro';
+import Qr from '../../../components/design/b/Qr.astro';
+import { APP_SCHEMA, DOWNLOADS, FACTS, FACTS_AS_OF, FAQS, NEWS_OUTLETS, PODCASTS, TESTIMONIALS, linkify } from '../../../lib/voli-facts';
+import { BRACKET, BRACKET_STATUS, bracketPhase, promoIsLive } from '../../../lib/bracket-facts';
+
+// This direction's own Bracket Challenge page ('/bracket' at launch).
+const BRACKET_PAGE = '/design/b/bracket';
+
+// The promo comes down by itself once picks lock, as it does on the live site.
+const phase = bracketPhase();
+const promoOn = promoIsLive(phase);
+
+// What users said, set with typographic apostrophes.
+const quotes = TESTIMONIALS.map((t) => t.replace(/\u0027/g, '\u2019'));
+
+// Four of the site's questions, word for word; the rest are on /faq.
+const questions = ['what', 'fantasy', 'play-by-play', 'free'].map((id) => FAQS.find((f) => f.id === id)!);
+
+// The app's structured data, as on /app today, with one difference: this page
+// is the app's page now, so the app's address is the home page, not /app.
+// AT LAUNCH: make the same change to APP_SCHEMA.url in lib/voli-facts, so
+// /faq and /methods say the same thing, and redirect /app to /.
+const appSchema = { ...APP_SCHEMA, url: 'https://playvoli.com/' };
+
+const more = [
+  { href: '/rankings', title: 'VOLI Top 100', text: "VOLI's own ranking of Division I teams, published each Monday." },
+  { href: '/faq', title: 'Questions about VOLI', text: 'Answers on fantasy, box scores and stats, history, the leagues covered and the app.' },
+  { href: '/methods', title: "How VOLI's numbers work", text: 'Where the stats come from, how often they update, and how the Top 100 and win chances are computed.' },
+  { href: '/about', title: 'About VOLI', text: 'The mission, the two fans behind VOLI, and how the data is gathered.' },
+];
+---
+
+<OptionB
+  title="VOLI App - The Volleyball Hub"
+  description="Free volleyball app for NCAA women's volleyball, MLV and LOVB: fantasy leagues, live scores and box scores, stats, rankings, history, news and podcasts."
+  canonical="https://playvoli.com/"
+  schema={[appSchema]}
+  page="home"
+>
+    <section class="b-hero" aria-labelledby="hero-h">
+        <div class="b-wrap b-hero__grid">
+            <div class="b-hero__copy">
+                {promoOn && (
+                    <a class="b-chip b-glass" href={BRACKET_PAGE} data-bracket-promo>
+                        <span class="b-tag">Free to play</span>
+                        <span class="b-chip__txt"><b>{BRACKET.name}</b><span class="b-chip__sep" aria-hidden="true"> · </span><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></span>
+                        <svg class="b-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                    </a>
+                )}
+                {/* One h1, two voices. Read straight through it says
+                    "VOLI: The Volleyball Hub app. You asked. We built it."
+                    The colon and the full stop are in the text, for crawlers
+                    and screen readers; on screen the slanted rule and the
+                    line break stand in for them. */}
+                <h1 class="b-hero__title" id="hero-h">
+                    <span class="b-eyebrow b-hero__label"><span class="b-hero__mark">VOLI</span><span class="b-vh">: </span><span class="b-hero__rule" aria-hidden="true"></span>The Volleyball Hub app<span class="b-vh">.</span></span>
+                    <span class="b-display"><span class="b-display__line">You asked.</span> <span class="b-display__line"><span class="b-hl">We built it.</span></span></span>
+                </h1>
+                <p class="b-lede b-hero__lede">VOLI is a free volleyball app for iPhone and Android: fantasy volleyball, live games, stats, rankings and volleyball history for NCAA Division I women's volleyball, MLV and LOVB, with volleyball news and podcasts in one feed.</p>
+                <Stores />
+                <p class="b-hero__meta">
+                    <img src="/images/appicon.webp" alt="" width="36" height="36" decoding="async">
+                    <span><strong>{DOWNLOADS} downloads</strong> on iPhone and Android</span>
+                </p>
+            </div>
+
+            {/* The stage is the phone's own box: the three cut-outs are placed
+                against it, so they keep their places whatever size it is. */}
+            <div class="b-hero__art">
+                <div class="b-hero__stage">
+                    <img class="b-phone b-hero__phone" src="/images/screenshots/home-fantasy.webp"
+                         alt="The Fantasy tab in the VOLI app: two fantasy teams, the leagues each plays in, and their points and league ranks"
+                         width="640" height="1280" fetchpriority="high" decoding="async">
+                    <div class="b-cut b-cut--final b-float b-float--a">
+                        <img src="/images/splash/float-final.webp" alt="A final score in VOLI: Pitt 3, SMU 0, with the score of each set" width="760" height="397" decoding="async">
+                    </div>
+                    <div class="b-cut b-cut--fantasy b-float b-float--b">
+                        <img src="/images/splash/card-fantasy.webp" alt="A fantasy player card in VOLI: price, season points and points by round" width="900" height="756" decoding="async">
+                    </div>
+                    <div class="b-cut b-cut--stats b-float b-float--c">
+                        <img src="/images/splash/card-stats.webp" alt="A player card in VOLI Stats: a UCLA setter's efficiency, assists, aces, blocks and digs" width="900" height="399" decoding="async">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="b-facts" aria-labelledby="facts-h">
+        <div class="b-wrap">
+            <div class="b-facts__card b-glass">
+                <h2 class="b-facts__title" id="facts-h">What's in VOLI <span>as of {FACTS_AS_OF}</span></h2>
+                <ul class="b-facts__list" role="list">
+                    {/* The space between number and label is for anything that
+                        reads the page as plain text; on screen each is its own line. */}
+                    {FACTS.map((f) => (
+                        <li><strong>{f.value}</strong>{' '}<span>{f.label}</span></li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    {promoOn && (
+        <section class="b-sec b-sec--tight b-promo" aria-labelledby="promo-h" data-bracket-promo>
+            <div class="b-wrap">
+                <div class="b-night b-promo__card">
+                    <div class="b-promo__art">
+                        <img src="/images/bracket/bracket-challenge-2026-logo.webp"
+                             alt="College Volleyball '26 Bracket Challenge, presented by VOLI"
+                             width="840" height="486" loading="lazy" decoding="async">
+                    </div>
+                    <div class="b-promo__copy">
+                        <p class="b-promo__status"><span class="b-dot" aria-hidden="true"></span><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></p>
+                        <h2 class="b-promo__title" id="promo-h">{BRACKET.name}</h2>
+                        <p class="b-promo__sub"><b>{BRACKET.prize} cash</b> to the top eligible bracket. Free to play.</p>
+                        <div class="b-promo__actions">
+                            <a class="b-btn b-btn--lime" href={BRACKET_PAGE}>
+                                Play free
+                                <svg class="b-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                            </a>
+                            <a class="b-btn b-btn--line" href={`${BRACKET_PAGE}#scoring`}>How it is scored</a>
+                        </div>
+                        <p class="b-promo__legal">No purchase necessary. 50 U.S. states &amp; D.C., 18+ (19+ AL/NE, 21+ MS). <a href={BRACKET.rulesPath}>Official Rules</a> apply.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    )}
+
+    <section class="b-sec" aria-labelledby="features-h">
+        <div class="b-wrap">
+            <header class="b-head">
+                <p class="b-eyebrow">The app</p>
+                <h2 class="b-h2" id="features-h">What you can do in VOLI</h2>
+                <p class="b-head__lede">Eight parts of one app. Fantasy is optional: everything else works without it.</p>
+            </header>
+
+            <div class="b-feats">
+                <article class="b-feat b-feat--fantasy b-glass" id="fantasy">
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">01</span></p>
+                        <h3 class="b-h3">Fantasy leagues</h3>
+                        <p class="b-body">Build a team from real college and pro players and play the season against your friends. Leagues use a salary cap and multi-round contracts, for NCAA Division I women's volleyball and MLV, and the NCAA season runs in ten rounds, Wednesday to Sunday. Join a public league run by a volleyball podcast, or start a private one.</p>
+                        <ul class="b-specs" role="list">
+                            <li>Salary cap</li>
+                            <li>Multi-round contracts</li>
+                            <li>NCAA Division I and MLV</li>
+                            <li>Public and private leagues</li>
+                        </ul>
+                    </div>
+                    <div class="b-feat__art">
+                        <img class="b-phone b-ph b-ph--1" src="/images/screenshots/fantasy2.webp" alt="Fantasy leagues in VOLI: one team's three leagues and its rank in each" width="1000" height="2000" loading="lazy" decoding="async">
+                        <img class="b-phone b-ph b-ph--2" src="/images/screenshots/fantasy3.webp" alt="A fantasy roster in VOLI: the starters and their salaries under a $100K cap" width="1000" height="2000" loading="lazy" decoding="async">
+                        <img class="b-phone b-ph b-ph--3" src="/images/screenshots/fantasy1.webp" alt="A player's fantasy page in VOLI: salary and fantasy points charted round by round" width="1000" height="2000" loading="lazy" decoding="async">
+                    </div>
+                </article>
+
+                <article class="b-feat b-feat--games b-glass" id="games">
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">02</span></p>
+                        <h3 class="b-h3">Live games</h3>
+                        <p class="b-body">Scores and box scores for college and pro matches as they happen, with a lead chart for each set, and play-by-play with the rotation on court for MLV and LOVB matches. On iPhone, keep the score on your lock screen with Live Activities.</p>
+                    </div>
+                    <div class="b-feat__art">
+                        <img class="b-phone b-ph b-ph--1" src="/images/screenshots/home-games.webp" alt="The Games tab in VOLI: a week of college matches, each with both teams' chance to win" width="640" height="1280" loading="lazy" decoding="async">
+                        <img class="b-phone b-ph b-ph--2" src="/images/screenshots/games1.webp" alt="A pro match box score in VOLI: set scores and each player's line" width="1000" height="2000" loading="lazy" decoding="async">
+                    </div>
+                </article>
+
+                <article class="b-feat b-feat--stats b-glass" id="stats">
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">03</span></p>
+                        <h3 class="b-h3">Stats and box scores</h3>
+                        <p class="b-body">Nearly 500,000 NCAA player box-score lines since 2023, covering 99.8% of completed Division I matches, and set-by-set player stats for all 445 MLV and LOVB matches. Leaderboards sort by season, conference, position and class, in totals or per set.</p>
+                    </div>
+                    <div class="b-feat__art">
+                        <img class="b-phone b-ph b-ph--1" src="/images/screenshots/stats1.webp" alt="A stats leaderboard in VOLI: players ranked by hitting efficiency" width="1000" height="2000" loading="lazy" decoding="async">
+                        <img class="b-phone b-ph b-ph--2" src="/images/screenshots/stats3.webp" alt="A player's performance page in VOLI: attack, block and dig charts against the position average" width="1000" height="2000" loading="lazy" decoding="async">
+                    </div>
+                </article>
+
+                <article class="b-feat b-feat--rankings b-glass" id="rankings">
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">04</span></p>
+                        <h3 class="b-h3">Rankings and predictions</h3>
+                        <p class="b-body">The VOLI Top 100, VOLI's own ranking of Division I teams from match results and strength of schedule, published each Monday. Before first serve, each upcoming college match shows each team's chance to win and the most likely set score, and the chance to win updates after every set. All next to the AVCA Coaches Poll and EVOLLVE's ratings.</p>
+                        <p class="b-feat__links">
+                            <a class="b-link" href="/rankings">The VOLI Top&nbsp;100&nbsp;<span aria-hidden="true">→</span></a>
+                            <a class="b-link" href="/methods">How it works&nbsp;<span aria-hidden="true">→</span></a>
+                        </p>
+                    </div>
+                    <div class="b-feat__art">
+                        <div class="b-cut b-cut--rank"><img src="/images/splash/float-rank.webp" alt="The top row of the VOLI Top 100: Nebraska at number one with its record and rating points" width="760" height="132" loading="lazy" decoding="async"></div>
+                        <div class="b-cut b-cut--game"><img src="/images/splash/card-game.webp" alt="A match card in VOLI: LSU at Tennessee, with each team's chance to win" width="900" height="296" loading="lazy" decoding="async"></div>
+                    </div>
+                </article>
+
+                <article class="b-feat b-feat--ency b-glass" id="encyclopedia">
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">05</span></p>
+                        <h3 class="b-h3">The Volleyball Encyclopedia</h3>
+                        <p class="b-body">More than 18,000 honors back to 1979: 3,000+ AVCA All-America selections since 1981, the AVCA Coaches Poll since 1982, all 45 NCAA champions, ACC, Big 12, Big Ten and SEC honors, record books, the MLV Draft and pro league honors.</p>
+                    </div>
+                    <ul class="b-ledger" role="list">
+                        <li><strong>18,000+</strong> <span>honors, back to 1979</span></li>
+                        <li><strong>3,000+</strong> <span>AVCA All-America selections since 1981</span></li>
+                        <li><strong>45</strong> <span>NCAA champions, all of them</span></li>
+                    </ul>
+                </article>
+
+                <article class="b-feat b-feat--news b-glass" id="news">
+                    <div class="b-feat__art">
+                        <div class="b-cut b-cut--article"><img src="/images/splash/float-article.webp" alt="A news story in the VOLI feed, tagged NCAA and Big Ten, with its writer and when it was published" width="760" height="468" loading="lazy" decoding="async"></div>
+                    </div>
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">06</span></p>
+                        <h3 class="b-h3">News and podcasts</h3>
+                        <p class="b-body">Volleyball news from 19 outlets, from league and conference sites to independent writers, each story linked to its source. And 12 volleyball podcasts with more than 800 episodes to stream or download, with your place saved across devices.</p>
+                    </div>
+                </article>
+
+                <article class="b-feat b-feat--community b-glass" id="community">
+                    <div class="b-feat__art">
+                        <img class="b-phone b-ph b-ph--1" src="/images/screenshots/more1.webp" alt="A match chat room in VOLI, with fans talking during a live match" width="1000" height="2000" loading="lazy" decoding="async">
+                        <div class="b-cut b-cut--chat"><img src="/images/splash/float-chat.webp" alt="The NCAA fan room in VOLI, showing the latest message" width="760" height="117" loading="lazy" decoding="async"></div>
+                    </div>
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">07</span></p>
+                        <h3 class="b-h3">Community</h3>
+                        <p class="b-body">A chat room for every match, rooms for NCAA, MLV and LOVB fans, and a private chat for each fantasy league. Partner podcasts host AMAs with players and creators right in the app.</p>
+                    </div>
+                </article>
+
+                <article class="b-feat b-feat--evollve b-glass" id="evollve">
+                    <div class="b-feat__art">
+                        <div class="b-cut b-cut--pct"><img src="/images/splash/float-pct.webp" alt="EVOLLVE analytics in VOLI: a setter's RAPM and percentile among Division I setters" width="760" height="392" loading="lazy" decoding="async"></div>
+                    </div>
+                    <div class="b-feat__copy">
+                        <p class="b-feat__no"><span class="b-tag">08</span></p>
+                        <h3 class="b-h3">Analytics by EVOLLVE</h3>
+                        <p class="b-body">EVOLLVE's college volleyball analytics are built in: nightly team ratings for every Division I team, player impact numbers like RAPM, and match predictions.</p>
+                        <p class="b-feat__links"><a class="b-link" href="/evollve">Analytics by EVOLLVE&nbsp;<span aria-hidden="true">→</span></a></p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="b-sec" aria-labelledby="sources-h">
+        <div class="b-wrap">
+            <header class="b-head">
+                <p class="b-eyebrow">One feed</p>
+                <h2 class="b-h2" id="sources-h">Where VOLI's news and podcasts come from</h2>
+            </header>
+            <div class="b-sources">
+                <div class="b-card b-glass b-sources__news">
+                    <h3 class="b-h3">Where the news comes from</h3>
+                    <ul class="b-outlets" role="list">
+                        {NEWS_OUTLETS.map((o) => <li>{o}</li>)}
+                    </ul>
+                    <p class="b-body">Coverage spans NCAA women's volleyball, MLV and LOVB: results, previews, transfers, rankings and awards. Every story opens on its publisher's site.</p>
+                </div>
+                <div class="b-card b-glass b-sources__pods">
+                    <h3 class="b-h3">Volleyball podcasts on VOLI</h3>
+                    <ul class="b-pods" role="list">
+                        {PODCASTS.map((p) => (
+                            <li>
+                                <span class="b-pods__name">{p.name}</span>
+                                <span class="b-pods__meta">{p.by} · {p.episodes} {p.episodes === 1 ? 'episode' : 'episodes'}{p.partner && <Fragment>{' '}<span class="b-tag b-tag--flat">Partner</span></Fragment>}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="b-sec" aria-labelledby="quotes-h">
+        <div class="b-wrap">
+            <header class="b-head">
+                <p class="b-eyebrow">In their words</p>
+                <h2 class="b-h2" id="quotes-h">What people say about VOLI</h2>
+            </header>
+            <div class="b-quotes">
+                {quotes.map((t, i) => (
+                    <figure class={`b-quote${i === 3 ? ' b-quote--lead' : ''}`}>
+                        <blockquote><p>{t}</p></blockquote>
+                        <figcaption>VOLI app user</figcaption>
+                    </figure>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <section class="b-sec" aria-labelledby="questions-h">
+        <div class="b-wrap b-qa">
+            <header class="b-head b-qa__head">
+                <p class="b-eyebrow">Questions</p>
+                <h2 class="b-h2" id="questions-h">Questions about VOLI</h2>
+                <p class="b-head__lede">Four short answers. Every question is on the questions page.</p>
+                <a class="b-btn b-btn--glass" href="/faq">All questions and answers <span aria-hidden="true">→</span></a>
+            </header>
+            <div class="b-qa__list">
+                {questions.map((f) => (
+                    <div class="b-qa__item">
+                        <h3 class="b-qa__q">{f.q}</h3>
+                        <p class="b-body" set:html={linkify(f.a)} />
+                    </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <section class="b-sec" aria-labelledby="more-h">
+        <div class="b-wrap">
+            <header class="b-head">
+                <p class="b-eyebrow">Keep reading</p>
+                <h2 class="b-h2" id="more-h">More about VOLI</h2>
+            </header>
+            <ul class="b-more" role="list">
+                {more.map((m) => (
+                    <li>
+                        <a class="b-more__card b-glass" href={m.href}>
+                            <span class="b-more__title">{m.title}</span>
+                            <span class="b-more__text">{m.text}</span>
+                            <svg class="b-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    </section>
+
+    <section class="b-sec b-leagues" aria-labelledby="leagues-h">
+        <div class="b-wrap">
+            <h2 class="b-eyebrow" id="leagues-h">Leagues we cover</h2>
+            <ul class="b-leagues__list" role="list">
+                <li><a href="https://lovb.com" target="_blank" rel="noopener"><span class="b-leagues__mark">LOVB</span> <span class="b-leagues__full">League One Volleyball</span></a></li>
+                <li><a href="https://provolleyball.com" target="_blank" rel="noopener"><span class="b-leagues__mark">MLV</span> <span class="b-leagues__full">Major League Volleyball</span></a></li>
+                <li><a href="https://www.ncaa.com/sports/volleyball-women" target="_blank" rel="noopener"><span class="b-leagues__mark">NCAA</span> <span class="b-leagues__full">Women's Division I</span></a></li>
+            </ul>
+            <p class="b-leagues__note">VOLI is an independent fan platform, not affiliated with or endorsed by these leagues.</p>
+        </div>
+    </section>
+
+    <section class="b-sec b-cta" aria-labelledby="cta-h">
+        <div class="b-wrap">
+            <div class="b-cta__card b-glass">
+                <img class="b-cta__icon" src="/images/appicon.webp" alt="The VOLI app icon" width="88" height="88" loading="lazy" decoding="async">
+                <h2 class="b-h2" id="cta-h">Get VOLI</h2>
+                <p class="b-lede"><strong class="b-cta__tag">Fantasy. Stats. Community.</strong> <span class="b-cta__free">Free on iPhone and Android.</span></p>
+                <Stores />
+                <Qr />
+            </div>
+        </div>
+    </section>
+
+    {promoOn && <BracketLive slot="scripts" />}
+</OptionB>

@@ -1,7 +1,7 @@
 ---
 // Official Rules of the College Volleyball Bracket Challenge. The site
 // advertises a cash prize, so the full rules have to be one tap away from
-// every place that mentions it: the splash, /app and /bracket all link here.
+// every place that mentions it: the home page's strip and /bracket link here.
 //
 // Rendered on each request from the database, like /rankings, so it is the
 // same document the app shows and is complete in the HTML for anyone reading
@@ -11,9 +11,18 @@
 //
 // This address is NOT claimed by the app (the phones claim exactly /bracket),
 // so it always opens in the browser.
-import SiteLayout from '../../layouts/SiteLayout.astro';
+//
+// The page is a short hero over a reading sheet of the same colour. The hero
+// is written by hand because its heading comes from the database: the rules'
+// own title, "Official Rules: <the contest's name>", set as one heading.
+import Pearl from '../../layouts/Pearl.astro';
+import '../../styles/pearl/pages/bracket.css';
+import GetApp from '../../components/pearl/kit/GetApp.astro';
+import Sheet from '../../components/pearl/kit/Sheet.astro';
+import Stores from '../../components/pearl/kit/Stores.astro';
 import { BRACKET } from '../../lib/bracket-facts';
 import { currentBracketRules, type BracketRules } from '../../lib/bracket-rules';
+import { sectionMenu, type SectionMenu } from '../../lib/site';
 
 export const prerender = false;
 
@@ -31,7 +40,33 @@ const heading = rules?.title ?? 'Official Rules: College Volleyball Bracket Chal
 const stamp = rules
   ? [rules.effective_date && `Effective ${rules.effective_date}`, rules.version && `Version ${rules.version}`].filter(Boolean).join(' · ')
   : '';
-const schema = {
+
+// "Official Rules" is set big, its last word in italic navy; the contest's
+// name follows it in the same heading. The colon stays in the heading's text
+// and out of the display type.
+const split = heading.match(/^\s*(Official Rules)\s*:\s*(.+)$/i);
+const lead = split ? split[1] : '';
+const name = split ? split[2].trim() : heading;
+const leadWords = lead.split(' ');
+const leadStart = leadWords.slice(0, -1).join(' ');
+const leadEm = leadWords[leadWords.length - 1];
+
+// The lime bar: the same menu as /bracket, its sections pointing back there.
+const MENU: SectionMenu = {
+  label: 'Bracket Challenge',
+  base: BRACKET.path,
+  sections: [
+    { id: 'how-it-works', label: 'How to play', short: 'Play' },
+    { id: 'groups', label: 'Friends' },
+    { id: 'scoring', label: 'Scoring' },
+    { id: 'dates', label: 'Dates' },
+    { id: 'prize', label: 'Prize' },
+    { id: 'faq', label: 'FAQ' },
+  ],
+  pages: [{ href: BRACKET.rulesPath, label: 'Official Rules', short: 'Rules' }],
+};
+
+const schema = [{
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   '@id': `${BRACKET.rulesUrl}#breadcrumb`,
@@ -40,68 +75,76 @@ const schema = {
     { '@type': 'ListItem', position: 2, name: 'College Volleyball Bracket Challenge', item: BRACKET.url },
     { '@type': 'ListItem', position: 3, name: 'Official Rules', item: BRACKET.rulesUrl },
   ],
-};
+}];
 ---
 
-<SiteLayout
+<Pearl
   title="Official Rules: College Volleyball Bracket Challenge 2026 | VOLI"
   description="The Official Rules of the College Volleyball Bracket Challenge, presented by VOLI: eligibility, how to enter, scoring, tiebreakers and the $500 cash prize."
-  ogUrl={BRACKET.rulesUrl}
   ogImage="https://playvoli.com/images/bracket/bracket-challenge-2026-og.png"
+  section="bracket"
+  subnav={sectionMenu(MENU, Astro.url.pathname)}
   schema={schema}
-  skipSupabase
-  skipNavAuth
 >
-    <main class="v-page">
-        <div class="v-wrap v-wrap--read">
-            <p class="br-back"><a href={BRACKET.path} class="v-link"><span aria-hidden="true">&larr;</span> College Volleyball Bracket Challenge</a></p>
-
-            <header class="legal-head">
-                <h1 class="v-title-plain br-title">{heading}</h1>
-                {stamp && <p class="v-path">{stamp}</p>}
-            </header>
-
-            {rules ? (
-                <div class="v-card v-card--plate legal-content">
-                    <p class="legal-p legal-lead">{rules.header}</p>
-                    {rules.sections.map((s) => (
-                        <section id={`section-${s.section_number}`}>
-                            <h2 class="legal-h2">{s.section_number}. {s.section_title}</h2>
-                            {s.content.map((item) =>
-                                item.subsection ? (
-                                    <p><strong>{item.subsection} {item.title}.</strong> {item.text}</p>
-                                ) : (
-                                    <p class="legal-p">{item.text}</p>
-                                )
-                            )}
-                        </section>
-                    ))}
+    <section class="hero khero bkr-hero" aria-labelledby="bkr-h">
+        <div class="wrap hero__grid">
+            <div class="hero__copy">
+                <p class="kicker bkr-back"><a href={BRACKET.path}>College Volleyball Bracket Challenge</a></p>
+                <h1 id="bkr-h">
+                    {lead && (
+                        <Fragment>
+                            <span class="display">{leadStart && <Fragment>{leadStart}{' '}</Fragment>}<em>{leadEm}</em><span class="vh">:</span></span>
+                            {' '}
+                        </Fragment>
+                    )}
+                    <span class="bkr-name">{name}</span>
+                </h1>
+                {stamp && <p class="label">{stamp}</p>}
+                <p class="lede">The Official Rules of the College Volleyball Bracket Challenge, the free bracket game in the VOLI app for the {BRACKET.season} NCAA <span class="nb">Division I</span> women's volleyball tournament. The same rules are in the app: open the Bracket page and tap the info button at the top left.</p>
+                <Stores />
+            </div>
+            {/* The contest's artwork on its ink panel, beside the copy (wide screens only). */}
+            <div class="hero__art bkr-art">
+                <div class="bk-logo">
+                    <img src="/images/bracket/bracket-challenge-2026-logo.webp" width="840" height="486"
+                         alt="College Volleyball '26 Bracket Challenge, presented by VOLI">
                 </div>
-            ) : (
-                <div class="v-card v-card--plate legal-content">
-                    <p class="legal-p">The Official Rules could not be loaded just now. Please try again in a moment. They are also in the VOLI app (open the Bracket page and tap the info button at the top left), or email support@playvoli.com for a copy.</p>
-                </div>
-            )}
-
-            <p class="br-foot v-meta">Questions about the contest go to <a href="mailto:support@playvoli.com" class="v-link">support@playvoli.com</a>. Back to the <a href={BRACKET.path} class="v-link">Bracket Challenge</a>.</p>
+            </div>
         </div>
-    </main>
-</SiteLayout>
+    </section>
 
-<style>
-    /* The legal-page look (/terms, /privacy), rendered on the server here. */
-    .br-back { margin: 0 0 20px; font: 500 14px/1.3 var(--font-body); }
-    .legal-head { text-align: center; margin-bottom: var(--sp-6); }
-    .br-title { margin: 0 0 12px; text-wrap: balance; }
-    .legal-head .v-path { margin: 0; }
+    <Sheet color="rose" label="Official Rules" toc={!!rules} tocLabel="Sections">
+        {rules ? (
+            <Fragment>
+                <p class="lead">{rules.header}</p>
+                {rules.sections.map((s) => (
+                    <section id={`section-${s.section_number}`}>
+                        <h2>{s.section_number}. {s.section_title}</h2>
+                        {s.content.map((item) =>
+                            item.subsection ? (
+                                <p><strong>{item.subsection} {item.title}.</strong>{' '}{item.text}</p>
+                            ) : (
+                                <p>{item.text}</p>
+                            )
+                        )}
+                    </section>
+                ))}
+            </Fragment>
+        ) : (
+            <p class="lead">The Official Rules could not be loaded just now. Please try again in a moment. They are also in the VOLI app (open the Bracket page and tap the info button at the top left), or email <a href="mailto:support@playvoli.com">support@playvoli.com</a> for a copy.</p>
+        )}
+        <hr>
+        <p class="fine">Questions about the contest go to <a href="mailto:support@playvoli.com">support@playvoli.com</a>. How the game works, with its key dates and scoring, is on the <a href={BRACKET.path}>Bracket Challenge</a> page, and how VOLI handles your information is in the <a href="/privacy">VOLI Privacy Policy</a>.</p>
+    </Sheet>
 
-    .legal-content { text-align: left; }
-    .legal-content p { font: 400 var(--fs-body)/1.6 var(--font-body); color: var(--ink-body); margin: 0 0 12px; }
-    .legal-content .legal-lead { margin-bottom: 24px; }
-    .legal-content .legal-h2 { font: 700 18px/1.3 var(--font-body); color: #fff; margin: 32px 0 12px; scroll-margin-top: 96px; }
-    .legal-content section:first-of-type .legal-h2 { margin-top: 0; }
-    .legal-content section:last-child p:last-child { margin-bottom: 0; }
-    .legal-content strong { color: #fff; font-weight: 600; }
-
-    .br-foot { margin: 24px 0 0; text-align: center; }
-</style>
+    <GetApp
+      lines={['Play it', { text: 'in the app', hollow: true }]}
+      lede="The Bracket Challenge is played in the free VOLI app, on iPhone and Android."
+      links={[
+        { href: BRACKET.path, label: 'The Bracket Challenge' },
+        { href: `${BRACKET.path}#prize`, label: 'Prize and eligibility' },
+        { href: `${BRACKET.path}#faq`, label: 'Bracket questions' },
+        { href: '/', label: 'Everything in VOLI' },
+      ]}
+    />
+</Pearl>

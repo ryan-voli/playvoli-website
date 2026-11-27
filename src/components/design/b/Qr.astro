@@ -1,0 +1,22 @@
+---
+// "Scan to get the app": shown where there is a mouse and no app to open.
+// The code is drawn at build time (see qr.ts) and is plain SVG in the page.
+import { qrPath } from './qr';
+
+interface Props {
+  /** What the code opens. /download sends each phone to its own store. */
+  url?: string;
+  label?: string;
+  class?: string;
+}
+const { url = 'https://playvoli.com/download', label = 'Scan with your phone to get VOLI', class: cls = '' } = Astro.props;
+const { d, size } = qrPath(url);
+---
+
+<div class={`b-qr b-glass ${cls}`.trim()}>
+    <svg viewBox={`0 0 ${size} ${size}`} width="92" height="92" role="img" aria-label={`QR code that opens ${url.replace('https://', '')}`} shape-rendering="crispEdges">
+        <rect width={size} height={size} fill="#fff" />
+        <path d={d} fill="#161512" />
+    </svg>
+    <p class="b-qr__txt"><strong>On a computer?</strong> {label}.</p>
+</div>

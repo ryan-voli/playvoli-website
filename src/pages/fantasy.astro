@@ -1,0 +1,311 @@
+---
+// Fantasy volleyball: what the game is, how a roster scores, what players
+// cost and how contracts run, where to play, and how a season is laid out.
+// The rules are the app's own in-app guides (Roster, Scoring, Player
+// Salaries, Salary Cap, Signing & Trading), restated for the web; the facts
+// about VOLI come from lib/voli-facts. Scoring is the college game's: the
+// app's guide explains college scoring.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/fantasy.css';
+import Badge from '../components/pearl/kit/Badge.astro';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Cell from '../components/pearl/kit/Cell.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import DataTable from '../components/pearl/kit/DataTable.astro';
+import Dates from '../components/pearl/kit/Dates.astro';
+import Faq from '../components/pearl/kit/Faq.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import LinkList from '../components/pearl/kit/LinkList.astro';
+import Minis from '../components/pearl/kit/Minis.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Phone from '../components/pearl/kit/Phone.astro';
+import Phones from '../components/pearl/kit/Phones.astro';
+import Rows from '../components/pearl/kit/Rows.astro';
+import Split from '../components/pearl/kit/Split.astro';
+import Stack from '../components/pearl/kit/Stack.astro';
+import Steps from '../components/pearl/kit/Steps.astro';
+import Sticker from '../components/pearl/kit/Sticker.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import { FAQS, faqSchema, type Faq as FaqItem } from '../lib/voli-facts';
+import { INDEPENDENCE, SITE_URL } from '../lib/site';
+import { SCREENS } from '../lib/screens';
+
+const PAGE_URL = `${SITE_URL}/fantasy`;
+const TITLE = 'Fantasy Volleyball: Free Leagues for College and Pro | VOLI';
+const DESCRIPTION =
+  "Free fantasy volleyball in the VOLI app for NCAA Division I women's volleyball and MLV, with LOVB from January 2027: a salary cap, contracts, public and private leagues. iPhone and Android.";
+
+const subnav = {
+  label: 'Fantasy volleyball',
+  items: [
+    { href: '#how', label: 'How it works', short: 'How' },
+    { href: '#scoring', label: 'Scoring' },
+    { href: '#salaries', label: 'Salaries' },
+    { href: '#leagues', label: 'Leagues' },
+    { href: '#season', label: 'Season' },
+    { href: '#faq', label: 'FAQ' },
+  ],
+};
+
+const STEPS = [
+  {
+    title: 'Get VOLI',
+    text: 'VOLI is free on iPhone and Android, and fantasy has its own tab.',
+  },
+  {
+    title: 'Join a league',
+    text: 'Join a public league run by a volleyball podcast, or start a private one for your friends.',
+  },
+  {
+    title: 'Sign your team',
+    text: 'Sign seven starters: three hitters, two middle blockers, a setter and a libero, under your salary cap.',
+  },
+  {
+    title: 'Score points',
+    text: 'Your starters earn points from their real box scores, round after round.',
+  },
+];
+
+// College scoring, per set: each play's weight, and the app guide's worked round.
+const WEIGHTS = [
+  ['Block kills', '×16', '8.0'],
+  ['Aces', '×6', '1.5'],
+  ['Digs', '×6', '3.0'],
+  ['Kills', '×3', '9.0'],
+  ['Assists', '×1', '1.0'],
+  ['Hitting efficiency bonus', '×10', '3.1'],
+  ['Errors on attack, serve, set or block', '-2', '-1.8'],
+];
+
+const OPPONENTS = [
+  { value: '×1.25', label: 'against a top 25 team: the round above becomes 29.8' },
+  { value: '×1.00', label: 'against a team ranked 26 to 50' },
+  { value: '×0.75', label: 'against a team ranked 51 to 100' },
+  { value: '×0.50', label: 'against an unranked team' },
+];
+
+const CONTRACT_RULES = [
+  {
+    title: 'No deal crosses a bye',
+    meta: "A college contract cannot cover a round the player's team does not play.",
+  },
+  {
+    title: 'Ending a deal',
+    meta: 'Free until the player plays under it, then 10% of their salary, off your cap for good.',
+  },
+  {
+    title: 'Trading',
+    meta: 'A release and a signing in one move, against the market, not another manager.',
+  },
+  {
+    title: 'The re-sign lockout',
+    meta: 'When a contract runs its course, or you end it after the player has played, you cannot sign that player again for a round. Your rivals can.',
+  },
+  {
+    title: 'The bench',
+    meta: 'One bench player per position group, on free one-round deals, priced below your cheapest starter there.',
+  },
+];
+
+const LEAGUES = [
+  { href: '/volleytalk', label: 'Volley Talk league' },
+  { href: '/mlm', label: 'Major League Minute league' },
+  { href: '/canaan', label: 'Canaan Courtside league' },
+  { href: '/lshotvb', label: 'Line Shot league' },
+];
+
+const COMPETITIONS = [
+  { iso: '2026-01', when: 'January 2026', what: 'Major League Volleyball', detail: 'Fantasy since the 2026 MLV season.' },
+  { iso: '2026-08', when: 'August 2026', what: "NCAA Division I women's volleyball", detail: 'Ten rounds a season, tuned for the college game.' },
+  { iso: '2027-01', when: 'January 2027', what: 'LOVB', detail: 'The second pro league in VOLI fantasy, so you can run teams in both.', tag: 'Next' },
+];
+
+// The questions this page answers, and marks up as its FAQ. The first is the
+// site's own fantasy answer, word for word.
+const questions: FaqItem[] = [
+  FAQS.find((f) => f.id === 'fantasy')!,
+  {
+    id: 'fantasy-free',
+    q: 'Is fantasy volleyball on VOLI free?',
+    a: 'Yes. VOLI is free on iPhone and Android with no subscription, and joining or starting a fantasy league costs nothing.',
+  },
+  {
+    id: 'fantasy-leagues',
+    q: 'Which leagues can I play fantasy volleyball for?',
+    a: "NCAA Division I women's volleyball and Major League Volleyball (MLV), and LOVB from the 2027 season, starting in January 2027.",
+  },
+  {
+    id: 'fantasy-scoring',
+    q: 'How does fantasy volleyball scoring work?',
+    a: "Points come from real box scores. In the college game, a player's stats for the round are divided by the sets played, each play is weighted, and the total is multiplied by the strength of the opponents faced. Your round score is the total of your seven starters.",
+  },
+  {
+    id: 'fantasy-cap',
+    q: 'How does the salary cap work?',
+    a: "Every team starts with $100,000, and only your seven starters count against it. Salaries move each round with what players score, and when your starters' salaries rise, your cap rises by the same amount.",
+  },
+  {
+    id: 'fantasy-signing',
+    q: 'When can I sign players?',
+    a: 'In the college game, the whole market is open on Monday and Tuesday, the signing window between rounds. From Wednesday, players lock one by one as their teams play, until the next signing window.',
+  },
+  {
+    id: 'fantasy-friends',
+    q: 'Can I play fantasy volleyball with my friends?',
+    a: 'Yes. Start a private league for your friends, with its own chat, or join a public league run by a volleyball podcast.',
+  },
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${PAGE_URL}#webpage`,
+    url: PAGE_URL,
+    name: TITLE,
+    description: DESCRIPTION,
+    about: { '@type': 'Thing', name: 'Fantasy volleyball' },
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    inLanguage: 'en-US',
+  },
+  faqSchema(questions, PAGE_URL),
+];
+---
+
+<Pearl title={TITLE} description={DESCRIPTION} section="fantasy" subnav={subnav} schema={schema}>
+    <link rel="preload" as="image" href={SCREENS.fantasy.src} type="image/webp" fetchpriority="high" slot="head" />
+
+    <PageHero
+      color="blue"
+      label="Fantasy volleyball on VOLI"
+      lines={[{ text: ['Sign real', 'players.'], hollow: true }, ['Beat your', 'friends.']]}
+    >
+        <p class="lede">Fantasy volleyball on VOLI is a free game: build a team of real college or pro players under a salary cap and score points from their real matches. Play NCAA <span class="nb">Division I</span> women's volleyball or MLV, and LOVB from January 2027, in a public league run by a volleyball podcast or a private one with your friends.</p>
+        <Stores />
+        <Stack slot="art" ratio="100/104">
+            <Phone screen="fantasy" x={4} xm={2} y={0} w={44} wm={46} r={-3.75} z={2} priority />
+            <Phone screen="fantasyCard" x={52} y={10} w={44} wm={46} r={7.5} eager />
+            <Badge value="$100K" label="salary cap to build your team" x={32} xm={24} y={74} ym={74} z={3} shadow="lime" />
+        </Stack>
+    </PageHero>
+
+    {/* The hero's phones hang over the cut: on a phone this band starts lower to clear them. */}
+    <Band color="lime" id="how" lines={[{ text: 'How it works', size: 'sm' }]} ptPhone={12}>
+        <Steps items={STEPS} />
+    </Band>
+
+    <Band color="ink" id="scoring" title="Scoring" sub="from real box scores" em="box scores" tone="lime">
+        <Cols ratio="46:50">
+            <Copy>
+                <p class="lede">Fantasy points come straight from real box scores. In the college game, a player's round score is built in five steps.</p>
+                <ol class="fan-rules">
+                    <li><strong>Add up the round.</strong> Every match from Wednesday to Sunday counts.</li>
+                    <li><strong>Turn it into a rate.</strong> The round's stats are divided by the sets played, never by fewer than three, so a one-set cameo cannot pass for a full round.</li>
+                    <li><strong>Weight each play.</strong> Rare plays weigh most, so a block kill pays the most. Every error, on an attack, serve, set or block, costs 2 per set.</li>
+                    <li><strong>Add the hitting bonus.</strong> The round's hitting efficiency, kills minus errors over attacks, times ten, with at least 10 attacks.</li>
+                    <li><strong>Weigh the opponent.</strong> The total is multiplied by the opponents' strength in that week's <a class="link" href="/rankings">VOLI Top 100</a>.</li>
+                </ol>
+                <p class="body">Your team's round score is the total of your seven starters. A bench player who outscores your lowest starter in the same position group takes that place automatically.</p>
+            </Copy>
+            <div class="fan-score">
+                <DataTable
+                  caption="College scoring, per set, with one worked round"
+                  min="21rem"
+                  cols={['Play', { label: 'Weight', class: 'fig' }, { label: 'Worked round', class: 'fig' }]}
+                  rows={WEIGHTS}
+                  foot={['Round total', '', { text: '23.8', class: 'fig pop' }]}
+                />
+                <p class="small fan-note">The worked round is the app guide's own: 8 sets over two matches with 24 kills, 4 blocks and 4 digs, hitting .310 (24 kills minus 6 attack errors, over 58 attacks).</p>
+                <h3 class="h3 fan-sub">Opponent strength</h3>
+                <Minis items={OPPONENTS} />
+                <p class="small fan-note">Two opponents in a round? Their multipliers average.</p>
+            </div>
+        </Cols>
+    </Band>
+
+    <Split ground="blue">
+        <Cell color="rose" id="salaries" title="Salaries" sub="and the cap">
+            <p class="lede">Every player has a salary, the same price for every manager, and it follows the points.</p>
+            <p class="body">Salaries are re-rated at the end of each round from what players score, a limited step at a time, so a breakout takes weeks to price in. That is your window. A player with no match played yet has no price and cannot be signed.</p>
+            <h3 class="h3 fan-sub">The salary cap</h3>
+            <p class="body">Every team starts with <span class="nb">$100,000</span>. Only your seven starters count against it. When their salaries rise, your cap rises by the same amount, so rising salaries raise your ceiling instead of squeezing you.</p>
+            <Stack ratio="100/80" class="fan-fig">
+                <Sticker cut="card-fantasy" x={1} y={5} w={86} r={-3.75} shadow="lime" />
+            </Stack>
+        </Cell>
+        <Cell color="blue" id="contracts" title="Contracts">
+            <p class="lede">Every signing is a contract of one, two or three rounds.</p>
+            <Rows class="fan-rows" items={CONTRACT_RULES} />
+        </Cell>
+    </Split>
+
+    <Band color="ink" id="leagues" title="Leagues" tone="blue">
+        <Cols ratio="46:42" gap={6}>
+            <Copy>
+                <p class="lede">Join a public league run by a volleyball podcast, or start a private league for your friends. Every fantasy league has its own private chat.</p>
+                <p class="body">Volley Talk with Sarah Pavan and Adam Schulz and Major League Minute with GMP and DOC run public leagues anyone can join, and so do Canaan Courtside and Line Shot Volleyball. One team can play in several leagues.</p>
+                <p class="body">A college league signs players from a pool of schools fixed when it is created: last season's NCAA tournament field by default, with the Power 4 conferences and the RPI Top 100 as options.</p>
+                <Stack ratio="100/22" class="fan-fig">
+                    <Sticker cut="float-chat" x={0} y={4} w={96} r={-3.75} shadow="blue" />
+                </Stack>
+            </Copy>
+            <div class="fan-pods">
+                <LinkList label="Join a public league" items={LEAGUES} />
+                <p class="small fan-note">Court Captains, a podcast on MLV with Kelly, Nikki and Ian, is on VOLI too: <a class="link" href="/courtcaptains">listen to Court Captains</a>.</p>
+            </div>
+        </Cols>
+    </Band>
+
+    <Band color="lime" id="season" kicker="The season in" title="rounds">
+        <Cols ratio="48:42" gap={6}>
+            <Copy>
+                <p class="lede">The college season runs in ten rounds. Each round runs Wednesday through Sunday, and Monday and Tuesday are the signing window.</p>
+                <div class="fan-week">
+                    <div class="fan-week__part fan-week__part--sign">
+                        <span class="fan-week__days"><span>Mon</span> <span>Tue</span></span>
+                        <span class="fan-week__what">Signing window</span>
+                    </div>
+                    <div class="fan-week__part">
+                        <span class="fan-week__days"><span>Wed</span> <span>Thu</span> <span>Fri</span> <span>Sat</span> <span>Sun</span></span>
+                        <span class="fan-week__what">The round: every match counts</span>
+                    </div>
+                </div>
+                <p class="body">The whole market is open on Monday and Tuesday, and those days score nothing. From Wednesday, players lock as their teams play, until the next signing window.</p>
+            </Copy>
+            <div class="fan-where">
+                <h3 class="h3">Where you can play</h3>
+                <Dates items={COMPETITIONS} />
+                <p class="small fan-note">{INDEPENDENCE}</p>
+            </div>
+        </Cols>
+    </Band>
+
+    <Band color="ink" id="faq" title="Questions" sub="about fantasy" tone="rose">
+        <Faq items={questions} fold={false}>
+            <Btn slot="more" href="/about#faq">All questions about VOLI</Btn>
+        </Faq>
+    </Band>
+
+    <Band color="rose" id="more" kicker="Fantasy is" title="optional">
+        <Cols ratio="44:48" drop={[0, 2]} align="center">
+            <Copy>
+                <p class="lede">Everything else in VOLI works without fantasy.</p>
+                <p class="body">Follow college and pro matches live, look up any team or player, and see the VOLI Top 100 every Monday. In tournament season, the <a class="link" href="/bracket">College Volleyball Bracket Challenge</a>, a free bracket game for the NCAA <span class="nb">Division I</span> women's volleyball tournament, is in the app too.</p>
+                <div class="btns">
+                    <Btn href="/">Everything in VOLI</Btn>
+                    <Btn href="/rankings">The VOLI Top 100</Btn>
+                </div>
+            </Copy>
+            <Phones screens={['games', 'playerStats']} class="fan-phones" />
+        </Cols>
+    </Band>
+
+    <GetApp color="blue" links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/about#faq', label: 'Questions about VOLI' },
+      { href: '/about', label: 'About VOLI' },
+    ]} />
+</Pearl>

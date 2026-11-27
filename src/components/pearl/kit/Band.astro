@@ -1,0 +1,60 @@
+---
+// A section of the page: Pearl's .sec and .wrap on the shared ground, with
+// the title as a display heading (see Rider: one sentence, one italic navy
+// word, `em` to choose it). Put columns in <Cols>; Steps, Faq, Quotes and
+// Tower go straight in.
+//
+//   <Band color="blue" id="fantasy" title="Fantasy" sub="leagues">
+//     <Cols ratio="42:50"> ... </Cols>
+//   </Band>
+//
+// Kept: id (the section menu's anchors), the heading tag and its id
+// (`${id}-h`), note, stamp (a mono line shown over the title, after it in
+// the HTML), label. Ignored: color, tone, pt, pb, ptPhone, pbPhone, lift.
+// Pearl only: `em`, `lede` (a line under the title), `center`, `tight`.
+import Rider from './Rider.astro';
+import { titleText, type TitleProps } from './rider';
+import { slug, type Field } from './util';
+
+interface Props extends TitleProps {
+  color?: Field;
+  id?: string;
+  as?: 'h1' | 'h2' | 'h3';
+  tone?: 'lime' | 'blue' | 'rose' | 'white';
+  note?: string;
+  stamp?: string;
+  label?: string;
+  pt?: number;
+  pb?: number;
+  ptPhone?: number;
+  pbPhone?: number;
+  lift?: boolean;
+  /** Pearl only: a lede under the title. */
+  lede?: string;
+  /** Pearl only: centre the heading. */
+  center?: boolean;
+  /** Pearl only: less space above and below (sec--tight). */
+  tight?: boolean;
+  class?: string;
+}
+
+const { color: _c, id, as = 'h2', tone: _t, note, stamp, label, pt: _1, pb: _2, ptPhone: _3, pbPhone: _4, lift: _5, lede, center, tight, class: cls, ...title } = Astro.props;
+const text = titleText(title);
+const hasTitle = !!text;
+const hid = hasTitle ? `${id ?? slug(text)}-h` : undefined;
+const custom = Astro.slots.has('title');
+---
+<section class:list={['sec', 'band', { 'sec--tight': tight }, cls]} id={id} aria-labelledby={hid} aria-label={hasTitle ? undefined : label}>
+    <div class="wrap">
+        {custom ? (
+            <slot name="title" />
+        ) : (hasTitle || stamp) && (
+            <div class:list={['head', { 'head--center': center }]}>
+                {hasTitle && <Rider as={as} id={hid} note={note} size={as === 'h1' ? 'h1' : 'h2'} {...title} />}
+                {stamp && <p class="kicker head__stamp">{stamp}</p>}
+                {lede && <p class="lede">{lede}</p>}
+            </div>
+        )}
+        <slot />
+    </div>
+</section>

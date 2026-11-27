@@ -1,0 +1,31 @@
+---
+// A Pearl button. A link by default; give `type` to make it a <button>.
+//
+//   <Btn href="/rankings">The VOLI Top 100</Btn>              glass (secondary)
+//   <Btn href="/bracket" variant="primary">Play free</Btn>    ink (primary)
+//
+// Poster props: `tone="ink"` makes it primary; other tones, `shadow` and
+// `arrow` are ignored (Pearl buttons carry no arrow).
+import type { Tint } from './util';
+
+interface Props {
+  href?: string;
+  type?: 'button' | 'submit';
+  /** Pearl only: the button's weight. Default secondary (ink when tone="ink"). */
+  variant?: 'primary' | 'secondary' | 'ghost';
+  /** Pearl only: the larger size. */
+  size?: 'sm' | 'lg';
+  tone?: Tint;
+  shadow?: Tint;
+  arrow?: boolean;
+  track?: string;
+  class?: string;
+  [attr: string]: any;
+}
+
+const { href, type, variant, size, tone, shadow: _s, arrow: _a, track, class: cls, ...rest } = Astro.props;
+if (!href && !type) throw new Error('Btn: give it an href (a link) or a type (a button)');
+const kind = variant ?? (tone === 'ink' ? 'primary' : 'secondary');
+const Tag = href ? 'a' : 'button';
+---
+<Tag class:list={['btn', `btn--${kind}`, size && `btn--${size}`, 'kbtn', cls]} href={href} type={href ? undefined : type} data-track={track} {...rest}><slot /></Tag>

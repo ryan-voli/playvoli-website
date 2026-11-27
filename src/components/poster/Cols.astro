@@ -1,0 +1,59 @@
+---
+// Level columns inside a band. Each direct child is one column: it is set
+// level, given the room it needs under the slanted edge above it, and steps
+// down the slope beside its neighbours. Inside a column the layout is
+// ordinary. Never put a Cols inside a column to level it again: there it is
+// a plain grid.
+//
+//   <Cols ratio="42:50"> <Copy>...</Copy> <Stack>...</Stack> </Cols>
+//   <Cols>               one level block that keeps to a reading measure
+//   <Cols ratio="1:1:1"> three equal columns (one column on a phone)
+//
+// Two and three columns become one below 761px; four become two below 981px
+// and one below 561px.
+import { r3, vars } from './util';
+
+interface Props {
+  /** Each column's share, in the order the children are written: "42:50", "1:1:1". One number, or none, is a single column. */
+  ratio?: string;
+  /** Two columns only: draw the first child on the right on a wide screen (it still comes first on a phone, and for a screen reader). */
+  flip?: boolean;
+  /** Push columns further down, in units of --u: [0, 5] lowers the second by 5% of the page width. */
+  drop?: number[];
+  /** The space between columns, in --u. Default 4.5. */
+  gap?: number;
+  /** The space between rows (and between the stacked columns on a phone), as a CSS length. */
+  rowGap?: string;
+  /** A single column's widest measure. Default 40rem. */
+  max?: string;
+  /** A single column that runs the band's whole width (a table, a grid of cards). It stands further below the title: 13.4% of the page width. */
+  wide?: boolean;
+  /** The tag: "div", or "ul" / "ol" when the columns are list items. */
+  as?: 'div' | 'ul' | 'ol';
+  class?: string;
+  /** Custom properties for the columns to read (a figure's --em), added to the grid's own. */
+  style?: string;
+  /** Any other attribute goes on the grid (an aria-label for a list). */
+  [attr: string]: any;
+}
+
+const { ratio = '1', flip, drop = [], gap, rowGap, max, wide, as: Tag = 'div', class: cls, style: own, ...rest } = Astro.props;
+const parts = String(ratio).split(':').map((p) => Number(p.trim()));
+if (parts.length < 1 || parts.length > 4 || parts.some((p) => !(p > 0))) {
+  throw new Error(`Cols: ratio "${ratio}" must be one to four positive numbers, like "42:50"`);
+}
+if (flip && parts.length !== 2) throw new Error('Cols: flip is for two columns');
+const sum = parts.reduce((a, b) => a + b, 0);
+const drawn = flip ? [...parts].reverse() : parts;
+const style = vars({
+  '--cols': parts.length > 1 && drawn.map((p) => `minmax(0, ${p}fr)`).join(' '),
+  ...Object.fromEntries(parts.length > 1 ? parts.map((p, i) => [`--f${i + 1}`, r3(p / sum)]) : []),
+  ...Object.fromEntries(drop.map((d, i) => [`--d${i + 1}`, d || undefined])),
+  '--cg': gap !== undefined && `calc(var(--u) * ${gap})`,
+  '--rg': rowGap,
+  '--max': wide ? 'var(--cw)' : max,
+});
+---
+<Tag class:list={['cols', { 'cols--flip': flip }, cls]} data-n={parts.length} style={[style, own].filter(Boolean).join(';') || undefined} {...rest}>
+    <slot />
+</Tag>

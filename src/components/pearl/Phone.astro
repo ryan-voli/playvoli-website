@@ -1,0 +1,31 @@
+---
+// One app screen, whole and uncropped, in the design sheet's phone frame. On a
+// stage, x / y / w (and xm / ym / wm on a phone) place it.
+import { SCREENS, type ScreenKey } from '../../lib/screens';
+import { placeVars, type Place } from './util';
+
+interface Props extends Place {
+  screen: ScreenKey;
+  alt?: string;
+  /** In the first screen: load at once. */
+  eager?: boolean;
+  /** The one main picture of the first screen: at once and at high priority. */
+  priority?: boolean;
+  class?: string;
+}
+const { screen, alt, eager, priority, class: cls, ...place } = Astro.props;
+const s = SCREENS[screen];
+if (!s) throw new Error(`Phone: there is no screen "${screen}" in src/lib/screens.ts`);
+const now = eager || priority;
+---
+<div class:list={['phone', cls]} style={placeVars(place)}>
+    <span class="phone__btn phone__btn--action" aria-hidden="true"></span>
+    <span class="phone__btn phone__btn--volume" aria-hidden="true"></span>
+    <span class="phone__btn phone__btn--power" aria-hidden="true"></span>
+    <div class="phone__bezel">
+        <div class="phone__glass">
+            <img src={s.src} width={s.width} height={s.height} alt={alt ?? s.alt} loading={now ? undefined : 'lazy'} decoding={now ? undefined : 'async'} fetchpriority={priority ? 'high' : undefined}>
+            <span class="phone__island" aria-hidden="true"></span>
+        </div>
+    </div>
+</div>

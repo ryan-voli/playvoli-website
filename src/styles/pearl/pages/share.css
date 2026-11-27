@@ -1,0 +1,43 @@
+/* The pages a shared link opens, in Pearl (/game, /league, /podcast): what
+   only they need. Everything shared is in pearl/system.css and pearl/kit.css.
+
+   The hero is written by hand (not PageHero) because its heading changes
+   with the page's state: the league invite has three (opening the app, the
+   fallback, no invite at all), each a block with its own heading and copy,
+   and only one is ever shown. The blocks sit in the hero's copy column, the
+   phones (shared by every state) in its art column. */
+
+.ut-state { display: flex; flex-direction: column; gap: var(--sp-5); min-width: 0; }
+.ut-state[hidden] { display: none; }
+
+/* A state's heading, as PageHero's: the mono label over the display line.
+   One that is not the page's h1 carries role="heading" and is drawn the same. */
+.ut-head { display: flex; flex-direction: column; gap: var(--sp-5); margin: 0; font-weight: 400; }
+.ut-head .kicker { display: block; line-height: 1.6; }
+.ut-head .display { overflow-wrap: break-word; }
+
+/* The line that leads into the shared thing's name ("You're invited") stays a size under it. */
+.ut-lead { display: block; margin-bottom: .12em; font-size: .56em; line-height: 1.05; }
+.ut-name { display: block; }
+
+.ut-copy { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.ut-copy .btns { margin-top: 0; }
+.ut-copy .qr { margin-top: 0; }
+/* "Don't have the app?" sits close over the store buttons it names. */
+.ut-get { display: flex; flex-direction: column; gap: var(--sp-3); margin-top: var(--sp-2); }
+
+/* A line under the headline with what the link points at: a date, a score, a host. */
+.ut-meta:empty { display: none; }
+
+/* "Opening VOLI": the note's dot blinks while the app is being asked to open. */
+.ut-wait::before { animation: ut-blink 1.1s steps(1, end) infinite; }
+@keyframes ut-blink { 50% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) {
+  .ut-wait::before { animation: none; }
+}
+
+/* The two phones: kept to a phone's size on a wide screen. */
+.ut-phones { width: min(100%, 34rem); margin-left: auto; }
+@media (max-width: 900px) {
+  .ut-phones { margin: var(--sp-2) auto 0; }
+}

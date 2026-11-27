@@ -1,0 +1,11 @@
+/* The utility pages in Pearl: so far the 404. (The Poster file,
+   styles/poster/pages/utility.css, still holds the parts for /privacy,
+   /terms, /download and the share-link pages until they convert.) */
+
+/* ---------- 404: the mark on its glass plate, the 404 chip over it --------- */
+.ut-lost { position: relative; width: min(100%, 30rem); margin-left: auto; }
+.ut-lost .kbadge { position: absolute; left: -6%; bottom: 8%; }
+@media (max-width: 900px) {
+  .ut-lost { width: min(78%, 22rem); margin: var(--sp-4) 0 0 auto; }
+  .ut-lost .kbadge { left: -14%; bottom: 10%; }
+}

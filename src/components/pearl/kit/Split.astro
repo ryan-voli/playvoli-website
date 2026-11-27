@@ -1,0 +1,25 @@
+---
+// Two cards side by side (one over the other on a phone): Pearl's glass
+// .card--big pair, as in the home page's Rankings / Encyclopedia row. Its
+// children are exactly two <Cell>s. `ground` and `lift` are ignored.
+//
+//   <Split>
+//     <Cell id="rankings" title="Rankings" sub="and predictions"> ... </Cell>
+//     <Cell id="encyclopedia" kicker="The Volleyball" title="Encyclopedia"> ... </Cell>
+//   </Split>
+import type { Field } from './util';
+
+interface Props {
+  ground?: Field;
+  lift?: boolean;
+  /** Pearl only: names the pair for screen readers. */
+  label?: string;
+  class?: string;
+}
+const { label, class: cls } = Astro.props;
+---
+<div class:list={['sec', 'split2', cls]} role={label ? 'region' : undefined} aria-label={label}>
+    <div class="wrap grid2 split2__in">
+        <slot />
+    </div>
+</div>

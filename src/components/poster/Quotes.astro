@@ -1,0 +1,27 @@
+---
+// Quotes: ink cards that step down the slope, four across on a wide screen,
+// two on a tablet, left and right in turn on a phone. It goes straight into
+// a Band (it levels its own cards).
+//
+//   <Quotes items={TESTIMONIALS} by="VOLI app user" />
+interface Props {
+  /** Each quote, as its words, or its words and who said them. Only real quotes. */
+  items: (string | { text: string; by?: string })[];
+  /** Who said them, when it is the same line for all. */
+  by?: string;
+  class?: string;
+}
+const { items, by, class: cls } = Astro.props;
+const list = items.map((i) => (typeof i === 'string' ? { text: i, by } : { by, ...i }));
+const n = Math.min(Math.max(list.length, 1), 4);
+const style = n > 1 ? `--cols:repeat(${n}, minmax(0, 1fr));${Array.from({ length: n }, (_, i) => `--f${i + 1}:${Math.round(1000 / n) / 1000}`).join(';')}` : undefined;
+---
+<div class:list={['cols', 'quotes', cls]} data-n={n} style={style}>
+    {list.map((q) => (
+        <blockquote class="quote">
+            <span class="ticks" aria-hidden="true"></span>
+            <p>{q.text}</p>
+            {q.by && <footer>{q.by}</footer>}
+        </blockquote>
+    ))}
+</div>

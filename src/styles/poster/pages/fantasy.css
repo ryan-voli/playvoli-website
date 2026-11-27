@@ -1,0 +1,37 @@
+/* Fantasy: what only this page needs. Everything shared is in system.css. */
+
+/* Scoring: the five steps, each numbered in the display face. */
+.fan-rules { display: grid; row-gap: 14px; counter-reset: fan-rule; }
+.fan-rules li { position: relative; padding-left: 2.6em; counter-increment: fan-rule; color: var(--soft); font: 500 1rem/1.55 var(--body); text-wrap: pretty; }
+.fan-rules li::before { content: counter(fan-rule); position: absolute; left: 0; top: .1em; color: var(--pop); font: 400 1.75rem/1 var(--display); }
+.fan-rules strong { color: var(--fg); }
+
+/* The right-hand column of a band: a table, figures and notes, stacked. */
+.fan-score .tblwrap { max-width: 34rem; }
+.fan-note { max-width: 34rem; margin-top: 14px; color: var(--soft); }
+.fan-sub { margin-top: calc(var(--u) * 2.4 + 12px); }
+.fan-score .minis { max-width: 34rem; margin-top: 14px; }
+
+/* A cut-out card under a cell's or a column's copy. */
+.fan-fig { max-width: 30rem; }
+.fan-rows { margin-top: 1.6em; max-width: 36rem; }
+.fan-rows .rows__m { font: 500 .9375rem/1.45 var(--body); text-wrap: pretty; }
+
+/* Leagues: the public leagues as onward links. */
+.fan-pods .fan-note { margin-top: 18px; }
+
+/* Season: the week as two blocks of day chips, the signing days hollow. */
+.fan-week { display: grid; grid-template-columns: 2fr 5fr; column-gap: 12px; max-width: 36rem; margin-top: 1.6em; }
+.fan-week__part { display: grid; row-gap: 8px; align-content: start; }
+.fan-week__days { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 6px; }
+.fan-week__days span { display: grid; place-items: center; height: clamp(2.5rem, calc(var(--u) * 4), 3.25rem); background: var(--fg); color: var(--bg); border: 3px solid var(--fg); border-radius: 0 10px 0 10px; font: 400 clamp(.8rem, calc(var(--u) * 1.1), 1.05rem)/1 var(--display); text-transform: uppercase; }
+.fan-week__part--sign .fan-week__days span { background: transparent; color: var(--fg); }
+.fan-week__what { font: 800 .72rem/1.3 var(--body); letter-spacing: .12em; text-transform: uppercase; }
+.fan-where .dates { margin-top: 14px; }
+
+@media (max-width: 760px) {
+  .fan-fig { margin-top: calc(var(--u) * 6); }
+  .fan-sub { margin-top: calc(var(--u) * 7); }
+  .fan-week { column-gap: 8px; }
+  .fan-week__days { column-gap: 4px; }
+}

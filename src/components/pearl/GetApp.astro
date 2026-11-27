@@ -1,0 +1,51 @@
+---
+// The closing block every page ends on: the app, its store buttons, the QR
+// code for a computer, and where to go next.
+import Stores from './Stores.astro';
+import { em } from './util';
+import { qrPath } from '../../lib/qr';
+import { DOWNLOADS } from '../../lib/voli-facts';
+
+interface Props {
+  /** The title; *one word* in italic navy. */
+  title?: string;
+  lede?: string;
+  links?: { href: string; label: string }[];
+  linksLabel?: string;
+}
+const {
+  title = 'Free on iPhone *and Android.*',
+  lede = 'Get VOLI from the App Store or Google Play.',
+  links,
+  linksLabel = 'More about VOLI',
+} = Astro.props;
+const url = 'https://playvoli.com/download';
+const { d, size } = qrPath(url);
+---
+<section class="sec sec--flush" id="get" aria-labelledby="get-h">
+    <div class="wrap">
+        <div class="plate">
+            <div class="plate__copy">
+                <div class="lockup">
+                    <img src="/images/appicon_sm.webp" width="140" height="140" alt="The VOLI app icon" loading="lazy">
+                    <p><strong class="lockup__name">VOLI: The Volleyball Hub</strong><span class="lockup__tag">{DOWNLOADS} downloads · Fantasy, stats, community</span></p>
+                </div>
+                <h2 class="h1" id="get-h" set:html={em(title)} />
+                <p class="lede">{lede}</p>
+                <Stores />
+                <div class="qr">
+                    <svg viewBox={`0 0 ${size} ${size}`} role="img" aria-label="QR code that opens playvoli.com/download" shape-rendering="crispEdges"><rect width={size} height={size} fill="#fff" /><path d={d} fill="#12141C" /></svg>
+                    <p class="qr__t"><strong>On a computer?</strong> Scan to get VOLI on your phone.</p>
+                </div>
+            </div>
+            {!!links?.length && (
+                <nav aria-label={linksLabel}>
+                    <p class="kicker" style="margin-bottom:12px">{linksLabel}</p>
+                    <ul class="next">
+                        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+                    </ul>
+                </nav>
+            )}
+        </div>
+    </div>
+</section>

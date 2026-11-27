@@ -1,0 +1,203 @@
+---
+// The site's layout in the VOLI light system (Pearl): a complete document of
+// its own. Head, schema, analytics and scripts are the Poster layout's, as is.
+//
+// A page gives it a title, a description, the main page it belongs to
+// (section) and the lime bar's menu (subnav). The canonical address is the
+// page's own path on playvoli.com unless one is passed.
+import '../styles/pearl/system.css';
+import '../styles/pearl/kit.css';
+import '../styles/pearl/motion.css';
+import Menu from '../components/pearl/Menu.astro';
+import Footer from '../components/pearl/Footer.astro';
+import PromoStrip from '../components/pearl/Promo.astro';
+// The site's own script-only clock (no markup, no styles): it keeps every
+// Bracket Challenge status line right between deploys and, once picks lock,
+// swaps in the after-lock headline and takes the promo down.
+import BracketClock from '../components/BracketClock.astro';
+import { STORE } from '../lib/voli-facts';
+import { SITE_URL, SOCIAL_LINKS, type Section, type Subnav } from '../lib/site';
+
+interface Props {
+  /** 50 to 62 characters, the main phrase first, "| VOLI" last unless VOLI already leads. */
+  title: string;
+  /** 140 to 160 characters: what the visitor gets. */
+  description: string;
+  /** The page's address. Default: its own path on playvoli.com, without a trailing slash. `false` prints none (the 404 page gets none by itself). */
+  canonical?: string | false;
+  ogImage?: string;
+  /** Page-specific JSON-LD nodes; the sitewide Organization and WebSite ride along. */
+  schema?: Record<string, any>[];
+  /** Keep the page out of search (a kit page, a preview). 'follow' prints "noindex, follow", for a page whose links should still be followed. */
+  noindex?: boolean | 'follow';
+  /** Which main page is current in the top row. */
+  section?: Section;
+  /** The second menu row: this category's menu. Every page has one. */
+  subnav: Subnav;
+  /** Show the Bracket Challenge strip above the menu (it takes itself down once picks lock). */
+  promo?: boolean;
+  /** An ad landing page: the top row keeps the mark and Download and drops the main pages. */
+  focus?: boolean;
+}
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const {
+  title,
+  description,
+  canonical,
+  ogImage = `${SITE_URL}/images/og/voli-share.jpg`,
+  schema = [],
+  noindex = false,
+  section,
+  subnav,
+  promo = false,
+  focus = false,
+} = Astro.props;
+// One address per page. A page that is not at any address (404) names none.
+const canon = canonical === false || path === '/404' ? null : (canonical ?? `${SITE_URL}${path}`);
+
+// The two sitewide nodes every page carries, so the @id references in the
+// page nodes (#organization, #website) resolve. sameAs names VOLI's social
+// accounts and store listings, which ties the site to them as one entity.
+const siteSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://playvoli.com/#organization',
+    name: 'VOLI LLC',
+    alternateName: 'VOLI',
+    url: 'https://playvoli.com',
+    logo: 'https://playvoli.com/images/official_logo_dark_bg.webp',
+    description:
+      "VOLI LLC makes VOLI: The Volleyball Hub, a free volleyball app for iPhone and Android covering NCAA Division I women's volleyball, Major League Volleyball and LOVB: fantasy volleyball leagues, live scores and box scores, team and player stats, the weekly VOLI Top 100, the Volleyball Encyclopedia, and volleyball news and podcasts. VOLI is independent and built by volleyball fans.",
+    sameAs: [...SOCIAL_LINKS.map((l) => l.href), STORE.ios, STORE.android],
+    founder: [
+      { '@type': 'Person', name: 'Ryan', jobTitle: 'Founder' },
+      { '@type': 'Person', name: 'Max', jobTitle: 'Co-Founder' },
+    ],
+    knowsAbout: ['Volleyball', 'Professional Volleyball', "NCAA Women's Volleyball", 'Fantasy Sports', 'Sports Analytics', 'Live Sports Statistics', 'MLV', 'LOVB', 'Major League Volleyball', 'League One Volleyball'],
+    areaServed: 'US',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://playvoli.com/#website',
+    url: 'https://playvoli.com',
+    name: 'VOLI: The Volleyball Hub',
+    description: "The site of VOLI: The Volleyball Hub, a free volleyball app for NCAA Division I women's volleyball, MLV and LOVB: fantasy leagues, live scores, stats, rankings, history, news and podcasts.",
+    publisher: { '@id': 'https://playvoli.com/#organization' },
+    inLanguage: 'en-US',
+  },
+];
+const allSchema = [...siteSchema, ...schema];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    {noindex && <meta name="robots" content={noindex === 'follow' ? 'noindex, follow' : 'noindex'}>}
+    {canon && <link rel="canonical" href={canon}>}
+    <meta name="theme-color" content="#F1F2F6">
+    <meta name="color-scheme" content="light">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="VOLI">
+    {canon && <meta property="og:url" content={canon}>}
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={ogImage}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    {canon && <meta name="twitter:url" content={canon}>}
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+
+    <!-- Two icons on purpose. The tab gets the app icon (32px); Google only
+         takes sizes that are multiples of 48 and prefers the largest, so it
+         gets the logo on its dark square. The 32 is last because Firefox
+         takes the last icon listed whatever its size. -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+    <slot name="head" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(allSchema)} />
+
+    {/* Google Analytics + Ads (deferred, non-blocking). Only a built site
+        loads them: a local preview, or a phone looking at one over Wi-Fi,
+        must not be counted as a visitor. gtag() itself exists either way,
+        so a page script that reports a click never throws. */}
+    {import.meta.env.PROD ? (
+        <Fragment>
+            <script is:inline>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-W77KSNYJG3');
+                gtag('config', 'AW-17868194042');
+            </script>
+            <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-W77KSNYJG3"></script>
+        </Fragment>
+    ) : (
+        <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+        </script>
+    )}
+</head>
+<body>
+    <a class="skip" href="#main">Skip to content</a>
+    {promo && <PromoStrip />}
+    <Menu section={section} subnav={subnav} path={path} focus={focus} />
+    <main id="main">
+        <slot />
+    </main>
+    <Footer />
+    {/* After the markup it updates: [data-bracket-status], [data-bracket-after]
+        and [data-bracket-promo]. A page with none of them is left as it is. */}
+    <BracketClock />
+    {/* The Download links jump to the store buttons at the end of the page. On
+        a phone they go straight to that phone's store instead. Nothing depends
+        on it. */}
+    <script is:inline define:vars={{ ios: STORE.ios, android: STORE.android }}>
+        (function () {
+            var ua = navigator.userAgent || '';
+            var to = /iPhone|iPad|iPod/.test(ua) ? ios : /Android/.test(ua) ? android : '';
+            if (to) document.querySelectorAll('[data-get]').forEach(function (a) { a.setAttribute('href', to); });
+        })();
+    </script>
+    {/* One click counter for the whole site: data-track="category:label" on a
+        link or a button sends that pair, in the shape the old site's events have. */}
+    <script is:inline>
+        document.addEventListener('click', function (e) {
+            var el = e.target && e.target.closest ? e.target.closest('[data-track]') : null;
+            if (!el) return;
+            var t = el.getAttribute('data-track').split(':');
+            try { gtag('event', 'click', { event_category: t[0], event_label: t.slice(1).join(':') }); } catch (err) {}
+        });
+    </script>
+    {/* Glass cards catch the light under the pointer (motion.css). */}
+    <script is:inline>
+        if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.addEventListener('pointermove', function (e) {
+                var c = e.target && e.target.closest ? e.target.closest('.card') : null;
+                if (!c) return;
+                var r = c.getBoundingClientRect();
+                c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+            }, { passive: true });
+        }
+    </script>
+    <slot name="scripts" />
+</body>
+</html>

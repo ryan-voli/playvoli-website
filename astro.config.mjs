@@ -3,9 +3,15 @@ import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   output: 'static',
-  // The old app page; its content is now /app (owner, 6 Oct 2026).
+  // Addresses that moved. The home page is the app page now, and About holds
+  // the questions, the partners, the roadmap and the contact block as sections.
   redirects: {
-    '/mobileapp': '/app',
+    '/app': '/', '/get': '/', '/poll': '/rankings',
+    '/mobileapp': '/',
+    '/faq': '/about#faq',
+    '/contact': '/about#contact',
+    '/whats-next': '/about#whats-next',
+    '/partners': '/about#partners',
   },
   // satori loads harfbuzz's wasm from node_modules at RUNTIME, and Vercel's
   // function bundle only carries what it can see statically — so the route

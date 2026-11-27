@@ -1,0 +1,68 @@
+/* The utility pages: /privacy and /terms, the 404, /download, and the pages a
+   shared link opens (/league, /game, /podcast). Level space only. */
+
+/* ---------- Share-link pages: a hero written by hand ---------------------------
+   The heading changes with the page's state (opening the app, the fallback, no
+   link at all), so each state block carries its own heading and copy. A state
+   block is not a box of its own: its heading spans the hero, its copy sits on
+   the left, and the art, shared by every state, sits on the right. A hidden
+   state is not drawn at all. */
+.ut-share__in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: calc(var(--u) * 4); align-items: start; }
+.ut-state { display: contents; }
+.ut-head { grid-column: 1 / -1; }
+/* A state's heading that is not the page's h1 (it carries role="heading") names
+   its ground and takes clicks the way the hero's h1 does. */
+.hero .ut-head { pointer-events: auto; background-color: var(--bg); }
+.ut-share__in > .ut-state > .hero__copy { grid-column: 1; grid-row: 2; margin-top: clamp(20px, calc(var(--u) * 2.6), 46px); padding-bottom: calc(var(--h) * .97 + 30px + var(--sh) * 3); }
+.ut-share__in > .hero__art { grid-column: 2; grid-row: 2; margin-top: clamp(20px, calc(var(--u) * 2.6), 46px); }
+@media (max-width: 760px) {
+  .ut-share__in { grid-template-columns: minmax(0, 1fr); }
+  .ut-share__in > .ut-state > .hero__copy { padding-bottom: 0; }
+  .ut-share__in > .hero__art { grid-column: 1; grid-row: 3; margin-top: calc(var(--u) * 7); }
+}
+/* The hero is the target of "Open in VOLI" in the lime bar. */
+.ut-share { scroll-margin-top: var(--bar); }
+
+/* The line that leads into the shared thing's name ("You're invited") stays a size under it. */
+.ut-lead { --cap: 9.5; }
+@media (max-width: 640px) {
+  .ut-lead { --cap-m: 24; }
+}
+
+/* A line under the headline with what the link points at: a date, a score, a host. */
+.ut-meta:empty { display: none; }
+
+/* "Opening VOLI": the note's tick blinks while the app is being asked to open. */
+.ut-wait::before { animation: ut-blink 1.1s steps(1, end) infinite; }
+@keyframes ut-blink { 50% { opacity: .12; } }
+@media (prefers-reduced-motion: reduce) {
+  .ut-wait::before { animation: none; }
+}
+
+/* ---------- What VOLI is: a sentence, three items, then the way on ----------------- */
+.ut-what { display: grid; row-gap: 1.1em; max-width: 36rem; }
+.ut-what .h3 { margin-bottom: .35em; color: var(--pop); }
+.ut-what .body { color: var(--soft); }
+
+/* ---------- /download: the code to scan, large ------------------------------------ */
+.ut-scan { display: grid; justify-items: center; row-gap: 14px; width: min(100%, 23rem); margin: 0 auto; padding: clamp(14px, calc(var(--u) * 1.4), 22px); background: #fff; color: var(--ink); border-radius: 0 clamp(18px, calc(var(--u) * 2), 30px) 0 clamp(18px, calc(var(--u) * 2), 30px); box-shadow: var(--sh) var(--sh) 0 var(--ink); transform: rotate(-3.75deg); }
+.ut-scan svg { width: 100%; height: auto; }
+.ut-scan figcaption { display: grid; justify-items: center; row-gap: 8px; }
+.ut-scan__t { display: flex; align-items: center; gap: .6em; font: 400 clamp(1.05rem, calc(var(--u) * 1.6), 1.6rem)/1 var(--display); text-transform: uppercase; text-align: center; text-wrap: balance; }
+.ut-scan__t .ticks { font-size: .9em; }
+.ut-scan__s { font: 600 .9375rem/1.4 var(--body); text-align: center; text-wrap: balance; }
+/* On a narrow screen the card follows the copy on the right, where the cut is
+   lowest, and ends far enough above it to clear the next band's title. */
+@media (max-width: 760px) {
+  .ut-scan { width: min(62%, 17rem); margin: 0 0 calc(var(--h) * .62) auto; }
+  .ut-scan__t .ticks { display: none; }
+}
+
+/* ---------- 404 -------------------------------------------------------------------- */
+.ut-lost { position: relative; width: min(100%, 34rem); margin: calc(var(--u) * 1) 0 0 auto; }
+.ut-lost .mark { width: 100%; }
+.ut-lost .badge { position: absolute; left: 4%; bottom: 6%; }
+@media (max-width: 760px) {
+  .ut-lost { width: min(62%, 17rem); margin: 0 0 calc(var(--h) * .62) auto; }
+  .ut-lost .badge { left: -18%; bottom: auto; top: 2%; }
+}

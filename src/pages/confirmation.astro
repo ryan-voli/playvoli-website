@@ -1,40 +1,27 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+// Styles: styles/pearl/pages/account.css (loaded by SiteLayout).
 ---
 
 <SiteLayout
   title="Email Confirmed - VOLI"
   description="Your email has been confirmed. You can now sign in to VOLI."
 >
-    <main class="v-page v-page--center">
-        <div class="v-stub">
-            <div class="success-icon">
+    <main class="acct">
+        <div class="acct-card acct-card--center acct-stub">
+            <div class="acct-badge-icon success-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                     <polyline points="22 4 12 14.01 9 11.01"/>
                 </svg>
             </div>
-            <h1 class="v-title-plain v-stub__title">Email Confirmed!</h1>
-            <p class="v-body v-stub__sub">Thanks for confirming your email. You can now sign in on VOLI.</p>
+            <h1 class="acct-title">Email <em>Confirmed!</em></h1>
+            <p class="acct-sub">Thanks for confirming your email. You can now sign in on VOLI.</p>
 
-            <div class="v-actions">
-                <a href="voli://" class="v-pill v-pill--cta v-pill--action v-pill--block">Open VOLI App</a>
-                <a href="/" class="v-pill v-pill--block">Return Home</a>
+            <div class="acct-actions">
+                <a href="voli://" class="btn btn--primary acct-wide">Open VOLI App</a>
+                <a href="/" class="btn btn--secondary acct-wide">Return Home</a>
             </div>
         </div>
     </main>
 </SiteLayout>
-
-<style>
-    .success-icon {
-        width: 56px;
-        height: 56px;
-        margin: 0 auto 20px;
-        color: #F0FF1E;
-    }
-
-    .success-icon svg {
-        width: 100%;
-        height: 100%;
-    }
-</style>

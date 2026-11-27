@@ -1,0 +1,125 @@
+---
+// Design option C, "POSTER". A complete document of its own: it shares
+// nothing with Layout / SiteLayout, the site nav or footer, or site.css.
+import '../../styles/design/option-c.css';
+import Nav from '../../components/design/c/Nav.astro';
+import Footer from '../../components/design/c/Footer.astro';
+// The site's own script-only clock (no markup, no styles): it keeps every
+// Bracket Challenge status line right between deploys and, once picks lock,
+// swaps in the after-lock headline and takes the promo down.
+import BracketClock from '../../components/BracketClock.astro';
+import { STORE } from '../../lib/voli-facts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** The page's REAL address: these previews are noindex and point home. */
+  canonical: string;
+  ogImage?: string;
+  /** Page-specific JSON-LD nodes; the sitewide Organization and WebSite ride along. */
+  schema?: Record<string, any>[];
+  stickyNav?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = 'https://playvoli.com/images/og/voli-share.jpg',
+  schema = [],
+  stickyNav = true,
+} = Astro.props;
+
+// The same two sitewide nodes the live Layout prints on every page, so the
+// @id references in the page nodes (#organization, #website) resolve here too.
+const siteSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://playvoli.com/#organization',
+    name: 'VOLI LLC',
+    alternateName: 'VOLI',
+    url: 'https://playvoli.com',
+    logo: 'https://playvoli.com/images/official_logo_dark_bg.webp',
+    description:
+      "VOLI is the comprehensive volleyball hub for professional and college volleyball fans in the United States — fantasy leagues, real-time stats, live game tracking, player profiles, podcasts, and community features for MLV, LOVB, and NCAA women's volleyball. Independent, built by volleyball fans for volleyball fans.",
+    founder: [
+      { '@type': 'Person', name: 'Ryan', jobTitle: 'Founder' },
+      { '@type': 'Person', name: 'Max', jobTitle: 'Co-Founder' },
+    ],
+    knowsAbout: ['Volleyball', 'Professional Volleyball', "NCAA Women's Volleyball", 'Fantasy Sports', 'Sports Analytics', 'Live Sports Statistics', 'MLV', 'LOVB', 'Major League Volleyball', 'League One Volleyball'],
+    areaServed: 'US',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://playvoli.com/#website',
+    url: 'https://playvoli.com',
+    name: 'VOLI - The Volleyball Hub',
+    description: 'The comprehensive volleyball hub: fantasy leagues, live stats, player profiles, and community for MLV, LOVB, and NCAA volleyball.',
+    publisher: { '@id': 'https://playvoli.com/#organization' },
+    inLanguage: 'en-US',
+  },
+];
+const allSchema = [...siteSchema, ...schema];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href={canonical}>
+    <meta name="theme-color" content="#0F1314">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="VOLI">
+    <meta property="og:url" content={canonical}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={ogImage}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content={canonical}>
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <link rel="preload" href="/fonts/Designer.otf" as="font" type="font/otf" crossorigin>
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <slot name="head" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(allSchema)} />
+</head>
+<body class="oc">
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="oc-page">
+        <Nav sticky={stickyNav} />
+        <main id="main">
+            <slot />
+        </main>
+        <Footer />
+    </div>
+    {/* After the markup it updates: [data-bracket-status], [data-bracket-after]
+        and [data-bracket-promo]. A page with none of them is left as it is. */}
+    <BracketClock />
+    {/* The Download links jump to the store buttons on this page. On a phone
+        they go straight to that phone's store instead. Nothing depends on it. */}
+    <script is:inline define:vars={{ ios: STORE.ios, android: STORE.android }}>
+        (function () {
+            var ua = navigator.userAgent || '';
+            var to = /iPhone|iPad|iPod/.test(ua) ? ios : /Android/.test(ua) ? android : '';
+            if (to) document.querySelectorAll('[data-get]').forEach(function (a) { a.setAttribute('href', to); });
+        })();
+    </script>
+    <slot name="scripts" />
+</body>
+</html>

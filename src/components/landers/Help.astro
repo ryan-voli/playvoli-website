@@ -1,0 +1,18 @@
+---
+// What a deep-link button says when the app cannot open: an empty notice
+// until the page's script writes in the one line that fits the device. The
+// lines ride in attributes, so they are not page text for search engines.
+//   phone: the tap went nowhere, so the app is not installed yet
+//   qr:    a computer with the QR code in view
+//   desk:  a computer without it (a narrow window)
+import Note from '../pearl/kit/Note.astro';
+
+interface Props {
+  id: string;
+  phone: string;
+  qr?: string;
+  desk: string;
+}
+const { id, phone, qr, desk } = Astro.props;
+---
+<Note id={id} class="ln-help" live hidden data-phone={phone} data-qr={qr} data-desk={desk}></Note>

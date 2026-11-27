@@ -1,0 +1,20 @@
+---
+// Fact tiles: glass cards, two by two, each a figure in the display face and
+// a line under it. For a hero's art slot or a column. `size` is the Poster's
+// and is ignored.
+//
+//   <Tickets label="The Bracket Challenge at a glance" items={[{ value: '$500', label: 'cash to the top eligible bracket' }, ...]} />
+import Nb from './Nb.astro';
+import { fig } from './util';
+
+interface Props {
+  items: { value: string; label: string }[];
+  label?: string;
+  size?: number;
+  class?: string;
+}
+const { items, label, class: cls } = Astro.props;
+---
+<ul class:list={['tickets', { 'tickets--one': items.length === 1 }, cls]} aria-label={label}>
+    {items.map((i) => <li class="card ticket"><strong class="stat__n" set:html={fig(i.value)} />{' '}<span class="stat__l"><Nb text={i.label} /></span></li>)}
+</ul>

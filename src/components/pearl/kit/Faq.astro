@@ -1,0 +1,65 @@
+---
+// Questions and answers in two balanced columns, in Pearl's .faq / .qa
+// styles. Straight into a Band. Same props as the Poster's:
+//
+// Folded (the default) it is an accordion: every answer is open in the HTML,
+// and a few lines of script fold all but the first `keep` before the page
+// below is laid out; a link to #faq-<id> opens that one. With fold={false}
+// every answer is shown in full (pearl/Faq, as on the home page).
+//
+// The same items feed the page's structured data:
+//   schema={[faqSchema(items, 'https://playvoli.com/page')]}
+import PearlFaq from '../Faq.astro';
+import Nb from './Nb.astro';
+import { linkify, type Faq } from '../../../lib/voli-facts';
+
+interface Props {
+  items: Faq[];
+  fold?: boolean;
+  keep?: number;
+  as?: 'h3' | 'h4';
+  prefix?: string;
+  class?: string;
+}
+
+const { items, fold = true, keep = 1, as: Tag = 'h3', prefix = 'faq', class: cls } = Astro.props;
+if (!items?.length) throw new Error('Faq: no questions given');
+// Folded: two columns by count (they open one at a time).
+const half = Math.ceil(items.length / 2);
+const cols = items.length > 1 ? [items.slice(0, half), items.slice(half)] : [items];
+const hasMore = Astro.slots.has('more');
+const more = hasMore ? await Astro.slots.render('more') : '';
+---
+{!fold ? (
+    <PearlFaq items={items} as={Tag} prefix={prefix} class={cls}>
+        {hasMore && <Fragment slot="more" set:html={more} />}
+    </PearlFaq>
+) : (
+    <Fragment>
+        <div class:list={['faq', 'faq--fold', cls]}>
+            {cols.map((col, c) => (
+                <div class="faq__col">
+                    {col.map((f) => (
+                        <details class="qa" id={`${prefix}-${f.id}`} open>
+                            <summary><Tag><Nb text={f.q} /></Tag></summary>
+                            <p class="body" set:html={linkify(f.a)} />
+                        </details>
+                    ))}
+                    {hasMore && c === cols.length - 1 && <div class="faq__more"><Fragment set:html={more} /></div>}
+                </div>
+            ))}
+        </div>
+        <script is:inline define:vars={{ keep }}>
+            (function () {
+                var root = document.currentScript.previousElementSibling;
+                var qs = [].slice.call(root.querySelectorAll('details.qa'));
+                function sync(first) {
+                    var id = decodeURIComponent(location.hash.slice(1));
+                    qs.forEach(function (d, i) { if (d.id === id) d.open = true; else if (first) d.open = i < keep; });
+                }
+                sync(true);
+                addEventListener('hashchange', function () { sync(false); });
+            })();
+        </script>
+    </Fragment>
+)}

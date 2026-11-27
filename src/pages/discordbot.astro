@@ -1,391 +1,318 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+// The VOLI Discord bot: what it does, every slash command, and the link that
+// adds it to a server. The commands are written out in full as definition
+// lists on a reading sheet, public ones first.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/discordbot.css';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Card from '../components/pearl/kit/Card.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Sheet from '../components/pearl/kit/Sheet.astro';
+import Steps from '../components/pearl/kit/Steps.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import Tickets from '../components/pearl/kit/Tickets.astro';
+import { pageSchema } from '../components/products/schema';
+
+const ADD_URL =
+  'https://discord.com/oauth2/authorize?client_id=1422381975947182203&permissions=2147567616&integration_type=0&scope=applications.commands+bot';
+
+const title = 'VOLI Discord Bot: Volleyball Fantasy, Scores and Stats';
+const description =
+  'Add the free VOLI Discord bot to your server: fantasy league leaderboards, MLV and LOVB scores, stat leaders, transactions, record alerts and lineup reminders.';
+
+const subnav = {
+  label: 'VOLI Discord bot',
+  items: [
+    { href: '#features', label: 'Features' },
+    { href: '#commands', label: 'Commands' },
+    { href: '#add', label: 'Add it' },
+  ],
+};
+
+const schema = pageSchema({
+  path: '/discordbot',
+  name: 'The VOLI Discord bot',
+  description,
+  crumbs: [
+    { name: 'VOLI', path: '/' },
+    { name: 'About VOLI', path: '/about' },
+    { name: 'VOLI Discord bot', path: '/discordbot' },
+  ],
+});
+
+interface Command {
+  name: string;
+  /** Parameters the command needs, in order. */
+  req?: string[];
+  /** Parameters it can do without, after the required ones. */
+  opt?: string[];
+  text: string;
+  /** What a parameter takes. */
+  params?: [string, string][];
+}
+interface Group {
+  group: string;
+  cmds: Command[];
+}
+
+const PUBLIC: Group[] = [
+  {
+    group: 'Fantasy league',
+    cmds: [
+      { name: '/fantasy leaderboard', text: 'View the top 10 fantasy teams in your linked league with current standings and point totals.' },
+      { name: '/fantasy join', text: "Get the direct link to join the server's linked fantasy league in the VOLI app." },
+      { name: '/fantasy reminder-test', text: 'Preview what the lineup reminder embed looks like. Shows standings and incomplete rosters.' },
+    ],
+  },
+  {
+    group: 'Games',
+    cmds: [
+      { name: '/games upcoming', opt: ['league'], text: 'Show the next 5 upcoming games with dates, times and stream info.', params: [['league', 'MLV or LOVB (optional, shows all if omitted)']] },
+      { name: '/games results', opt: ['league'], text: 'Show the last 5 completed games with final scores and set-by-set breakdowns.' },
+      { name: '/games live', opt: ['league'], text: 'Show any games currently in progress with live set scores.' },
+    ],
+  },
+  {
+    group: 'Pro league',
+    cmds: [
+      { name: '/standings', req: ['league'], text: 'View current season standings with W-L record, set record and points.', params: [['league', 'MLV or LOVB']] },
+      { name: '/team roster', req: ['league', 'team'], text: "View a team's full roster with jersey numbers and positions.", params: [['team', 'Autocomplete with team abbreviations']] },
+    ],
+  },
+  {
+    group: 'Statistics',
+    cmds: [
+      {
+        name: '/stat leaders', req: ['category', 'league', 'stat-type'], opt: ['calc-type', 'year'],
+        text: 'View the top 10 statistical leaders for any stat category.',
+        params: [
+          ['category', 'Player or Team'],
+          ['stat-type', 'Aces, Kills, Digs, Assists, Blocks, Efficiency'],
+          ['calc-type', 'Total (default) or Per Set'],
+          ['year', 'Season year (default: current)'],
+        ],
+      },
+    ],
+  },
+  {
+    group: 'Records',
+    cmds: [
+      {
+        name: '/records lookup', req: ['league', 'entity', 'scope', 'stat'], opt: ['sets'],
+        text: 'Look up records for a specific stat, scope and entity type.',
+        params: [
+          ['entity', 'Player or Team'],
+          ['scope', 'Set, Game, Season, or All-Time'],
+          ['stat', 'Points, Kills, Blocks, Aces, Assists, Digs, Perfect Passes, Efficiency'],
+          ['sets', 'For game scope: 3, 4, or 5 set games'],
+        ],
+      },
+    ],
+  },
+  {
+    group: 'Info',
+    cmds: [{ name: '/help', text: 'Show all available commands organized by category.' }],
+  },
+];
+
+const ADMIN: Group[] = [
+  {
+    group: 'Fantasy league',
+    cmds: [
+      { name: '/fantasy link-league', req: ['join-code'], text: "Link a VOLI fantasy league to this Discord server using the league's join code.", params: [['join-code', "Found in the VOLI app's league invite modal"]] },
+      { name: '/fantasy setup-channel', req: ['channel'], text: 'Set which Discord channel receives weekly leaderboard updates and lineup reminders.' },
+      {
+        name: '/fantasy set-time', req: ['time'], opt: ['timezone'],
+        text: 'Customize when Monday leaderboard updates are posted.',
+        params: [
+          ['time', 'HH:MM format, for example 10:00'],
+          ['timezone', 'ET, CT, MT, PT, AZ, AK, or HI (default: CT)'],
+        ],
+      },
+      { name: '/fantasy unlink', text: 'Disconnect the linked fantasy league from this server. It can be linked again later.' },
+    ],
+  },
+  {
+    group: 'Transactions',
+    cmds: [
+      { name: '/transactions enable', req: ['channel', 'league'], text: 'Enable automatic transaction posting. New player signings, releases and trades are posted as they happen.' },
+      { name: '/transactions disable', req: ['channel', 'league'], text: 'Stop posting transaction updates to the specified channel.' },
+      { name: '/transactions sync', opt: ['integration_id'], text: 'Sync transaction messages: updates edited transactions and removes deleted ones from Discord.' },
+    ],
+  },
+  {
+    group: 'Records',
+    cmds: [
+      { name: '/records enable', req: ['channel', 'league'], text: 'Enable record break notifications. Posts when new league records are set.', params: [['league', 'MLV, LOVB, or Both']] },
+      { name: '/records disable', req: ['channel', 'league'], text: 'Stop posting record notifications to the specified channel.' },
+      { name: '/records populate', req: ['league'], text: 'Post all existing records to the current channel. Useful for backfilling a records channel.' },
+      { name: '/records test', req: ['league'], text: 'Post the 5 most recent records to test formatting in the current channel.' },
+    ],
+  },
+  {
+    group: 'Settings',
+    cmds: [
+      { name: '/settings allow-channel', req: ['channel'], text: 'Enable the bot to respond to commands in a specific channel.' },
+      { name: '/settings block-channel', req: ['channel'], text: 'Disable the bot in a specific channel.' },
+      { name: '/settings list-channels', text: 'View all channels where the bot is currently enabled.' },
+    ],
+  },
+];
+
+// The command groups on the hero, as tickets.
+const GROUPS = [
+  { value: '/fantasy', label: 'leaderboard, join link and lineup reminders' },
+  { value: '/games', label: 'live, upcoming and results, MLV and LOVB' },
+  { value: '/stat', label: 'the top 10 leaders in any category' },
+  { value: '/records', label: 'league records from a set to all-time' },
+];
+
+const SETS = [
+  { id: 'public', title: 'Public commands', groups: PUBLIC },
+  { id: 'admin', title: 'Admin commands', groups: ADMIN },
+];
+
+const DISCORD_GLYPH =
+  'M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z';
 ---
 
-<SiteLayout
-  title="Discord Bot - VOLI"
-  description="Add the Voli Discord bot to your server for fantasy leaderboards, live scores, stat leaders, transaction tracking, record alerts, and more."
-  ogUrl="https://playvoli.com/discordbot"
-  skipSupabase
-  skipNavAuth
->
-    <main class="v-page">
-        <div class="v-wrap bot-wrap">
-
-        <!-- Hero -->
-        <section class="bot-hero v-center">
-            <div class="v-tile bot-hero-icon">
-                <img src="/images/logo_dark.webp" alt="" class="bot-hero-voli">
-                <span class="bot-hero-x">&times;</span>
-                <svg class="bot-hero-discord" width="44" height="44" viewBox="0 0 24 24" fill="#5865F2">
-                    <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
-                </svg>
-            </div>
-            <h1 class="v-h1 bot-title">Voli Discord Bot</h1>
-            <p class="v-lede bot-subtitle">Bring pro volleyball stats, fantasy leagues, live scores, and more directly into your Discord server.</p>
-            <a href="https://discord.com/oauth2/authorize?client_id=1422381975947182203&permissions=2147567616&integration_type=0&scope=applications.commands+bot"
-               target="_blank"
-               class="v-pill v-pill--cta bot-add-btn">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#5865F2">
-                    <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
-                </svg>
+<Pearl title={title} description={description} section="about" subnav={subnav} schema={schema}>
+    <PageHero
+      color="blue"
+      label={['The VOLI Discord bot', 'for volleyball servers']}
+      lines={[{ text: 'Add VOLI', hollow: true }, 'to Discord']}
+    >
+        <p class="lede">The VOLI Discord bot brings pro volleyball into your server: fantasy league leaderboards, live MLV and LOVB scores, stat leaders, transactions and record alerts, through slash commands and automatic posts.</p>
+        <div class="btns dc-follow">
+            <Btn href={ADD_URL} target="_blank" rel="noopener" arrow={false} track="discordbot:add" variant="primary">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={DISCORD_GLYPH} /></svg>
                 Add to Discord
-            </a>
-        </section>
-
-        <!-- Features overview -->
-        <section class="bot-features">
-            <div class="v-grid v-grid--3">
-                <div class="v-card bot-feature-card">
-                    <div class="bot-feature-icon-wrap"><img src="/images/icons/fantasy_opt.png" alt="" class="bot-feature-img"></div>
-                    <strong class="v-h3-plain">Fantasy Leagues</strong>
-                    <span class="v-meta">Link your Voli fantasy league, view leaderboards, and get weekly standings posted automatically.</span>
-                </div>
-                <div class="v-card bot-feature-card">
-                    <div class="bot-feature-icon-wrap"><img src="/images/icons/games_opt.png" alt="" class="bot-feature-img"></div>
-                    <strong class="v-h3-plain">Live Scores</strong>
-                    <span class="v-meta">Check live games, upcoming matchups, and recent results for MLV and LOVB.</span>
-                </div>
-                <div class="v-card bot-feature-card">
-                    <div class="bot-feature-icon-wrap"><img src="/images/icons/statistics_opt.png" alt="" class="bot-feature-img"></div>
-                    <strong class="v-h3-plain">Stat Leaders</strong>
-                    <span class="v-meta">Look up top 10 statistical leaders across kills, aces, digs, blocks, assists, and efficiency.</span>
-                </div>
-                <div class="v-card bot-feature-card">
-                    <div class="bot-feature-icon-wrap"><img src="/images/icons/trade.png" alt="" class="bot-feature-img"></div>
-                    <strong class="v-h3-plain">Transaction Tracking</strong>
-                    <span class="v-meta">Auto-post player signings, releases, and trades the moment they happen.</span>
-                </div>
-                <div class="v-card bot-feature-card">
-                    <div class="bot-feature-icon-wrap"><img src="/images/icons/book.png" alt="" class="bot-feature-img"></div>
-                    <strong class="v-h3-plain">Record Alerts</strong>
-                    <span class="v-meta">Get notified when new league records are set for any stat category.</span>
-                </div>
-                <div class="v-card bot-feature-card">
-                    <div class="bot-feature-icon-wrap"><img src="/images/icons/notification.png" alt="" class="bot-feature-img"></div>
-                    <strong class="v-h3-plain">Lineup Reminders</strong>
-                    <span class="v-meta">Automatic reminders before games start so your league never misses a lineup.</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Automated Features -->
-        <section class="bot-section">
-            <h2 class="v-h2 bot-section-title">Automated Features</h2>
-            <p class="v-body bot-section-desc">Set it and forget it. The bot handles these automatically once configured.</p>
-            <div class="v-grid v-grid--2">
-                <div class="v-tile bot-auto-card">
-                    <div class="v-chip v-chip--blue bot-auto-badge">Mondays</div>
-                    <strong class="v-h3-plain">Weekly Leaderboards</strong>
-                    <span class="v-meta">Posts your fantasy league standings every Monday at your chosen time. Shows top 5 overall and top 5 from the previous round, with Discord mentions for managers in your server.</span>
-
-                </div>
-                <div class="v-tile bot-auto-card">
-                    <div class="v-chip v-chip--blue bot-auto-badge">Real-time</div>
-                    <strong class="v-h3-plain">Transaction Feed</strong>
-                    <span class="v-meta">Automatically posts new player transactions as they happen — signings, releases, trades, and more.</span>
-                </div>
-                <div class="v-tile bot-auto-card">
-                    <div class="v-chip v-chip--blue bot-auto-badge">Real-time</div>
-                    <strong class="v-h3-plain">Record Notifications</strong>
-                    <span class="v-meta">When a new league record is set, the bot posts it automatically. Covers all stat categories for both MLV and LOVB.</span>
-                </div>
-                <div class="v-tile bot-auto-card">
-                    <div class="v-chip v-chip--blue bot-auto-badge">Pre-game</div>
-                    <strong class="v-h3-plain">Lineup Reminders</strong>
-                    <span class="v-meta">Sends a reminder before games start, tagging managers with incomplete rosters so they don't miss their lineup.</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Commands Documentation -->
-        <section class="bot-section">
-            <h2 class="v-h2 bot-section-title">Commands</h2>
-            <p class="v-body bot-section-desc">All slash commands available in the bot.</p>
-
-            <div class="v-tabs v-tabs--inline bot-cmd-tabs" role="tablist">
-                <span class="v-tabs__hole" aria-hidden="true"></span>
-                <button class="v-tabs__tab bot-cmd-tab active" data-tab="public">Public</button>
-                <button class="v-tabs__tab bot-cmd-tab" data-tab="admin">Admin</button>
-            </div>
-
-            <!-- Public Commands -->
-            <div class="bot-cmd-panel" id="bot-cmd-public">
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Fantasy League</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy leaderboard</div>
-                        <div class="bot-cmd-desc">View the top 10 fantasy teams in your linked league with current standings and point totals.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy join</div>
-                        <div class="bot-cmd-desc">Get the direct link to join the server's linked fantasy league in the Voli app.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy reminder-test</div>
-                        <div class="bot-cmd-desc">Preview what the lineup reminder embed looks like. Shows standings and incomplete rosters.</div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Games</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/games upcoming <span class="bot-param-opt">[league]</span></div>
-                        <div class="bot-cmd-desc">Show the next 5 upcoming games with dates, times, and stream info.</div>
-                        <div class="bot-cmd-params">
-                            <code>league</code> — MLV or LOVB (optional, shows all if omitted)
-                        </div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/games results <span class="bot-param-opt">[league]</span></div>
-                        <div class="bot-cmd-desc">Show the last 5 completed games with final scores and set-by-set breakdowns.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/games live <span class="bot-param-opt">[league]</span></div>
-                        <div class="bot-cmd-desc">Show any games currently in progress with live set scores.</div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Pro League</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/standings <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">View current season standings with W-L record, set record, and points.</div>
-                        <div class="bot-cmd-params">
-                            <code>league</code> — MLV or LOVB
-                        </div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/team roster <span class="bot-param">&lt;league&gt;</span> <span class="bot-param">&lt;team&gt;</span></div>
-                        <div class="bot-cmd-desc">View a team's full roster with jersey numbers and positions.</div>
-                        <div class="bot-cmd-params">
-                            <code>team</code> — Autocomplete with team abbreviations
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Statistics</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/stat leaders <span class="bot-param">&lt;category&gt;</span> <span class="bot-param">&lt;league&gt;</span> <span class="bot-param">&lt;stat-type&gt;</span> <span class="bot-param-opt">[calc-type]</span> <span class="bot-param-opt">[year]</span></div>
-                        <div class="bot-cmd-desc">View the top 10 statistical leaders for any stat category.</div>
-                        <div class="bot-cmd-params">
-                            <code>category</code> — Player or Team<br>
-                            <code>stat-type</code> — Aces, Kills, Digs, Assists, Blocks, Efficiency<br>
-                            <code>calc-type</code> — Total (default) or Per Set<br>
-                            <code>year</code> — Season year (default: current)
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Records</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/records lookup <span class="bot-param">&lt;league&gt;</span> <span class="bot-param">&lt;entity&gt;</span> <span class="bot-param">&lt;scope&gt;</span> <span class="bot-param">&lt;stat&gt;</span> <span class="bot-param-opt">[sets]</span></div>
-                        <div class="bot-cmd-desc">Look up records for a specific stat, scope, and entity type.</div>
-                        <div class="bot-cmd-params">
-                            <code>entity</code> — Player or Team<br>
-                            <code>scope</code> — Set, Game, Season, or All-Time<br>
-                            <code>stat</code> — Points, Kills, Blocks, Aces, Assists, Digs, Perfect Passes, Efficiency<br>
-                            <code>sets</code> — For game scope: 3, 4, or 5 set games
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Info</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/help</div>
-                        <div class="bot-cmd-desc">Show all available commands organized by category.</div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Admin Commands -->
-            <div class="bot-cmd-panel" id="bot-cmd-admin" style="display:none">
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Fantasy League</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy link-league <span class="bot-param">&lt;join-code&gt;</span></div>
-                        <div class="bot-cmd-desc">Link a Voli fantasy league to this Discord server using the league's join code.</div>
-                        <div class="bot-cmd-params">
-                            <code>join-code</code> — Found in the Voli app's league invite modal
-                        </div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy setup-channel <span class="bot-param">&lt;channel&gt;</span></div>
-                        <div class="bot-cmd-desc">Set which Discord channel receives weekly leaderboard updates and lineup reminders.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy set-time <span class="bot-param">&lt;time&gt;</span> <span class="bot-param-opt">[timezone]</span></div>
-                        <div class="bot-cmd-desc">Customize when Monday leaderboard updates are posted.</div>
-                        <div class="bot-cmd-params">
-                            <code>time</code> — HH:MM format (e.g., 10:00)<br>
-                            <code>timezone</code> — ET, CT, MT, PT, AZ, AK, or HI (default: CT)
-                        </div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/fantasy unlink</div>
-                        <div class="bot-cmd-desc">Disconnect the linked fantasy league from this server. Can be re-linked later.</div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Transactions</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/transactions enable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">Enable automatic transaction posting. New player signings, releases, and trades will be posted as they happen.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/transactions disable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">Stop posting transaction updates to the specified channel.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/transactions sync <span class="bot-param-opt">[integration_id]</span></div>
-                        <div class="bot-cmd-desc">Sync transaction messages — updates edited transactions and removes deleted ones from Discord.</div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Records</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/records enable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">Enable record break notifications. Posts when new league records are set.</div>
-                        <div class="bot-cmd-params">
-                            <code>league</code> — MLV, LOVB, or Both
-                        </div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/records disable <span class="bot-param">&lt;channel&gt;</span> <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">Stop posting record notifications to the specified channel.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/records populate <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">Post all existing records to the current channel. Useful for backfilling a records channel.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/records test <span class="bot-param">&lt;league&gt;</span></div>
-                        <div class="bot-cmd-desc">Post the 5 most recent records to test formatting in the current channel.</div>
-                    </div>
-                </div>
-
-                <div class="bot-cmd-group">
-                    <h3 class="v-label v-label--data v-label--left bot-cmd-group-title">Settings</h3>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/settings allow-channel <span class="bot-param">&lt;channel&gt;</span></div>
-                        <div class="bot-cmd-desc">Enable the bot to respond to commands in a specific channel.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/settings block-channel <span class="bot-param">&lt;channel&gt;</span></div>
-                        <div class="bot-cmd-desc">Disable the bot in a specific channel.</div>
-                    </div>
-                    <div class="v-tile bot-cmd">
-                        <div class="bot-cmd-name">/settings list-channels</div>
-                        <div class="bot-cmd-desc">View all channels where the bot is currently enabled.</div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- CTA -->
-        <section class="v-card v-card--plate bot-cta">
-            <p class="v-q">Ready to bring Voli to your server?</p>
-            <a href="https://discord.com/oauth2/authorize?client_id=1422381975947182203&permissions=2147567616&integration_type=0&scope=applications.commands+bot"
-               target="_blank"
-               class="v-pill v-pill--cta bot-add-btn">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="#5865F2">
-                    <path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/>
-                </svg>
-                Add to Discord
-            </a>
-        </section>
-
+            </Btn>
         </div>
-    </main>
-</SiteLayout>
+        <p class="small">The bot links to your VOLI fantasy league. Get VOLI free on iPhone and Android:</p>
+        <Stores />
+        <Tickets slot="art" size={3.6} label="Slash command groups" items={GROUPS} class="dc-groups" />
+    </PageHero>
 
-<script is:inline>
-(function() {
-    var tabs = document.querySelectorAll('.bot-cmd-tab');
-    var panels = document.querySelectorAll('.bot-cmd-panel');
-    tabs.forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            tabs.forEach(function(t) { t.classList.remove('active'); });
-            panels.forEach(function(p) { p.style.display = 'none'; });
-            tab.classList.add('active');
-            document.getElementById('bot-cmd-' + tab.dataset.tab).style.display = 'block';
-        });
-    });
-})();
-</script>
+    <Band color="ink" id="features" pb={4} title="Features" tone="lime">
+        <Cols max="38rem">
+            <p class="lede">The bot answers slash commands and posts on its own, for MLV and LOVB, and for any <a class="link" href="/fantasy">VOLI fantasy league</a> you link to the server.</p>
+        </Cols>
+        <Cols ratio="1:1:1" class="dc-cards">
+            <Card name="Fantasy leagues">
+                <p>Link your VOLI fantasy league, view leaderboards, and get weekly standings posted automatically.</p>
+            </Card>
+            <Card name="Live scores">
+                <p>Check live games, upcoming matchups and recent results for MLV and LOVB.</p>
+            </Card>
+            <Card name="Stat leaders">
+                <p>Look up the top 10 leaders in kills, aces, digs, blocks, assists and efficiency.</p>
+            </Card>
+            <Card name="Transaction tracking">
+                <p>Post player signings, releases and trades automatically, as they happen.</p>
+            </Card>
+            <Card name="Record alerts">
+                <p>Get notified when a new league record is set, in any stat category.</p>
+            </Card>
+            <Card name="Lineup reminders">
+                <p>Automatic reminders before games start, so your league never misses a lineup.</p>
+            </Card>
+        </Cols>
+    </Band>
 
-<style>
-    .bot-wrap { max-width: 960px; }
-    .bot-wrap > section + section { margin-top: var(--sp-8); }
-    .bot-wrap > .bot-hero + .bot-features { margin-top: var(--sp-6); }
+    <Band color="lime" id="auto" pb={4} title={['Automatic', 'posts']}>
+        <Cols max="38rem">
+            <p class="lede">Set it and forget it. Once it is set up, the bot posts these on its own.</p>
+        </Cols>
+        <Cols ratio="1:1:1:1" class="dc-cards">
+            <Card name="Weekly leaderboards" kicker="Mondays">
+                <p>Your fantasy league standings every Monday at your chosen time: the top 5 overall and the top 5 from the previous round, with Discord mentions for managers in your server.</p>
+            </Card>
+            <Card name="Transaction feed" kicker="Real-time">
+                <p>New player transactions as they happen: signings, releases, trades and more.</p>
+            </Card>
+            <Card name="Record notifications" kicker="Real-time">
+                <p>A post whenever a new league record is set, in every stat category, for both MLV and LOVB.</p>
+            </Card>
+            <Card name="Lineup reminders" kicker="Pre-game">
+                <p>A reminder before games start, tagging managers with incomplete rosters so they do not miss their lineup.</p>
+            </Card>
+        </Cols>
+    </Band>
 
-    /* Hero */
-    .bot-hero-icon {
-        height: 72px;
-        border-radius: 20px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 0 20px;
-        margin: 0 auto 20px;
-    }
-    .bot-hero-voli { height: 32px; width: auto; }
-    .bot-hero-discord { width: 40px; height: 40px; }
-    .bot-hero-x { font: 400 22px/1 var(--font-body); color: var(--ink-2); }
-    .bot-title { margin: 0 0 12px; }
-    .bot-subtitle { max-width: 560px; margin: 0 auto 24px; }
-    .bot-add-btn svg { width: 22px; height: 22px; }
+    <Sheet
+      color="rose"
+      id="commands"
+      as="h2"
+      label="VOLI Discord bot"
+      title={['slash', 'commands']}
+      toc={SETS.map((s) => ({ href: `#${s.id}`, label: s.title }))}
+      tocLabel="The commands"
+    >
+        <p class="lead">Every slash command in the VOLI Discord bot. Anyone in your server can use the public commands; the admin commands set the bot up for the server.</p>
+        {SETS.map((set) => (
+            <section id={set.id}>
+                <h3>{set.title}</h3>
+                {set.groups.map((g) => (
+                    <Fragment>
+                        <h4>{g.group}</h4>
+                        <dl class="dc-cmds">
+                            {g.cmds.map((c) => (
+                                <div class="dc-cmd">
+                                    <dt><code class="dc-cmd__n">{c.name}{c.req?.map((p) => <Fragment>{' '}<span class="dc-req">{`<${p}>`}</span></Fragment>)}{c.opt?.map((p) => <Fragment>{' '}<span class="dc-opt">{`[${p}]`}</span></Fragment>)}</code></dt>
+                                    <dd>
+                                        <p>{c.text}</p>
+                                        {c.params && (
+                                            <ul class="dc-params">
+                                                {c.params.map(([k, v]) => <li><code>{k}</code>: {v}</li>)}
+                                            </ul>
+                                        )}
+                                    </dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </Fragment>
+                ))}
+            </section>
+        ))}
+        <p class="fine">In a command, <span class="dc-req">&lt;angle brackets&gt;</span> mark what it needs and <span class="dc-opt">[square brackets]</span> what it can do without.</p>
+    </Sheet>
 
-    /* Feature grid */
-    .bot-feature-card { display: flex; flex-direction: column; gap: 4px; }
-    .bot-feature-icon-wrap { margin-bottom: 8px; }
-    .bot-feature-img { width: 28px; height: 28px; object-fit: contain; display: block; }
+    <Band color="blue" id="add" title={['Add it to', 'your server']}>
+        <Steps items={[
+          { title: 'Add the bot', text: 'Use Add to Discord and choose your server.' },
+          { title: 'Link a league', text: "An admin runs /fantasy link-league with the join code from the VOLI app's league invite." },
+          { title: 'Pick channels', text: 'Send leaderboards and reminders with /fantasy setup-channel, then turn on /transactions enable and /records enable.' },
+        ]} />
+        <Cols ratio="50:42">
+            <Copy>
+                <p class="lede">Ready to bring VOLI to your server?</p>
+                <div class="btns dc-follow">
+                    <Btn href={ADD_URL} target="_blank" rel="noopener" arrow={false} track="discordbot:add" variant="primary">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={DISCORD_GLYPH} /></svg>
+                        Add to Discord
+                    </Btn>
+                </div>
+                <p class="body">Everything the bot posts comes from VOLI: <a class="link" href="/">live scores, stats and fantasy</a> in one free app.</p>
+            </Copy>
+            <div class="dc-pair-col">
+                <div class="dc-pair" role="img" aria-label="VOLI and Discord">
+                    <span class="dc-pair__m"><img src="/images/appicon_opt.webp" width="280" height="280" alt="" class="dc-icon" loading="lazy" decoding="async"></span>
+                    <span class="dc-pair__x" aria-hidden="true">&times;</span>
+                    <span class="dc-pair__m dc-pair__tile"><svg class="dc-discord" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={DISCORD_GLYPH} /></svg></span>
+                </div>
+            </div>
+        </Cols>
+    </Band>
 
-    /* Section heads */
-    .bot-section-title { text-align: center; margin: 0 0 8px; }
-    .bot-section-desc { text-align: center; margin: 0 auto 24px; max-width: 60ch; }
-
-    /* Automated features */
-    .bot-auto-card { display: flex; flex-direction: column; gap: 4px; padding: 16px; }
-    .bot-auto-badge { width: fit-content; margin-bottom: 6px; }
-
-    /* Commands */
-    .bot-cmd-tabs { display: flex; width: fit-content; min-width: 240px; margin: 0 auto 32px; }
-    .bot-cmd-panel { max-width: 720px; margin: 0 auto; }
-    .bot-cmd-group + .bot-cmd-group { margin-top: var(--sp-6); }
-    .bot-cmd-group-title { padding: 0 0 12px; }
-    .bot-cmd + .bot-cmd { margin-top: 8px; }
-    .bot-cmd { padding: 12px 14px; }
-    .bot-cmd-name {
-        font: 600 13px/1.5 'SF Mono', ui-monospace, 'Fira Code', Menlo, monospace;
-        color: #fff;
-        margin-bottom: 4px;
-        overflow-wrap: anywhere;
-    }
-    .bot-param { color: var(--electric-blue); font-weight: 500; }
-    .bot-param-opt { color: var(--ink-2); font-weight: 500; }
-    .bot-cmd-desc { font: 400 14px/1.45 var(--font-body); color: var(--ink-body); }
-    .bot-cmd-params { margin-top: 6px; font: 400 13px/1.6 var(--font-body); color: var(--ink-2); }
-    .bot-cmd-params code {
-        font: 600 12px/1.6 'SF Mono', ui-monospace, 'Fira Code', Menlo, monospace;
-        color: #fff;
-    }
-
-    /* CTA */
-    .bot-cta { text-align: center; }
-    .bot-cta .v-q { margin: 0 0 16px; }
-
-    @media (max-width: 600px) {
-        .bot-hero-icon { height: 64px; padding: 0 16px; }
-    }
-</style>
+    <GetApp links={[
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/about', label: 'About VOLI' },
+    ]} />
+</Pearl>

@@ -1,0 +1,66 @@
+---
+// Phones in a ready-made arrangement, so a page gets a good stack without
+// placing anything by hand. One screen stands alone, two lean apart, three
+// step down the slope (the hero's arrangement). An optional badge is placed
+// for you.
+//
+//   <Phones screens={['gameLive', 'gameBox']} badge={{ value: '445', label: 'MLV and LOVB matches with play-by-play' }} />
+//   <Phones slot="art" screens={['fantasy', 'fantasyCard']} step eager />     a pair in a hero: it steps down the slope
+//
+// For any other arrangement use <Stack> and place each <Phone> yourself.
+import Badge from './Badge.astro';
+import Phone from './Phone.astro';
+import Stack from './Stack.astro';
+import type { ScreenKey } from '../../lib/screens';
+import type { Tint } from './util';
+
+interface Props {
+  /** One, two or three keys from src/lib/screens.ts. In a trio the first is the one in front. */
+  screens: ScreenKey[];
+  badge?: { value: string; label: string; shadow?: Tint };
+  /** Where the badge sits on a pair: over the top left corner, or under the right phone. */
+  badgeAt?: 'top' | 'bottom';
+  /** The colour of the phones' hard offset. Default: the field's. */
+  shadow?: Tint;
+  /** The stack is in the first screen: load its pictures at once, the first at high priority. */
+  eager?: boolean;
+  /** A pair that steps down with the slope: the left phone stands higher and the right one lower, at every width. For a hero's art, where the left phone has to end above the cut, clear of the next band's title. */
+  step?: boolean;
+  class?: string;
+}
+
+const { screens, badge, badgeAt = 'top', shadow, eager, step, class: cls } = Astro.props;
+if (screens.length < 1 || screens.length > 3) throw new Error('Phones: give it one, two or three screens');
+---
+{screens.length === 1 && (
+    <Stack ratio="100/190" ratioPhone="100/128" class={cls} shadow={shadow}>
+        <Phone screen={screens[0]} x={7} y={1} w={86} xm={36} wm={58} r={7.5} priority={eager} />
+        {badge && <Badge value={badge.value} label={badge.label} shadow={badge.shadow} x={-6} y={72} xm={4} ym={70} r={-7.5} />}
+    </Stack>
+)}
+{screens.length === 2 && !step && (
+    <Stack ratio="100/100" class={cls} shadow={shadow}>
+        <Phone screen={screens[0]} x={4} y={3} w={42} r={-7.5} priority={eager} />
+        <Phone screen={screens[1]} x={54} xm={52} y={9} w={42} r={7.5} eager={eager} />
+        {badge && (badgeAt === 'top'
+            ? <Badge value={badge.value} label={badge.label} shadow={badge.shadow} x={-3} y={-12} xm={2} ym={-11} r={-7.5} />
+            : <Badge value={badge.value} label={badge.label} shadow={badge.shadow} x={57} y={90} xm={44} ym={88} r={-7.5} />)}
+    </Stack>
+)}
+{screens.length === 2 && step && (
+    <Stack ratio="100/100" ratioPhone="100/104" class={cls} shadow={shadow}>
+        <Phone screen={screens[0]} x={6} y={0} ym={-6} w={39} wm={40} r={-7.5} priority={eager} />
+        <Phone screen={screens[1]} x={55} xm={54} y={13} ym={15} w={39} wm={40} r={7.5} eager={eager} />
+        {badge && (badgeAt === 'top'
+            ? <Badge value={badge.value} label={badge.label} shadow={badge.shadow} x={-3} y={-15} xm={2} ym={-19} r={-7.5} />
+            : <Badge value={badge.value} label={badge.label} shadow={badge.shadow} x={57} y={90} xm={44} ym={88} r={-7.5} />)}
+    </Stack>
+)}
+{screens.length === 3 && (
+    <Stack ratio="100/100" ratioPhone="100/104" class={cls} shadow={shadow}>
+        <Phone screen={screens[0]} x={28} y={5} ym={8} w={44} r={-3.75} z={2} priority={eager} />
+        <Phone screen={screens[1]} x={1} y={2} ym={-1} w={38} r={-15} eager={eager} />
+        <Phone screen={screens[2]} x={60} xm={58} y={15} ym={22} w={38} r={7.5} eager={eager} />
+        {badge && <Badge value={badge.value} label={badge.label} shadow={badge.shadow} x={72} y={68} xm={52} ym={78} r={-7.5} />}
+    </Stack>
+)}

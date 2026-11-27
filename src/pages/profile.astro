@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+// Styles: styles/pearl/pages/account.css (loaded by SiteLayout).
 ---
 
 <SiteLayout
@@ -9,14 +10,14 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     bodyClass="profile-body"
 >
 
-<main class="v-page v-page--center">
+<main class="acct">
 <!-- Loading State -->
-<div id="profile-loading">
-    <div class="loading-spinner v-spinner"></div>
+<div id="profile-loading" class="acct-spin-wrap">
+    <div class="loading-spinner acct-spinner"></div>
 </div>
 
 <!-- Profile Card -->
-<div id="profile-card" class="glass-card" style="display:none">
+<div id="profile-card" class="acct-card acct-card--wide" style="display:none">
 
     <!-- Avatar -->
     <div class="avatar-section">
@@ -42,17 +43,17 @@ import SiteLayout from '../layouts/SiteLayout.astro';
     <!-- Fields -->
     <div class="field-group">
         <label for="field-username">Username</label>
-        <input type="text" id="field-username" class="form-input v-input" placeholder="Username" minlength="3" maxlength="20">
+        <input type="text" id="field-username" class="field__c" placeholder="Username" minlength="3" maxlength="20">
     </div>
 
     <div class="field-row">
         <div class="field-group">
             <label for="field-first">First Name</label>
-            <input type="text" id="field-first" class="form-input v-input" placeholder="First Name">
+            <input type="text" id="field-first" class="field__c" placeholder="First Name">
         </div>
         <div class="field-group">
             <label for="field-last">Last Name</label>
-            <input type="text" id="field-last" class="form-input v-input" placeholder="Last Name">
+            <input type="text" id="field-last" class="field__c" placeholder="Last Name">
         </div>
     </div>
 
@@ -69,26 +70,26 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 
     <!-- Save -->
     <div id="profile-message" class="message"></div>
-    <button id="save-btn" class="v-pill v-pill--cta v-pill--action v-pill--block">Save Changes</button>
+    <button id="save-btn" class="btn btn--primary acct-wide">Save Changes</button>
 
     <!-- Danger Zone -->
     <div class="danger-zone">
-        <button id="reset-pw-btn" class="v-pill">Reset Password</button>
-        <button id="delete-btn" class="v-pill v-pill--rose">Delete Account</button>
+        <button id="reset-pw-btn" class="btn btn--secondary">Reset Password</button>
+        <button id="delete-btn" class="btn acct-danger">Delete Account</button>
     </div>
 </div>
 </main>
 
 <!-- Delete Confirmation Modal -->
 <div id="delete-modal" class="modal-overlay" style="display:none">
-    <div class="modal-card glass-card">
-        <h2 class="v-h2-plain">Delete Account</h2>
+    <div class="modal-card acct-modal">
+        <h2 class="acct-modal__t">Delete Account</h2>
         <p class="modal-text">This action is permanent and cannot be undone. Type <strong id="delete-confirm-text"></strong> to confirm.</p>
-        <input type="text" id="delete-input" class="form-input v-input" placeholder="Type to confirm">
+        <input type="text" id="delete-input" class="field__c" placeholder="Type to confirm">
         <div id="delete-message" class="message"></div>
         <div class="modal-actions">
-            <button id="delete-cancel-btn" class="v-pill">Cancel</button>
-            <button id="delete-confirm-btn" class="v-pill v-pill--rose" disabled>Delete</button>
+            <button id="delete-cancel-btn" class="btn btn--secondary">Cancel</button>
+            <button id="delete-confirm-btn" class="btn acct-danger" disabled>Delete</button>
         </div>
     </div>
 </div>
@@ -361,184 +362,3 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 </script>
 
 </SiteLayout>
-
-<style is:global>
-    /* Everything here is keyed to body.profile-body, and the legacy globals
-       (.glass-card, .form-input) carry body.site too, because global.css loads
-       after this sheet and would win a tie. */
-
-    body.profile-body #profile-loading .loading-spinner { margin: 64px auto; }
-
-    /* dark glass card */
-    body.site #profile-card.glass-card {
-        width: 100%;
-        max-width: 460px;
-        background: var(--glass-d60);
-        -webkit-backdrop-filter: var(--blur);
-        backdrop-filter: var(--blur);
-        box-shadow: var(--shadow-card);
-        border: 0;
-        border-radius: var(--r-plate);
-        padding: 24px;
-        overflow: visible;
-    }
-    body.site #profile-card.glass-card::before,
-    body.site .modal-card.glass-card::before { display: none; }
-
-    /* Avatar */
-    body.profile-body .avatar-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 24px;
-    }
-    body.profile-body .avatar-wrap { position: relative; width: 96px; height: 96px; }
-    body.profile-body .profile-avatar,
-    body.profile-body .profile-avatar-fallback {
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-        border: 1px solid var(--outline);
-    }
-    body.profile-body .profile-avatar { object-fit: cover; display: block; }
-    body.profile-body .profile-avatar-fallback {
-        background: var(--glass-10);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    body.profile-body .avatar-upload-btn {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: var(--glass-d80);
-        -webkit-backdrop-filter: blur(12px);
-        backdrop-filter: blur(12px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: #fff;
-        transition: opacity 100ms;
-    }
-    body.profile-body .avatar-upload-btn:active { opacity: .72; }
-    body.profile-body .profile-email { margin-top: 12px; font-size: 14px; color: var(--ink-2); }
-
-    /* Fields */
-    body.profile-body .field-group { margin-bottom: 16px; }
-    body.profile-body .field-group label {
-        display: block;
-        margin-bottom: 6px;
-        padding-left: 18px;
-        font: 600 11px/1.2 var(--font-body);
-        letter-spacing: .10em;
-        text-transform: uppercase;
-        color: var(--ink-2);
-    }
-    body.profile-body .field-row { display: flex; gap: 12px; }
-    body.profile-body .field-row .field-group { flex: 1; min-width: 0; }
-
-    /* inputs: the v-input look */
-    body.site .form-input {
-        height: 44px;
-        padding: 0 18px;
-        border: 0;
-        border-radius: 22px;
-        background: var(--glass-10);
-        color: #fff;
-        font: 400 15px/1 var(--font-body);
-        transition: none;
-    }
-    body.site .form-input::placeholder { color: var(--ink-3); }
-    body.site .form-input:focus { background: var(--glass-10); border-color: transparent; }
-    body.site .form-input:focus-visible { outline: 1.5px solid var(--electric-blue); outline-offset: 0; }
-
-    /* Team logo grids: light10 tiles, selected = blue ring */
-    body.profile-body .team-selector { display: flex; flex-wrap: wrap; gap: 8px; }
-    body.profile-body .team-btn {
-        width: 48px;
-        height: 48px;
-        padding: 6px;
-        border: 0;
-        border-radius: 14px;
-        background: var(--glass-10);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 150ms, opacity 100ms;
-    }
-    body.profile-body .team-btn img { width: 100%; height: 100%; object-fit: contain; }
-    body.profile-body .team-btn:active { opacity: .72; }
-    @media (hover: hover) { body.profile-body .team-btn:hover { background: var(--glass-15); } }
-    body.profile-body .team-btn.selected { box-shadow: 0 0 0 1.5px var(--electric-blue); }
-
-    /* Message */
-    body.profile-body .message {
-        display: none;
-        margin-bottom: 12px;
-        padding: 10px 16px;
-        border-radius: 14px;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-    body.profile-body .message.visible { display: block; }
-    body.profile-body .message.error { border: 1px solid var(--rose); color: var(--rose); }
-    body.profile-body .message.success { border: 1px solid var(--lemon-lime); color: var(--lemon-lime); }
-
-    body.profile-body #save-btn { margin-top: 8px; }
-
-    /* Account row: two compact pills */
-    body.profile-body .danger-zone {
-        margin-top: 24px;
-        padding-top: 24px;
-        border-top: 1px solid var(--line-plate);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-    }
-
-    /* Delete modal: the v-overlay + v-modal look (display is set by the JS) */
-    body.profile-body .modal-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-        background: rgba(0, 0, 0, .5);
-    }
-    body.site .modal-card.glass-card {
-        width: min(100%, 360px);
-        padding: 24px;
-        border: 0;
-        border-radius: 24px;
-        background: var(--glass-d80);
-        -webkit-backdrop-filter: blur(12px);
-        backdrop-filter: blur(12px);
-        box-shadow: var(--shadow-float);
-        text-align: center;
-    }
-    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-        body.site .modal-card.glass-card { background: var(--glass-d96); }
-    }
-    body.profile-body .modal-card h2 { margin: 0 0 12px; color: var(--rose); }
-    body.profile-body .modal-text {
-        margin: 0 0 16px;
-        font-size: 15px;
-        line-height: 1.5;
-        color: var(--ink-body);
-    }
-    body.profile-body .modal-text strong { color: #fff; font-weight: 600; }
-    body.profile-body .modal-card .form-input { margin-bottom: 12px; }
-    body.profile-body .modal-actions { display: flex; gap: 12px; margin-top: 8px; }
-    body.profile-body .modal-actions .v-pill { flex: 1; }
-
-    @media (max-width: 480px) {
-        body.site #profile-card.glass-card { padding: 16px; }
-    }
-</style>

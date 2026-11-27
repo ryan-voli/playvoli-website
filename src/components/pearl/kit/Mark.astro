@@ -1,0 +1,14 @@
+---
+// The VOLI mark, large, on a glass plate: decoration for a column that has
+// no picture. `on` and `shadow` are the Poster's and are ignored.
+import type { Field, Tint } from './util';
+interface Props {
+  on?: Field;
+  shadow?: Tint;
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+<div class:list={['mark', cls]} aria-hidden="true">
+    <img src="/images/pearl/voli-mark-navy.webp" alt="" width="256" height="243" loading="lazy" decoding="async">
+</div>

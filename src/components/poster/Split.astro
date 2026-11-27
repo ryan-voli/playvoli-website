@@ -1,0 +1,24 @@
+---
+// A split band: two cells side by side on a wide screen, one over the other
+// on a narrow one. Its children are exactly two <Cell>s.
+//
+//   <Split>
+//     <Cell color="rose" id="rankings" title="Rankings" sub="and predictions"> ... </Cell>
+//     <Cell color="ink" id="encyclopedia" kicker="The Volleyball" title="Encyclopedia" tone="lime"> ... </Cell>
+//   </Split>
+import type { Field } from './util';
+
+interface Props {
+  /** The colour behind the two cells: give it the second cell's colour. */
+  ground?: Field;
+  /** Stickers in this band hang over the cut into the next one. */
+  lift?: boolean;
+  class?: string;
+}
+const { ground = 'ink', lift, class: cls } = Astro.props;
+---
+<div class:list={['band', 'band--split', { 'band--lift': lift }, cls]}>
+    <div class:list={['band__in', `f-${ground}`]}>
+        <slot />
+    </div>
+</div>

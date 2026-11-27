@@ -1,0 +1,67 @@
+---
+// The Pearl hero, as on the home page: a mono kicker (the label: the page's
+// search words) and the headline in the display face with one italic navy
+// word, as one heading; then the copy (a lede, Stores, small print) and the
+// art on the right (a Stack, Phones or Tickets).
+//
+//   <PageHero label="Fantasy volleyball on VOLI" lines={[['Sign real', 'players.'], ['Beat your', 'friends.']]}>
+//     <p class="lede">...</p>
+//     <Stores />
+//     <Stack slot="art" ratio="100/100"> ... </Stack>
+//   </PageHero>
+//
+// Slots: default (copy), "art", "sub" (a smaller line inside the heading).
+// Art that renders nothing is no art: the hero is then one column.
+// Kept: label, lines, as, id (the heading's id is `${id}-h`, "hero-h" by
+// default). Ignored: color, fit, fitPhone, cap, capPhone, and each line's
+// hollow. Pearl only: `em`, the word(s) to set in italic (default: the last).
+import { emphasize } from './util';
+import type { Field } from './util';
+import type { LineText } from './rider';
+
+interface HeroLine {
+  text: LineText;
+  hollow?: boolean;
+}
+
+interface Props {
+  color?: Field;
+  label: string | string[];
+  lines: (LineText | HeroLine)[];
+  fit?: 'each' | 'same';
+  fitPhone?: 'each' | 'same';
+  cap?: number;
+  capPhone?: number;
+  as?: 'h1' | 'h2';
+  id?: string;
+  em?: string;
+  class?: string;
+}
+
+const { label, lines, as: Tag = 'h1', id = 'hero', em, class: cls } = Astro.props;
+if (!lines?.length) throw new Error('PageHero: give it at least one headline line');
+const labels = Array.isArray(label) ? label : [label];
+const say = (t: LineText) => (Array.isArray(t) ? t.map((p) => p.trim()).join(' ') : t.trim());
+const text = lines.map((l) => say(typeof l === 'string' || Array.isArray(l) ? l : l.text)).join(' ');
+const hid = `${id}-h`;
+const art = Astro.slots.has('art') ? (await Astro.slots.render('art')).trim() : '';
+const solo = !art;
+---
+<section class:list={['hero', 'khero', { 'hero--solo': solo }, cls]} id={id === 'hero' ? undefined : id} aria-labelledby={hid}>
+    <div class="wrap hero__grid">
+        <div class="hero__copy">
+            <Tag id={hid}>
+                <span class="kicker">{labels.map((t, i) => <Fragment>{i > 0 && ' '}<span>{t}</span></Fragment>)}</span>
+                {' '}
+                <span class="display" set:html={emphasize(text, em)} />
+                <slot name="sub" />
+            </Tag>
+            <slot />
+        </div>
+        {!solo && (
+            <div class="hero__art">
+                <Fragment set:html={art} />
+            </div>
+        )}
+    </div>
+</section>

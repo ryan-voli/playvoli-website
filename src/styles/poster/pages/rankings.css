@@ -1,0 +1,71 @@
+/* ==========================================================================
+   The VOLI Top 100 and how VOLI's numbers work.
+   Level space only: everything here sits in a column, a hero or a sheet.
+   ========================================================================== */
+
+/* ---------- /rankings ----------------------------------------------------- */
+/* The week and the date the list was published, under the hero's lede: the
+   date moves under the tag as a whole when the two do not fit on one line. */
+.rk-when { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font: 700 clamp(.875rem, calc(.8rem + var(--u) * .2), 1rem)/1.35 var(--body); }
+.rk-when .tag { height: 24px; padding: 0 9px; font-size: .6875rem; }
+
+/* This week's top four, in the hero: a team name can run long, so the card's line may wrap. */
+.rk-lead .ticket span { max-width: 11em; }
+
+/* The key above the table: a reading measure, in the same level block as the table. */
+.rk-key { max-width: 46rem; margin-bottom: calc(var(--u) * 2.4 + 12px); }
+.rk-key strong { font-weight: 800; }
+
+/* The hundred rows. One line a row on a wide screen; on a phone the
+   conference goes under the team's name and the rating bars go. */
+.rk-tbl :is(th, td) { white-space: nowrap; }
+.rk-tbl .rank { font-size: 1.2rem; }
+.rk-tbl :is(.rk-h-move, .rk-move) { width: 4.6em; padding-left: 10px; text-align: left; }
+.rk-tbl .rk-move { font: 800 .8125rem/1.3 var(--body); letter-spacing: .02em; }
+.rk-tbl .is-up { color: var(--lime); }
+.rk-tbl .is-down { color: var(--rose); }
+.rk-tbl .is-same { color: var(--soft); }
+.rk-tbl .is-new { color: var(--blue); }
+.rk-tbl .rk-team { white-space: normal; }
+.rk-name { font-weight: 700; }
+.rk-conf { margin-left: .55em; color: var(--soft); font: 600 .75rem/1.3 var(--body); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.rk-tbl :is(.rk-h-rec, .rk-rec) { width: 5.5em; }
+/* Rating: the figure, and a bar from zero drawn to the longest rating this
+   week, cut on the logo's slant. The bar is a picture of the figure beside it. */
+.rk-tbl :is(.rk-h-rat, .rk-rat) { width: 44%; }
+.rk-tbl .rk-rat { position: relative; color: var(--pop); font-weight: 700; }
+.rk-bar { position: absolute; left: 24px; right: 4.6em; top: 50%; height: 12px; margin-top: -6px; }
+.rk-bar::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v, 0) * 100%); background: var(--pop); transform: skewX(-15deg); transform-origin: 0 100%; }
+/* The top 25 stand out; the rest of the bars are drawn as outlines. */
+.rk-tbl tbody tr:nth-child(n + 26) .rk-bar::before { background: none; box-shadow: inset 0 0 0 2px var(--pop); }
+@media (max-width: 1000px) {
+  .rk-tbl :is(.rk-h-rat, .rk-rat) { width: 34%; }
+}
+@media (max-width: 760px) {
+  .rk-tbl .rk-team { padding-top: 9px; padding-bottom: 9px; }
+  .rk-conf { display: block; margin: 2px 0 0; font-size: .6875rem; white-space: normal; }
+  .rk-tbl :is(.rk-h-move, .rk-move) { width: 3.3em; padding-left: 8px; }
+  .rk-tbl .rk-move { font-size: .75rem; }
+  .rk-tbl :is(.rk-h-rec, .rk-rec) { width: auto; }
+  .rk-tbl :is(.rk-h-rat, .rk-rat) { width: auto; }
+  .rk-bar { display: none; }
+}
+/* The smallest phones: every column still fits without scrolling the box. */
+@media (max-width: 359px) {
+  .tbl.rk-tbl :is(th, td) { padding-left: 7px; }
+  .tbl.rk-tbl thead th { letter-spacing: .04em; }
+  .rk-tbl .rank { font-size: .95rem; }
+  .tbl.rk-tbl :is(.rk-team, .rk-rec, .rk-rat) { font-size: .875rem; }
+  .rk-tbl :is(.rk-h-move, .rk-move) { width: 2.6em; padding-left: 6px; }
+  .rk-conf { letter-spacing: .03em; }
+}
+@media (max-width: 339px) {
+  .tbl.rk-tbl :is(th, td) { padding-left: 5px; }
+  .rk-tbl .rank { font-size: .875rem; }
+}
+
+/* A cut-out card under the copy. */
+.rk-fig { max-width: 34rem; }
+@media (max-width: 760px) {
+  .rk-fig { margin-top: calc(var(--u) * 6); }
+}

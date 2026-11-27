@@ -1,0 +1,104 @@
+---
+// The reading sheet, for a long document (a policy, terms, rules, a method):
+// a Pearl heading (mono label, display title with one italic navy word, a
+// mono dated line), then the document on a glass panel in running-text
+// styles (.prose), with a table of contents beside it on a wide screen.
+//
+//   <Sheet label="Legal" title="Privacy policy" meta="Effective October 24, 2026" toc>
+//     <p class="lead">...</p>
+//     <h2 id="what-we-collect">What we collect</h2>
+//     <p>...</p>
+//   </Sheet>
+//
+// Write the document as plain HTML: h2 (with an id) for sections, h3 under
+// them, p, ul, ol, a, strong, blockquote, hr, and <DataTable> for a table.
+// Slots: default (the document), "lede" (a few lines under the title).
+// Kept: label, title, as, meta, toc, tocLabel, id. Ignored: color, cap,
+// capPhone, shadow. Pearl only: `em`.
+import { emphasize, type Field, type Tint } from './util';
+import type { LineText } from './rider';
+
+interface Props {
+  color?: Field;
+  label?: string | string[];
+  title?: LineText | LineText[];
+  as?: 'h1' | 'h2';
+  meta?: string | string[];
+  toc?: boolean | { href: string; label: string }[];
+  tocLabel?: string;
+  cap?: number;
+  capPhone?: number;
+  shadow?: Tint;
+  em?: string;
+  id?: string;
+  class?: string;
+}
+
+const { label, title, as: Tag = 'h1', meta, toc, tocLabel = 'On this page', em, id, class: cls } = Astro.props;
+const isPair = (t: unknown): t is [string, string] => Array.isArray(t) && t.length === 2 && t.every((p) => typeof p === 'string');
+const titles: LineText[] = !title ? [] : typeof title === 'string' || isPair(title) ? [title as LineText] : (title as LineText[]);
+const bare = titles.length === 0;
+if (bare && !label) throw new Error('Sheet: without a title, give it a label that names the document for screen readers');
+const text = titles.map((t) => (Array.isArray(t) ? t.map((p) => p.trim()).join(' ') : t.trim())).join(' ');
+const labels = label ? (Array.isArray(label) ? label : [label]) : [];
+const metas = (Array.isArray(meta) ? meta : meta ? [meta] : []).filter(Boolean);
+const hid = `${id ?? 'sheet'}-h`;
+
+const html = await Astro.slots.render('default');
+let contents: { href: string; label: string }[] = [];
+if (Array.isArray(toc)) {
+  contents = toc;
+} else if (toc) {
+  const find = /<section\b[^>]*\bid="([^"]+)"[^>]*>\s*<h2\b[^>]*>([\s\S]*?)<\/h2>|<h2\b[^>]*\bid="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g;
+  for (const m of html.matchAll(find)) {
+    contents.push({ href: `#${m[1] ?? m[3]}`, label: (m[2] ?? m[4]).replace(/<[^>]+>/g, '').trim() });
+  }
+}
+const hasToc = contents.length > 1;
+---
+<section class:list={['sec', 'sheet', { 'sheet--toc': hasToc, 'sheet--bare': bare }, cls]} id={id} aria-labelledby={bare ? undefined : hid} aria-label={bare ? labels.join(' ') : undefined}>
+    <div class="wrap">
+        {!bare && (
+            <header class="head sheet__head">
+                <Tag id={hid} class="sheet__h">
+                    {labels.length > 0 && <Fragment><span class="kicker">{labels.map((t, i) => <Fragment>{i > 0 && ' '}<span>{t}</span></Fragment>)}</span>{' '}</Fragment>}
+                    <span class="h1" set:html={emphasize(text, em)} />
+                </Tag>
+                {metas.length > 0 && <p class="kicker sheet__meta">{metas.map((t, i) => <Fragment>{i > 0 && ' · '}<span>{t}</span></Fragment>)}</p>}
+                {Astro.slots.has('lede') && <div class="sheet__lede lede"><slot name="lede" /></div>}
+            </header>
+        )}
+        <div class="sheet__grid">
+            {hasToc && (
+                <Fragment>
+                    <details class="toc" open>
+                        <summary><span class="kicker">{tocLabel}</span></summary>
+                        <nav aria-label={tocLabel}>
+                            <ol>
+                                {contents.map((c) => <li><a href={c.href} set:html={c.label} /></li>)}
+                            </ol>
+                        </nav>
+                    </details>
+                    {/* Open in the HTML. Above the sheet (a narrow screen) it is folded here and
+                        its label opens it; beside the sheet it stays open and the label is not a control. */}
+                    <script is:inline>
+                        (function () {
+                            var t = document.currentScript.previousElementSibling, s = t.querySelector('summary');
+                            var narrow = matchMedia('(max-width: 999px)');
+                            function fit() {
+                                if (narrow.matches) { s.removeAttribute('tabindex'); } else { t.open = true; s.tabIndex = -1; }
+                            }
+                            if (narrow.matches) t.open = false;
+                            fit();
+                            narrow.addEventListener('change', fit);
+                            t.addEventListener('click', function (e) { if (e.target.closest('a') && narrow.matches) t.open = false; });
+                        })();
+                    </script>
+                </Fragment>
+            )}
+            <article class="sheet__panel prose">
+                <Fragment set:html={html} />
+            </article>
+        </div>
+    </div>
+</section>

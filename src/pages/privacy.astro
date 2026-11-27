@@ -1,159 +1,91 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+// VOLI's privacy policy. Rendered on each request from the database, so it is
+// the same document the app shows and is complete in the HTML for anyone
+// reading without scripts: search engines, AI crawlers and app-store reviewers
+// included. A short CDN cache (60 s) keeps a burst off the database; a failed
+// or malformed fetch answers 503, is never cached, and never shows an old copy.
+// The fetch and the text-to-HTML conversion live in lib/legal-docs.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/legal.css';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import Sheet from '../components/pearl/kit/Sheet.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import { currentLegalDoc, docDate, legalHtml, type LegalDoc } from '../lib/legal-docs';
+import { SITE_URL } from '../lib/site';
+
+export const prerender = false;
+
+let doc: LegalDoc | null = null;
+try {
+  doc = await currentLegalDoc('privacy');
+  Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60');
+} catch (e) {
+  console.error('[privacy]', e);
+  Astro.response.status = 503;
+  Astro.response.headers.set('Cache-Control', 'no-store');
+}
+
+const url = `${SITE_URL}/privacy`;
+const updated = doc?.last_updated;
+const iso = updated && /^\d{4}-\d{2}-\d{2}$/.test(updated) ? updated : undefined;
+
+const subnav = {
+  label: 'Legal',
+  items: [
+    { href: '/privacy', label: 'Privacy', current: true },
+    { href: '/terms', label: 'Terms' },
+    { href: '/bracket/rules', label: 'Bracket rules' },
+  ],
+};
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: 'Privacy Policy',
+    description: 'The privacy policy of VOLI: The Volleyball Hub, the app, the website and related services.',
+    dateModified: iso,
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    inLanguage: 'en-US',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${url}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'VOLI', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Privacy Policy', item: url },
+    ],
+  },
+];
 ---
 
-<SiteLayout
-  title="Privacy Policy - VOLI"
-  description="VOLI's Privacy Policy - How we collect, use, and protect your information."
+<Pearl
+  title="Privacy Policy | VOLI"
+  description="How VOLI collects, uses, shares and protects your information in the free VOLI volleyball app for iPhone and Android and on this site, and your rights."
+  subnav={subnav}
+  schema={schema}
 >
-    <main class="v-page">
-        <div class="v-wrap v-wrap--read">
-            <header class="legal-head">
-                <h1 class="v-h1">Privacy Policy</h1>
-                <p class="v-path" id="privacy-last-updated">Last updated: Loading...</p>
-            </header>
+    <Sheet color="blue" label="VOLI: The Volleyball Hub" title={['Privacy', 'policy']} meta={updated ? `Last updated ${docDate(updated)}` : undefined} toc>
+        <Fragment slot="lede">
+            <p>How VOLI collects, uses, shares and protects your information when you use the VOLI app, this website and related services, and the rights you have over it.</p>
+            <p class="body">Read it with the <a class="link" href="/terms">Terms of Use</a>. Questions go to <a class="link" href="mailto:support@playvoli.com">support@playvoli.com</a> or see the other ways to <a class="link" href="/about#contact">contact the VOLI team</a>.</p>
+            <Stores />
+        </Fragment>
+        {doc ? (
+            <Fragment set:html={legalHtml('privacy', doc)} />
+        ) : (
+            <p class="lead">The privacy policy could not be loaded just now. Try again in a moment, or email <a href="mailto:support@playvoli.com">support@playvoli.com</a> for a copy.</p>
+        )}
+    </Sheet>
 
-            <div class="v-card v-card--plate legal-content" id="privacy-content">
-                <p>Loading privacy policy...</p>
-            </div>
-        </div>
-    </main>
-
-    <script is:inline slot="scripts">
-        var SUPABASE_URL = 'https://api.playvoli.com';
-        var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjaG9sa3JqcHV6YWhxdW1hamVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MDcwMzQsImV4cCI6MjA1OTk4MzAzNH0.RVhKzZkLxwwtbow3i3tUSVVnG_hMl-q0bwuvmqNuDq0';
-
-        (async function() {
-            var container = document.getElementById('privacy-content');
-            if (!container) return;
-
-            try {
-                var response = await fetch(SUPABASE_URL + '/rest/v1/global_settings?select=privacy_policy&limit=1', {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-                    }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch privacy policy');
-
-                var data = await response.json();
-                if (data && data.length > 0 && data[0].privacy_policy) {
-                    renderPrivacyPolicy(data[0].privacy_policy, container);
-                } else {
-                    container.innerHTML = '<p class="legal-p">No privacy policy available.</p>';
-                }
-            } catch (error) {
-                console.error('[Privacy] Error:', error);
-                container.innerHTML = '<p class="legal-p">Unable to load privacy policy. Please try again later.</p>';
-            }
-        })();
-
-        function renderPrivacyPolicy(privacyData, container) {
-            var header = privacyData.header;
-            var lastUpdated = privacyData.last_updated;
-            var sections = privacyData.sections;
-
-            var lastUpdatedEl = document.getElementById('privacy-last-updated');
-            if (lastUpdatedEl) lastUpdatedEl.textContent = 'Last updated: ' + lastUpdated;
-
-            var html = '<div class="legal-block"><p class="legal-p">' + header + '</p></div>';
-
-            sections.forEach(function(section) {
-                html += '<div class="legal-block">';
-                html += '<div class="legal-h2">' + section.section_number + '. ' + section.section_title + '</div>';
-
-                section.content.forEach(function(item) {
-                    if (item.title) {
-                        html += '<h3 class="legal-h3">' + item.title + '</h3>';
-                    }
-
-                    if (item.text.indexOf('\u2022') !== -1) {
-                        var parts = item.text.split('\u2022');
-                        if (parts[0].trim()) {
-                            html += '<p class="legal-p">' + parts[0].trim() + '</p>';
-                        }
-                        if (parts.length > 1) {
-                            html += '<ul class="legal-ul">';
-                            for (var i = 1; i < parts.length; i++) {
-                                html += '<li class="legal-li">' + parts[i].trim() + '</li>';
-                            }
-                            html += '</ul>';
-                        }
-                    } else {
-                        html += '<p class="legal-p">' + item.text + '</p>';
-                    }
-                });
-
-                html += '</div>';
-            });
-
-            container.innerHTML = html;
-        }
-    </script>
-</SiteLayout>
-
-<style is:global>
-    /* Legal pages: DB-driven copy rendered by the script above into
-       .legal-content. Section heads may contain anything, so never Designer. */
-    .legal-head { text-align: center; margin-bottom: var(--sp-6); }
-    .legal-head .v-h1 { margin: 0 0 12px; }
-    .legal-head .v-path { margin: 0; }
-
-    .legal-content { text-align: left; }
-    .legal-content .legal-block { margin-bottom: 32px; }
-    .legal-content .legal-block:last-child { margin-bottom: 0; }
-    .legal-content > p:first-child { margin-top: 0; }
-
-    .legal-content p,
-    .legal-content .legal-p {
-        font: 400 var(--fs-body)/1.6 var(--font-body);
-        color: var(--ink-body);
-        margin: 0 0 12px;
-    }
-    .legal-content .legal-lead { margin-bottom: 24px; }
-
-    .legal-content .legal-h2 {
-        font: 700 18px/1.3 var(--font-body);
-        color: #fff;
-        margin: 32px 0 12px;
-    }
-    .legal-content .legal-block > .legal-h2:first-child,
-    .legal-content > .legal-h2:first-child { margin-top: 0; }
-
-    .legal-content .legal-h3 {
-        font: 600 16px/1.35 var(--font-body);
-        color: #fff;
-        margin: 16px 0 6px;
-    }
-
-    .legal-content strong { color: #fff; font-weight: 600; }
-
-    .legal-content .legal-ul {
-        list-style: none;
-        margin: 0 0 12px;
-        padding: 0;
-    }
-    .legal-content .legal-li {
-        position: relative;
-        padding-left: 18px;
-        margin-bottom: 8px;
-        font: 400 var(--fs-body)/1.6 var(--font-body);
-        color: var(--ink-body);
-    }
-    .legal-content .legal-li::before {
-        content: "";
-        position: absolute;
-        left: 2px;
-        top: calc(0.8em - 2.5px);
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: var(--lemon-lime);
-    }
-
-    .legal-content a { color: var(--electric-blue); text-decoration: none; }
-    @media (hover: hover) {
-        .legal-content a:hover { text-decoration: underline; text-underline-offset: 3px; }
-    }
-</style>
+    <GetApp links={[
+      { href: '/terms', label: 'Terms of Use' },
+      { href: '/bracket/rules', label: 'Bracket rules' },
+      { href: '/about', label: 'About VOLI' },
+      { href: '/about#contact', label: 'Contact VOLI' },
+    ]} />
+</Pearl>

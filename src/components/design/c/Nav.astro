@@ -1,0 +1,24 @@
+---
+// Option C nav: the mark (home), About, Top 100, Contact and Download. One
+// row at every width, no menu to open, every item a real link.
+import { HOME } from './links';
+
+interface Props {
+  /** false on a page that pins its own bar (the bracket page's section index) */
+  sticky?: boolean;
+}
+const { sticky = true } = Astro.props;
+---
+
+<header class:list={['nav', { 'nav--sticky': sticky }]}>
+    <a class="nav__logo" href={HOME} aria-label="VOLI home">
+        <img src="/images/logo_dark_sm.webp" alt="" width="49" height="49">
+        <span class="nav__word">VOLI</span>
+    </a>
+    <nav class="nav__links" aria-label="Main">
+        <a href="/about">About</a>
+        <a href="/rankings">Top 100</a>
+        <a href="/contact">Contact</a>
+    </nav>
+    <a class="nav__get" href="#get" data-get>Download</a>
+</header>

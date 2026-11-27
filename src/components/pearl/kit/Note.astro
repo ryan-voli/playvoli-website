@@ -1,0 +1,15 @@
+---
+// A notice: a glass line with a navy dot. A status line, a form's "sent"
+// message, or (bad) what went wrong, with the dot in the error colour.
+//
+//   <Note>Brackets open Sunday, November 29.</Note>
+//   <Note bad id="form-error" hidden>That did not send. Try again in a moment.</Note>
+interface Props {
+  bad?: boolean;
+  live?: boolean;
+  class?: string;
+  [attr: string]: any;
+}
+const { bad, live, class: cls, ...rest } = Astro.props;
+---
+<p class:list={['note', { 'note--bad': bad }, cls]} role={live ? 'status' : undefined} {...rest}><span><slot /></span></p>

@@ -1,0 +1,30 @@
+---
+// A display heading from the Poster's title props: kicker, title, sub or
+// lines, set as one sentence in the display face, in the same words and
+// order, with one italic navy word (`em`, or the last word).
+//
+//   <Rider title="Scoring" sub="from real box scores" em="box scores" />
+//   <Rider kicker="The season in" title="rounds" />        The season in *rounds*
+//
+// Band, Cell and Sheet print their own; use this on its own only where a
+// title is needed outside one. `tone` and the line sizes are ignored.
+import { titleText, type TitleProps } from './rider';
+import { emphasize } from './util';
+
+interface Props extends TitleProps {
+  as?: 'h1' | 'h2' | 'h3' | 'p' | 'div';
+  id?: string;
+  tone?: 'lime' | 'blue' | 'rose' | 'white';
+  /** A few words under the title, part of the heading's text, in mono. */
+  note?: string;
+  /** Pearl only: the display size. Default h2 (h1 for an h1). */
+  size?: 'h1' | 'h2';
+  class?: string;
+}
+
+const { as: Tag = 'h2', id, tone: _t, note, size, class: cls, ...title } = Astro.props;
+const text = titleText(title);
+if (!text) throw new Error('Rider: give it a title, a kicker, a sub or lines');
+const sz = size ?? (Tag === 'h1' ? 'h1' : 'h2');
+---
+<Tag class:list={[sz, cls]} id={id}><Fragment set:html={emphasize(text, title.em)} />{note && <Fragment>{' '}<span class="h-note">{note}</span></Fragment>}</Tag>

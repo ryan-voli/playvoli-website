@@ -1,0 +1,33 @@
+---
+// Figures that ride the slope: each a number set big in the display face and
+// a line saying what it counts. It goes straight into a Band (it is meant to
+// stay sheared), in two columns that become one on a phone.
+//
+//   <Tower items={FACTS} />                      items: { value, label }
+import Nb from './Nb.astro';
+import { emWidth } from '../../lib/designer-metrics';
+import { vars } from './util';
+
+interface Props {
+  items: { value: string; label: string }[];
+  /** Start the second column one row down (when stickers from the band above hang over the top right). */
+  stagger?: boolean;
+  class?: string;
+}
+
+const { items, stagger, class: cls } = Astro.props;
+// Designer has no tilde: a leading "~" is set in the text face.
+const split = (v: string) => (v.startsWith('~') ? { pre: '~', rest: v.slice(1) } : { pre: '', rest: v });
+const figs = items.map((i) => ({ ...split(i.value), label: i.label }));
+const em = Math.max(...figs.map((f) => emWidth(f.rest) + (f.pre ? 0.45 : 0)));
+const first = Math.ceil(items.length / 2);
+const rows = stagger ? Math.max(first, items.length - first + 1) : first;
+---
+<ul class:list={['tower', cls]} style={vars({ '--em': Math.round(em * 1000) / 1000, '--rows': rows })}>
+    {figs.map((f, i) => (
+        <li style={stagger && i === first ? 'grid-row:2' : undefined}>
+            <strong class="tower__n">{f.pre && <span class="tilde">{f.pre}</span>}{f.rest}</strong>
+            <span class="tower__l"><Nb text={f.label} /></span>
+        </li>
+    ))}
+</ul>

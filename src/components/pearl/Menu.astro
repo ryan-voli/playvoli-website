@@ -1,0 +1,109 @@
+---
+// The menu, two rows: the main pages, then this category's own menu (the
+// page's sections, or its category's pages). Under 860px the main pages fold
+// into a sheet behind the menu button; the second row stays and scrolls.
+import { MAIN_PAGES, type Section, type Subnav } from '../../lib/site';
+
+interface Props {
+  section?: Section;
+  subnav: Subnav;
+  /** The page's own path, to tell a category's main page from its sub-pages. */
+  path: string;
+  /** An ad landing page: no main pages, only the logo and Get the app. */
+  focus?: boolean;
+}
+
+const { section, subnav, path, focus } = Astro.props;
+const here = path.replace(/\/+$/, '') || '/';
+const items = subnav?.items ?? [];
+if (items.length < 2 || items.length > 9) {
+  throw new Error(`The second menu row holds 2 to 9 items: this page's subnav has ${items.length}.`);
+}
+const cur = (p: (typeof MAIN_PAGES)[number]) => (p.section === section ? (p.href === here ? 'page' : 'true') : undefined);
+---
+<header class="menu">
+    <div class="menu__bar">
+        <div class="wrap menu__top">
+            <a class="logo" href="/" aria-label="VOLI home" aria-current={section === 'home' && here === '/' ? 'page' : undefined}>
+                <img src="/images/pearl/voli-mark-ink.webp" alt="" width="256" height="243">
+                <span class="logo__word" aria-hidden="true">VOLI</span>
+            </a>
+            {!focus && (
+                <nav class="menu__main" aria-label="Main">
+                    {MAIN_PAGES.map((p) => <a href={p.href} aria-current={cur(p)}>{p.label}</a>)}
+                </nav>
+            )}
+            <div class="menu__cta">
+                <a class="btn btn--primary btn--sm" href="#get" data-get data-track="download:nav">Get the app</a>
+            </div>
+            <a class="btn btn--primary btn--sm menu__get-m" href="#get" data-get data-track="download:nav_m">Get the app</a>
+            {!focus && (
+                <button class="menu__burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-sheet"><span></span></button>
+            )}
+        </div>
+        {!focus && (
+            <nav class="menu__sheet" id="menu-sheet" aria-label="Main">
+                <a href="/" aria-current={section === 'home' && here === '/' ? 'page' : undefined}>Home</a>
+                {MAIN_PAGES.map((p) => <a href={p.href} aria-current={cur(p)}>{p.label}</a>)}
+            </nav>
+        )}
+        <nav class="sub" aria-label={subnav.label}>
+            <div class="wrap sub__in">
+                <span class="sub__label">{subnav.label}</span>
+                <ul class="sub__list">
+                    {items.map((i) => (
+                        <li><a href={i.href} aria-current={i.current ? 'page' : undefined}>{i.label}</a></li>
+                    ))}
+                </ul>
+            </div>
+        </nav>
+    </div>
+</header>
+<script is:inline>
+    (function () {
+        var menu = document.querySelector('.menu');
+        if (!menu) return;
+        var root = document.documentElement;
+        function height() { root.style.setProperty('--menu-h', menu.offsetHeight + 'px'); }
+        height(); addEventListener('resize', height);
+
+        var burger = menu.querySelector('.menu__burger');
+        if (burger) burger.addEventListener('click', function () {
+            var open = !menu.hasAttribute('data-open');
+            menu.toggleAttribute('data-open', open);
+            burger.setAttribute('aria-expanded', open);
+        });
+
+        // The second row: keep the current stop in view, and mark the
+        // section being read as the page scrolls.
+        var list = menu.querySelector('.sub__list');
+        var links = [].slice.call(list.querySelectorAll('a'));
+        function show(a) {
+            var l = a.offsetLeft - list.offsetLeft, r = l + a.offsetWidth;
+            if (l < list.scrollLeft + 8 || r > list.scrollLeft + list.clientWidth - 32) list.scrollLeft = Math.max(0, l - 16);
+        }
+        var page = list.querySelector('[aria-current="page"]');
+        if (page) show(page);
+        var stops = links.map(function (a) {
+            var h = a.getAttribute('href');
+            return h.charAt(0) === '#' ? document.getElementById(decodeURIComponent(h.slice(1))) : null;
+        });
+        if (!stops.some(Boolean)) return;
+        var lit = null, due = false;
+        function spy() {
+            due = false;
+            var line = menu.getBoundingClientRect().bottom + 120, first = null;
+            links.forEach(function (a, i) {
+                var el = stops[i]; if (!el) return;
+                var r = el.getBoundingClientRect();
+                var on = r.top <= line && r.bottom > line;
+                if (on && !first) { first = a; a.setAttribute('aria-current', 'location'); }
+                else if (a.getAttribute('aria-current') === 'location') a.removeAttribute('aria-current');
+            });
+            if (first && first !== lit) show(first);
+            lit = first;
+        }
+        addEventListener('scroll', function () { if (!due) { due = true; requestAnimationFrame(spy); } }, { passive: true });
+        spy();
+    })();
+</script>

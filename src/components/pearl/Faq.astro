@@ -1,0 +1,48 @@
+---
+// Questions and answers in two balanced columns. Folded (details) or open.
+import { linkify, type Faq } from '../../lib/voli-facts';
+
+interface Props {
+  items: Faq[];
+  fold?: boolean;
+  /** Each item's anchor is this, a dash, and the item's id. Default "faq". */
+  prefix?: string;
+  as?: 'h3' | 'h4';
+  class?: string;
+}
+const { items, fold = false, prefix = 'faq', as: Tag = 'h3', class: cls } = Astro.props;
+if (!items?.length) throw new Error('Faq: no questions given');
+// Split where the two columns come out closest in length.
+const size = items.map((f) => f.q.length * 1.6 + f.a.length + 60);
+const total = size.reduce((a, b) => a + b, 0);
+let run = 0, best = Infinity, half = Math.ceil(items.length / 2);
+size.forEach((s, i) => { run += s; const off = Math.abs(total - 2 * run); if (i < items.length - 1 && off < best) { best = off; half = i + 1; } });
+const cols = items.length > 1 ? [items.slice(0, half), items.slice(half)] : [items];
+const more = Astro.slots.has('more');
+---
+<div class:list={['faq', cls]}>
+    {cols.map((col, c) => (
+        <div class="faq__col">
+            {col.map((f) => fold ? (
+                <details class="qa" id={`${prefix}-${f.id}`}>
+                    <summary><Tag>{f.q}</Tag></summary>
+                    <p class="body" set:html={linkify(f.a)} />
+                </details>
+            ) : (
+                <div class="qa" id={`${prefix}-${f.id}`}>
+                    <Tag>{f.q}</Tag>
+                    <p class="body" set:html={linkify(f.a)} />
+                </div>
+            ))}
+            {more && c === cols.length - 1 && <div class="faq__more"><slot name="more" /></div>}
+        </div>
+    ))}
+</div>
+{fold && (
+    <script is:inline>
+        (function () {
+            function open() { var id = decodeURIComponent(location.hash.slice(1)); var d = id && document.getElementById(id); if (d && d.tagName === 'DETAILS') d.open = true; }
+            open(); addEventListener('hashchange', open);
+        })();
+    </script>
+)}

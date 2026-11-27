@@ -1,0 +1,52 @@
+---
+// Phones in a ready-made Pearl arrangement: one stands alone, two stand side
+// by side with the second a step lower, three are the home page's hero trio
+// (the first screen in front, in the middle). An optional fact chip is placed
+// for you. `shadow` is the Poster's and is ignored.
+//
+//   <Phones screens={['gameLive', 'gameBox']} badge={{ value: '445', label: 'MLV and LOVB matches with play-by-play' }} />
+//   <Phones slot="art" screens={['fantasy', 'fantasyCard']} step eager />
+import Badge from './Badge.astro';
+import Phone from './Phone.astro';
+import Stack from './Stack.astro';
+import type { ScreenKey } from '../../../lib/screens';
+import type { Tint } from './util';
+
+interface Props {
+  screens: ScreenKey[];
+  badge?: { value: string; label: string; shadow?: Tint };
+  badgeAt?: 'top' | 'bottom';
+  shadow?: Tint;
+  eager?: boolean;
+  /** A pair whose second phone stands lower still. */
+  step?: boolean;
+  class?: string;
+}
+
+const { screens, badge, badgeAt = 'bottom', eager, step, class: cls } = Astro.props;
+if (screens.length < 1 || screens.length > 3) throw new Error('Phones: give it one, two or three screens');
+const lo = step ? 14 : 9;
+---
+{screens.length === 1 && (
+    <Stack ratio="100/132" ratioPhone="100/124" class={cls}>
+        <Phone screen={screens[0]} x={20} y={0} w={60} xm={22} wm={56} priority={eager} />
+        {badge && <Badge value={badge.value} label={badge.label} x={0} y={74} xm={0} ym={72} z={3} />}
+    </Stack>
+)}
+{screens.length === 2 && (
+    <Stack ratio={`100/${Math.round(44 * 2.14 + lo + 2)}`} class={cls}>
+        <Phone screen={screens[0]} x={2} y={0} w={44} priority={eager} />
+        <Phone screen={screens[1]} x={54} y={lo} w={44} eager={eager} />
+        {badge && (badgeAt === 'top'
+            ? <Badge value={badge.value} label={badge.label} x={0} y={4} z={3} />
+            : <Badge value={badge.value} label={badge.label} x={30} y={74} xm={22} z={3} />)}
+    </Stack>
+)}
+{screens.length === 3 && (
+    <Stack ratio="100/98" class={cls}>
+        <Phone screen={screens[1]} x={0} y={9} w={36} eager={eager} />
+        <Phone screen={screens[2]} x={64} y={9} w={36} eager={eager} />
+        <Phone screen={screens[0]} x={27} y={0} w={46} z={3} priority={eager} />
+        {badge && <Badge value={badge.value} label={badge.label} x={62} y={72} xm={50} z={4} />}
+    </Stack>
+)}

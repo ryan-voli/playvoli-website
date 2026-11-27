@@ -1,192 +1,128 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+// The VOLI Daily Grid on Reddit: the daily volleyball trivia puzzle, made to
+// be played inside Reddit, pending Reddit's approval. Kept out of search and
+// unlinked from the menus for now (owner, 4 Oct 2026).
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/redditdailygrid.css';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import DataTable from '../components/pearl/kit/DataTable.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import Note from '../components/pearl/kit/Note.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Rows from '../components/pearl/kit/Rows.astro';
+import Steps from '../components/pearl/kit/Steps.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import { pageSchema } from '../components/products/schema';
+
+const title = 'VOLI Daily Grid on Reddit: Daily Volleyball Trivia Puzzle';
+const description =
+  'The VOLI Daily Grid, made for Reddit: a free daily volleyball trivia puzzle. Name a pro player who fits each row and column clue in a 3x3 grid in nine guesses.';
+
+const subnav = {
+  label: 'VOLI Daily Grid on Reddit',
+  items: [
+    { href: '#how', label: 'How to play' },
+    { href: '#play', label: 'Play' },
+  ],
+};
+
+const schema = pageSchema({
+  path: '/redditdailygrid',
+  name: 'The VOLI Daily Grid on Reddit',
+  description,
+  crumbs: [
+    { name: 'VOLI', path: '/' },
+    { name: 'About VOLI', path: '/about' },
+    { name: 'VOLI Daily Grid on Reddit', path: '/redditdailygrid' },
+  ],
+});
+
+const CATEGORIES = [
+  ['Team', 'Signed to that team (MLV or LOVB)'],
+  ['Statistics', 'Met a statistical threshold for a game, season or career'],
+  ['All Star', 'Played in an All-Star match'],
+  ['League Champion', 'Won a championship'],
+  ['Draft Round', 'Drafted in that round'],
+];
+
+const FEATURES = [
+  { title: 'Daily puzzles', meta: 'A new grid every day with fresh category combinations.' },
+  { title: 'Player search', meta: 'Search hundreds of professional volleyball players by name or number.' },
+  { title: 'Leaderboards', meta: 'Daily and season leaderboards with rankings, averages and perfect score counts.' },
+  { title: 'Share results', meta: 'Post your score as a Reddit comment with a single tap.' },
+  { title: 'Account linking', meta: 'Link your Reddit account to VOLI to sync your grid history and scores across platforms.' },
+];
+
+// The picture in the hero: a grid part way through, right answers in lime,
+// one wrong one in rose, and the open cells still to guess.
+const CELLS = ['hit', '', 'hit', '', 'miss', '', 'hit', '', ''];
 ---
 
-<SiteLayout
-  title="Reddit Daily Grid - VOLI"
-  description="Play the Voli Daily Grid on Reddit. A daily volleyball trivia puzzle where you match players to category clues in a 3x3 grid."
-  ogUrl="https://playvoli.com/redditdailygrid"
-  skipSupabase
-  skipNavAuth
->
-  <!-- Hidden for now (owner, 4 Oct 2026): unlinked site-wide, kept out of search. -->
-  <meta slot="head" name="robots" content="noindex" />
-    <main class="v-page">
-        <div class="v-wrap v-wrap--read rdg-stack">
-
-        <!-- Hero -->
-        <section class="rdg-hero v-center">
-            <div class="v-tile rdg-hero-icon">
-                <img src="/images/icons/dailygrid.png" alt="" class="rdg-hero-img">
-                <span class="rdg-hero-x">&times;</span>
-                <svg class="rdg-hero-reddit" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.561-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-            </div>
-            <h1 class="v-h1 rdg-title">Voli Daily Grid on Reddit</h1>
-            <p class="v-lede rdg-subtitle">The fan favorite daily volleyball trivia puzzle — now playable directly inside Reddit.</p>
-            <div class="v-chip v-chip--verdict is-blue">Pending Reddit Approval</div>
-        </section>
-
-        <!-- What is it -->
-        <section class="rdg-section v-plate is-labelled">
-            <div class="v-label v-label--sans">What Is It?</div>
-            <p class="v-body rdg-section-text">The Voli Daily Grid is a 3x3 matching puzzle where you identify professional volleyball players based on row and column category clues. A new grid drops every day at midnight UTC. You get 9 guesses to fill all 9 cells — find a player that satisfies both the row and column category for each cell.</p>
-        </section>
-
-        <!-- How it works -->
-        <section class="rdg-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">How It Works</div>
-            <div class="rdg-steps">
-                <div class="v-tile rdg-step">
-                    <div class="v-index rdg-step-num">1</div>
-                    <div>
-                        <strong class="v-h3-plain">Open the post</strong>
-                        <span class="v-meta">A new Daily Grid post is created automatically every day on the subreddit.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-step">
-                    <div class="v-index rdg-step-num">2</div>
-                    <div>
-                        <strong class="v-h3-plain">Read the clues</strong>
-                        <span class="v-meta">Each row and column has a category — teams, stats, all-star appearances, draft rounds, and more.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-step">
-                    <div class="v-index rdg-step-num">3</div>
-                    <div>
-                        <strong class="v-h3-plain">Pick your players</strong>
-                        <span class="v-meta">Tap a cell, search for a player, and submit your guess. Green means correct, red means wrong.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-step">
-                    <div class="v-index rdg-step-num">4</div>
-                    <div>
-                        <strong class="v-h3-plain">Share your score</strong>
-                        <span class="v-meta">Post your results as a comment with one tap and see how you stack up on the leaderboard.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Categories -->
-        <section class="rdg-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Category Types</div>
-            <div class="v-grid v-grid--2">
-                <div class="v-tile rdg-cat-card">
-                    <strong class="v-h3-plain">Team</strong>
-                    <span class="v-meta">Player must have been signed to that team (MLV or LOVB)</span>
-                </div>
-                <div class="v-tile rdg-cat-card">
-                    <strong class="v-h3-plain">Statistics</strong>
-                    <span class="v-meta">Player must meet a statistical threshold for a game, season, or career</span>
-                </div>
-                <div class="v-tile rdg-cat-card">
-                    <strong class="v-h3-plain">All Star</strong>
-                    <span class="v-meta">Player must have played in an All-Star match</span>
-                </div>
-                <div class="v-tile rdg-cat-card">
-                    <strong class="v-h3-plain">League Champion</strong>
-                    <span class="v-meta">Player must have won a championship</span>
-                </div>
-                <div class="v-tile rdg-cat-card">
-                    <strong class="v-h3-plain">Draft Round</strong>
-                    <span class="v-meta">Player must have been drafted in that round</span>
-                </div>
-            </div>
-            <p class="v-path rdg-cat-note">Only statistics from US pro leagues (MLV and LOVB) count.</p>
-        </section>
-
-        <!-- Features -->
-        <section class="rdg-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Features</div>
-            <div class="rdg-features">
-                <div class="v-tile rdg-feature">
-                    <img src="/images/icons/dailygrid.png" alt="" class="rdg-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Daily Puzzles</strong>
-                        <span class="v-meta">A new grid every day with fresh category combinations.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-feature">
-                    <img src="/images/icons/search.png" alt="" class="rdg-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Player Search</strong>
-                        <span class="v-meta">Search across hundreds of professional volleyball players by name or number.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-feature">
-                    <img src="/images/icons/leaderboard.png" alt="" class="rdg-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Leaderboards</strong>
-                        <span class="v-meta">Daily and season leaderboards with rankings, averages, and perfect score counts.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-feature">
-                    <img src="/images/icons/share.png" alt="" class="rdg-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Share Results</strong>
-                        <span class="v-meta">Post your score as a Reddit comment with a single tap.</span>
-                    </div>
-                </div>
-                <div class="v-tile rdg-feature">
-                    <img src="/images/icons/profile.png" alt="" class="rdg-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Account Linking</strong>
-                        <span class="v-meta">Link your Reddit account to Voli to sync your grid history and scores across platforms.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA -->
-        <section class="rdg-cta v-center">
-            <p class="v-q">Also available on the web and in the Voli app.</p>
-            <div class="rdg-cta-links">
-                <a href="/dailygrid" class="v-pill v-pill--cta v-pill--action">Play on Web</a>
-                <a href="/app" class="v-pill">Get the App</a>
-            </div>
-        </section>
-
+<Pearl title={title} description={description} section="about" subnav={subnav} schema={schema} noindex>
+    <PageHero
+      color="blue"
+      label={['The VOLI Daily Grid', 'on Reddit']}
+      lines={[{ text: 'Nine cells.', hollow: true }, 'Nine guesses.']}
+    >
+        <p class="lede">The VOLI Daily Grid is a daily volleyball trivia puzzle made to be played inside Reddit: name a pro player who fits both the row and the column clue in each cell of a 3x3 grid.</p>
+        <Note>Pending Reddit approval.</Note>
+        <div class="btns">
+            <Btn href="/dailygrid" variant="primary">Play on the web</Btn>
         </div>
-    </main>
-</SiteLayout>
+        <p class="small">Also on the web and in the VOLI app, free on iPhone and Android.</p>
+        <Stores />
+        <div slot="art" class="rg-grid9" role="img" aria-label="A 3x3 Daily Grid part way through: three right answers, one wrong one and five cells still open.">
+            {CELLS.map((c) => <span class:list={['rg-grid9__cell', c && `rg-grid9__cell--${c}`]} aria-hidden="true">{c ? '' : '?'}</span>)}
+        </div>
+    </PageHero>
 
-<style>
-    .rdg-stack > * + * { margin-top: var(--sp-4); }
+    <Band color="ink" id="how" pb={4} title="How to play" tone="lime">
+        <Cols max="40rem">
+            <p class="lede">A new grid drops every day at midnight UTC. You get 9 guesses to fill all 9 cells: for each cell, find a player who fits both its row and its column category.</p>
+        </Cols>
+        <Steps items={[
+          { title: 'Open the post', text: 'A new Daily Grid post is created automatically every day on the subreddit.' },
+          { title: 'Read the clues', text: 'Each row and column has a category: teams, stats, All-Star appearances, draft rounds and more.' },
+          { title: 'Pick your players', text: 'Tap a cell, search for a player and submit your guess. Green means correct, red means wrong.' },
+          { title: 'Share your score', text: 'Post your results as a comment with one tap, and see how you stack up on the leaderboard.' },
+        ]} />
+    </Band>
 
-    /* Hero */
-    .rdg-hero { margin-bottom: var(--sp-6); }
-    .rdg-hero-icon {
-        height: 72px;
-        border-radius: 20px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 0 20px;
-        margin: 0 auto 20px;
-    }
-    .rdg-hero-img, .rdg-hero-reddit { width: 40px; height: 40px; object-fit: contain; }
-    .rdg-hero-x { font: 400 22px/1 var(--font-body); color: var(--ink-2); }
-    .rdg-title { margin: 0 0 12px; }
-    .rdg-subtitle { max-width: 520px; margin: 0 auto 16px; }
+    <Band color="lime" id="categories" title={['Category', 'types']}>
+        <Cols ratio="56:36" drop={[0, 2]}>
+            <DataTable
+              caption="What a player must have done to fit a category"
+              cols={['Category', { label: 'The player must have', class: 'l' }]}
+              rows={CATEGORIES}
+            />
+            <Copy>
+                <p class="lede">Only statistics from US pro leagues, MLV and LOVB, count.</p>
+                <p class="body">The same pro players, teams and records are in the <a class="link" href="/">VOLI app</a>, with live scores, stats and <a class="link" href="/fantasy">fantasy volleyball</a>.</p>
+            </Copy>
+        </Cols>
+    </Band>
 
-    /* Sections */
-    .rdg-section-text { text-align: center; margin: 0 auto; max-width: 60ch; }
+    <Band color="blue" id="play" title={['Play the', 'Daily Grid']} em="Daily Grid">
+        <Cols ratio="44:48">
+            <Copy>
+                <p class="lede">Play on Reddit once it is approved, or play today on the web and in the VOLI app.</p>
+                <div class="btns">
+                    <Btn href="/dailygrid" variant="primary">Play on the web</Btn>
+                </div>
+            </Copy>
+            <div class="rg-feats">
+                <h3 class="h3">What is in it</h3>
+                <Rows items={FEATURES} />
+            </div>
+        </Cols>
+    </Band>
 
-    /* Steps + feature rows */
-    .rdg-steps, .rdg-features { display: flex; flex-direction: column; gap: 8px; }
-    .rdg-step, .rdg-feature { display: flex; align-items: center; gap: 14px; padding: 12px 14px; }
-    .rdg-step-num { flex: none; width: 20px; text-align: center; }
-    .rdg-feature-icon { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
-    .rdg-section strong { display: block; margin-bottom: 2px; }
-
-    /* Categories */
-    .rdg-cat-card { padding: 12px 14px; }
-    .rdg-cat-card strong { margin-bottom: 4px; }
-    .rdg-cat-note { text-align: center; margin: 12px 0 0; }
-
-    /* CTA */
-    .rdg-cta { padding-top: var(--sp-6); }
-    .rdg-cta .v-q { margin: 0 0 16px; }
-    .rdg-cta-links { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; }
-</style>
+    <GetApp color="rose" lede="Play the Daily Grid in the VOLI app, free on iPhone and Android." links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/about', label: 'About VOLI' },
+    ]} />
+</Pearl>

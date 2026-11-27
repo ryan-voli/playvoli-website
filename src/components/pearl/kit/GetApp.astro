@@ -1,0 +1,35 @@
+---
+// The closing block every page ends with, id="get": pearl/GetApp (the app's
+// lockup, the store buttons, the QR code on a computer, and onward links).
+//
+//   <GetApp links={[{ href: '/rankings', label: 'VOLI Top 100' }, { href: '/about', label: 'About VOLI' }]} />
+//
+// Poster `lines` become the title, in the same words: a hollow line is set
+// in italic navy (else the last word). Without lines it is the home page's
+// "Free on iPhone and Android." `color` is ignored. Pearl only: `title`
+// (with *word* for the italic) instead of lines.
+import PearlGetApp from '../GetApp.astro';
+import type { Field } from './util';
+import type { LineText, RiderLine } from './rider';
+
+interface Props {
+  color?: Field;
+  lines?: (LineText | RiderLine)[];
+  title?: string;
+  lede?: string;
+  links?: { href: string; label: string }[];
+  linksLabel?: string;
+}
+
+const { lines, title, lede, links, linksLabel } = Astro.props;
+const say = (t: LineText) => (Array.isArray(t) ? t.map((p) => p.trim()).join(' ') : t.trim());
+let heading = title;
+if (!heading && lines?.length) {
+  const set = lines.map((l) => (typeof l === 'string' || Array.isArray(l) ? { text: say(l), hollow: false } : { text: say(l.text), hollow: !!l.hollow }));
+  const at = set.map((l) => l.hollow).lastIndexOf(true);
+  heading = at >= 0
+    ? set.map((l, i) => (i === at ? `*${l.text}*` : l.text)).join(' ')
+    : set.map((l) => l.text).join(' ').replace(/(\S+)\s*$/, '*$1*');
+}
+---
+<PearlGetApp title={heading} lede={lede} links={links} linksLabel={linksLabel} />

@@ -1,0 +1,25 @@
+---
+// "Scan to get the app", as in the closing block: shown only where there is a
+// mouse. The code is drawn at build time (lib/qr.ts).
+//
+//   <Qr />
+//   <Qr url="https://playvoli.com/volleytalk" text="Scan with your phone to join the Volley Talk league." id="page-qr" />
+import { qrPath } from '../../../lib/qr';
+
+interface Props {
+  url?: string;
+  title?: string;
+  text?: string;
+  class?: string;
+  [attr: string]: any;
+}
+const { url = 'https://playvoli.com/download', title = 'On a computer?', text = 'Scan to get VOLI on your phone.', class: cls, ...rest } = Astro.props;
+const { d, size } = qrPath(url);
+---
+<div class:list={['qr', cls]} {...rest}>
+    <svg viewBox={`0 0 ${size} ${size}`} width="88" height="88" role="img" aria-label={`QR code that opens ${url.replace('https://', '')}`} shape-rendering="crispEdges">
+        <rect width={size} height={size} fill="#fff" />
+        <path d={d} fill="#12141C" />
+    </svg>
+    <p class="qr__t"><strong>{title}</strong> {text}</p>
+</div>

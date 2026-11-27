@@ -1,0 +1,35 @@
+/* Analytics by EVOLLVE (/evollve), in Pearl: what only this page needs.
+   (The Poster file, styles/poster/pages/products.css, still holds the other
+   product pages' parts.) Everything shared is in pearl/system.css and
+   pearl/kit.css. */
+
+/* Where it shows up: four places, each a heading and a line, under hairlines. */
+.pr-places > * + * { margin-top: var(--sp-4); }
+.pr-places > .lede { max-width: 36rem; }
+.pr-places > ul { display: grid; margin-top: var(--sp-5); border-top: 1px solid var(--line); }
+.pr-places li { padding: 18px 0 19px; border-bottom: 1px solid var(--line); }
+.pr-places li h3 { display: flex; align-items: center; gap: 10px; }
+/* EVOLLVE's colour, as a small mark only. */
+.pr-places li h3::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--evollve); }
+.pr-places li p { max-width: 36rem; margin-top: 6px; color: var(--ink-2); }
+.pr-places > .btns { margin-top: var(--sp-5); }
+
+/* About: EVOLLVE's wordmark (white, made for dark grounds) on an ink panel,
+   and a card from the app under it. */
+.pr-evollve-art { display: grid; justify-items: start; row-gap: var(--sp-6); }
+.pr-evollve-art > .stage { width: 100%; max-width: 32rem; }
+.pr-logo {
+  position: relative; overflow: hidden; display: inline-block; padding: clamp(22px, 2.6vw, 36px) clamp(26px, 3vw, 44px);
+  border-radius: var(--r-sheet); background: var(--ink); box-shadow: var(--sh-pop);
+}
+.pr-logo::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(70% 100% at 90% 0%, rgba(66, 82, 140, .55), transparent 70%);
+}
+.pr-logo img { position: relative; display: block; width: clamp(180px, 22vw, 340px); height: auto; }
+@media (max-width: 900px) {
+  .pr-evollve-art { margin-top: var(--sp-2); }
+}
+
+/* What you get: the four cards as one even row (two by two on a tablet). */
+#what .cols[data-n="4"] { column-gap: var(--sp-4); row-gap: var(--sp-4); align-items: stretch; }

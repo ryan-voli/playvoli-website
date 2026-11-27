@@ -1,122 +1,299 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+// About VOLI: who makes the app, what it holds, who it works with, what is
+// next, the questions people ask and how to reach the team. One page in six
+// sections; the old /faq, /contact, /whats-next and /partners addresses
+// redirect to #faq, #contact, #whats-next and #partners, so those ids stay.
+// Every number and answer comes from lib/voli-facts and lib/bracket-facts.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/about.css';
+import Arrow from '../components/pearl/kit/Arrow.astro';
+import Badge from '../components/pearl/kit/Badge.astro';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Card from '../components/pearl/kit/Card.astro';
+import Cell from '../components/pearl/kit/Cell.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import Dates from '../components/pearl/kit/Dates.astro';
+import Faq from '../components/pearl/kit/Faq.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import LinkList from '../components/pearl/kit/LinkList.astro';
+import Note from '../components/pearl/kit/Note.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Phone from '../components/pearl/kit/Phone.astro';
+import Split from '../components/pearl/kit/Split.astro';
+import Stack from '../components/pearl/kit/Stack.astro';
+import Sticker from '../components/pearl/kit/Sticker.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import Tickets from '../components/pearl/kit/Tickets.astro';
+import { DOWNLOADS, DOWNLOADS_AS_OF, FACTS, FACTS_AS_OF, FAQS, faqSchema } from '../lib/voli-facts';
+import { BRACKET, BRACKET_DATES, BRACKET_STATUS, bracketPhase } from '../lib/bracket-facts';
+import { INDEPENDENCE, SITE_URL, SOCIAL_LINKS } from '../lib/site';
+import { SCREENS } from '../lib/screens';
+import { emWidth } from '../lib/designer-metrics';
+
+const PAGE_URL = `${SITE_URL}/about`;
+const TITLE = 'About VOLI: The Volleyball App Built by Fans, for Fans';
+const DESCRIPTION =
+  'Meet the fans who make VOLI, the free volleyball app for NCAA, MLV and LOVB on iPhone and Android: the numbers, partners, what is next, FAQ and how to reach us.';
+
+const subnav = {
+  label: 'About VOLI',
+  items: [
+    { href: '#story', label: 'Our story', short: 'Story' },
+    { href: '#numbers', label: 'Numbers' },
+    { href: '#partners', label: 'Partners' },
+    { href: '#whats-next', label: "What's next", short: 'Next' },
+    { href: '#faq', label: 'FAQ' },
+    { href: '#contact', label: 'Contact' },
+  ],
+};
+
+// VOLI by the numbers. Each figure is said again in a sentence that can be
+// quoted on its own, so the figure itself is hidden from screen readers.
+// The FACTS figures come first in their own words; the rest are the counts
+// already published on the site. Fantasy leads, as it does wherever the
+// app's features are listed.
+const fact = (label: string) => FACTS.find((f) => f.label === label)!.value;
+const FIGURES = [
+  { value: '10', text: 'An NCAA fantasy volleyball season on VOLI runs in 10 rounds, each from Wednesday to Sunday.' },
+  { value: DOWNLOADS, text: `VOLI has ${DOWNLOADS} downloads on iPhone and Android, as of ${DOWNLOADS_AS_OF}.` },
+  { value: fact('college and pro matches since 2023'), text: 'VOLI covers more than 18,700 college and pro volleyball matches played since 2023.' },
+  { value: fact('NCAA player box-score lines'), text: 'VOLI holds nearly 500,000 NCAA player box-score lines.' },
+  { value: fact('of Division I matches since 2023 with a box score'), text: "VOLI has a box score for 99.8% of completed NCAA Division I women's matches since 2023." },
+  { value: '445', text: 'All 445 MLV and LOVB matches in VOLI have play-by-play, with each rally, substitution and the rotation on court.' },
+  { value: fact('honors in the Volleyball Encyclopedia, back to 1979'), text: 'The Volleyball Encyclopedia in VOLI holds more than 18,000 honors, back to 1979.' },
+  { value: '3,000+', text: 'The Volleyball Encyclopedia lists more than 3,000 AVCA All-America selections since 1981.' },
+  { value: '45', text: 'The Volleyball Encyclopedia has all 45 NCAA champions.' },
+  { value: '13', text: 'VOLI carries 13 volleyball podcasts to stream or download.' },
+  { value: '900+', text: 'The podcasts in VOLI have more than 900 episodes, with your place saved across devices.' },
+  { value: '20', text: 'VOLI gathers volleyball news from 20 outlets, with each story linked to its source.' },
+].map((f) => {
+  // Designer has no tilde: a leading "~" is set in the text face.
+  const pre = f.value.startsWith('~') ? '~' : '';
+  return { ...f, pre, rest: f.value.slice(pre.length) };
+});
+const FIG_EM = Math.max(...FIGURES.map((f) => emWidth(f.rest) + (f.pre ? 0.45 : 0)));
+
+// The roadmap. The Bracket Challenge row is marked from the contest's own
+// calendar on the day the page is built.
+const phase = bracketPhase();
+const ROADMAP = [
+  {
+    iso: '2024-03', when: 'March 2024', what: 'FantasyVB begins', tag: 'Done',
+    detail: 'FantasyVB started as a test bed for one question: could a real fantasy volleyball game work? It compared fantasy formats to find the one that fits volleyball, shaped a scoring system that is fair to every position and settled the technology, with classes in full-stack development alongside. The answer was yes, with a plan for what shipping it would take.',
+  },
+  {
+    iso: '2025-01', when: 'January 2025', what: 'VOLI app begins', tag: 'Done',
+    detail: 'The project grew beyond fantasy. The stats, player profiles and schedules that fantasy needed became a full hub for U.S. pro volleyball, simplest parts first. Fantasy came next, tested in simulations against two years of MLV data and one year of LOVB data. Podcast discovery and support tools came just before launch, so fans could find and back the creators growing the sport.',
+  },
+  {
+    iso: '2026-01', when: 'January 2026', what: 'App beta launch', tag: 'Done',
+    detail: 'VOLI went public with MLV fantasy for the 2026 pro season, with real managers instead of simulations. Partnerships with Major League Minute, Volley Talk and Court Captains brought in the fans most likely to put the app through its paces. The season closed with 1,300+ downloads and lessons on scoring, contract rules and the fantasy week that shaped everything after, starting with a scoring system rebuilt for the college game.',
+  },
+  {
+    iso: '2026-08', when: 'August 2026', what: 'NCAA fantasy launch', tag: 'Done', href: '/fantasy',
+    detail: "Fantasy came to NCAA Division I women's volleyball, tuned for the college game with simpler scoring. The 2026 season ran in ten rounds, each Wednesday to Sunday, with Monday and Tuesday as the signing window.",
+  },
+  {
+    iso: '2026-11', when: 'November 2026', what: BRACKET.name, tag: phase === 'over' ? 'Done' : 'On now', href: BRACKET.path,
+    detail: "A free bracket game for the NCAA Division I women's volleyball tournament: pick the winner of all 63 matches and follow a live leaderboard, against everyone or in a group with your friends.",
+  },
+  {
+    iso: '2027-01', when: 'January 2027', what: 'LOVB fantasy launch', tag: 'Next',
+    detail: "LOVB joins VOLI's fantasy game, so managers can run teams in both pro leagues. VOLI has carried LOVB stats, schedules and player profiles from the start: fantasy is the piece still to come.",
+  },
+];
+
+// Contact: one address, and a link per topic that starts an email to it with
+// the subject filled in. There is no form: every link opens the visitor's mail app.
+const EMAIL = 'support@playvoli.com';
+const mailto = (subject: string, body?: string) =>
+  `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`;
+const TOPICS = [
+  { href: mailto('General question'), label: 'General question' },
+  { href: mailto('App support', 'Phone and model:\nWhat happened:\n'), label: 'App support' },
+  { href: mailto('Feature request'), label: 'Feature request' },
+  { href: mailto('Partnership'), label: 'Partnership' },
+  { href: mailto('Press'), label: 'Press' },
+  { href: mailto('Investor inquiry'), label: 'Investor inquiry' },
+];
+const [MAIL_A, MAIL_B] = [EMAIL.slice(0, EMAIL.indexOf('@') + 1), EMAIL.slice(EMAIL.indexOf('@') + 1)];
+const HANDLES: Record<string, string> = {
+  Instagram: '@playvoli',
+  TikTok: '@playvoli',
+  YouTube: '@watchvoli',
+  Facebook: 'thevolleyballhub',
+  Reddit: 'r/playvoli',
+};
+
+// Of the ten questions shown here, these two are marked up on this page; the
+// others are marked up on the pages that answer them in full.
+const marked = ['leagues', 'bracket'].map((id) => FAQS.find((f) => f.id === id)!);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${PAGE_URL}#webpage`,
+    url: PAGE_URL,
+    name: TITLE,
+    description: DESCRIPTION,
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    about: { '@id': `${SITE_URL}/#organization` },
+    mainEntity: { '@id': `${SITE_URL}/#organization` },
+    inLanguage: 'en-US',
+  },
+  faqSchema(marked, PAGE_URL),
+];
 ---
 
-<SiteLayout
-  title="About - VOLI"
-  description="Learn about VOLI's mission to revolutionize volleyball with fantasy leagues, live stats, and community features."
-  activePage="about"
->
-    <main class="v-page">
-      <div class="v-wrap v-wrap--read v-stack--modules">
-        <h1 class="v-h1 v-center about-title">About VOLI</h1>
+<Pearl title={TITLE} description={DESCRIPTION} section="about" subnav={subnav} schema={schema}>
+    <link rel="preload" as="image" href={SCREENS.games.src} type="image/webp" fetchpriority="high" slot="head" />
 
-        <section class="v-plate is-labelled">
-            <div class="v-label v-label--sans">Our Mission</div>
-            <p class="v-body v-measure">VOLI LLC is a volleyball technology company building the infrastructure that professional volleyball deserves. We believe volleyball has the talent, the competition, and the fanbase to compete with any major sport — it just needs the right technology ecosystem. We're building a foundation for the sport's digital future.</p>
-        </section>
+    <PageHero color="rose" label={['About VOLI:', 'The Volleyball Hub.']} lines={[{ text: 'For fans,', hollow: true }, 'by fans.']}>
+        <p class="lede">VOLI: The Volleyball Hub is made by two volleyball fans, Ryan and Max, for everyone who follows NCAA <span class="nb">Division I</span> women's volleyball, MLV and LOVB. Free on iPhone and Android.</p>
+        <Stores />
+        {/* Two phones, the downloads chip over the second, and a chat card
+            lifted in front of both. */}
+        <Stack slot="art" ratio="100/106">
+            <Badge value={DOWNLOADS} label="downloads" x={66} xm={60} y={46} ym={44} z={3} shadow="lime" />
+            <Phone screen="games" x={4} xm={2} y={0} w={44} wm={46} r={-3.75} z={2} priority />
+            <Phone screen="encyclopedia" x={52} y={10} w={44} wm={46} r={7.5} eager />
+            <Sticker cut="float-chat" x={10} xm={4} y={72} w={66} wm={80} r={-3.75} z={3} shadow="white" />
+        </Stack>
+    </PageHero>
 
-        <section class="v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">What We Do</div>
-            <p class="v-body v-measure">We build products that connect fans more deeply with professional volleyball. From fantasy leagues and real-time statistics to community spaces and interactive games, everything we create is designed to elevate how people experience the sport.</p>
-        </section>
-
-        <section class="v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">The Fans Behind VOLI</div>
-            <div class="founders-grid v-grid v-grid--2">
-                <div class="founder-card v-tile">
-                    <img src="/images/founders/ryan.webp" alt="Ryan" class="founder-photo">
-                    <strong class="v-h3-plain">Ryan</strong>
-                    <span class="founder-role">Founder</span>
-                    <p class="v-meta">Ryan works full-time in cybersecurity and software engineering, and built VOLI from the ground up after teaching himself full-stack development to make this happen. He fell in love with volleyball watching his sister play in college, and when she graduated just as the U.S. pro leagues launched, he saw a sport with the talent and fanbase to rival any major league — but missing the digital infrastructure to match. VOLI is his answer: a platform built by a fan who believes volleyball deserves it.</p>
-                </div>
-                <div class="founder-card v-tile">
-                    <img src="/images/founders/max.webp" alt="Max" class="founder-photo">
-                    <strong class="v-h3-plain">Max</strong>
-                    <span class="founder-role">Co-Founder</span>
-                    <p class="v-meta">Max runs the business and operational side of VOLI, bringing a project management and server administration background from his day job. He and Ryan met in the Air Force a decade ago and have been close friends ever since — despite living on opposite sides of the world, Max even stood in Ryan's wedding — and when the project grew bigger than one person could handle, Max stepped in so Ryan could stay focused on development. He's here because he believes in both the friend and the mission: a sport this good deserves software to match.</p>
+    {/* 1. Who makes VOLI, and what it is. */}
+    <Band color="lime" id="story" kicker="The fans" title="behind VOLI" pt={5}>
+        <Cols ratio="40:52" drop={[0, 2]}>
+            <Copy>
+                <p class="lede">VOLI is a free volleyball app for iPhone and Android with <a class="link" href="/fantasy">fantasy volleyball</a>, live scores and box scores, stats, <a class="link" href="/rankings">the VOLI Top 100</a>, volleyball history, news and podcasts in one place. VOLI is made for fans of NCAA <span class="nb">Division I</span> women's volleyball, Major League Volleyball (MLV) and LOVB.</p>
+                <p class="body">Every part of the app, feature by feature, is on <a class="link" href="/">the VOLI home page</a>. VOLI also makes the <a class="link" href="/discordbot">VOLI Discord Bot</a>, which brings fantasy leaderboards, live scores, stat leaders and transaction tracking to Discord servers.</p>
+            </Copy>
+            <div>
+                <div class="abt-founders">
+                    <Card name="Ryan" kicker="Founder" ratio="1 / 1" img={{ src: '/images/founders/ryan.webp', width: 384, height: 384, alt: 'Ryan, founder of VOLI' }}>
+                        <p>Ryan built VOLI from the ground up, teaching himself full-stack development to do it, and works full-time in cybersecurity and software engineering. He fell in love with volleyball watching his sister play in college. She graduated just as the U.S. pro leagues launched, and he saw a sport with the talent and the fans, but without the digital tools to match. VOLI is his answer.</p>
+                    </Card>
+                    <Card name="Max" kicker="Co-founder" ratio="1 / 1" shadow="blue" img={{ src: '/images/founders/max.webp', width: 384, height: 384, alt: 'Max, co-founder of VOLI' }}>
+                        <p>Max runs the business and operations side of VOLI, drawing on project management and server administration from his day job. He and Ryan met in the Air Force a decade ago and have been close friends since: they live on opposite sides of the world, and Max stood in Ryan's wedding. When VOLI grew bigger than one person could handle, Max stepped in so Ryan could stay focused on building the app. He believes in his friend, and that a sport this good deserves software to match.</p>
+                    </Card>
                 </div>
             </div>
-        </section>
-
-        <section class="v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Our Products</div>
-            <div class="products-grid v-grid v-grid--2">
-                <a href="/app" class="product-card v-tile">
-                    <img src="/images/appicon.webp" alt="" class="product-icon product-icon--rounded">
-                    <strong>Voli Mobile App</strong>
-                    <span>Fantasy leagues, live stats, community chat, podcasts, and more — all in one app.</span>
-                </a>
-                <a href="/discordbot" class="product-card v-tile">
-                    <svg class="product-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M19.27 5.33C17.94 4.71 16.5 4.26 15 4a.09.09 0 0 0-.07.03c-.18.33-.39.76-.53 1.09a16.09 16.09 0 0 0-4.8 0c-.14-.34-.35-.76-.54-1.09c-.01-.02-.04-.03-.07-.03c-1.5.26-2.93.71-4.27 1.33c-.01 0-.02.01-.03.02c-2.72 4.07-3.47 8.03-3.1 11.95c0 .02.01.04.03.05c1.8 1.32 3.53 2.12 5.24 2.65c.03.01.06 0 .07-.02c.4-.55.76-1.13 1.07-1.74c.02-.04 0-.08-.04-.09c-.57-.22-1.11-.48-1.64-.78c-.04-.02-.04-.08-.01-.11c.11-.08.22-.17.33-.25c.02-.02.05-.02.07-.01c3.44 1.57 7.15 1.57 10.55 0c.02-.01.05-.01.07.01c.11.09.22.17.33.26c.04.03.04.09-.01.11c-.52.31-1.07.56-1.64.78c-.04.01-.05.06-.04.09c.32.61.68 1.19 1.07 1.74c.03.01.06.02.09.01c1.72-.53 3.45-1.33 5.25-2.65c.02-.01.03-.03.03-.05c.44-4.53-.73-8.46-3.1-11.95c-.01-.01-.02-.02-.04-.02zM8.52 14.91c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.84 2.12-1.89 2.12zm6.97 0c-1.03 0-1.89-.95-1.89-2.12s.84-2.12 1.89-2.12c1.06 0 1.9.96 1.89 2.12c0 1.17-.83 2.12-1.89 2.12z"/></svg>
-                    <strong>Voli Discord Bot</strong>
-                    <span>Fantasy leaderboards, live scores, stat leaders, and transaction tracking for Discord servers.</span>
-                </a>
-                <a href="/redditdailygrid" class="product-card v-tile">
-                    <svg class="product-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.561-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
-                    <strong>Reddit Daily Grid</strong>
-                    <span>A daily volleyball trivia puzzle playable directly inside Reddit.</span>
-                </a>
+        </Cols>
+        <Cols ratio="1:1" drop={[0, 2]}>
+            <div class="abt-point">
+                <h3 class="h3">Where VOLI's numbers come from</h3>
+                <p class="body">VOLI's stats, scores and its own ratings are built from publicly available facts about games, players and teams, with VOLI's own software. <a class="link" href="/methods">How VOLI's numbers work</a> explains where the data comes from, how often it updates, and how the VOLI Top 100 and each match's chance to win are worked out.</p>
             </div>
-        </section>
+            <div class="abt-point">
+                <h3 class="h3">Independent of the leagues</h3>
+                <p class="body">{INDEPENDENCE} VOLI is made by volleyball fans, for volleyball fans. Leagues and teams that want to work with VOLI can <a class="link" href="#contact">write to the team</a>.</p>
+            </div>
+        </Cols>
+    </Band>
 
-        <section class="v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Independent Platform</div>
-            <p class="v-body v-measure">VOLI is an independent fan platform created by volleyball fans, for volleyball fans. We're not affiliated with or endorsed by any professional volleyball league or organization. Our goal is to support and celebrate professional volleyball, and we're actively working to build partnerships with leagues and teams.</p>
-        </section>
+    {/* 2. The counts, each in a sentence of its own. */}
+    <Band color="ink" id="numbers" kicker="VOLI by" title="the numbers" tone="lime" stamp={`As of ${FACTS_AS_OF}`}>
+        <Cols ratio="1:1:1" as="ul" class="abt-figs" style={`--em:${FIG_EM}`}>
+            {FIGURES.map((f) => (
+                <li>
+                    <strong class="abt-fig" aria-hidden="true">{f.pre && <span class="abt-tilde">{f.pre}</span>}{f.rest}</strong>
+                    <p class="abt-fact">{f.text}</p>
+                </li>
+            ))}
+        </Cols>
+    </Band>
 
-        <section class="v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Data & Statistics</div>
-            <p class="v-body v-measure">Our products use publicly available statistical data and factual information about professional volleyball games, players, and teams. All statistics, scores, and enhanced analytics are generated from publicly accessible sources using our own technology. We are committed to accuracy and transparency in how we present volleyball data to our community.</p>
-        </section>
-      </div>
-    </main>
-</SiteLayout>
+    {/* 3. Partners: their work is in the app. */}
+    <Band color="blue" id="partners" title="Our partners">
+        <Cols max="38rem">
+            <p class="lede">Four partners bring their work into VOLI: two volleyball podcasts, college volleyball analytics from EVOLLVE and transfer news from College Volleyball Transfers.</p>
+        </Cols>
+        {/* Two pairs: the podcasts, then analytics and transfers. Four across on
+            a wide screen, two by two on a tablet, one under another on a phone. */}
+        <Cols ratio="1:1" drop={[0, 2]} class="abt-partners">
+            <div class="cardgrid">
+                <Card name="Volley Talk" kicker="Podcast partner" href="/volleytalk" cta="Volley Talk on VOLI" track="partner_card:volleytalk" logo img={{ src: '/images/partners/volleytalk-cover-sm.webp', width: 160, height: 160, alt: 'Volley Talk with Sarah Pavan podcast cover' }}>
+                    <p>Volley Talk is a podcast on NCAA and international volleyball, hosted by Sarah Pavan, an Olympian, World Champion and former Nebraska All-American, and her husband Adam Schulz, an international volleyball coach and stats wizard. Each week: highlights, feature match breakdowns and hot takes from decades at the highest level.</p>
+                </Card>
+                <Card name="Major League Minute" kicker="Podcast partner" href="/mlm" cta="MLM on VOLI" track="partner_card:mlm" logo ground="white" img={{ src: '/images/partners/mlm-cover-sm.webp', width: 160, height: 160, alt: 'Major League Minute podcast logo' }}>
+                    <p>Major League Minute is a quick-hitting podcast on Major League Volleyball with Nick Prososki (Doc) and Gina <span class="nb">Mancuso-Prososki</span> (GMP), a former Nebraska and Omaha Supernovas player. They break down the biggest games, key performances and headlines, and host exclusive player Ask Me Anythings with VOLI in the app.</p>
+                </Card>
+            </div>
+            <div class="cardgrid">
+                <Card name="EVOLLVE" kicker="Analytics partner" href="/evollve" cta="EVOLLVE on VOLI" track="partner_card:evollve" logo img={{ src: '/images/partners/evollve-ball.webp', width: 256, height: 256, alt: 'The EVOLLVE logo, a volleyball' }}>
+                    <p>EVOLLVE builds advanced analytics for college volleyball. Its nightly ratings for every <span class="nb">Division I</span> team, player impact numbers like RAPM and match predictions are built into VOLI, from the Stats page to every team, player and game.</p>
+                </Card>
+                <Card name="College Volleyball Transfers" kicker="Transfer portal partner" href="/cvt" cta="CVT on VOLI" track="partner_card:cvt" logo ground="white" img={{ src: '/images/partners/cvt-mark-light.svg', width: 254, height: 260, alt: 'The College Volleyball Transfers mark' }}>
+                    <p>College Volleyball Transfers tracks moves in women's college volleyball across the divisions: who enters the portal, where they commit, and the full transfer list each season. Every move their desk verifies lands in VOLI's Transfer Portal, with the player, the school and where they are headed.</p>
+                </Card>
+            </div>
+        </Cols>
+        <Cols max="44rem">
+            <p class="body abt-leagues">Both podcasts run a public fantasy league on VOLI that anyone can join: <a class="link" href="/volleytalk">the Volley Talk league</a> and <a class="link" href="/mlm">the Major League Minute league</a>. You can also listen to <a class="link" href="/courtcaptains">Court Captains</a>, a podcast on MLV with Kelly, Nikki and Ian, in VOLI.</p>
+        </Cols>
+    </Band>
 
-<style>
-    .about-title { margin: 0 0 16px; }
-    .v-body { margin: 0; text-align: left; }
+    {/* 4. The roadmap, and what is on right now. */}
+    <Split ground="rose">
+        <Cell color="ink" id="whats-next" lines={["What's", 'next', { text: 'for VOLI', size: 'sm', hollow: true }]} em="next" tone="lime">
+            <p class="body">VOLI began as a fantasy volleyball test bed in 2024. The dates below are where it has been and where it goes next.</p>
+            <Dates narrow class="abt-roadmap" items={ROADMAP} />
+            <p class="small">New dates go on this list as they are set.</p>
+        </Cell>
+        <Cell color="rose" as="h3" lines={[{ text: 'College Volleyball', size: 'sm', hollow: true }, 'Bracket', 'Challenge']}>
+            <Note><span data-bracket-status="long">{BRACKET_STATUS[phase].long}</span></Note>
+            <p class="lede">Pick the winner of all 63 matches of the NCAA <span class="nb">Division I</span> women's volleyball tournament in the free VOLI app, and follow your bracket on a live leaderboard.</p>
+            <Tickets class="abt-tickets" size={3.5} label="The Bracket Challenge at a glance" items={[
+              { value: BRACKET.prize, label: 'cash to the top eligible bracket' },
+              { value: String(BRACKET.matches), label: 'matches to pick, free to play' },
+            ]} />
+            <p class="fine">No purchase necessary. 50 U.S. states &amp; D.C., 18+ (19+ AL/NE, 21+ MS). <a href={BRACKET.rulesPath}>Official Rules</a> apply.</p>
+            <div class="btns">
+                <Btn href={BRACKET.path} track="bracket_promo:about">The Bracket Challenge</Btn>
+            </div>
+            <Dates narrow items={[BRACKET_DATES[0], BRACKET_DATES[1], BRACKET_DATES[BRACKET_DATES.length - 1]]} />
+        </Cell>
+    </Split>
 
-    /* Founders */
-    .founder-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        padding: 16px;
-        text-align: center;
-    }
-    .founder-photo {
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 8px;
-    }
-    .founder-role {
-        font: 600 12px/1.2 var(--font-body);
-        letter-spacing: .10em;
-        text-transform: uppercase;
-        color: var(--lemon-lime-90);
-    }
-    .founder-card p { margin: 8px 0 0; text-align: left; }
+    {/* 5. Every question about VOLI. Only "leagues" and "bracket" are marked up here. */}
+    <Band color="lime" id="faq" title="Questions" sub="about VOLI">
+        <Faq items={FAQS}>
+            <LinkList slot="more" label="More answers" items={[
+              { href: '/fantasy#faq', label: 'Fantasy questions' },
+              { href: '/bracket#faq', label: 'Bracket Challenge questions' },
+              { href: '/methods', label: "How VOLI's numbers work" },
+            ]} />
+        </Faq>
+    </Band>
 
-    /* Products */
-    .product-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        padding: 16px;
-        text-align: center;
-        text-decoration: none;
-        transition: background-color 150ms, opacity 100ms;
-    }
-    .product-card:active { opacity: .72; }
-    @media (hover: hover) { .product-card:hover { background: var(--glass-15); } }
-    .product-card strong { font: 700 16px/1.3 var(--font-body); color: var(--ink); }
-    .product-card > span { font: 400 13px/1.4 var(--font-body); color: var(--ink-2); }
-    .product-icon { width: 40px; height: 40px; object-fit: contain; }
-    .product-icon--rounded { border-radius: 10px; }
-    .product-icon-svg { width: 40px; height: 40px; }
-</style>
+    {/* 6. How to reach the team. Email only: there is no form. */}
+    <Band color="ink" id="contact" lines={[{ text: 'Contact the VOLI team', size: 'sm' }]}>
+        <p class="abt-mail" style={`--em:${emWidth(EMAIL)};--em-m:${Math.max(emWidth(MAIL_A), emWidth(MAIL_B))}`}><a href={`mailto:${EMAIL}`}><span>{MAIL_A}</span><span>{MAIL_B}</span></a></p>
+        <Cols ratio="52:40" drop={[0, 2]}>
+            <Copy>
+                <p class="lede">Email the VOLI team at <a class="link" href={`mailto:${EMAIL}`}>{EMAIL}</a> about anything: the app, a partnership, press or investing. Pick a topic to start an email with the subject filled in.</p>
+                <LinkList label="Email us about" items={TOPICS} />
+                <p class="body">For app support, tell us which phone you use (iPhone or Android, and the model) and what happened, step by step.</p>
+            </Copy>
+            <div class="abt-follow">
+                <p class="label">Follow VOLI</p>
+                <ul class="abt-social">
+                    {SOCIAL_LINKS.map((s) => (
+                        <li><a href={s.href} target="_blank" rel="noopener"><span class="abt-social__n">{s.name}</span>{' '}<span class="abt-social__h">{HANDLES[s.name]}</span><Arrow /></a></li>
+                    ))}
+                </ul>
+            </div>
+        </Cols>
+    </Band>
+
+    <GetApp color="blue" links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/bracket', label: 'Bracket Challenge' },
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/methods', label: "How VOLI's numbers work" },
+    ]} />
+</Pearl>

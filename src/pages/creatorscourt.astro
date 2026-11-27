@@ -1,206 +1,174 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+// Creators Court: VOLI's platform for volleyball content creators, in
+// development. Every feature the page has listed since launch is here, fan
+// tools first (they carry the fantasy leagues), then analytics, game prep,
+// publishing and who it is for. Creators get in touch by email, through the
+// contact section of /about.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/creatorscourt.css';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Card from '../components/pearl/kit/Card.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import Note from '../components/pearl/kit/Note.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Phone from '../components/pearl/kit/Phone.astro';
+import Badge from '../components/pearl/kit/Badge.astro';
+import Stack from '../components/pearl/kit/Stack.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import { pageSchema } from '../components/products/schema';
+import { SCREENS } from '../lib/screens';
+
+const title = 'Creators Court: Tools for Volleyball Content Creators | VOLI';
+const description =
+  "Creators Court, in development, is VOLI's platform for volleyball podcasters, writers and video creators: fantasy leagues, AMAs, polls, analytics and game prep.";
+
+const subnav = {
+  label: 'Creators Court',
+  items: [
+    { href: '#fans', label: 'Fan tools' },
+    { href: '#analytics', label: 'Analytics' },
+    { href: '#prep', label: 'Game prep', short: 'Prep' },
+    { href: '#publish', label: 'Publishing' },
+    { href: '#who', label: "Who it's for", short: 'Who' },
+  ],
+};
+
+const schema = pageSchema({
+  path: '/creatorscourt',
+  name: 'Creators Court: tools for volleyball content creators',
+  description,
+  crumbs: [
+    { name: 'VOLI', path: '/' },
+    { name: 'About VOLI', path: '/about' },
+    { name: 'Creators Court', path: '/creatorscourt' },
+  ],
+});
 ---
 
-<SiteLayout
-  title="Creators Court - VOLI"
-  description="The all-in-one platform for volleyball content creators. Analytics, fan engagement tools, game prep dashboards, article publishing, and live data APIs."
-  ogUrl="https://playvoli.com/creatorscourt"
-  skipSupabase
-  skipNavAuth
->
-    <main class="v-page">
-        <div class="v-wrap v-wrap--read cc-stack">
+<Pearl title={title} description={description} section="about" subnav={subnav} schema={schema}>
+    <link rel="preload" as="image" href={SCREENS.fantasy.src} type="image/webp" fetchpriority="high" slot="head" />
 
-        <!-- Hero -->
-        <section class="cc-hero v-center">
-            <div class="v-tile cc-hero-icon">
-                <img src="/images/icons/creatorscourt.png" alt="" class="cc-hero-img">
-            </div>
-            <h1 class="v-h1 cc-title">Creators Court</h1>
-            <p class="v-lede cc-subtitle">The all-in-one platform for volleyball podcasters, bloggers, and content creators.</p>
-            <div class="v-chip v-chip--verdict is-blue">In Development</div>
-        </section>
-
-        <!-- What is it -->
-        <section class="cc-section v-plate is-labelled">
-            <div class="v-label v-label--sans">What Is It?</div>
-            <p class="v-body cc-section-text">Creators Court is where volleyball content creators get the tools they need to grow their audience and make better content. Whether you're running a podcast, writing a blog, or building a YouTube channel — Creators Court gives you analytics, fan engagement features, game prep tools, and access to the most reliable volleyball data available.</p>
-        </section>
-
-        <!-- Analytics -->
-        <section class="cc-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Creator Analytics</div>
-            <p class="v-body cc-section-text">A media-kit-ready analytics dashboard built for volleyball creators.</p>
-            <div class="cc-features">
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/analytics.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Audience Insights</strong>
-                        <span class="v-meta">Track plays, unique listeners, completions, favorites, loves, and shares across all your content.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/content_opt.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Episode Breakdown</strong>
-                        <span class="v-meta">Per-episode analytics showing exactly what's resonating with your audience and what's not.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/leaderboard.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Data Dashboard</strong>
-                        <span class="v-meta">Scores, standings, schedules, and detailed volleyball data organized and ready for your content.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Engagement Tools -->
-        <section class="cc-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Fan Engagement Tools</div>
-            <p class="v-body cc-section-text">Build a loyal fanbase with interactive features that keep your audience coming back.</p>
-            <div class="cc-features">
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/fantasy_opt.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Official Fantasy Leagues</strong>
-                        <span class="v-meta">Create branded fantasy leagues tied to your show. Give your audience a reason to stay engaged all season.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/chat.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Ask Me Anything</strong>
-                        <span class="v-meta">Host live AMA sessions where fans submit questions for athletes and guests on your show.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/thisorthat.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">This or That</strong>
-                        <span class="v-meta">Run fan polls where your audience picks between players, teams, and scenarios — then discuss the results on air.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Game Prep & Data -->
-        <section class="cc-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Game Prep & Data</div>
-            <p class="v-body cc-section-text">Never scramble for stats again. Everything you need to prepare for game coverage, all in one place.</p>
-            <div class="cc-features">
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/games_opt.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Game Details Dashboard</strong>
-                        <span class="v-meta">Schedules, lineups, head-to-head records, and matchup history — ready before tip-off.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/statistics_opt.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Reliable Statistics</strong>
-                        <span class="v-meta">Access the same detailed stats that power the Voli app — attack efficiency, serve percentages, rotation data, and more.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/profile.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Player & Team Profiles</strong>
-                        <span class="v-meta">Quick-reference profiles with season stats, transaction history, and performance trends.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Publishing & APIs -->
-        <section class="cc-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Publishing & APIs</div>
-            <p class="v-body cc-section-text">Bring Voli's data to your own platform, or publish directly to ours.</p>
-            <div class="cc-features">
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/edit.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Interactive Articles</strong>
-                        <span class="v-meta">Write and publish articles on Voli with embedded live stats, player cards, and interactive elements.</span>
-                    </div>
-                </div>
-                <div class="v-tile cc-feature">
-                    <img src="/images/icons/share.png" alt="" class="cc-feature-icon">
-                    <div>
-                        <strong class="v-h3-plain">Voli Data APIs</strong>
-                        <span class="v-meta">Pull live scores, stats, standings, and player data directly into your own blog or website with our API.</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Who is it for -->
-        <section class="cc-section v-card v-card--plate is-labelled">
-            <div class="v-label v-label--sans">Who Is It For?</div>
-            <div class="v-grid v-grid--2">
-                <div class="v-tile cc-audience-card">
-                    <strong class="v-h3-plain">Podcasters</strong>
-                    <span class="v-meta">Analytics, AMA sessions, fan engagement tools, and game prep data to elevate your show.</span>
-                </div>
-                <div class="v-tile cc-audience-card">
-                    <strong class="v-h3-plain">Bloggers & Writers</strong>
-                    <span class="v-meta">Publish interactive articles on Voli or use our APIs to bring live data to your own site.</span>
-                </div>
-                <div class="v-tile cc-audience-card">
-                    <strong class="v-h3-plain">YouTubers & Streamers</strong>
-                    <span class="v-meta">Reliable stats and game details for pre-show research and on-air reference.</span>
-                </div>
-                <div class="v-tile cc-audience-card">
-                    <strong class="v-h3-plain">Community Builders</strong>
-                    <span class="v-meta">Fantasy leagues, polls, and AMAs to keep your community active and engaged all season.</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA -->
-        <section class="cc-cta v-center">
-            <p class="v-q">Interested in joining Creators Court?</p>
-            <a href="/contact" class="v-pill v-pill--cta v-pill--action">Get in Touch</a>
-        </section>
-
+    <PageHero
+      color="ink"
+      label={['Tools for volleyball', 'content creators']}
+      lines={['Creators', { text: 'Court', hollow: true }]}
+    >
+        <p class="lede">Creators Court is VOLI's platform for volleyball podcasters, bloggers and content creators: fan engagement tools, analytics, game prep and publishing, to grow your audience and make better content.</p>
+        <Note>Creators Court is in development.</Note>
+        <div class="btns">
+            <Btn href="/about#contact" variant="primary">Get in touch</Btn>
         </div>
-    </main>
-</SiteLayout>
+        <p class="small">Partner podcasts already run fantasy leagues and host AMAs in the VOLI app, free on iPhone and Android.</p>
+        <Stores />
+        {/* Two straight phones side by side, the podcast one a step lower; the chip over their feet. */}
+        <Stack slot="art" ratio="100/104">
+            <Phone screen="fantasy" x={4} y={0} w={44} xm={2} wm={46} r={-7.5} z={2} priority />
+            <Phone screen="podcast" x={52} y={10} w={44} xm={52} wm={46} r={7.5} eager />
+            <Badge value="13" label="volleyball podcasts in VOLI" x={30} y={76} xm={22} ym={76} z={3} />
+        </Stack>
+    </PageHero>
 
-<style>
-    /* Hero */
-    .cc-stack > * + * { margin-top: var(--sp-4); }
-    .cc-hero { margin-bottom: var(--sp-6); }
-    .cc-hero-icon {
-        width: 72px;
-        height: 72px;
-        border-radius: 20px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-    }
-    .cc-hero-img { width: 40px; height: 40px; object-fit: contain; }
-    .cc-title { margin: 0 0 12px; }
-    .cc-subtitle { max-width: 520px; margin: 0 auto 16px; }
+    {/* The hero's right phone hangs over the cut: on a phone this band starts a little lower to keep its title clear. */}
+    <Band color="blue" id="fans" pb={4} ptPhone={6} lines={[{ text: 'Fan engagement', size: 'sm' }, { text: 'tools', cap: 9 }]}>
+        <Cols max="36rem">
+            <p class="lede">Build a loyal fanbase with interactive features that keep your audience coming back.</p>
+        </Cols>
+        <Cols ratio="1:1:1" class="cc-cards">
+            <Card name="Official fantasy leagues" kicker="Fantasy">
+                <p>Create a branded fantasy league tied to your show, and give your audience a reason to stay engaged all season. Here is how <a class="link" href="/fantasy">fantasy volleyball on VOLI</a> works.</p>
+            </Card>
+            <Card name="Ask Me Anything" kicker="AMA">
+                <p>Host live AMA sessions where fans send in questions for the athletes and guests on your show.</p>
+            </Card>
+            <Card name="This or That" kicker="Fan polls">
+                <p>Run fan polls where your audience picks between players, teams and scenarios, then talk through the results on air.</p>
+            </Card>
+        </Cols>
+    </Band>
 
-    /* Sections */
-    .cc-section-text { text-align: center; margin: 0 auto 16px; max-width: 60ch; }
-    .cc-section > .cc-section-text:last-child { margin-bottom: 0; }
+    <Band color="lime" id="analytics" pb={4} kicker="Creator" title="analytics">
+        <Cols max="36rem">
+            <p class="lede">An analytics dashboard built for volleyball creators, ready for your media kit.</p>
+        </Cols>
+        <Cols ratio="1:1:1" class="cc-cards">
+            <Card name="Audience insights" kicker="Every show">
+                <p>Plays, unique listeners, completions, favorites, loves and shares across all your content.</p>
+            </Card>
+            <Card name="Episode breakdown" kicker="Every episode">
+                <p>Analytics for each episode, showing what lands with your audience and what does not.</p>
+            </Card>
+            <Card name="Data dashboard" kicker="Volleyball data">
+                <p>Scores, standings, schedules and detailed volleyball data, organized and ready for your content.</p>
+            </Card>
+        </Cols>
+    </Band>
 
-    /* Feature rows */
-    .cc-features { display: flex; flex-direction: column; gap: 8px; }
-    .cc-feature { display: flex; align-items: center; gap: 14px; padding: 12px 14px; }
-    .cc-feature-icon { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
-    .cc-feature strong, .cc-audience-card strong { display: block; margin-bottom: 2px; }
-    .cc-audience-card { padding: 12px 14px; }
-    .cc-audience-card strong { margin-bottom: 4px; }
+    <Band color="rose" id="prep" pb={4} title="Game prep" sub="and data" em="Game prep">
+        <Cols max="36rem">
+            <p class="lede">No more scrambling for stats: everything you need to prepare for game coverage, in one place.</p>
+        </Cols>
+        <Cols ratio="1:1:1" class="cc-cards">
+            <Card name="Game details dashboard" kicker="Before first serve">
+                <p>Schedules, lineups, head-to-head records and matchup history, ready before first serve.</p>
+            </Card>
+            <Card name="Reliable statistics" kicker="The app's own stats">
+                <p>The same detailed stats that power the VOLI app: attack efficiency, serve percentages, rotation data for MLV and LOVB, and more.</p>
+            </Card>
+            <Card name="Player and team profiles" kicker="Quick reference">
+                <p>Profiles with season stats, transaction history and performance trends.</p>
+            </Card>
+        </Cols>
+    </Band>
 
-    /* CTA */
-    .cc-cta { padding-top: var(--sp-6); }
-    .cc-cta .v-q { margin: 0 0 16px; }
-</style>
+    <Band color="ink" id="publish" title="Publishing" sub="and APIs" tone="lime" em="Publishing">
+        <Cols ratio="50:42" drop={[0, 2]}>
+            <Copy>
+                <p class="lede">Publish directly on VOLI, or bring VOLI's data to your own platform.</p>
+                <p class="body">The data is the same that runs the app: <a class="link" href="/">live scores, box scores and stats</a> for NCAA <span class="nb">Division I</span> women's volleyball, MLV and LOVB, and the weekly <a class="link" href="/rankings">VOLI Top 100</a>.</p>
+            </Copy>
+            <div class="cc-stack2">
+                <Card name="Interactive articles" kicker="Publish on VOLI">
+                    <p>Write and publish articles on VOLI with live stats, player cards and interactive elements built in.</p>
+                </Card>
+                <Card name="VOLI data APIs" kicker="On your own site" shadow="blue">
+                    <p>Pull live scores, stats, standings and player data into your own blog or website.</p>
+                </Card>
+            </div>
+        </Cols>
+    </Band>
+
+    <Band color="blue" id="who" title="Who it's for">
+        <Cols ratio="1:1:1:1" class="cc-cards">
+            <Card name="Podcasters">
+                <p>Analytics, AMA sessions, fan engagement tools and game prep data for your show.</p>
+            </Card>
+            <Card name="Bloggers and writers">
+                <p>Publish interactive articles on VOLI, or use the APIs to bring live data to your own site.</p>
+            </Card>
+            <Card name="YouTubers and streamers">
+                <p>Reliable stats and game details for research before the show and reference on air.</p>
+            </Card>
+            <Card name="Community builders">
+                <p>Fantasy leagues, polls and AMAs to keep your community active and engaged all season.</p>
+            </Card>
+        </Cols>
+        <Cols max="36rem">
+            <Copy>
+                <p class="lede">Interested in joining Creators Court? Tell us about your show, blog or channel.</p>
+                <div class="btns">
+                    <Btn href="/about#contact" variant="primary">Get in touch</Btn>
+                </div>
+            </Copy>
+        </Cols>
+    </Band>
+
+    <GetApp links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/about', label: 'About VOLI' },
+      { href: '/about#contact', label: 'Contact VOLI' },
+    ]} />
+</Pearl>

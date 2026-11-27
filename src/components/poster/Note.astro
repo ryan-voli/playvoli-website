@@ -1,0 +1,17 @@
+---
+// A notice: an ink slab with the mark's tick. A status line, a form's
+// "sent" message, or (bad) what went wrong.
+//
+//   <Note>Brackets open Sunday, November 29.</Note>
+//   <Note bad id="form-error" hidden>That did not send. Try again in a moment.</Note>
+interface Props {
+  /** Something went wrong: the tick turns rose. Say what in words. */
+  bad?: boolean;
+  /** Announce it to screen readers when it appears or changes. */
+  live?: boolean;
+  class?: string;
+  [attr: string]: any;
+}
+const { bad, live, class: cls, ...rest } = Astro.props;
+---
+<p class:list={['note', { 'note--bad': bad }, cls]} role={live ? 'status' : undefined} {...rest}><span><slot /></span></p>

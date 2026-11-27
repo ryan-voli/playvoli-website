@@ -1,0 +1,14 @@
+---
+// Outlined chips: a wrapping list of short names. An item with an href is a link.
+//
+//   <Chips items={NEWS_OUTLETS} />
+interface Props {
+  items: (string | { label: string; href?: string })[];
+  class?: string;
+}
+const { items, class: cls } = Astro.props;
+const list = items.map((i) => (typeof i === 'string' ? { label: i } : i));
+---
+<ul class:list={['chips', cls]}>
+    {list.map((i) => <li>{i.href ? <a href={i.href}>{i.label}</a> : i.label}</li>)}
+</ul>

@@ -1,0 +1,211 @@
+---
+// DESIGN OPTION B, "DAYLIGHT". A complete document of its own: it shares
+// nothing with Layout / SiteLayout, the site nav or footer, or site.css.
+// A pale ground, a light aurora of blue, pink and purple ribbons, white glass
+// cards and near-black ink. All of its CSS is styles/design/option-b.css.
+//
+// PREVIEW ONLY. Every page carries noindex, and the canonical points at the
+// real address the page would take over (https://playvoli.com/ and /bracket).
+// Analytics are left out of the preview on purpose; they go back in at launch.
+import '../../styles/design/option-b.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** The real address this page would live at. */
+  canonical: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** Page-specific JSON-LD nodes, added after the sitewide Organization + WebSite. */
+  schema?: Record<string, any>[];
+  page: 'home' | 'bracket';
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = 'https://playvoli.com/images/og/voli-share.jpg',
+  ogImageAlt = 'VOLI, the volleyball hub',
+  schema = [],
+  page,
+} = Astro.props;
+
+// Inside the preview, "home" and the Bracket Challenge are this direction's
+// own two pages. At launch these become '/' and '/bracket'.
+const HOME = '/design/b/';
+
+// The same sitewide nodes the live layout sends, so every @id the page
+// schema points at (#organization, #website) still resolves.
+const siteSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://playvoli.com/#organization',
+    name: 'VOLI LLC',
+    alternateName: 'VOLI',
+    url: 'https://playvoli.com',
+    logo: 'https://playvoli.com/images/official_logo_dark_bg.webp',
+    description:
+      "VOLI is the comprehensive volleyball hub for professional and college volleyball fans in the United States — fantasy leagues, real-time stats, live game tracking, player profiles, podcasts, and community features for MLV, LOVB, and NCAA women's volleyball. Independent, built by volleyball fans for volleyball fans.",
+    founder: [
+      { '@type': 'Person', name: 'Ryan', jobTitle: 'Founder' },
+      { '@type': 'Person', name: 'Max', jobTitle: 'Co-Founder' },
+    ],
+    knowsAbout: ['Volleyball', 'Professional Volleyball', "NCAA Women's Volleyball", 'Fantasy Sports', 'Sports Analytics', 'Live Sports Statistics', 'MLV', 'LOVB', 'Major League Volleyball', 'League One Volleyball'],
+    areaServed: 'US',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://playvoli.com/#website',
+    url: 'https://playvoli.com',
+    name: 'VOLI - The Volleyball Hub',
+    description: 'The comprehensive volleyball hub: fantasy leagues, live stats, player profiles, and community for MLV, LOVB, and NCAA volleyball.',
+    publisher: { '@id': 'https://playvoli.com/#organization' },
+    inLanguage: 'en-US',
+  },
+];
+const allSchema = [...siteSchema, ...schema];
+
+// Every link in components/SiteFooter.astro, at its real address, with one
+// change: "App" was /app, the overview this home page replaces, so it points
+// home (HOME here, '/' at launch) instead of at an address due to redirect.
+const footer = [
+  {
+    title: 'VOLI',
+    links: [
+      ['/about', 'About'], [HOME, 'App'], ['/bracket', 'Bracket Challenge'], ['/rankings', 'VOLI Top 100'],
+      ['/faq', 'FAQ'], ['/methods', 'How It Works'], ['/contact', 'Contact'], ['/whats-next', "What's Next"],
+    ],
+  },
+  {
+    title: 'Products',
+    links: [['/discordbot', 'Discord Bot'], ['/creatorscourt', 'Creators Court'], ['/dailygrid', 'Daily Grid'], ['/redditdailygrid', 'Reddit Daily Grid']],
+  },
+  {
+    title: 'Partners',
+    href: '/partners',
+    links: [['/volleytalk', 'Volley Talk'], ['/mlm', 'Major League Minute'], ['/evollve', 'EVOLLVE'], ['/cvt', 'College Volleyball Transfers']],
+  },
+  { title: 'Legal', links: [['/privacy', 'Privacy'], ['/terms', 'Terms']] },
+];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    {/* A design preview: keep it out of search. The canonical is the real page. */}
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href={canonical}>
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="VOLI">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:url" content={canonical}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={ogImage}>
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content={ogImageAlt}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+    <meta name="twitter:image:alt" content={ogImageAlt}>
+
+    <meta name="theme-color" content="#F1F2F6">
+    <meta name="color-scheme" content="light">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Designer.otf" as="font" type="font/otf" crossorigin>
+
+    <script type="application/ld+json" set:html={JSON.stringify(allSchema)} />
+    <slot name="head" />
+</head>
+<body class={`b-page b-page--${page}`}>
+    <a class="b-skip" href="#main">Skip to content</a>
+
+    {/* The aurora: ribbons painted with CSS gradients, one scene per block,
+        scrolling with the page. No filters, no images but a 96px grain tile.
+        Twenty scenes reach the foot of the longest page on the narrowest
+        phone (a scene is 930px tall there); the page clips any it has no use for. */}
+    <div class="b-aurora" aria-hidden="true">{Array.from({ length: 20 }, () => <i></i>)}</div>
+
+    <header class="b-header">
+        <div class="b-nav b-glass">
+            <a class="b-nav__logo" href={HOME} aria-label="VOLI home">
+                <img src="/images/official_logo_light_text.webp" alt="" width="88" height="44" decoding="async">
+            </a>
+            <nav class="b-nav__links" aria-label="Main">
+                <a href="/about">About</a>
+                <a href="/rankings">Top 100</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <a class="b-btn b-btn--lime b-nav__dl" href="/download" aria-label="Download the VOLI app">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>
+                <span>Download</span>
+            </a>
+        </div>
+    </header>
+
+    <main id="main">
+        <slot />
+    </main>
+
+    <footer class="b-footer">
+        <div class="b-wrap">
+            <div class="b-footer__top">
+                <div class="b-footer__brand">
+                    <a href={HOME} aria-label="VOLI home"><img src="/images/official_logo_light_text.webp" alt="" width="120" height="60" loading="lazy" decoding="async"></a>
+                    <p>The volleyball app. Fantasy, live games, stats, rankings, history, news and podcasts. Free on iPhone and Android.</p>
+                </div>
+                <nav class="b-footer__cols" aria-label="Site">
+                    {footer.map((col) => (
+                        <div class="b-footer__col">
+                            {col.href
+                                ? <p class="b-footer__title"><a href={col.href}>{col.title}</a></p>
+                                : <p class="b-footer__title">{col.title}</p>}
+                            <ul role="list">
+                                {col.links.map(([href, label]) => <li><a href={href}>{label}</a></li>)}
+                            </ul>
+                        </div>
+                    ))}
+                </nav>
+            </div>
+            <div class="b-footer__base">
+                <p>&copy; 2026 VOLI LLC. All rights reserved.</p>
+                <ul class="b-social" role="list">
+                    <li><a href="https://instagram.com/playvoli" target="_blank" rel="noopener" aria-label="VOLI on Instagram">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.218.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                    </a></li>
+                    <li><a href="https://tiktok.com/@playvoli" target="_blank" rel="noopener" aria-label="VOLI on TikTok">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                    </a></li>
+                    <li><a href="https://youtube.com/@watchvoli" target="_blank" rel="noopener" aria-label="VOLI on YouTube">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a></li>
+                    <li><a href="https://www.facebook.com/thevolleyballhub" target="_blank" rel="noopener" aria-label="VOLI on Facebook">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
+                    </a></li>
+                    <li><a href="https://reddit.com/r/playvoli" target="_blank" rel="noopener" aria-label="VOLI on Reddit">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.249 0 .688.561 1.249 1.249 1.249.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <slot name="scripts" />
+</body>
+</html>

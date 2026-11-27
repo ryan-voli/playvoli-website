@@ -1,0 +1,29 @@
+---
+// Tickets: tilted ink fact cards, two by two, each a figure in the display
+// face and a line under it. Made for a hero's art slot or a wide column; on a
+// phone they stack and lean left and right in turn, the figure beside its
+// line. A set with a long figure (a word, a command) keeps the figure over
+// its line there, so the line always has room.
+//
+//   <Tickets label="The Bracket Challenge at a glance" items={[{ value: '$500', label: 'cash to the top eligible bracket' }, ...]} />
+import Nb from './Nb.astro';
+import { emWidth } from '../../lib/designer-metrics';
+import { vars } from './util';
+
+interface Props {
+  /** Up to four read best. Keep each figure short (six characters or so). */
+  items: { value: string; label: string }[];
+  /** What the list is, for screen readers. */
+  label?: string;
+  /** The figure's size in --u (1% of the page width). Default 4.6; make it smaller in a narrow column. */
+  size?: number;
+  class?: string;
+}
+const { items, label, size, class: cls } = Astro.props;
+// Past this width (in ems) a figure leaves its line too little room beside it on a phone.
+const LONG = 4.9;
+const long = Math.max(...items.map((i) => emWidth(i.value))) > LONG;
+---
+<ul class:list={['tickets', { 'tickets--over': long }, cls]} aria-label={label} style={vars({ '--tk': size })}>
+    {items.map((i) => <li class="ticket"><strong>{i.value}</strong>{' '}<span><Nb text={i.label} /></span></li>)}
+</ul>

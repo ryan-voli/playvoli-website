@@ -1,0 +1,19 @@
+---
+// Small figures set big: a ruled list of a number and what it counts. For a
+// level block (a column, a cell, a sheet).
+//
+//   <Minis items={[{ value: '18,000+', label: 'honors, back to 1979' }, ...]} />
+import Nb from './Nb.astro';
+import { emWidth } from '../../lib/designer-metrics';
+import { vars } from './util';
+
+interface Props {
+  items: { value: string; label: string }[];
+  class?: string;
+}
+const { items, class: cls } = Astro.props;
+const em = Math.max(...items.map((i) => emWidth(i.value)));
+---
+<ul class:list={['minis', cls]} style={vars({ '--em': em })}>
+    {items.map((i) => <li><strong>{i.value}</strong>{' '}<span><Nb text={i.label} /></span></li>)}
+</ul>

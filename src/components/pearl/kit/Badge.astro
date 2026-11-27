@@ -1,0 +1,19 @@
+---
+// A fact chip: a figure in the display face over what it counts, on glass.
+// In a <Stack> it is placed with x and y (xm / ym on a phone); on its own it
+// sits in the text flow. `shadow` and `r` are the Poster's and are ignored.
+//
+//   <Badge value="$100K" label="salary cap to build your team" x={60} y={70} />
+import Nb from './Nb.astro';
+import { fig, placeStyle, type Place, type Tint } from './util';
+
+interface Props extends Omit<Place, 'w' | 'wm'> {
+  value: string;
+  label: string;
+  shadow?: Tint;
+  class?: string;
+}
+const { value, label, shadow: _s, class: cls, ...place } = Astro.props;
+const style = [placeStyle(place), '--w:auto;--wm:auto'].filter(Boolean).join(';');
+---
+<p class:list={['kbadge', cls]} style={style}><strong set:html={fig(value)} /> <span><Nb text={label} /></span></p>

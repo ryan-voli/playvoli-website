@@ -1,129 +1,142 @@
 ---
-// EVOLLVE partner page (owner, 15 Oct 2026). EVOLLVE (evollve.net) is a data
-// partner, not a podcast, so the lander's one action is their site; the list
-// is what VOLI shows from their data. Same v-stub card as the podcast landers.
-import SiteLayout from '../layouts/SiteLayout.astro';
+// Analytics by EVOLLVE: what EVOLLVE's college volleyball numbers are, where
+// they show up in VOLI, and who EVOLLVE is. EVOLLVE (evollve.net) is a data
+// partner; its numbers are computed by EVOLLVE and labeled as theirs in the
+// app, next to VOLI's own ratings and the AVCA Coaches Poll.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/evollve.css';
+import Band from '../components/pearl/kit/Band.astro';
+import Btn from '../components/pearl/kit/Btn.astro';
+import Card from '../components/pearl/kit/Card.astro';
+import Cols from '../components/pearl/kit/Cols.astro';
+import Copy from '../components/pearl/kit/Copy.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Phone from '../components/pearl/kit/Phone.astro';
+import Phones from '../components/pearl/kit/Phones.astro';
+import Stack from '../components/pearl/kit/Stack.astro';
+import Sticker from '../components/pearl/kit/Sticker.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import { pageSchema } from '../components/products/schema';
+import { SCREENS } from '../lib/screens';
+
+const title = 'EVOLLVE Analytics: College Volleyball Ratings and RAPM | VOLI';
+const description =
+  "EVOLLVE's college volleyball analytics in the free VOLI app for iPhone and Android: nightly ratings for all Division I teams, player RAPM and match predictions.";
+
+const subnav = {
+  label: 'Analytics by EVOLLVE',
+  items: [
+    { href: '#what', label: 'What you get', short: 'You get' },
+    { href: '#where', label: 'Where it shows up', short: 'Where' },
+    { href: '#about', label: 'About EVOLLVE', short: 'About' },
+  ],
+};
+
+const schema = pageSchema({
+  path: '/evollve',
+  name: 'Analytics by EVOLLVE in VOLI',
+  description,
+  crumbs: [
+    { name: 'VOLI', path: '/' },
+    { name: 'VOLI Top 100', path: '/rankings' },
+    { name: 'Analytics by EVOLLVE', path: '/evollve' },
+  ],
+});
 ---
 
-<SiteLayout
-  title="Analytics by EVOLLVE - VOLI"
-  description="EVOLLVE's college volleyball analytics are built into VOLI: nightly team ratings for every Division I team, player impact numbers like RAPM, and match predictions."
-  ogUrl="https://playvoli.com/evollve"
-  skipSupabase
-  skipNavAuth
->
-    <main class="v-page v-page--center">
-        <div class="v-stub">
-            <h1 class="evollve-lockup">
-                <span class="evollve-lockup__by">Analytics by</span>
-                <img src="/images/partners/evollve-wordmark.webp" alt="EVOLLVE" class="evollve-wordmark" width="600" height="109">
-            </h1>
-            <p class="v-body v-stub__sub">EVOLLVE's advanced college volleyball analytics, built right into VOLI.</p>
+<Pearl title={title} description={description} section="rankings" subnav={subnav} schema={schema}>
+    <link rel="preload" as="image" href={SCREENS.playerAnalytics.src} type="image/webp" fetchpriority="high" slot="head" />
 
-            <ul class="evollve-list">
-                <li><strong>Team ratings</strong> for every Division I team, updated nightly, alongside the AVCA poll and VOLI's own rankings</li>
-                <li><strong>Player impact</strong> with RAPM and per-game Impact, Attack, Serve and Defense numbers</li>
-                <li><strong>Match predictions</strong> with win chances in game previews</li>
-                <li><strong>EVOLLVE sorts</strong> for players and teams on the Stats page</li>
-            </ul>
+    <PageHero
+      color="blue"
+      label={['College volleyball analytics', 'in the VOLI app']}
+      lines={[{ text: 'Analytics by', hollow: true }, 'EVOLLVE']}
+    >
+        <p class="lede">EVOLLVE's college volleyball analytics are built into VOLI: nightly ratings for every <span class="nb">Division I</span> team, player impact numbers such as RAPM, and match predictions. Free on iPhone and Android.</p>
+        <Stores />
+        <p class="small">EVOLLVE makes the numbers. See more of their work at <a class="link" href="https://evollve.net" target="_blank" rel="noopener" data-track="partner:evollve_site">evollve.net</a>.</p>
+        <Phones slot="art" screens={['playerAnalytics', 'teamAnalytics']} step eager />
+    </PageHero>
 
-            <div class="v-actions">
-                <a href="https://evollve.net" target="_blank" rel="noopener"
-                   onclick="plausible('EVOLLVE Visit'); gtag('event', 'click', {'event_category': 'partner', 'event_label': 'evollve_site', 'source': 'evollve'});"
-                   class="v-pill v-pill--cta v-pill--action v-pill--block">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="2" y1="12" x2="22" y2="12"/>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                    </svg>
-                    Visit evollve.net
-                </a>
+    <Band color="lime" id="what" pb={4} lines={[{ text: 'What you get', size: 'sm' }]}>
+        <Cols max="38rem">
+            <p class="lede">Four kinds of EVOLLVE numbers sit inside VOLI, each labeled as EVOLLVE's, next to VOLI's own ratings and the AVCA Coaches Poll.</p>
+        </Cols>
+        <Cols ratio="1:1:1:1">
+            <Card name="Team ratings" kicker="Updated nightly">
+                <p>Ratings for every <span class="nb">Division I</span> team, updated each night, alongside the AVCA Coaches Poll and the VOLI Top 100.</p>
+            </Card>
+            <Card name="Player impact" kicker="RAPM">
+                <p>RAPM for each player, with per-game Impact, Attack, Serve and Defense numbers.</p>
+            </Card>
+            <Card name="Match predictions" kicker="Game previews">
+                <p>EVOLLVE's chance to win for each team, in college match previews.</p>
+            </Card>
+            <Card name="EVOLLVE sorts" kicker="Stats page">
+                <p>Sort players and teams by EVOLLVE's numbers on the Stats page.</p>
+            </Card>
+        </Cols>
+    </Band>
+
+    <Band color="ink" id="where" title={['Where it', 'shows up']} tone="blue" em="shows up">
+        <Cols ratio="46:46" drop={[0, 2]}>
+            <div class="pr-places">
+                <p class="lede">EVOLLVE's numbers show up from the Stats page to every team, player and game in VOLI.</p>
+                <ul>
+                    <li>
+                        <h3 class="h3">The Stats page</h3>
+                        <p class="body">EVOLLVE sorts for players and teams, and a switch in the Teams view between the AVCA Coaches Poll, the VOLI Top 100 and EVOLLVE's ratings.</p>
+                    </li>
+                    <li>
+                        <h3 class="h3">Team pages</h3>
+                        <p class="body">An Analytics tab with the team's AVCA, VOLI and EVOLLVE ranks side by side, its strongest and weakest areas, and where it ranks in attack, serve and block.</p>
+                    </li>
+                    <li>
+                        <h3 class="h3">Player pages</h3>
+                        <p class="body">An Analytics tab, analytics by EVOLLVE: the player's RAPM with their rank and percentile at their position, strongest and weakest skills, and attack percentiles.</p>
+                    </li>
+                    <li>
+                        <h3 class="h3">Game previews</h3>
+                        <p class="body">EVOLLVE's match prediction, with each team's chance to win, next to VOLI's own.</p>
+                    </li>
+                </ul>
+                <div class="btns">
+                    <Btn href="/rankings" tone="blue" shadow="white">The VOLI Top 100</Btn>
+                </div>
             </div>
+            <Stack ratio="100/104" shadow="blue">
+                <Phone screen="rankings" x={2} y={0} w={44} wm={46} r={-7.5} />
+                <Phone screen="playerTrends" x={54} xm={52} y={9} w={44} wm={46} r={7.5} />
+            </Stack>
+        </Cols>
+    </Band>
 
-            <div class="v-rule-label v-stub__divider">
-                <span>See it in VOLI</span>
+    <Band color="rose" id="about" kicker="About" title="EVOLLVE">
+        <Cols ratio="50:42" drop={[0, 2]}>
+            <Copy>
+                <p class="lede">EVOLLVE builds advanced analytics for college volleyball: ratings for every <span class="nb">Division I</span> team, player impact numbers like RAPM, and match predictions.</p>
+                <p class="body">EVOLLVE computes these numbers, and VOLI labels them as EVOLLVE's wherever they appear. VOLI rates teams with a method of its own, published each Monday as the <a class="link" href="/rankings">VOLI Top 100</a>, and makes no player ratings of its own: player impact numbers in VOLI come from EVOLLVE.</p>
+                <p class="body">How VOLI's own ratings and predictions work, and where EVOLLVE's fit beside them, is set out in <a class="link" href="/methods">How VOLI's numbers work</a>.</p>
+                <div class="btns">
+                    <Btn href="https://evollve.net" target="_blank" rel="noopener" track="partner:evollve_site">Visit evollve.net</Btn>
+                </div>
+            </Copy>
+            <div class="pr-evollve-art">
+                <div class="pr-logo">
+                    <img src="/images/partners/evollve-wordmark.webp" width="600" height="109" alt="EVOLLVE" loading="lazy" decoding="async">
+                </div>
+                <Stack ratio="100/56">
+                    <Sticker cut="float-pct" x={4} y={6} w={90} r={3.75} shadow="white" />
+                </Stack>
             </div>
+        </Cols>
+    </Band>
 
-            <div class="store-buttons v-stores v-stores--stack">
-                <a href="https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982"
-                   onclick="plausible('EVOLLVE App Store'); gtag('event', 'click', {'event_category': 'download', 'event_label': 'app_store', 'source': 'evollve'});"
-                   class="v-store">
-                    <svg viewBox="0 0 24 24" fill="white">
-                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                    </svg>
-                    <div>
-                        <span class="v-store__small">Download on the</span>
-                        <span class="v-store__big">App Store</span>
-                    </div>
-                </a>
-
-                <a href="https://play.google.com/store/apps/details?id=com.playvoli.app"
-                   onclick="plausible('EVOLLVE Google Play'); gtag('event', 'click', {'event_category': 'download', 'event_label': 'play_store', 'source': 'evollve'});"
-                   class="v-store">
-                    <svg viewBox="0 0 24 24" fill="white">
-                        <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 010 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/>
-                    </svg>
-                    <div>
-                        <span class="v-store__small">Get it on</span>
-                        <span class="v-store__big">Google Play</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </main>
-</SiteLayout>
-
-<style>
-    /* "Analytics by" over the wordmark is the heading (owner, 15 Oct 2026):
-       no display-face headline on this page. */
-    .evollve-lockup {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 12px;
-        margin: 4px 0 20px;
-    }
-
-    .evollve-lockup__by {
-        font: 600 12px/1 var(--font-body);
-        letter-spacing: 0.2em;
-        margin-right: -0.2em;
-        text-transform: uppercase;
-        color: var(--ink-2);
-    }
-
-    .evollve-wordmark {
-        display: block;
-        width: min(220px, 70%);
-        height: auto;
-    }
-
-    .evollve-list {
-        list-style: none;
-        margin: 0 0 24px;
-        padding: 0;
-        display: grid;
-        gap: 12px;
-        text-align: left;
-    }
-
-    .evollve-list li {
-        position: relative;
-        padding-left: 20px;
-        font: 400 var(--fs-body)/1.45 var(--font-body);
-        color: var(--ink-body);
-    }
-
-    .evollve-list li::before {
-        content: '';
-        position: absolute;
-        left: 2px;
-        top: 0.55em;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--lemon-lime);
-    }
-
-    .evollve-list strong { color: #fff; font-weight: 600; }
-</style>
+    <GetApp links={[
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/methods', label: "How VOLI's numbers work" },
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/', label: 'Everything in VOLI' },
+    ]} />
+</Pearl>

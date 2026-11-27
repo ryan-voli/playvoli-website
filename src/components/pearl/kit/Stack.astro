@@ -1,0 +1,32 @@
+---
+// A stage: a box of fixed shape that phones, cut-outs and fact chips are
+// placed on, in percent of the box (x, w of its width; y of its height).
+// Pearl's .stage: the phones drift a little as the page scrolls and the
+// cut-out drifts more, for depth. `shadow` is the Poster's and is ignored.
+//
+//   <Stack ratio="100/104">
+//     <Phone screen="gameLive" x={2} y={0} w={44} />
+//     <Phone screen="gameBox" x={54} y={9} w={44} />
+//     <Sticker cut="card-game" x={10} y={70} w={76} z={3} />
+//   </Stack>
+//
+// A phone is about 2.14 times as tall as it is wide: choose a ratio tall
+// enough for what is in it (a 44%-wide phone needs 94% of the width).
+import type { Tint } from './util';
+
+interface Props {
+  ratio?: string;
+  ratioPhone?: string;
+  shadow?: Tint;
+  class?: string;
+}
+const { ratio, ratioPhone, shadow: _s, class: cls } = Astro.props;
+const shape = /^\s*\d+(\.\d+)?\s*\/\s*\d+(\.\d+)?\s*$/;
+for (const r of [ratio, ratioPhone]) {
+  if (r !== undefined && !shape.test(r)) throw new Error(`Stack: ratio "${r}" must be width/height, like "100/96"`);
+}
+const style = [ratio && `--ratio:${ratio}`, ratioPhone && `--ratio-m:${ratioPhone}`].filter(Boolean).join(';') || undefined;
+---
+<div class:list={['stage', cls]} style={style}>
+    <slot />
+</div>

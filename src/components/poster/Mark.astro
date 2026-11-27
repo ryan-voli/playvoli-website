@@ -1,0 +1,20 @@
+---
+// The mark's three stripes, drawn large: decoration for a column that has no
+// picture. The stripe that would vanish into the field is drawn white.
+import { tint, vars, type Field, type Tint } from './util';
+
+interface Props {
+  /** The field the mark sits on. */
+  on: Field;
+  /** The colour of the hard offset. Default ink (white on ink). */
+  shadow?: Tint;
+  class?: string;
+}
+const { on, shadow, class: cls } = Astro.props;
+const stripe = (c: Field, hex: string) => (c === on ? '#fff' : hex);
+---
+<svg class:list={['mark', cls]} style={vars({ '--mark-sh': tint(shadow ?? (on === 'ink' ? 'white' : 'ink')) })} viewBox="60 110 1470 1390" role="presentation" focusable="false" aria-hidden="true">
+    <g transform="translate(450 153) rotate(15)"><path fill={stripe('lime', '#F0FF1E')} d="M0 0h832a320 320 0 0 1 320 320H320A320 320 0 0 1 0 0z"/></g>
+    <g transform="translate(138 465) rotate(15)"><path fill={stripe('blue', '#17E9FC')} d="M0 0h1121a320 320 0 0 1 320 320H320A320 320 0 0 1 0 0z"/></g>
+    <g transform="translate(107 850) rotate(15)"><path fill={stripe('rose', '#FF1F6D')} d="M0 0h831a320 320 0 0 1 320 320H320A320 320 0 0 1 0 0z"/></g>
+</svg>

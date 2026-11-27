@@ -1,0 +1,37 @@
+---
+// A button in the display face with the hard offset. It takes its colours
+// from the field it is on (lime on ink, ink on a colour); `tone` and `shadow`
+// override them. A link by default; give `type` to make it a <button>.
+//
+//   <Btn href="/rankings">The VOLI Top 100</Btn>
+//   <Btn href="/evollve" tone="blue" shadow="white">EVOLLVE on VOLI</Btn>
+//   <Btn type="submit" arrow={false}>Send message</Btn>
+import Arrow from './Arrow.astro';
+import { tint, vars, type Tint } from './util';
+
+interface Props {
+  href?: string;
+  /** Makes it a <button> of this type instead of a link. */
+  type?: 'button' | 'submit';
+  /** The button's own colour. */
+  tone?: Tint;
+  /** The colour of its hard offset. */
+  shadow?: Tint;
+  /** The arrow after the label. Default on. */
+  arrow?: boolean;
+  /** "category:label" for the click tracker. */
+  track?: string;
+  class?: string;
+  [attr: string]: any;
+}
+
+const { href, type, tone, shadow, arrow = true, track, class: cls, ...rest } = Astro.props;
+if (!href && !type) throw new Error('Btn: give it an href (a link) or a type (a button)');
+const style = vars({
+  '--btn-bg': tint(tone),
+  '--btn-fg': tone ? (tone === 'ink' ? '#fff' : 'var(--ink)') : undefined,
+  '--btn-sh': tint(shadow),
+});
+const Tag = href ? 'a' : 'button';
+---
+<Tag class:list={['btn', cls]} href={href} type={href ? undefined : type} style={style} data-track={track} {...rest}><slot />{arrow && <Arrow />}</Tag>

@@ -1,0 +1,246 @@
+---
+// DESIGN OPTION A, "BROADCAST". A complete document of its own: it loads
+// nothing from Layout / SiteLayout, the site nav and footer, or site.css.
+// Everything is flat near-black, hard-edged and set on one strict grid.
+//
+// These are previews, so every page is noindex and its canonical points at
+// the REAL address the design would live at.
+import '../../styles/design/option-a.css';
+import Arrow from '../../components/design/a/Arrow.astro';
+import Stores from '../../components/design/a/Stores.astro';
+// The site's own clock for the Bracket Challenge (a few lines of inline
+// script, no styles): it keeps the status lines, the bracket headline and the
+// promos right between deploys. Shared with the live pages, read-only.
+import BracketClock from '../../components/BracketClock.astro';
+import { BRACKET, BRACKET_STATUS, bracketPhase, promoIsLive } from '../../lib/bracket-facts';
+
+interface Props {
+  title: string;
+  description: string;
+  /** The real address this page would be published at. */
+  canonical: string;
+  ogImage?: string;
+  /** Page-specific JSON-LD nodes; the sitewide Organization and WebSite ride along. */
+  schema?: Record<string, any>[];
+  page: 'home' | 'bracket';
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = 'https://playvoli.com/images/og/voli-share.jpg',
+  schema = [],
+  page,
+} = Astro.props;
+
+// Inside the preview the two pages link to each other; every other link is
+// the site's real address.
+const HOME = '/design/a/';
+const BRACKET_PREVIEW = '/design/a/bracket';
+
+const phase = bracketPhase();
+// The Bracket Challenge line across the top of the home page. Like the
+// site's promos, it comes down once picks lock.
+const ticker = page === 'home' && promoIsLive(phase);
+
+// Sitewide nodes, as on every page of the site: the app and the bracket page
+// point at these by @id.
+const siteSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': 'https://playvoli.com/#organization',
+    name: 'VOLI LLC',
+    alternateName: 'VOLI',
+    url: 'https://playvoli.com',
+    logo: 'https://playvoli.com/images/official_logo_dark_bg.webp',
+    description:
+      "VOLI is the comprehensive volleyball hub for professional and college volleyball fans in the United States — fantasy leagues, real-time stats, live game tracking, player profiles, podcasts, and community features for MLV, LOVB, and NCAA women's volleyball. Independent, built by volleyball fans for volleyball fans.",
+    founder: [
+      { '@type': 'Person', name: 'Ryan', jobTitle: 'Founder' },
+      { '@type': 'Person', name: 'Max', jobTitle: 'Co-Founder' },
+    ],
+    knowsAbout: ['Volleyball', 'Professional Volleyball', "NCAA Women's Volleyball", 'Fantasy Sports', 'Sports Analytics', 'Live Sports Statistics', 'MLV', 'LOVB', 'Major League Volleyball', 'League One Volleyball'],
+    areaServed: 'US',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': 'https://playvoli.com/#website',
+    url: 'https://playvoli.com',
+    name: 'VOLI - The Volleyball Hub',
+    description: 'The comprehensive volleyball hub: fantasy leagues, live stats, player profiles, and community for MLV, LOVB, and NCAA volleyball.',
+    publisher: { '@id': 'https://playvoli.com/#organization' },
+    inLanguage: 'en-US',
+  },
+];
+
+// Every link in the site footer (SiteFooter.astro), in its order. Daily Grid
+// and Reddit Daily Grid are in the markup but not shown, exactly as on the
+// live site (owner, 4 Oct 2026: "built but unlinked").
+const FOOT = [
+  {
+    title: 'VOLI',
+    links: [
+      { href: '/about', label: 'About' },
+      { href: '/app', label: 'App' },
+      { href: '/bracket', label: 'Bracket Challenge' },
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/faq', label: 'FAQ' },
+      { href: '/methods', label: 'How It Works' },
+      { href: '/contact', label: 'Contact' },
+      { href: '/whats-next', label: "What's Next" },
+    ],
+  },
+  {
+    title: 'Products',
+    links: [
+      { href: '/discordbot', label: 'Discord Bot' },
+      { href: '/creatorscourt', label: 'Creators Court' },
+      { href: '/dailygrid', label: 'Daily Grid', hidden: true },
+      { href: '/redditdailygrid', label: 'Reddit Daily Grid', hidden: true },
+    ],
+  },
+  {
+    title: 'Partners',
+    href: '/partners',
+    links: [
+      { href: '/volleytalk', label: 'Volley Talk' },
+      { href: '/mlm', label: 'Major League Minute' },
+      { href: '/evollve', label: 'EVOLLVE' },
+      { href: '/cvt', label: 'College Volleyball Transfers' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { href: '/privacy', label: 'Privacy' },
+      { href: '/terms', label: 'Terms' },
+    ],
+  },
+];
+
+const SOCIAL = [
+  { href: 'https://instagram.com/playvoli', label: 'Instagram' },
+  { href: 'https://tiktok.com/@playvoli', label: 'TikTok' },
+  { href: 'https://youtube.com/@watchvoli', label: 'YouTube' },
+  { href: 'https://www.facebook.com/thevolleyballhub', label: 'Facebook' },
+  { href: 'https://reddit.com/r/playvoli', label: 'Reddit' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{title}</title>
+    <meta name="description" content={description}>
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href={canonical}>
+    <meta name="theme-color" content="#0B0D0E">
+    <meta name="color-scheme" content="dark">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="VOLI">
+    <meta property="og:url" content={canonical}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:image" content={ogImage}>
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content={canonical}>
+    <meta name="twitter:title" content={title}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={ogImage}>
+
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <link rel="preload" href="/fonts/Designer.otf" as="font" type="font/otf" crossorigin>
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+    <script type="application/ld+json" set:html={JSON.stringify([...siteSchema, ...schema])} />
+
+    <slot name="head" />
+</head>
+<body class={`a a--${page}`}>
+    <a class="a-skip" href="#main">Skip to content</a>
+
+    {ticker && (
+        <aside class="a-ticker" aria-label={BRACKET.name} data-bracket-promo>
+            <a class="a-ticker__in" href={BRACKET_PREVIEW}>
+                <span class="a-ticker__tag">Bracket Challenge</span>
+                <span class="a-ticker__status"><i class={`a-dot a-dot--phase a-dot--${phase}`} aria-hidden="true"></i><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></span>
+                <span class="a-ticker__text">{BRACKET.name} {BRACKET.season}: pick all {BRACKET.matches} matches.</span>
+                <span class="a-ticker__go"><span>Play free</span> <Arrow /></span>
+            </a>
+        </aside>
+    )}
+
+    <header class="a-hdr">
+        <div class="a-hdr__in">
+            <a class="a-logo" href={HOME} aria-label="VOLI home">
+                <img src="/images/logo_dark_opt.webp" alt="" width="98" height="98">
+                <span class="a-logo__word">VOLI</span>
+            </a>
+            <nav class="a-menu" aria-label="Main">
+                <a href="/about">About</a>
+                <a href="/rankings">Top 100</a>
+                <a href="/contact">Contact</a>
+            </nav>
+            <a class="a-btn a-btn--lime a-hdr__dl" href="/download">Download <Arrow dir="down" /></a>
+        </div>
+    </header>
+
+    <main id="main">
+        <slot />
+    </main>
+
+    <footer class="a-foot">
+        <div class="a-frame">
+            <div class="a-foot__top">
+                <div class="a-foot__brand">
+                    <a class="a-logo a-logo--lg" href={HOME} aria-label="VOLI home">
+                        <img src="/images/logo_dark_opt.webp" alt="" width="98" height="98" loading="lazy">
+                        <span class="a-logo__word">VOLI</span>
+                    </a>
+                    <p class="a-foot__what">The Volleyball Hub. A free volleyball app for NCAA Division I women's volleyball, MLV and LOVB.</p>
+                    {page !== 'home' && <Stores class="a-stores--sm" />}
+                </div>
+                <nav class="a-foot__cols" aria-label="Footer">
+                    {FOOT.map((col) => (
+                        <div class="a-foot__col">
+                            <p class="a-foot__title">{col.href ? <a href={col.href}>{col.title}</a> : col.title}</p>
+                            <ul>
+                                {col.links.map((l) => (
+                                    <li hidden={l.hidden}><a href={l.href}>{l.label}</a></li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </nav>
+            </div>
+            <div class="a-foot__bar">
+                <ul class="a-foot__social" aria-label="VOLI on social media">
+                    {SOCIAL.map((s) => (
+                        <li><a href={s.href} target="_blank" rel="noopener">{s.label} <Arrow dir="out" size={11} /></a></li>
+                    ))}
+                </ul>
+                <p class="a-foot__note">VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.</p>
+                <p class="a-foot__copy">&copy; 2026 VOLI LLC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    {/* After the markup it updates: every [data-bracket-status] line, the
+        bracket page's headline once picks lock, and the promos, which it
+        takes down at the lock. */}
+    <BracketClock />
+
+    <slot name="scripts" />
+</body>
+</html>

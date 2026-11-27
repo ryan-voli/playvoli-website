@@ -1,0 +1,33 @@
+---
+// Keeps the Bracket Challenge lines right between deploys (a port of the live
+// site's BracketClock for this preview). The page prints the build day's
+// line; this re-reads the calendar on Central Time, the contest's clock, and
+// only ever swaps text that is already in the HTML for another prepared line.
+// Without scripts the build day's line simply stays.
+import { BRACKET_CLOCK } from '../../../lib/bracket-facts';
+---
+<script is:inline define:vars={{ clock: BRACKET_CLOCK }}>
+(function () {
+    var day;
+    try { day = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return; }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+    var phase = day < clock.fieldOn ? 'soon' : day === clock.fieldOn ? 'today' : day < clock.firstMatchOn ? 'open'
+        : day === clock.firstMatchOn ? 'lockday' : day <= clock.finalOn ? 'locked' : 'over';
+    if (clock.lockAt && day <= clock.finalOn && Date.now() >= Date.parse(clock.lockAt)) phase = 'locked';
+    document.documentElement.setAttribute('data-bracket-phase', phase);
+    document.querySelectorAll('[data-bracket-status]').forEach(function (el) {
+        var line = clock.status[phase][el.getAttribute('data-bracket-status')];
+        if (line && el.textContent !== line) el.textContent = line;
+    });
+    if (phase !== 'locked' && phase !== 'over') return;
+    document.querySelectorAll('[data-bracket-after]').forEach(function (el) {
+        // Two sentences: the first keeps the display line, the second the plain one.
+        var line = el.getAttribute('data-bracket-after'), cut = line.indexOf('. ') + 1;
+        var lead = el.querySelector('.b-display'), rest = el.querySelector('.b-bk-title__rest');
+        if (lead && rest && cut) { lead.textContent = line.slice(0, cut); rest.textContent = line.slice(cut + 1); }
+        else el.textContent = line;
+        el.removeAttribute('data-bracket-after');
+    });
+    document.querySelectorAll('[data-bracket-promo]').forEach(function (el) { el.hidden = true; });
+})();
+</script>

@@ -17,19 +17,21 @@
 // rotations are MLV and LOVB only.
 //   18,458 honors back to 1979; 3,019 AVCA All-America selections since 1981;
 //     668 AVCA Coaches Polls since 1982
-//   12 active podcasts, 836 episodes; 19 news outlets in the last 120 days
+//   13 active podcasts, 949 episodes; 20 news outlets, 1,875 stories (DB, 27 Nov 2026)
 
 export const FACTS_AS_OF = 'October 2026';
 
 /** App downloads, iOS + Android (owner, 23 Oct 2026; 3.7k+ on 24 Nov 2026). Update as it grows. */
 export const DOWNLOADS = '3.7k+';
+/** When DOWNLOADS was last counted. Update the two together. */
+export const DOWNLOADS_AS_OF = 'November 2026';
 
 export const FACTS = [
   { value: '18,700+', label: 'college and pro matches since 2023' },
   { value: '~500,000', label: 'NCAA player box-score lines' },
   { value: '99.8%', label: 'of Division I matches since 2023 with a box score' },
   { value: '18,000+', label: 'honors in the Volleyball Encyclopedia, back to 1979' },
-  { value: '12 & 19', label: 'podcasts, and news outlets in one feed' },
+  { value: '13 & 20', label: 'podcasts, and news outlets in one feed' },
 ];
 
 export const STORE = {
@@ -47,7 +49,7 @@ export const FAQS: Faq[] = [
   {
     id: 'what',
     q: 'What can I do with VOLI?',
-    a: "Play fantasy volleyball with your friends, and follow college and pro volleyball live, with scores and box scores, and play-by-play for MLV and LOVB matches. Look up any team or player, see the VOLI Top 100 each Monday, and explore the Volleyball Encyclopedia, with more than 18,000 honors back to 1979. VOLI also brings together volleyball news from 19 outlets and 12 volleyball podcasts, and has a chat room for every match. It's free on iPhone and Android.",
+    a: "Play fantasy volleyball with your friends, and follow college and pro volleyball live, with scores and box scores, and play-by-play for MLV and LOVB matches. Look up any team or player, see the VOLI Top 100 each Monday, and explore the Volleyball Encyclopedia, with more than 18,000 honors back to 1979. VOLI also brings together volleyball news from 20 outlets and 13 volleyball podcasts, and has a chat room for every match. It's free on iPhone and Android.",
   },
   {
     id: 'fantasy',
@@ -82,7 +84,7 @@ export const FAQS: Faq[] = [
   {
     id: 'news',
     q: 'Does VOLI have volleyball news and podcasts?',
-    a: 'Yes. VOLI gathers volleyball news from 19 outlets, from league and conference sites to independent writers, with each story linked to its source. It also carries 12 volleyball podcasts with more than 800 episodes to stream or download, with your place saved across devices.',
+    a: 'Yes. VOLI gathers volleyball news from 20 outlets, from league and conference sites to independent writers, with each story linked to its source. It also carries 13 volleyball podcasts with more than 900 episodes to stream or download, with your place saved across devices.',
   },
   {
     id: 'leagues',
@@ -115,8 +117,8 @@ export const APP_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'MobileApplication',
   '@id': 'https://playvoli.com/#app',
-  name: 'VOLI - The Volleyball Hub',
-  url: 'https://playvoli.com/app',
+  name: 'VOLI: The Volleyball Hub',
+  url: 'https://playvoli.com/',
   operatingSystem: 'iOS, Android',
   applicationCategory: 'SportsApplication',
   description:
@@ -125,13 +127,13 @@ export const APP_SCHEMA = {
   publisher: { '@id': 'https://playvoli.com/#organization' },
   downloadUrl: [STORE.ios, STORE.android],
   featureList: [
-    "Fantasy volleyball leagues for NCAA Division I women's volleyball and MLV, with a salary cap and multi-round contracts; public leagues run by volleyball podcasts, and private leagues",
+    "Fantasy volleyball leagues for NCAA Division I women's volleyball and MLV (LOVB joins in January 2027), with a salary cap and multi-round contracts; public leagues run by volleyball podcasts, and private leagues",
     "The College Volleyball Bracket Challenge: a free bracket game for the NCAA Division I women's volleyball tournament, with a live leaderboard and friend groups",
     'Live scores and box scores for college and pro matches with a lead chart for each set, and play-by-play with the rotation on court for MLV and LOVB matches; Live Activities on iPhone',
     "Box scores for 99.8% of completed Division I women's matches since 2023, nearly 500,000 NCAA player lines, and set-by-set stats for all 445 MLV and LOVB matches",
     "The VOLI Top 100, VOLI's own Division I ranking from match results and strength of schedule, published each Monday, plus each college match's chance to win before first serve and after every set",
     'The Volleyball Encyclopedia: 18,000+ honors back to 1979, including 3,000+ AVCA All-America selections, the AVCA Coaches Poll since 1982 and all 45 NCAA champions',
-    'Volleyball news from 19 outlets and 12 volleyball podcasts with 800+ episodes in one feed',
+    'Volleyball news from 20 outlets and 13 volleyball podcasts with 900+ episodes in one feed',
     'A chat room for every match, rooms for NCAA, MLV and LOVB fans, a private chat for each fantasy league, and AMAs with volleyball creators',
     "EVOLLVE's college volleyball analytics: team ratings, player impact numbers and match predictions",
   ],
@@ -142,6 +144,36 @@ export const TESTIMONIALS = [
   "It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!",
   'This app is gorgeous. Thanks for putting it out there. And so fun!',
   "Y'all are starting something huge that could be a massive growth factor for U.S. volleyball.",
+];
+
+/** The home page's fan strip, quoted word for word (an ellipsis marks a cut;
+ *  emoji and @mentions dropped). `from` is where each was said: a public App
+ *  Store review (with the reviewer's public App Store name), a public Google
+ *  Play review (no name: Play shows people's real names), or a message a
+ *  user sent VOLI in the app (no name: those were not posted in public). */
+export type FanQuote = { text: string; from: 'appstore' | 'play' | 'app'; name?: string };
+export const FAN_QUOTES: FanQuote[] = [
+  { from: 'appstore', name: 'GrayPuck19', text: 'The amount of stats, information, ability to track live matches, a built in fantasy game. Unbelievable. Hands down the best app for the sport.' },
+  { from: 'app', text: "It was already so fun to watch volleyball before but now it's a completely new experience watching for your fantasy league. LOVE IT!" },
+  { from: 'appstore', name: 'grooviegroves', text: 'Makes it much easier to follow the two different pro leagues and now NCAA\u2026 Love the fantasy function as well, makes it fun to follow along throughout the season.' },
+  { from: 'app', text: "Between the fantasy draft and more games being televised, the usual drought between NCAA seasons has been much less painful, and I'm excited to be able to stay engaged with volleyball." },
+  { from: 'appstore', name: 'kaipofresh', text: 'Bout time a fantasy draft thing came out for volleyball!! Makes the colleges season that much more enjoyable and fun to keep tabs on players from all over.' },
+  { from: 'app', text: "The statistics and analysis are amazing. Nothing like it that I've found!" },
+  { from: 'app', text: "This app is everything I've been dreaming of since I've gotten into professional volleyball!" },
+  { from: 'appstore', name: 'Karatepandatiger', text: 'The fantasy formula is a great game loop and the dev team is ON IT when it comes to updates, bug fixes, and QoL add ons' },
+  { from: 'app', text: "I'm loving this app so much! It's given me a reason to watch teams I don't normally watch and learn more about all the amazing talent out there." },
+  { from: 'appstore', text: 'I literally check my scores all the time! It has brought me so much joy just to be able to see volleyball played in real time!' },
+  { from: 'play', text: "Besides the scores updating live, I like the fact that there are articles and podcasts in the app so there's more to do than just keeping track of your team." },
+  { from: 'app', text: 'I just got home from the Big 10 tournament and was watching the live stats on the app during the Nebraska game today!!!' },
+  { from: 'app', text: 'This app is gorgeous. Thanks for putting it out there. And so fun!' },
+  { from: 'appstore', name: 'Slanky2020', text: 'Finally something for the volleyball people! So excited to play fantasy with my friends' },
+  { from: 'app', text: "It's really helping me start to follow Major League Volleyball! I especially love the fantasy component." },
+  { from: 'app', text: 'User experience on a fantasy app has never been so good' },
+  { from: 'appstore', name: 'BrahLa97', text: 'The GUI is sleek and it even includes audio content about the sport. Highly recommend!' },
+  { from: 'app', text: 'The only sport I know anything about is volleyball, so this fantasy league experience has been novel and super fun.' },
+  { from: 'app', text: 'Love the fantasy season wrapped feature. So fun and insightful' },
+  { from: 'app', text: "Y'all are starting something huge that could be a massive growth factor for U.S. volleyball." },
+  { from: 'appstore', name: 'Monique-86', text: '100% recommend. Great time using this app over the NCAA season' },
 ];
 
 export const appSchemaWithReviews = {
@@ -158,22 +190,24 @@ export const NEWS_OUTLETS = [
   'SEC Sports', 'Major League Volleyball', 'NCAA.com', 'Hurrdat Sports', 'Sports Illustrated',
   'Big Ten Conference', 'ACC', 'LOVB', '900 Square Feet', 'Big 12 Conference', 'Big West',
   'Mountain West', 'Minute Volley', 'Big East', 'Cornfed Volleyball', 'EVOLLVE',
-  'West Coast Conference', 'American Athletic Conference', 'VolleyMind',
+  'West Coast Conference', 'American Athletic Conference', 'VolleyMind', 'Elvis Thrill',
 ];
 
 export const PODCASTS = [
-  { name: 'Volley Talk with Sarah Pavan', by: 'Sarah Pavan', episodes: 95, partner: true },
-  { name: 'The Major League Minute', by: 'MLM', episodes: 50, partner: true },
-  { name: 'The USA Volleyball Show', by: 'USA Volleyball', episodes: 153 },
-  { name: 'Volleyball State', by: 'Jeff Sheldon and Lincoln Arneal', episodes: 137 },
-  { name: 'Dig City', by: 'Purdue Volleyball', episodes: 130 },
+  // Names and hosts exactly as content.podcasts holds them (title, author).
+  { name: 'Volley Talk', by: 'Sarah Pavan', episodes: 101, partner: true },
+  { name: 'Major League Minute', by: 'GMP and DOC', episodes: 56, partner: true },
+  { name: 'The USA Volleyball Show', by: 'USA Volleyball', episodes: 156 },
+  { name: 'Volleyball State', by: 'Jeff Sheldon and Lincoln Arneal', episodes: 146 },
+  { name: 'Dig City', by: 'Purdue Volleyball', episodes: 135 },
+  { name: 'Side Out Society', by: 'Tiffany Oshinsky and Lindsay Harwood', episodes: 68 },
   { name: 'Court Captains', by: 'KWND Studios', episodes: 67 },
-  { name: 'The Side Out Society Podcast', by: 'Side Out Society', episodes: 62 },
+  { name: 'Around the Block', by: 'Justin and Mike', episodes: 61 },
   { name: 'Serving Pancakes', by: 'iHeartPodcasts', episodes: 60 },
   { name: "Ember's Nest", by: 'Edward White', episodes: 48 },
-  { name: 'Set 6: The Official MLV Podcast', by: 'Major League Volleyball', episodes: 25 },
-  { name: 'Six Zone Duo', by: 'Amie Just and Erin Sorensen', episodes: 8 },
-  { name: 'Dig In: The Grand Rapids Rise Official Podcast', by: 'Grand Rapids Rise', episodes: 1 },
+  { name: 'Set 6', by: 'Major League Volleyball', episodes: 32 },
+  { name: 'Six Zone Duo', by: 'Amie Just and Erin Sorensen', episodes: 16 },
+  { name: 'Dig In', by: 'Grand Rapids Rise', episodes: 3 },
 ];
 
 /** Bare "playvoli.com/..." mentions in an answer become links on the page. */

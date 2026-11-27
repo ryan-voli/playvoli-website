@@ -1,0 +1,11 @@
+---
+// A hard-edged arrow, drawn here because Inter's Latin subset has no arrow glyph.
+interface Props { dir?: 'right' | 'down' | 'out'; size?: number }
+const { dir = 'right', size = 14 } = Astro.props;
+const d = dir === 'down'
+  ? 'M8 2v11M3.5 9 8 13.5 12.5 9'
+  : dir === 'out'
+    ? 'M4 12 12 4M5.5 4H12v6.5'
+    : 'M2 8h11M9 3.5 13.5 8 9 12.5';
+---
+<svg class="a-arrow" viewBox="0 0 16 16" width={size} height={size} fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d={d} /></svg>

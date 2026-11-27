@@ -1,0 +1,23 @@
+---
+// Ruled rows: a name, a line about it, and an optional tag. Short lines sit
+// to the right of the name; when any line is long, every line sits under its
+// name instead.
+//
+//   <Rows items={PODCASTS.map((p) => ({ title: p.name, meta: `${p.by} · ${p.episodes} episodes`, tag: p.partner && 'Partner' }))} />
+interface Props {
+  items: { title: string; meta?: string; tag?: string | false; href?: string }[];
+  /** Force the stacked layout (or the side-by-side one). Default: by length. */
+  stack?: boolean;
+  class?: string;
+}
+const { items, stack, class: cls } = Astro.props;
+const stacked = stack ?? items.some((i) => (i.meta?.length ?? 0) > 48);
+---
+<ul class:list={['rows', { 'rows--stack': stacked }, cls]}>
+    {items.map((i) => (
+        <li>
+            <span class="rows__t">{i.href ? <a href={i.href}>{i.title}</a> : i.title}</span>
+            {(i.meta || i.tag) && <span class="rows__m">{i.meta}{i.tag && <Fragment>{' '}<span class="badge badge--navy">{i.tag}</span></Fragment>}</span>}
+        </li>
+    ))}
+</ul>

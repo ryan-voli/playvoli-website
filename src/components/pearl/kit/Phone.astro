@@ -1,0 +1,22 @@
+---
+// One app screen in the Pearl phone frame (pearl/Phone): whole, uncropped,
+// never tilted. In a <Stack> it is placed with x, y, w, z (xm, ym, wm on a
+// phone). Poster props `r` and `shadow` are ignored; `plain` hides the
+// island (a capture from a phone without one).
+import PearlPhone from '../Phone.astro';
+import type { ScreenKey } from '../../../lib/screens';
+import { level, type Place, type Tint } from './util';
+
+interface Props extends Place {
+  screen: ScreenKey;
+  alt?: string;
+  eager?: boolean;
+  priority?: boolean;
+  shadow?: Tint;
+  plain?: boolean;
+  class?: string;
+}
+const { screen, alt, eager, priority, shadow: _s, plain, class: cls, ...place } = Astro.props;
+const klass = [plain && 'phone--plain', cls].filter(Boolean).join(' ') || undefined;
+---
+<PearlPhone screen={screen} alt={alt} eager={eager} priority={priority} class={klass} {...level(place)} />

@@ -1,0 +1,22 @@
+---
+// Steps: two to four numbered glass cards, each a short title and a sentence
+// or two. Straight into a Band.
+//
+//   <Steps items={BRACKET_STEPS} />              items: { title, text }
+interface Props {
+  items: { title: string; text: string }[];
+  as?: 'h3' | 'h4';
+  class?: string;
+}
+const { items, as: Tag = 'h3', class: cls } = Astro.props;
+if (items.length < 2 || items.length > 4) throw new Error('Steps: two to four steps (use two Steps for more)');
+---
+<ol class:list={['steps', cls]} data-n={items.length}>
+    {items.map((s, i) => (
+        <li class="card">
+            <span class="steps__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <Tag class="h3 steps__t">{s.title}</Tag>
+            <p class="body">{s.text}</p>
+        </li>
+    ))}
+</ol>

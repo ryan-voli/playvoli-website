@@ -1,0 +1,376 @@
+---
+// DESIGN OPTION B, "DAYLIGHT": the College Volleyball Bracket Challenge.
+//
+// The page is long, and nothing in it is hidden to make it shorter. A section
+// index rides beside the text on wide screens and across the top on a phone,
+// and the questions fold into an accordion. Every word is in the HTML: the
+// accordion is native <details>, printed OPEN, and a few lines of script
+// fold all but the first, so with scripts off the whole page simply reads.
+//
+// It keeps the live page's two jobs for people who arrive without the app:
+// a friend-group invite (/bracket?g=CODE) carries its code into the voli://
+// link, shows it, and (until picks lock) becomes the headline; and when the
+// voli:// button finds no app to open, the "Download VOLI to Play!" sheet
+// comes up. Both are prepared in the HTML and only switched on by script.
+//
+// The game's name is the College Volleyball Bracket Challenge; "NCAA" only
+// describes the tournament. Prize, eligibility and legal wording is copied
+// from the live page (it was legally reviewed): restyled, never rewritten.
+import OptionB from '../../../layouts/design/OptionB.astro';
+import Stores from '../../../components/design/b/Stores.astro';
+import BracketLive from '../../../components/design/b/BracketLive.astro';
+import Qr from '../../../components/design/b/Qr.astro';
+import { faqSchema, linkify } from '../../../lib/voli-facts';
+import {
+  BRACKET, BRACKET_DATES, BRACKET_FAQS, BRACKET_ROUNDS, BRACKET_STATUS, BRACKET_STEPS, bracketPhase, promoIsLive,
+} from '../../../lib/bracket-facts';
+
+// This direction's own home page ('/' at launch).
+const HOME = '/design/b/';
+
+// What search results and link previews say follows the calendar on each
+// build, exactly as on the live page.
+const phase = bracketPhase();
+const live = promoIsLive(phase);
+const title = live
+  ? 'College Volleyball Bracket Challenge 2026: Win $500 Cash | VOLI'
+  : 'College Volleyball Bracket Challenge 2026 | VOLI';
+const description = live
+  ? "Pick the 2026 NCAA Division I women's volleyball tournament in VOLI's free bracket game. $500 cash to the top eligible bracket. Opens Nov. 29, locks Dec. 3."
+  : phase === 'locked'
+    ? "The 2026 College Volleyball Bracket Challenge is under way in the VOLI app. Brackets are locked, and every pick for the NCAA Division I women's volleyball tournament is scored live."
+    : "The 2026 College Volleyball Bracket Challenge, VOLI's free bracket game for the NCAA Division I women's volleyball tournament, is complete.";
+const ogImage = 'https://playvoli.com/images/bracket/bracket-challenge-2026-og.png';
+// The headline once picks lock. Before that it rides in an attribute and the
+// status script swaps it in on the day.
+const afterHeadline = `Picks are in for ${BRACKET.season}. Follow the leaderboard in the VOLI app.`;
+const [afterLead, afterRest] = [afterHeadline.slice(0, afterHeadline.indexOf('. ') + 1), afterHeadline.slice(afterHeadline.indexOf('. ') + 2)];
+// The headline for a friend-group invite (/bracket?g=CODE), the live page's
+// own words. It rides in an attribute too, cut where the two voices change
+// and around the words that take the lime; the invite script swaps it in.
+const inviteHeadline = "You're invited|to a |Bracket Challenge| group";
+
+const totalMatches = BRACKET_ROUNDS.reduce((n, r) => n + r.matches, 0);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${BRACKET.url}#webpage`,
+    url: BRACKET.url,
+    name: 'College Volleyball Bracket Challenge 2026',
+    description,
+    inLanguage: 'en-US',
+    isPartOf: { '@id': 'https://playvoli.com/#website' },
+    publisher: { '@id': 'https://playvoli.com/#organization' },
+    about: { '@type': 'Thing', name: "2026 NCAA Division I women's volleyball tournament" },
+    mentions: { '@id': 'https://playvoli.com/#app' },
+    primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630 },
+    breadcrumb: { '@id': `${BRACKET.url}#breadcrumb` },
+    dateModified: new Date().toISOString().slice(0, 10),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${BRACKET.url}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'VOLI', item: 'https://playvoli.com/' },
+      { '@type': 'ListItem', position: 2, name: 'College Volleyball Bracket Challenge', item: BRACKET.url },
+    ],
+  },
+  faqSchema(BRACKET_FAQS, BRACKET.url),
+];
+
+// The section index, in page order.
+const sections = [
+  { id: 'how-it-works', label: 'How it works' },
+  { id: 'scoring', label: 'Scoring' },
+  { id: 'dates', label: 'Key dates' },
+  { id: 'prize', label: `The ${BRACKET.prize} prize` },
+  { id: 'groups', label: 'Friend groups' },
+  { id: 'faq', label: 'Questions' },
+  { id: 'voli', label: 'More in VOLI' },
+];
+---
+
+<OptionB
+  title={title}
+  description={description}
+  canonical={BRACKET.url}
+  ogImage={ogImage}
+  ogImageAlt="College Volleyball Bracket Challenge 2026, presented by VOLI"
+  schema={schema}
+  page="bracket"
+>
+    <section class="b-bk-hero" aria-labelledby="bracket-h">
+        <div class="b-wrap">
+            {/* First in the page and first on screen, at every width. */}
+            <nav class="b-crumbs" aria-label="Breadcrumb">
+                <ol role="list">
+                    <li><a href={HOME}>VOLI</a></li>
+                    <li aria-current="page">Bracket Challenge</li>
+                </ol>
+            </nav>
+
+            <div class="b-bk-hero__grid">
+                <div class="b-bk-hero__copy">
+                    {/* Read straight through: "College Volleyball Bracket
+                        Challenge 2026: Pick all 63 matches. The top eligible
+                        bracket wins $500 cash." */}
+                    <h1 class="b-bk-title" id="bracket-h">
+                        <span class="b-eyebrow b-bk-title__name">College Volleyball Bracket Challenge {BRACKET.season}<span class="b-vh">:</span></span>
+                        <span class="b-bk-title__offer" id="bracket-heading" data-bracket-after={live ? afterHeadline : undefined} data-bracket-invite={live ? inviteHeadline : undefined}>{live
+                            ? <Fragment><span class="b-display"><span class="b-display__line">Pick all {BRACKET.matches}</span> <span class="b-display__line">matches.</span></span> <span class="b-bk-title__rest">The top eligible bracket wins <span class="b-hl b-hl--text">{BRACKET.prize} cash</span>.</span></Fragment>
+                            : <Fragment><span class="b-display">{afterLead}</span> <span class="b-bk-title__rest">{afterRest}</span></Fragment>}</span>
+                    </h1>
+
+                    <div class="b-bk-group b-glass" id="group-code" hidden>
+                        <span class="b-eyebrow">Group code</span>
+                        <span class="b-bk-group__value" id="group-code-value"></span>
+                        <span class="b-bk-group__hint">If VOLI doesn't open on its own, enter this under Bracket &rarr; Group in the app.</span>
+                    </div>
+
+                    <p class="b-lede b-bk-hero__lede">A free bracket game for the {BRACKET.season} NCAA Division I women's volleyball tournament. Fill out your bracket in the VOLI app, then follow every pick on a live leaderboard.</p>
+
+                    <p class="b-status b-glass"><span class="b-dot b-dot--lime" aria-hidden="true"></span><span data-bracket-status="long">{BRACKET_STATUS[phase].long}</span></p>
+
+                    <div class="b-bk-actions" id="get-the-app">
+                        <a href="voli://bracket" id="open-bracket-btn" class="b-btn b-btn--lime b-btn--lg b-bk-open">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>
+                            Open the Bracket Challenge
+                        </a>
+                        <p class="b-bk-help">Opens the VOLI app. No app yet? Get it free below, then tap the button again.</p>
+                        <Stores />
+                        <Qr label="Scan with your phone to get VOLI and play" />
+                    </div>
+
+                    <p class="b-fine">No purchase necessary. 50 U.S. states &amp; D.C., 18+ (19+ AL/NE, 21+ MS). <a href={BRACKET.rulesPath}>Official Rules</a> apply.</p>
+                </div>
+
+                <div class="b-bk-hero__side">
+                    <div class="b-night b-poster">
+                        <img src="/images/bracket/bracket-challenge-2026-logo.webp"
+                             alt="College Volleyball '26 Bracket Challenge, presented by VOLI"
+                             width="840" height="486" fetchpriority="high" decoding="async">
+                    </div>
+                    <ul class="b-glance" role="list" aria-label="The Bracket Challenge at a glance">
+                        <li class="b-glass"><strong><span class="b-hl b-hl--text">{BRACKET.prize}</span></strong> <span>cash to the top eligible bracket</span></li>
+                        <li class="b-glass"><strong>Free</strong> <span>to enter, with no purchase necessary</span></li>
+                        <li class="b-glass"><strong>{BRACKET.matches}</strong> <span>matches to pick, plus a tiebreaker</span></li>
+                        <li class="b-glass"><strong>Nov. 29</strong> <span>brackets open once the field is set</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="b-wrap b-bk-body">
+        <aside class="b-rail">
+            <nav class="b-toc b-glass" aria-label="On this page">
+                <p class="b-eyebrow b-toc__title">On this page</p>
+                <ol role="list">
+                    {sections.map((s) => <li><a href={`#${s.id}`}>{s.label}</a></li>)}
+                </ol>
+            </nav>
+            <div class="b-rail__card b-glass">
+                <p class="b-rail__status"><span class="b-dot b-dot--lime" aria-hidden="true"></span><span data-bracket-status="short">{BRACKET_STATUS[phase].short}</span></p>
+                <p class="b-rail__text">Play in the VOLI app, free on iPhone and Android.</p>
+                <a class="b-btn b-btn--ink b-rail__btn" href="#get-the-app">Get the app</a>
+                <a class="b-link b-rail__rules" href={BRACKET.rulesPath}>Official Rules&nbsp;<span aria-hidden="true">→</span></a>
+            </div>
+        </aside>
+
+        <div class="b-bk-main">
+            <section class="b-panel b-glass" id="how-it-works" aria-labelledby="how-h">
+                <p class="b-eyebrow">How to play</p>
+                <h2 class="b-h2 b-h2--sm" id="how-h">How the Bracket Challenge works</h2>
+                <ol class="b-steps" role="list">
+                    {BRACKET_STEPS.map((s) => (
+                        <li>
+                            <h3 class="b-steps__title">{s.title}</h3>
+                            <p class="b-body">{s.text}</p>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+
+            <section class="b-panel b-glass" id="scoring" aria-labelledby="scoring-h">
+                <p class="b-eyebrow">Scoring</p>
+                <h2 class="b-h2 b-h2--sm" id="scoring-h">How a bracket is scored</h2>
+                <p class="b-body">Every correct pick earns points, and a correct pick is worth more in each later round. Every round adds up to 32 points, so a perfect bracket scores {BRACKET.maxPoints}.</p>
+                <div class="b-table">
+                    <table>
+                        <caption>Points for each round of the bracket</caption>
+                        <thead>
+                            <tr><th scope="col">Round</th><th scope="col">Matches</th><th scope="col">Points per correct pick</th></tr>
+                        </thead>
+                        <tbody>
+                            {BRACKET_ROUNDS.map((r) => (
+                                <tr><th scope="row">{r.round}</th><td>{r.matches}</td><td><span class="b-pts">{r.points}</span></td></tr>
+                            ))}
+                        </tbody>
+                        <tfoot>
+                            <tr><th scope="row">Whole bracket</th><td>{totalMatches}</td><td>{BRACKET.maxPoints} points at most</td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <p class="b-body"><strong>Tiebreaker:</strong> with your bracket you predict the total points scored by both teams across all sets of the championship match. The closest prediction ranks higher. No tie is broken by chance.</p>
+            </section>
+
+            <section class="b-panel b-glass" id="dates" aria-labelledby="dates-h">
+                <p class="b-eyebrow">Calendar</p>
+                <h2 class="b-h2 b-h2--sm" id="dates-h">Key dates for brackets and the {BRACKET.season} NCAA volleyball tournament</h2>
+                <ol class="b-dates" role="list">
+                    {BRACKET_DATES.map((d) => (
+                        <li>
+                            <time datetime={d.iso}>{d.when}</time>
+                            <div>
+                                <strong>{d.what}</strong>
+                                <span>{d.detail}</span>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+
+            <section class="b-panel b-glass" id="prize" aria-labelledby="prize-h">
+                <p class="b-eyebrow">The prize</p>
+                <h2 class="b-h2 b-h2--sm" id="prize-h">The {BRACKET.prize} cash prize</h2>
+                <p class="b-body">One prize of {BRACKET.prize} in cash goes to the eligible entrant whose complete bracket finishes highest. VOLI funds the prize itself, and no part of it comes from entrants.</p>
+                {/* Each term is one sentence that runs on from its label, so
+                    label and wording stay in one run of text, as written. */}
+                <ul class="b-terms" role="list">
+                    <li><strong>Who can win:</strong> legal residents of the 50 United States and the District of Columbia who are at least 18 and have reached the age of majority where they live (19 in Alabama and Nebraska, 21 in Mississippi).</li>
+                    <li><strong>How to be eligible:</strong> before brackets lock, do both. Sign up for the prize in the app with your birthdate and state, and save a complete bracket, all {BRACKET.matches} picks and the tiebreaker. The birthdate and state must match your government-issued photo ID. Your birthdate is used only to confirm eligibility and is deleted on February 1, 2027.</li>
+                    <li><strong>Who cannot win:</strong> current NCAA student-athletes; staff of any NCAA school's athletics department, and staff with responsibilities within or over one; staff of any athletic conference office; VOLI's owners, officers, employees and contractors and their immediate family and household members; and anyone paid to promote the contest.</li>
+                    <li><strong>The winner:</strong> is notified by email and in the app within 7 days after the championship match, and has 7 days to reply with a government-issued photo ID and a signed declaration of eligibility and liability release. If they do not, the prize passes to the next eligible bracket. Payment is by ACH bank transfer, mailed check or Venmo within 30 days of verification, and goes only to the email address on the winning VOLI account. Venmo is not available for accounts that use Apple's Hide My Email.</li>
+                </ul>
+                <p class="b-body">Everything is in the <a href={BRACKET.rulesPath}>Official Rules</a>.</p>
+            </section>
+
+            <section class="b-panel b-glass" id="groups" aria-labelledby="groups-h">
+                <p class="b-eyebrow">Friend groups</p>
+                <h2 class="b-h2 b-h2--sm" id="groups-h">Play against your friends</h2>
+                <p class="b-body">Before picks lock, create a group in the app and share its invite link, and your group gets its own leaderboard. Everyone still plays one bracket, which counts in every group they join and on the main leaderboard. The app also lists open groups that anyone can join without a code. Groups have no prize of their own: the {BRACKET.prize} goes to the top eligible bracket overall.</p>
+            </section>
+
+            <section class="b-panel b-glass" id="faq" aria-labelledby="faq-h">
+                <p class="b-eyebrow">Questions</p>
+                <h2 class="b-h2 b-h2--sm" id="faq-h">Bracket Challenge questions</h2>
+                <div class="b-acc" id="faq-list">
+                    {BRACKET_FAQS.map((f) => (
+                        <details class="b-acc__item" id={`faq-${f.id}`} open>
+                            <summary><h3 class="b-acc__q">{f.q}</h3><span class="b-acc__mark" aria-hidden="true"></span></summary>
+                            <p class="b-body" set:html={linkify(f.a)} />
+                        </details>
+                    ))}
+                </div>
+                {/* Printed open; this folds all but the first, or all but the one a link points at. */}
+                <script is:inline>
+                (function () {
+                    var items = document.querySelectorAll('#faq-list details');
+                    function fold() {
+                        var id = decodeURIComponent(location.hash.slice(1));
+                        var hit = id && document.getElementById(id);
+                        if (hit && hit.parentNode.id !== 'faq-list') hit = null;
+                        items.forEach(function (d, i) { d.open = hit ? d === hit : i === 0; });
+                    }
+                    fold();
+                    addEventListener('hashchange', function () { if (/^#faq-/.test(location.hash)) fold(); });
+                })();
+                </script>
+            </section>
+
+            <section class="b-panel b-glass" id="voli" aria-labelledby="voli-h">
+                <p class="b-eyebrow">The app</p>
+                <h2 class="b-h2 b-h2--sm" id="voli-h">More volleyball in VOLI</h2>
+                <p class="b-body">VOLI is a free volleyball app for NCAA Division I women's volleyball, MLV and LOVB, with fantasy leagues, live scores and box scores, stats, history, news and podcasts. <a href={HOME}>See everything in the app</a>.</p>
+                <p class="b-body">Doing your homework before you pick? The <a href="/rankings">VOLI Top 100</a> ranks Division I teams from match results and strength of schedule each Monday, and every college match in the app shows each team's chance to win before first serve. <a href="/methods">How VOLI's numbers work</a>.</p>
+            </section>
+
+            <p class="b-legal">NO PURCHASE NECESSARY TO ENTER OR WIN. A purchase will not improve your chances of winning. Open only to legal residents of the 50 United States and the District of Columbia who are at least 18 years old and have reached the age of majority in their state of residence. Void in Puerto Rico, all other U.S. territories and possessions, and where prohibited. Brackets lock at the scheduled start of the tournament's first match. One prize: {BRACKET.prize} cash. Subject to the <a href={BRACKET.rulesPath}>Official Rules</a>. Sponsor: Voli LLC, 200 S 21st St STE 400A, Lincoln, NE 68510. This contest is not sponsored, endorsed or administered by, or associated with, Apple Inc. or Google LLC, and is not affiliated with, sponsored or endorsed by the NCAA.</p>
+        </div>
+    </div>
+
+    {/* What a phone with no app sees two seconds after tapping "Open the
+        Bracket Challenge": the live page's popup, as a native dialog. Its
+        words are in the page, closed; the script below only opens it. */}
+    <dialog class="b-dialog" id="get-app" aria-labelledby="get-app-title">
+        <div class="b-dialog__body">
+            <img class="b-dialog__icon" src="/images/appicon.webp" alt="" width="64" height="64" loading="lazy" decoding="async">
+            <p class="b-dialog__title" id="get-app-title">Download VOLI to Play!</p>
+            <p class="b-body">Get the VOLI app to fill out your bracket in the Bracket Challenge.<span id="get-app-group" hidden> Then join your friends with group code <strong id="get-app-code"></strong>.</span></p>
+            <Stores />
+            <form method="dialog"><button type="submit" class="b-btn b-btn--glass b-dialog__close" autofocus>Got it</button></form>
+        </div>
+    </dialog>
+
+    <Fragment slot="scripts">
+        <BracketLive />
+        <script is:inline>
+        (function () {
+            var open = document.getElementById('open-bracket-btn');
+            var sheet = document.getElementById('get-app');
+
+            // A friend-group invite arrives as ?g=CODE: carry the code into the
+            // app link and show it for anyone who has to install first.
+            var code = (new URLSearchParams(location.search).get('g') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (code.length >= 4 && code.length <= 10) {
+                open.href = 'voli://bracket?g=' + code;
+                document.getElementById('group-code-value').textContent = code;
+                document.getElementById('group-code').hidden = false;
+                document.getElementById('get-app-code').textContent = code;
+                document.getElementById('get-app-group').hidden = false;
+                // Until picks lock, the headline is the invitation. After that a
+                // friend group can no longer be joined, so the headline stays.
+                var phase = document.documentElement.getAttribute('data-bracket-phase');
+                var head = document.getElementById('bracket-heading');
+                var words = (head.getAttribute('data-bracket-invite') || '').split('|');
+                var lead = head.querySelector('.b-display'), rest = head.querySelector('.b-bk-title__rest');
+                if (words.length === 4 && lead && rest && phase !== 'locked' && phase !== 'over') {
+                    var lime = document.createElement('span');
+                    lime.className = 'b-hl b-hl--text';
+                    lime.textContent = words[2];
+                    lead.textContent = words[0];
+                    rest.textContent = '';
+                    rest.append(words[1], lime, words[3]);
+                }
+            }
+
+            // The button opens the app. If this page is still in front two
+            // seconds later there was no app to open: say so, stores in reach.
+            open.addEventListener('click', function (e) {
+                e.preventDefault();
+                location.href = open.getAttribute('href');
+                setTimeout(function () {
+                    if (document.hidden) return;
+                    if (sheet.showModal) { if (!sheet.open) sheet.showModal(); }
+                    else document.getElementById('get-the-app').scrollIntoView({ block: 'center' });
+                }, 2000);
+            });
+            sheet.addEventListener('click', function (e) { if (e.target === sheet) sheet.close(); });
+            if (location.hash === '#get-app' && sheet.showModal) sheet.showModal();
+
+            // The section index marks where you are; back up in the hero, nowhere.
+            var links = [].slice.call(document.querySelectorAll('.b-toc a'));
+            if (!('IntersectionObserver' in window) || !links.length) return;
+            var strip = document.querySelector('.b-toc ol');
+            var seen = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (!e.isIntersecting) return;
+                    var left = 0;
+                    links.forEach(function (a) {
+                        var on = a.getAttribute('href') === '#' + e.target.id;
+                        if (on) { a.setAttribute('aria-current', 'location'); left = a.parentNode.offsetLeft - 16; }
+                        else a.removeAttribute('aria-current');
+                    });
+                    // On a phone the index is a strip that scrolls sideways: it follows along.
+                    if (strip.scrollWidth > strip.clientWidth) strip.scrollTo({ left: left, behavior: 'smooth' });
+                });
+            }, { rootMargin: '-30% 0px -60% 0px' });
+            links.forEach(function (a) { var s = document.getElementById(a.getAttribute('href').slice(1)); if (s) seen.observe(s); });
+            seen.observe(document.querySelector('.b-bk-hero'));
+        })();
+        </script>
+    </Fragment>
+</OptionB>

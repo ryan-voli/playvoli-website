@@ -1,0 +1,20 @@
+---
+// Quotes: glass cards in a row, the words in the display face.
+//
+//   <Quotes items={TESTIMONIALS} by="VOLI app user" />
+interface Props {
+  items: (string | { text: string; by?: string })[];
+  by?: string;
+  class?: string;
+}
+const { items, by, class: cls } = Astro.props;
+const list = items.map((i) => (typeof i === 'string' ? { text: i, by } : { by, ...i }));
+---
+<div class:list={['quotes', cls]}>
+    {list.map((q) => (
+        <figure class="card quote">
+            <blockquote>{q.text}</blockquote>
+            {q.by && <figcaption>{q.by}</figcaption>}
+        </figure>
+    ))}
+</div>

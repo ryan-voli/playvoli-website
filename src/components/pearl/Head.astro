@@ -1,0 +1,24 @@
+---
+// A section's heading block: a small mono kicker, the title in the display
+// face (*one word* in italic navy), and an optional lede.
+import { em } from './util';
+interface Props {
+  title: string;
+  kicker?: string;
+  lede?: string;
+  /** The title's tag. Default h2. */
+  as?: 'h1' | 'h2' | 'h3';
+  /** Title size: h1 or h2 (default). */
+  size?: 'h1' | 'h2';
+  center?: boolean;
+  id?: string;
+  class?: string;
+}
+const { title, kicker, lede, as: Tag = 'h2', size = 'h2', center, id, class: cls } = Astro.props;
+---
+<div class:list={['head', { 'head--center': center }, cls]}>
+    {kicker && <span class="kicker">{kicker}</span>}
+    <Tag class={size} id={id} set:html={em(title)} />
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+</div>

@@ -1,0 +1,52 @@
+---
+// One form field: a label, the control, and a hint or an error under it.
+// Put fields in <form class="form">; two side by side go in a
+// <div class="form__row">.
+//
+//   <Field label="Your email" name="email" type="email" required autocomplete="email" />
+//   <Field label="Subject" name="subject" as="select" options={['General', 'Press']} placeholder="Choose one" required />
+//   <Field label="Message" name="message" as="textarea" maxlength={1000} hint="Up to 1,000 characters." error="Write a message first." />
+//
+// The error text is in the page from the start and out of sight. Show it by
+// adding the class "field--bad" to the field and aria-invalid="true" to the
+// control; say what is wrong in words.
+interface Props {
+  label: string;
+  name: string;
+  id?: string;
+  as?: 'input' | 'textarea' | 'select';
+  type?: string;
+  /** A select's choices. */
+  options?: (string | { value: string; label: string })[];
+  /** Example text in the control; for a select, its first, empty choice. */
+  placeholder?: string;
+  required?: boolean;
+  /** Marks the label "(optional)". */
+  optional?: boolean;
+  hint?: string;
+  error?: string;
+  /** Render it already in its error state. */
+  invalid?: boolean;
+  class?: string;
+  [attr: string]: any;
+}
+
+const { label, name, id = `f-${name}`, as = 'input', type = 'text', options = [], placeholder, required, optional, hint, error, invalid, class: cls, ...rest } = Astro.props;
+const describedby = [hint && `${id}-h`, error && `${id}-e`].filter(Boolean).join(' ') || undefined;
+const common = { id, name, required, 'aria-describedby': describedby, 'aria-invalid': invalid ? 'true' : undefined, ...rest };
+---
+<div class:list={['field', { 'field--bad': invalid }, cls]}>
+    <label class="field__l" for={id}>{label}{optional && <i> (optional)</i>}</label>
+    {as === 'textarea' && <textarea class="field__c" placeholder={placeholder} {...common}></textarea>}
+    {as === 'select' && (
+        <span class="field__sel">
+            <select class="field__c" {...common}>
+                {placeholder && <option value="">{placeholder}</option>}
+                {options.map((o) => (typeof o === 'string' ? <option value={o}>{o}</option> : <option value={o.value}>{o.label}</option>))}
+            </select>
+        </span>
+    )}
+    {as === 'input' && <input class="field__c" type={type} placeholder={placeholder} {...common}>}
+    {hint && <p class="field__h" id={`${id}-h`}>{hint}</p>}
+    {error && <p class="field__e" id={`${id}-e`}>{error}</p>}
+</div>

@@ -1,0 +1,29 @@
+---
+// One card of a <Split>: a glass .card--big with the title as a display
+// heading (see Rider) and a body in running-text layout. Kept: id, the
+// heading tag and its id, note, label. Ignored: color, tone. `wide` lets the
+// body run the card's whole width (it does by default in Pearl).
+import Rider from './Rider.astro';
+import { titleText, type TitleProps } from './rider';
+import { slug, type Field } from './util';
+
+interface Props extends TitleProps {
+  color?: Field;
+  id?: string;
+  as?: 'h2' | 'h3';
+  tone?: 'lime' | 'blue' | 'rose' | 'white';
+  note?: string;
+  label?: string;
+  wide?: boolean;
+  class?: string;
+}
+
+const { color: _c, id, as = 'h2', tone: _t, note, label, wide, class: cls, ...title } = Astro.props;
+const text = titleText(title);
+const hasTitle = !!text;
+const hid = hasTitle ? `${id ?? slug(text)}-h` : undefined;
+---
+<section class:list={['card', 'card--big', 'copy', 'cell', { 'cell--wide': wide }, cls]} id={id} aria-labelledby={hid} aria-label={hasTitle ? undefined : label}>
+    {hasTitle && <Rider as={as} id={hid} note={note} {...title} />}
+    <slot />
+</section>

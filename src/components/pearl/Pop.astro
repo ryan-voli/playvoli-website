@@ -1,0 +1,16 @@
+---
+// A card cut from a real app screen, lifted beside the phones by a navy shadow.
+import { CUTOUTS, type CutoutKey } from '../poster/cutouts';
+import { placeVars, vars, type Place } from './util';
+
+interface Props extends Place {
+  cut: CutoutKey;
+  class?: string;
+}
+const { cut, class: cls, ...place } = Astro.props;
+const c = CUTOUTS[cut];
+if (!c) throw new Error(`Pop: there is no cut-out "${cut}"`);
+---
+<div class:list={['pop', cls]} style={`${placeVars(place)};${vars({ '--pop-r': c.rad })}`}>
+    <img src={c.src} width={c.width} height={c.height} alt={c.alt} loading="lazy" decoding="async">
+</div>

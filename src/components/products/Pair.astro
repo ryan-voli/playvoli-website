@@ -1,0 +1,34 @@
+---
+// Two marks on one ink slab with a times sign between them: VOLI and a
+// partner, or a product and the place it lives. The slab is stuck on the
+// poster: tilted, with the hard offset. A level block (a hero's art slot, a
+// column, a cell).
+//
+//   <Pair label="VOLI and College Volleyball Transfers">
+//     <img slot="a" src="/images/appicon_opt.webp" width="280" height="280" alt="">
+//     <img slot="b" src="/images/partners/cvt-mark.svg" width="254" height="260" alt="">
+//   </Pair>
+//
+// The label names the pair for screen readers, so the pictures inside take
+// an empty alt.
+import { tint, tilt, vars, type Tint } from '../poster/util';
+
+interface Props {
+  /** What the pair shows, read as one picture. */
+  label: string;
+  /** The slab's tilt: 0, 3.75 or 7.5, either way. Default -3.75. */
+  r?: number;
+  /** The colour of the hard offset. Default: the field's first accent. */
+  shadow?: Tint;
+  /** The height of each mark, as a CSS length. */
+  size?: string;
+  class?: string;
+}
+
+const { label, r = -3.75, shadow, size, class: cls } = Astro.props;
+---
+<div class:list={['pr-pair', cls]} role="img" aria-label={label} style={vars({ '--pr-r': `${tilt(r, 'Pair')}deg`, '--pr-sh': tint(shadow), '--pr-size': size })}>
+    <span class="pr-pair__m"><slot name="a" /></span>
+    <span class="pr-pair__x" aria-hidden="true">&times;</span>
+    <span class="pr-pair__m"><slot name="b" /></span>
+</div>

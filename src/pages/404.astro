@@ -1,24 +1,51 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
+// The page for an address that is not on the site. Astro serves it with a
+// 404 status. It names no canonical address (the layout leaves it out for
+// /404, and canonical={false} keeps it out wherever the page is served).
+// The ways out: the four main pages, the home page, and the app.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/utility.css';
+import Badge from '../components/pearl/kit/Badge.astro';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import LinkList from '../components/pearl/kit/LinkList.astro';
+import Mark from '../components/pearl/kit/Mark.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import WhatIsVoli from '../components/pearl/kit/WhatIsVoli.astro';
+
+const subnav = {
+  label: 'Main pages',
+  items: [
+    { href: '/', label: 'Home' },
+    { href: '/fantasy', label: 'Fantasy' },
+    { href: '/rankings', label: 'Top 100' },
+  ],
+};
 ---
 
-<SiteLayout
-  title="Service Error - VOLI"
-  description="The court you are looking for does not exist."
+<Pearl
+  title="Page not found | VOLI"
+  description="This address is not a page on playvoli.com. Find fantasy volleyball, the Bracket Challenge and the VOLI Top 100, or get the free app for iPhone and Android."
+  canonical={false}
+  subnav={subnav}
 >
-    <main class="v-page v-page--center nf">
-      <div class="v-wrap v-wrap--narrow v-center">
-        <div class="error-code v-hero">404</div>
-        <h1 class="v-h1 nf-title">Service Error</h1>
-        <p class="v-body nf-sub">The court you are looking for does not exist.</p>
-        <a href="/" class="btn-home v-pill v-pill--cta v-pill--action">Return Home</a>
-      </div>
-    </main>
-</SiteLayout>
+    <PageHero color="rose" label={['Error 404.', 'Page not found.']} lines={['Out of bounds']}>
+        <p class="lede">That ball landed outside the lines: there is no page at this address. It may have moved, or the link may have a typo.</p>
+        <LinkList label="Back in play" items={[
+          { href: '/', label: 'The VOLI app' },
+          { href: '/fantasy', label: 'Fantasy volleyball' },
+          { href: '/bracket', label: 'Bracket Challenge' },
+          { href: '/rankings', label: 'VOLI Top 100' },
+          { href: '/about', label: 'About VOLI' },
+        ]} />
+        <Stores />
+        <div slot="art" class="ut-lost">
+            <Mark on="rose" />
+            <Badge value="404" label="page not found" />
+        </div>
+    </PageHero>
 
-<style>
-    .nf { padding-bottom: 64px; }
-    .error-code { margin: 0 0 16px; color: var(--ink); }
-    .nf-title { margin: 0 0 12px; }
-    .nf-sub { margin: 0 0 32px; }
-</style>
+    <WhatIsVoli />
+
+    <GetApp />
+</Pearl>

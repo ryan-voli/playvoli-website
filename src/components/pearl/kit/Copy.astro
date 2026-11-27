@@ -1,0 +1,11 @@
+---
+// A column of running text: a lede, paragraphs, then buttons, a list or a
+// stage. Pearl's .copy, so each child settles in as it scrolls into view.
+interface Props {
+  class?: string;
+}
+const { class: cls } = Astro.props;
+---
+<div class:list={['copy', cls]}>
+    <slot />
+</div>

@@ -1,0 +1,292 @@
+---
+// One league page: a podcast's or a creator's public fantasy league (or, for
+// Court Captains, the podcast itself). The page file passes its data, deep
+// links included; this lays it out:
+//
+//   hero (#join)   what the fan gets, the button that opens the league in the
+//                  app, the store buttons, and on a computer a QR code that
+//                  opens this page on the fan's phone
+//   #how           three steps
+//   #fantasy       what fantasy volleyball on VOLI is, with a link to /fantasy
+//   #podcast       the show and its hosts, with a button that opens it in VOLI
+//   #get           the closing band
+//
+// A page with no league (Court Captains) leads with listening instead, and
+// its hero carries the show.
+//
+// The buttons are voli:// links. On a phone the script below follows the
+// link and, if the app has not opened two seconds later, says how to get it
+// and brings the store buttons into view. On a computer a voli:// link has
+// nothing to open, so the button points the visitor to their phone instead.
+// Clicks are counted with the categories the old pages sent:
+// league_join:<page>_league and podcast_listen:<page>_podcast.
+import Pearl from '../../layouts/Pearl.astro';
+import '../../styles/pearl/pages/landers.css';
+import Badge from '../pearl/kit/Badge.astro';
+import Band from '../pearl/kit/Band.astro';
+import Btn from '../pearl/kit/Btn.astro';
+import Cols from '../pearl/kit/Cols.astro';
+import Copy from '../pearl/kit/Copy.astro';
+import GetApp from '../pearl/kit/GetApp.astro';
+import PageHero from '../pearl/kit/PageHero.astro';
+import Phone from '../pearl/kit/Phone.astro';
+import Qr from '../pearl/kit/Qr.astro';
+import Stack from '../pearl/kit/Stack.astro';
+import Steps from '../pearl/kit/Steps.astro';
+import Sticker from '../pearl/kit/Sticker.astro';
+import Stores from '../pearl/kit/Stores.astro';
+import Help from './Help.astro';
+import { DOWNLOADS, FACTS_AS_OF, PODCASTS } from '../../lib/voli-facts';
+import { SITE_URL } from '../../lib/site';
+import { SCREENS } from '../../lib/screens';
+import type { Lander } from './lander';
+
+interface Props {
+  lander: Lander;
+}
+const { lander: p } = Astro.props;
+const url = `${SITE_URL}/${p.slug}`;
+const shortUrl = `playvoli.com/${p.slug}`;
+const joins = !!p.league;
+
+// The show's episode count, as VOLI's podcast list has it.
+const show = p.show ? PODCASTS.find((s) => s.name === p.show) : undefined;
+if (p.show && !show) throw new Error(`LeaguePage: "${p.show}" is not in PODCASTS (lib/voli-facts)`);
+const episodes = show ? `${show.episodes}` : undefined;
+// A league page with a podcast gets its own band for the show.
+const podcastBand = joins && !!p.podcast && !!p.about?.length;
+
+// Colours: the hero's, ink, then the two colours the hero did not use. Two
+// bands that touch never match, and the closing band is never ink.
+const [c1, c2] = (['lime', 'blue', 'rose'] as const).filter((c) => c !== p.color);
+const fantasyColor = c1;
+const podcastColor = c2;
+const getColor = podcastBand ? p.color : c2;
+
+const heroId = joins ? 'join' : 'listen';
+const subnav = {
+  label: joins ? `${p.name} league` : p.name,
+  items: [
+    joins ? { href: '#join', label: 'Join' } : { href: '#listen', label: 'Listen' },
+    { href: '#how', label: 'How it works', short: 'How' },
+    { href: '/fantasy', label: 'Fantasy' },
+  ],
+};
+
+const steps = joins
+  ? [
+      { title: 'Get VOLI', text: 'Download VOLI, free on iPhone and Android.' },
+      { title: 'Tap join', text: `On your phone, tap Join the league on this page. VOLI opens the ${p.name} league for you to join.` },
+      { title: 'Build your roster', text: 'Sign real players to multi-round contracts under the salary cap, then play the season against the league.' },
+    ]
+  : [
+      { title: 'Get VOLI', text: 'Download VOLI, free on iPhone and Android.' },
+      { title: 'Tap listen', text: `On your phone, tap Listen on VOLI on this page and ${p.name} opens in the app.` },
+      { title: 'Stream or download', text: 'Play an episode now or download it for later. VOLI keeps your place across devices.' },
+    ];
+
+const joinTrack = `league_join:${p.track}_league`;
+const listenTrack = `podcast_listen:${p.track}_podcast`;
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${url}#webpage`,
+    url,
+    name: joins ? `${p.name} fantasy volleyball league` : `${p.show ?? p.name} on VOLI`,
+    description: p.description,
+    inLanguage: 'en-US',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    breadcrumb: { '@id': `${url}#breadcrumb` },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    '@id': `${url}#breadcrumb`,
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'VOLI', item: `${SITE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Fantasy volleyball', item: `${SITE_URL}/fantasy` },
+      { '@type': 'ListItem', position: 3, name: joins ? `${p.name} league` : p.name, item: url },
+    ],
+  },
+];
+
+// The first screen's main picture.
+const heroPicture = joins ? SCREENS.fantasy.src : p.art?.src;
+const heroPictureType = heroPicture?.endsWith('.webp') ? 'image/webp' : heroPicture?.endsWith('.svg') ? 'image/svg+xml' : 'image/jpeg';
+---
+
+<Pearl title={p.title} description={p.description} section="fantasy" subnav={subnav} schema={schema}>
+    {heroPicture && <link rel="preload" as="image" href={heroPicture} type={heroPictureType} fetchpriority="high" slot="head" />}
+
+    <PageHero color={p.color} id={heroId} label={p.label} lines={p.lines} em={p.em} fit="same">
+        <p class="lede">{p.lede}</p>
+        {joins ? (
+            <div class="btns">
+                <Btn href={p.league} id="join-league-btn" variant="primary" track={joinTrack} data-ln-deep data-ln-help="ln-help-join" data-ln-get="#ln-stores">Join the league</Btn>
+            </div>
+        ) : (
+            <div class="btns">
+                <Btn href={p.podcast} variant="primary" track={listenTrack} data-ln-deep data-ln-help="ln-help-listen" data-ln-get="#ln-stores">Listen on VOLI</Btn>
+            </div>
+        )}
+        {joins ? (
+            <Help
+              id="ln-help-join"
+              phone="VOLI did not open on this phone. Get it free below, then tap Join the league again."
+              qr="The league opens in VOLI on your phone. Scan the code below with your phone's camera, then tap Join the league."
+              desk={`The league opens in VOLI on your phone. Open ${shortUrl} there and tap Join the league.`}
+            />
+        ) : (
+            <Help
+              id="ln-help-listen"
+              phone="VOLI did not open on this phone. Get it free below, then tap Listen on VOLI again."
+              qr={`${p.name} plays in VOLI on your phone. Scan the code below with your phone's camera, then tap Listen on VOLI.`}
+              desk={`${p.name} plays in VOLI on your phone. Open ${shortUrl} there and tap Listen on VOLI.`}
+            />
+        )}
+        <div class="ln-get" id="ln-stores">
+            <p class="label">No app yet? VOLI is free</p>
+            <Stores />
+        </div>
+        <Qr id="ln-qr" url={url} text={joins ? `Scan with your phone to join the ${p.name} league.` : `Scan with your phone to listen to ${p.name} in VOLI.`} />
+
+        {/* The fantasy phone on the right, the show's cover in front of it on
+            the left, the downloads chip over the phone's foot. Nothing tilts. */}
+        {joins && p.art && (
+            <Stack slot="art" ratioPhone="100/112">
+                <Phone screen="fantasy" x={45} xm={46} y={2} ym={0} w={44} wm={50} priority />
+                <Sticker src={p.art.src} width={p.art.width} height={p.art.height} alt={p.art.alt} x={3} xm={0} y={30} ym={20} w={50} wm={52} z={2} eager />
+                <Badge value={DOWNLOADS} label="downloads" x={58} y={80} xm={48} ym={76} z={3} />
+            </Stack>
+        )}
+        {joins && !p.art && (
+            <Stack slot="art" ratioPhone="100/112">
+                <Phone screen="fantasy" x={45} xm={46} y={2} ym={0} w={44} wm={50} z={2} priority />
+                <Phone screen="games" x={4} xm={2} y={8} ym={6} w={38} wm={42} eager />
+                <Badge value={DOWNLOADS} label="downloads" x={58} y={80} xm={48} ym={76} z={3} />
+            </Stack>
+        )}
+        {!joins && p.art && (
+            <Stack slot="art" ratio="100/96" ratioPhone="100/96">
+                <Sticker src={p.art.src} width={p.art.width} height={p.art.height} alt={p.art.alt} x={16} xm={12} y={4} ym={0} w={66} wm={76} eager />
+                {episodes && <Badge value={episodes} label={`episodes in VOLI, as of ${FACTS_AS_OF}`} x={56} y={70} xm={44} ym={66} z={2} />}
+            </Stack>
+        )}
+    </PageHero>
+
+    <Band color="ink" id="how" title="How it works" tone={p.color} ptPhone={7}>
+        <Steps items={steps} />
+    </Band>
+
+    <Band color={fantasyColor} id="fantasy" title="Fantasy" sub="volleyball on VOLI">
+        <Cols ratio="42:50" drop={[0, 3]}>
+            <Copy>
+                <p class="lede">
+                    {joins
+                      ? 'Fantasy volleyball on VOLI: you build a team from real college or pro players and play the season against other fans.'
+                      : `VOLI is also a fantasy volleyball app: you build a team from real college or pro players and play the season against other fans.`}
+                </p>
+                <p class="body">
+                    Leagues use a salary cap and multi-round contracts, for NCAA <span class="nb">Division I</span> women's volleyball and MLV, and the NCAA season runs in ten rounds, Wednesday to Sunday.
+                    {joins && p.podcast
+                      ? `Volleyball podcasts run public leagues like the ${p.name} league, and you can start a private one for your friends.`
+                      : joins
+                        ? `Join leagues like the ${p.name} league, or start a private one for your friends.`
+                        : 'Volleyball podcasts run public leagues, and you can start a private one for your friends.'}
+                    Each league has its own chat.
+                </p>
+                <p class="body">Fantasy is one part of VOLI. The same free app has live scores and box scores, team and player stats, <a class="link" href="/rankings">the VOLI Top 100</a>, and volleyball news and podcasts. <a class="link" href="/">See everything in VOLI</a>.</p>
+                <div class="btns"><Btn href="/fantasy">How fantasy volleyball works</Btn></div>
+            </Copy>
+            <Stack ratio="100/88" ratioPhone="100/100">
+                <Sticker cut="card-fantasy" x={10} xm={8} y={8} ym={0} w={86} wm={92} />
+                <Badge value="10" label="college rounds, Wednesday to Sunday" x={0} y={78} xm={0} ym={74} z={2} />
+            </Stack>
+        </Cols>
+    </Band>
+
+    {podcastBand && (
+        <Band color={podcastColor} id="podcast" kicker="Listen to" title={p.showTitle ?? p.name} em="Listen">
+            <Cols ratio="42:50" drop={[0, 3]}>
+                <Copy>
+                    {p.about!.map((t, i) => <p class={i === 0 ? 'lede' : 'body'}>{t}</p>)}
+                    {episodes && <p class="body">{episodes} episodes of {p.show} are in VOLI, as of {FACTS_AS_OF}, to stream or download, with your place saved across devices.</p>}
+                    <div class="btns">
+                        <Btn href={p.podcast} track={listenTrack} data-ln-deep data-ln-help="ln-help-listen" data-ln-get="#get .stores">Listen on VOLI</Btn>
+                    </div>
+                    <Help
+                      id="ln-help-listen"
+                      phone="VOLI did not open on this phone. Get it free below, then tap Listen on VOLI again."
+                      desk={`${p.name} plays in VOLI on your phone. Open ${shortUrl} there and tap Listen on VOLI.`}
+                    />
+                </Copy>
+                {p.player ? (
+                    <Stack ratio="100/98" ratioPhone="100/110">
+                        <Phone screen="podcast" x={48} xm={46} y={3} ym={0} w={44} wm={50} />
+                        {p.art && <Sticker src={p.art.src} width={p.art.width} height={p.art.height} alt={p.art.alt} x={2} xm={0} y={34} ym={30} w={50} wm={52} z={2} />}
+                        {episodes && <Badge value={episodes} label="episodes in VOLI" x={0} y={84} xm={0} ym={4} z={3} />}
+                    </Stack>
+                ) : (
+                    <Stack ratio="100/86">
+                        {p.art && <Sticker src={p.art.src} width={p.art.width} height={p.art.height} alt={p.art.alt} x={14} xm={12} y={4} ym={0} w={70} wm={76} />}
+                        {episodes && <Badge value={episodes} label="episodes in VOLI" x={0} y={70} xm={0} ym={70} z={2} />}
+                    </Stack>
+                )}
+            </Cols>
+        </Band>
+    )}
+
+    <GetApp
+      color={getColor}
+      links={[
+        { href: '/fantasy', label: 'Fantasy volleyball' },
+        { href: '/', label: 'Everything in VOLI' },
+        ...(p.partner ? [{ href: '/about#partners', label: 'VOLI partners' }] : []),
+        { href: '/about', label: 'About VOLI' },
+      ]}
+    />
+
+    <script is:inline slot="scripts">
+        (function () {
+            // iPadOS 13 and later reports a desktop Safari UA: a Mac that takes touch is an iPad.
+            var ua = navigator.userAgent || '';
+            var phone = /iPad|iPhone|iPod|Android/i.test(ua) || (/Macintosh/i.test(ua) && 'ontouchend' in document);
+            var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function bring(el) {
+                if (!el) return;
+                setTimeout(function () { el.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' }); }, 300);
+            }
+
+            // Shows the one line of the button's note that fits: the app did not
+            // open on a phone, or a computer with or without the QR code in view.
+            function help(a, onPhone) {
+                var note = document.getElementById(a.getAttribute('data-ln-help'));
+                if (!note) return;
+                var qr = document.getElementById('ln-qr');
+                var qrShown = !!(qr && qr.offsetParent !== null && note.hasAttribute('data-qr'));
+                var pick = onPhone ? 'phone' : qrShown ? 'qr' : 'desk';
+                var line = note.querySelector('span') || note;
+                note.hidden = false;
+                // Written after the notice is shown, so a screen reader announces it.
+                requestAnimationFrame(function () { line.textContent = note.getAttribute('data-' + pick); });
+                if (pick === 'phone') bring(document.querySelector(a.getAttribute('data-ln-get')));
+                else if (pick === 'qr') bring(qr);
+            }
+
+            [].forEach.call(document.querySelectorAll('a[data-ln-deep]'), function (a) {
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (!phone) { help(a, false); return; }
+                    window.location.href = a.getAttribute('href');
+                    setTimeout(function () {
+                        if (!document.hidden) help(a, true);
+                    }, 2000);
+                });
+            });
+        })();
+    </script>
+</Pearl>

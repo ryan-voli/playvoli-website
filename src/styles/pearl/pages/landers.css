@@ -1,0 +1,9 @@
+/* The league and podcast pages in Pearl (/volleytalk, /mlm, /canaan,
+   /lshotvb, /courtcaptains): what only they need.
+   Everything shared is in pearl/system.css and pearl/kit.css. */
+
+/* The store buttons under the join button, with their line. */
+.ln-get .label { margin-bottom: var(--sp-3); }
+
+/* A deep-link button's note: shown by the page's script when the app cannot open. */
+.ln-help { max-width: 34rem; }

@@ -10,6 +10,14 @@
 // browsers are the least predictable JS environments there are, and a
 // server redirect works before a single script runs. The site is
 // output:'static', so this one route opts out.
+import Pearl from '../layouts/Pearl.astro';
+import '../styles/pearl/pages/download.css';
+import GetApp from '../components/pearl/kit/GetApp.astro';
+import PageHero from '../components/pearl/kit/PageHero.astro';
+import Stores from '../components/pearl/kit/Stores.astro';
+import WhatIsVoli from '../components/pearl/kit/WhatIsVoli.astro';
+import { qrPath } from '../lib/qr';
+
 export const prerender = false;
 
 const APP_STORE = 'https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982';
@@ -34,128 +42,65 @@ if (isIOS || isAndroid) {
 Astro.response.headers.set('Cache-Control', 'private, no-store');
 Astro.response.headers.set('Vary', 'User-Agent');
 
-const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=8&data=https://playvoli.com/download';
+// The code to scan, drawn here as plain SVG: no outside service. It opens
+// this same address, which a phone turns into its own store.
+const qr = qrPath('https://playvoli.com/download');
+
+const subnav = {
+  label: 'Download VOLI',
+  items: [
+    { href: '#get', label: 'Get the app' },
+    { href: '/', label: 'What is VOLI' },
+  ],
+};
 ---
 
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Download VOLI</title>
-  <meta name="description" content="Get VOLI — The Volleyball Hub. Scores, stats, fantasy and more." />
-  <meta name="robots" content="noindex" />
+<Pearl
+  title="Download VOLI: The Volleyball Hub for iPhone and Android"
+  description="Get VOLI: The Volleyball Hub, free on iPhone and Android: fantasy volleyball leagues, live scores, stats, news and podcasts. Scan the code or pick your store."
+  subnav={subnav}
+  noindex
+>
+    <Fragment slot="head">
+        <!-- Belt and braces: if this page is ever served from a cache to a
+             phone, the script still routes it. The server redirect above is
+             the primary path. -->
+        <script is:inline>
+          (function () {
+            var ua = navigator.userAgent || navigator.vendor || window.opera || '';
+            var ios = /iPad|iPhone|iPod/i.test(ua) ||
+              (/Macintosh/i.test(ua) && 'ontouchend' in document);
+            if (ios && !window.MSStream) {
+              window.location.replace('https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982');
+            } else if (/android/i.test(ua)) {
+              window.location.replace('https://play.google.com/store/apps/details?id=com.playvoli.app');
+            }
+          })();
+        </script>
+    </Fragment>
 
-  <!-- Social cards, since this URL is made to be shared. -->
-  <meta property="og:title" content="Download VOLI" />
-  <meta property="og:description" content="The Volleyball Hub — scores, stats, fantasy and more." />
-  <meta property="og:url" content="https://playvoli.com/download" />
-  <meta property="og:image" content="https://playvoli.com/images/og/voli-share.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:image" content="https://playvoli.com/images/og/voli-share.jpg" />
+    <PageHero color="lime" label={['VOLI: The Volleyball Hub.', 'Free on iPhone and Android.']} lines={[{ text: 'Download', hollow: true }, 'VOLI']} fit="same" em="Download">
+        <p class="lede">Scan the code with your phone's camera, or pick your store below. VOLI is free on iPhone and Android.</p>
+        <Stores />
+        <p class="body">Fantasy volleyball, live scores and stats for NCAA <span class="nb">Division I</span> women's volleyball, MLV and LOVB, with volleyball news and podcasts. <a class="link" href="/">See everything in VOLI</a> or read <a class="link" href="/about#faq">questions about VOLI</a>.</p>
+        <figure slot="art" class="dl-scan">
+            <svg viewBox={`0 0 ${qr.size} ${qr.size}`} width="320" height="320" role="img" aria-label="QR code that opens playvoli.com/download" shape-rendering="crispEdges">
+                <rect width={qr.size} height={qr.size} fill="#fff" />
+                <path d={qr.d} fill="#12141C" />
+            </svg>
+            <figcaption>
+                <span class="dl-scan__t"><span class="ticks" aria-hidden="true"></span>Scan to get VOLI</span>
+                <span class="dl-scan__s">Your phone opens its own store.</span>
+            </figcaption>
+        </figure>
+    </PageHero>
 
-  <!-- Belt and braces: if this page is ever served from a cache to a
-       phone, the script still routes it. The server redirect above is
-       the primary path. -->
-  <script is:inline>
-    (function () {
-      var ua = navigator.userAgent || navigator.vendor || window.opera || '';
-      var ios = /iPad|iPhone|iPod/i.test(ua) ||
-        (/Macintosh/i.test(ua) && 'ontouchend' in document);
-      if (ios && !window.MSStream) {
-        window.location.replace('https://apps.apple.com/us/app/voli-the-volleyball-hub/id6749812982');
-      } else if (/android/i.test(ua)) {
-        window.location.replace('https://play.google.com/store/apps/details?id=com.playvoli.app');
-      }
-    })();
-  </script>
+    <WhatIsVoli />
 
-  <style>
-    @font-face {
-      font-family: "Designer";
-      src: url("/fonts/Designer.otf") format("opentype");
-      font-display: swap;
-    }
-    :root { color-scheme: dark; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      background: #0F1314;
-      color: #fff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
-      text-align: center;
-    }
-    /* Aurora, still (no script on this page) */
-    .v-aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: #0F1314; }
-    .v-aurora__field {
-      position: absolute; left: 0; top: 0; width: 180vw; height: 180vh; height: 180lvh;
-      background: url("/images/refresh/bg-aurora.webp") 0 0 / 100% 100% no-repeat;
-      transform: translate3d(calc(var(--ax, .38) * -100vw), calc(var(--ay, .36) * -100lvh), 0);
-    }
-    .card {
-      width: 100%;
-      max-width: 400px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 20px;
-      padding: 24px;
-    }
-    h1 {
-      margin: 0 0 8px;
-      font: 400 34px/1 "Designer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.01em;
-    }
-    p  { margin: 0 0 24px; font-size: 15px; line-height: 1.45; color: rgba(255,255,255,0.70); }
-    .qr {
-      background: #fff;
-      border-radius: 14px;
-      padding: 12px;
-      display: inline-block;
-      line-height: 0;
-      margin-bottom: 24px;
-    }
-    .qr img { width: 200px; height: 200px; display: block; }
-    .stores { display: flex; flex-direction: column; gap: 12px; }
-    a.store {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 44px;
-      padding: 0 18px;
-      border-radius: 22px;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 600;
-      background: rgba(255, 255, 255, 0.10);
-      color: #fff;
-      transition: background-color 150ms, opacity 100ms;
-    }
-    a.store:hover { background: rgba(255, 255, 255, 0.15); }
-    a.store:active { opacity: .72; }
-    @media (max-width: 420px) { h1 { font-size: 28px; } }
-  </style>
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-</head>
-<body>
-  <div class="v-aurora" aria-hidden="true"><div class="v-aurora__field" style="--ax:.18;--ay:.22"></div></div>
-  <main class="card">
-    <h1>Download VOLI</h1>
-    <p>Scan with your phone, or pick your store below.</p>
-    <div class="qr"><img src={qr} alt="QR code linking to playvoli.com/download" width="200" height="200" /></div>
-    <div class="stores">
-      <a class="store" href={APP_STORE}>Download on the App&nbsp;Store</a>
-      <a class="store" href={PLAY_STORE}>Get it on Google&nbsp;Play</a>
-    </div>
-  </main>
-</body>
-</html>
+    <GetApp color="blue" links={[
+      { href: '/', label: 'Everything in VOLI' },
+      { href: '/fantasy', label: 'Fantasy volleyball' },
+      { href: '/rankings', label: 'VOLI Top 100' },
+      { href: '/about#faq', label: 'Questions about VOLI' },
+    ]} />
+</Pearl>
