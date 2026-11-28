@@ -10,6 +10,8 @@
 // see account.css); its #nav-auth stays the slot NavAuth and the Daily Grid
 // write into.
 import Layout from './Layout.astro';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import '../styles/pearl/system.css';
 import '../styles/pearl/kit.css';
 import '../styles/pearl/motion.css';
@@ -111,6 +113,11 @@ const canonical = canonicalPath === '/404' ? null : `https://playvoli.com${canon
       try { gtag('event', 'click', { event_category: t[0], event_label: t.slice(1).join(':') }); } catch (err) {}
     });
   </script>
+
+  {/* Vercel Web Analytics and Speed Insights. Here, not in the frozen Layout,
+      so oauth-callback's built page never changes. */}
+  <Analytics />
+  <SpeedInsights />
 
   <slot name="scripts" slot="scripts" />
 </Layout>

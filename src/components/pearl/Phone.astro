@@ -17,6 +17,15 @@ const { screen, alt, eager, priority, class: cls, ...place } = Astro.props;
 const s = SCREENS[screen];
 if (!s) throw new Error(`Phone: there is no screen "${screen}" in src/lib/screens.ts`);
 const now = eager || priority;
+// A 390px copy of every screen sits next to its 780px original
+// (name-390.webp, the same capture resized, never cropped). sizes is the
+// phone's widest likely width: w% of a half-width column on a desktop, of the
+// full width below 900px, and wm% of it below 680px.
+const small = s.src.replace(/\.webp$/, '-390.webp');
+const srcset = `${small} 390w, ${s.src} ${s.width}w`;
+const w = place.w ?? 46;
+const wm = place.wm ?? w;
+const sizes = `(max-width: 680px) ${wm}vw, (max-width: 900px) ${w}vw, ${Math.ceil(6 * w)}px`;
 ---
 <div class:list={['phone', cls]} style={placeVars(place)}>
     <span class="phone__btn phone__btn--action" aria-hidden="true"></span>
@@ -24,7 +33,7 @@ const now = eager || priority;
     <span class="phone__btn phone__btn--power" aria-hidden="true"></span>
     <div class="phone__bezel">
         <div class="phone__glass">
-            <img src={s.src} width={s.width} height={s.height} alt={alt ?? s.alt} loading={now ? undefined : 'lazy'} decoding={now ? undefined : 'async'} fetchpriority={priority ? 'high' : undefined}>
+            <img src={s.src} srcset={srcset} sizes={sizes} width={s.width} height={s.height} alt={alt ?? s.alt} loading={now ? undefined : 'lazy'} decoding={now ? undefined : 'async'} fetchpriority={priority ? 'high' : undefined}>
             <span class="phone__island" aria-hidden="true"></span>
         </div>
     </div>

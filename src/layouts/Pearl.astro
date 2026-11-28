@@ -17,6 +17,8 @@ import PromoStrip from '../components/pearl/Promo.astro';
 import BracketClock from '../components/BracketClock.astro';
 import { STORE } from '../lib/voli-facts';
 import { SITE_URL, SOCIAL_LINKS, type Section, type Subnav } from '../lib/site';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   /** 50 to 62 characters, the main phrase first, "| VOLI" last unless VOLI already leads. */
@@ -217,5 +219,8 @@ const allSchema = [...siteSchema, ...schema];
         })();
     </script>
     <slot name="scripts" />
+    {/* Vercel Web Analytics and Speed Insights, next to the Google tags. */}
+    <Analytics />
+    <SpeedInsights />
 </body>
 </html>
