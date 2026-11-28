@@ -21,8 +21,8 @@
 
 export const FACTS_AS_OF = 'October 2026';
 
-/** App downloads, iOS + Android (owner, 23 Oct 2026; 3.7k+ on 24 Nov 2026). Update as it grows. */
-export const DOWNLOADS = '3.7k+';
+/** App downloads, iOS + Android (owner, 23 Oct 2026; 3.7k+ on 24 Nov 2026; 3.8k+ on 28 Nov 2026, checked in App Store Connect and Play Console). Update as it grows. */
+export const DOWNLOADS = '3.8k+';
 /** When DOWNLOADS was last counted. Update the two together. */
 export const DOWNLOADS_AS_OF = 'November 2026';
 

@@ -144,6 +144,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
   { name: 'Instagram', href: 'https://instagram.com/playvoli' },
   { name: 'Facebook', href: 'https://www.facebook.com/playvoliapp' },
   { name: 'X', href: 'https://x.com/playvoli' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/company/playvoli' },
 ];
 
 /** Said wherever the leagues are named prominently, and in every footer. */
