@@ -38,6 +38,8 @@ interface Props {
   chrome?: boolean;
   /** The menu's second row. Default: the main pages, as on the 404 page. */
   subnav?: Subnav;
+  /** Keep the page out of search (sign-in, account pages). */
+  noindex?: boolean;
 }
 
 // The link-preview image for every site page (owner, 24 Oct 2026). Set here,
@@ -60,6 +62,7 @@ const {
   activePage = '',
   ogImage = SHARE_IMAGE,
   subnav = MAIN_PAGES_SUBNAV,
+  noindex = false,
   ...rest
 } = Astro.props;
 
@@ -71,7 +74,8 @@ const canonical = canonicalPath === '/404' ? null : `https://playvoli.com${canon
 
 <Layout {...rest} ogImage={ogImage} activePage={activePage} showFooter={false} bodyClass={('site pearl ' + bodyClass).trim()}>
   <link rel="preload" href="/fonts/Designer.otf" as="font" type="font/otf" crossorigin slot="head" />
-  {canonical && <link rel="canonical" href={canonical} slot="head" />}
+  {canonical && !noindex && <link rel="canonical" href={canonical} slot="head" />}
+  {noindex && <meta name="robots" content="noindex, follow" slot="head" />}
   <meta name="theme-color" content="#F1F2F6" slot="head" />
   <meta name="color-scheme" content="light" slot="head" />
   <link rel="preconnect" href="https://fonts.googleapis.com" slot="head" />
