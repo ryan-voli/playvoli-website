@@ -19,6 +19,9 @@
   box-shadow: var(--sh-card);
 }
 .cvt-pair__m { display: block; flex: none; width: var(--size); height: var(--size); }
+/* The CVT tile is also a .cvt-pair__m: keep it a centring grid, or the mark
+   sits in the tile's top-left corner. */
+.cvt-pair__m.cvt-tile { display: grid; }
 .cvt-icon { width: 100%; height: 100%; border-radius: 22.5%; box-shadow: var(--sh-sm); }
 .cvt-pair__x { font: 300 calc(var(--size) * .36)/1 var(--f-body); color: var(--ink-3); }
 @media (max-width: 900px) { .cvt-art { justify-content: flex-start; } }
