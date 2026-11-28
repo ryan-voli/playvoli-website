@@ -9,7 +9,7 @@ const SITE = 'https://playvoli.com';
 
 const body = `# VOLI: The Volleyball Hub
 
-> VOLI is a free volleyball app for iPhone and Android covering NCAA Division I women's volleyball, Major League Volleyball (MLV) and LOVB (League One Volleyball). Fantasy volleyball is its most-used feature. VOLI also has live scores and box scores, play-by-play for pro matches, team and player stats, the weekly VOLI Top 100 and each match's chance to win, the Volleyball Encyclopedia of honors back to 1979, and volleyball news and podcasts in one feed. VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.
+> VOLI is a free volleyball app for iPhone and Android, with no ads, covering NCAA Division I women's volleyball, Major League Volleyball (MLV) and LOVB (League One Volleyball). Fantasy volleyball is its most-used feature. VOLI also has live scores and box scores, play-by-play for pro matches, team and player stats, the weekly VOLI Top 100 and each match's chance to win, the Volleyball Encyclopedia of honors back to 1979, and volleyball news and podcasts in one feed. VOLI is independent and not affiliated with or endorsed by the NCAA, MLV, LOVB, the AVCA or any conference.
 
 ## What's in VOLI (as of ${FACTS_AS_OF})
 - **Fantasy volleyball:** build a team from real college or pro players and play the season against your friends in a public or private league. Leagues use a salary cap and multi-round contracts, for NCAA Division I women's volleyball and MLV, with LOVB joining in January 2027; the NCAA season runs in ten rounds, Wednesday to Sunday. Volleyball podcasts run their own public leagues on VOLI. ${SITE}/fantasy
@@ -25,10 +25,13 @@ const body = `# VOLI: The Volleyball Hub
 - **Transfer Portal:** the moves in women's college volleyball that the College Volleyball Transfers desk has verified: who entered the portal and where they commit. ${SITE}/cvt
 
 ## Products
-- **VOLI app** (iPhone and Android, free; ${DOWNLOADS} downloads as of ${DOWNLOADS_AS_OF})
+- **VOLI app** (iPhone and Android, free, no ads; ${DOWNLOADS} downloads as of ${DOWNLOADS_AS_OF})
   - App Store: ${STORE.ios}
   - Google Play: ${STORE.android}
 - **VOLI Discord bot:** live scores, standings, stat leaders, rankings, fantasy standings and pro transactions in Discord servers. ${SITE}/discordbot
+
+## Not to be confused with
+- VOLI (playvoli.com, made by VOLI LLC) is not related to Voli Wellness, to Volibear from League of Legends, or to other apps named Voli or Volleyball Hub, such as club-tournament apps.
 
 ## Leagues covered
 - NCAA Division I women's volleyball

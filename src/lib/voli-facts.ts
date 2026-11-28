@@ -93,8 +93,13 @@ export const FAQS: Faq[] = [
   },
   {
     id: 'free',
-    q: 'Is VOLI free?',
-    a: 'Yes. VOLI is free on iPhone and Android.',
+    q: 'Is VOLI free, and is it on Android?',
+    a: 'Yes to both. VOLI is free on iPhone and Android, with no ads.',
+  },
+  {
+    id: 'not-confused',
+    q: 'Is VOLI the same as other apps called Voli or Volleyball Hub?',
+    a: "No. VOLI: The Volleyball Hub (playvoli.com), made by VOLI LLC, is a fan app for NCAA Division I women's volleyball, MLV and LOVB. It is not related to Voli Wellness, to Volibear from League of Legends, or to other apps named Voli or Volleyball Hub, such as club-tournament apps.",
   },
 ];
 
@@ -122,7 +127,7 @@ export const APP_SCHEMA = {
   operatingSystem: 'iOS, Android',
   applicationCategory: 'SportsApplication',
   description:
-    "VOLI is a free volleyball app for NCAA Division I women's volleyball, Major League Volleyball and LOVB: fantasy volleyball leagues, live scores and box scores, play-by-play for pro matches, team and player stats, the weekly VOLI Top 100 and match win chances, the Volleyball Encyclopedia of honors back to 1979, and volleyball news and podcasts in one feed.",
+    "VOLI is a free volleyball app for iPhone and Android, with no ads, for NCAA Division I women's volleyball, Major League Volleyball and LOVB: fantasy volleyball leagues, live scores and box scores, play-by-play for pro matches, team and player stats, the weekly VOLI Top 100 and match win chances, the Volleyball Encyclopedia of honors back to 1979, and volleyball news and podcasts in one feed.",
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@id': 'https://playvoli.com/#organization' },
   downloadUrl: [STORE.ios, STORE.android],
