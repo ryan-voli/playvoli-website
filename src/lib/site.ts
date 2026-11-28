@@ -95,7 +95,6 @@ export const FOOTER_GROUPS: FooterGroup[] = [
   {
     title: 'VOLI',
     links: [
-      { href: '/', label: 'App' },
       { href: '/fantasy', label: 'Fantasy' },
       { href: '/bracket', label: 'Bracket Challenge' },
       { href: '/rankings', label: 'VOLI Top 100' },
@@ -109,6 +108,7 @@ export const FOOTER_GROUPS: FooterGroup[] = [
   {
     title: 'Products',
     links: [
+      { href: '/', label: 'VOLI App' },
       { href: '/discordbot', label: 'Discord Bot' },
       { href: '/dailygrid', label: 'Daily Grid', hidden: true },
       { href: '/redditdailygrid', label: 'Reddit Daily Grid', hidden: true },
